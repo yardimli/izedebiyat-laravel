@@ -1,0 +1,157 @@
+.form-control::-webkit-input-placeholder {
+	color: #ccc;
+}
+
+.form-control:-moz-placeholder {
+	color: #ccc;
+}
+
+.form-control::-moz-placeholder {
+	color: #ccc;
+}
+
+.form-control:-ms-input-placeholder {
+	color: #ccc;
+}
+
+.fadebackground_to_white {
+    background-color:white !important;
+    -webkit-transition:background 0.5s !important;;
+    -moz-transition:background 0.5s !important;;
+    -o-transition:background 0.5s !important;;
+    transition:background 0.5 !important;s
+}
+
+.progress-bar.animate {
+  width: 100%;
+}
+
+.colorpicker-2x .colorpicker-saturation {
+  width: 200px;
+  height: 200px;
+}
+
+.colorpicker-2x .colorpicker-hue,
+.colorpicker-2x .colorpicker-alpha {
+  width: 30px;
+  height: 200px;
+}
+
+.colorpicker-2x .colorpicker-color,
+.colorpicker-2x .colorpicker-color div {
+  height: 30px;
+}
+
+.col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto {
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  padding-right: 5px;
+  padding-left: 0px;
+}
+
+.form-group label {
+  padding-left: 8px;
+}
+
+.download-bought-image {
+  padding-right:12px; height:100px
+}
+
+
+textarea {
+  /* margin:0px 0px; this is redundant anyways since its specified below*/
+  padding-top: 10px;
+  padding-bottom: 25px; /* increased! */
+  /* height:16px; */
+  /* line-height:16px; */
+  width: 100%; /* changed from 96 to 100% */
+  display: block;
+  /* margin:0px auto; not needed since i have width 100% now */
+}
+
+.noresize {
+  resize: none;
+}
+
+.vresize {
+  resize: vertical;
+}
+
+.hresize {
+  resize: horizontal;
+}
+
+.modal-backdrop {
+  z-index: 30000 !important;
+}
+
+.colorpicker-2x .colorpicker-saturation {
+  width: 200px;
+  height: 200px;
+}
+
+.colorpicker-2x .colorpicker-hue,
+.colorpicker-2x .colorpicker-alpha {
+  width: 30px;
+  height: 200px;
+}
+
+.colorpicker-2x .colorpicker-color,
+.colorpicker-2x .colorpicker-color div {
+  height: 30px;
+}
+
+:root {
+  --loader-dimension: 80px;
+  --loader-border-width: 6px;
+}
+
+.loadingX,
+.loadingX:before,
+.loadingX:after {
+  background: transparent;
+  border-radius: 50%;
+  border-style: solid;
+  border-color: transparent;
+  border-top-color: #fff;
+  border-width: var(--loader-border-width);
+
+  animation-name: loader-ring;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: 4s;
+}
+
+.loadingX {
+  width: var(--loader-dimension);
+  height: var(--loader-dimension);
+  position: relative;
+}
+
+.loadingX:before {
+  content: '';
+  width: calc(var(--loader-dimension) - var(--loader-border-width) * 2);
+  height: calc(var(--loader-dimension) - var(--loader-border-width) * 2);
+  position: absolute;
+  margin: 0px;
+  animation-duration: 3s;
+}
+
+.loadingX:after {
+  content: '';
+  width: calc(var(--loader-dimension) - var(--loader-border-width) * 4);
+  height: calc(var(--loader-dimension) - var(--loader-border-width) * 4);
+  position: absolute;
+  margin: 6px;
+  animation-duration: 2s;
+}
+
+@keyframes loader-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

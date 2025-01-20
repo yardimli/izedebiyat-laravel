@@ -1,0 +1,36 @@
+<hr noshade width="100%" size="1">
+<table width="95%" border="0" align="center" cellpadding="2" cellspacing="2" class="arial11">
+  <tr> 
+    <td><div align="center"><a href="index.asp"><img border=0 src="/anagrafikler/mini_logo.jpg" width="69" height="25"></a> 
+        <br>
+        <br>
+        | <a href="kume.asp?id=1">Þiir</a> | <a href="/kume.asp?id=2">Öykü</a> 
+        | <a href="kume.asp?id=3">Roman</a> | <a href="/kume.asp?id=4">Deneme</a> 
+        | <a href="kume.asp?id=5">Eleþtiri</a> | <a href="/kume.asp?id=6">Ýnceleme</a> 
+        | <a href="kume.asp?id=7">Bilimsel</a> | <a href="/yazarlar.asp">Yazarlar 
+        </a>| Babýali Kütüphanesi | Yazar Kütüphaneleri | <a href="http://www.izedebiyat.com:81/">Yaratýcý Yazarlýk</a><br>
+        <br>
+        | <a href="/f/yayin_ilkeleri.asp">Katýlým</a> | <a href="mailto:izedebiyat@izlenim.com">Ýletiþim </a> | <a href="/b/yasallik.asp">Yasallýk | <a href="/b/saklilik.asp">Saklýlýk 
+        & Gizlilik</a> | <a href="/f/yayin_ilkeleri_genel.asp">Yayýn Ýlkeleri </a>| <a href="/b/izedebiyat.asp">ÝzEdebiyat?</a> 
+        | <a href="sss.asp">SSS</a> | <a href="/b/kunye.asp">Künye</a> | <a href="/f/giris.asp">Üye Giriþi</a> | </div></td>
+  </tr>
+</table>
+<p align=center><br>
+</p>
+<table width="80%" border="0" align="center" cellpadding="2" cellspacing="2">
+  <tr>
+    <td><div align="center">ÝzEdebiyat bir Ýzlenim Yapým sitesidir. © Ýzlenim 
+        Yapým, <%=year(now)%> | © <%=yazarad%>, <%=year(now)%> 
+        <hr noshade width="100%" size="1">
+        ÝzEdebiyat'da yayýnlanan bütün yazýlar, telif haklarý yasalarýnca korunmaktadýr. 
+        Tümü yazarlarýnýn ya da telif hakký sahiplerinin izniyle sitemizde yer 
+        almaktadýr. Yazarlarýn ya da telif hakký sahiplerinin izni olmaksýzýn 
+        sitede yer alan metinlerin —kýsa alýntý ve tanýtýmlar dýþýnda— herhangi 
+        bir biçimde basýlmasý/yayýnlanmasý kesinlikle yasaktýr. <br>
+        Ayrýntýlý bilgi icin Yasallýk bölümüne bkz. <br>
+      </div>
+      </td>
+  </tr>
+</table>
+</body>
+</html>
