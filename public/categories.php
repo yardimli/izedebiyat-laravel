@@ -8,7 +8,7 @@
 <head>
 	<?php
 		$story_row['ust_kategori_slug'] = $_GET["ust_kategori_slug"];
-		$command1 = "SELECT * FROM kategoriler WHERE ust_kategori_id=0 AND slug_tr='" . mysqli_real_escape_string($dbconn, $story_row['ust_kategori_slug']) . "'";
+		$command1 = "SELECT * FROM kategoriler WHERE ust_kategori_id=0 AND slug='" . mysqli_real_escape_string($dbconn, $story_row['ust_kategori_slug']) . "'";
 		$result1 = $dbconn->query($command1);
 		while ($row1 = $result1->fetch_assoc()) {
 			$ust_kategori_id = $row1["id"];

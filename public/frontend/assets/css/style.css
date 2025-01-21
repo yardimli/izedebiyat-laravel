@@ -1254,36 +1254,6 @@ footer .social-network li {
     font-size: .875rem;
 }
 
-/*ELEMENTS*/
-/*Pagination*/
-ul.page-numbers {
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(0, 0, 0, .15);
-    width: 100%;
-}
-
-ul.page-numbers i {
-    font-size: .875em;
-}
-
-ul.page-numbers li {
-    display: inline-block;
-    padding: 0 10px 0 0;
-}
-
-ul.page-numbers li a {
-
-    color: rgba(0, 0, 0, .54) !important;
-}
-
-ul.page-numbers li span.current {
-    color: rgba(0, 0, 0, .84) !important;
-    display: block;
-    text-align: center;
-    font-weight: bold;
-}
 
 /*Form*/
 
@@ -1544,59 +1514,6 @@ textarea.form-control {
     text-align: center;
 }
 
-/*PAGEs*/
-
-/*contact*/
-/*input:focus, textarea:focus, button:focus, select:focus {*/
-/*  border: 1px solid #888890;*/
-/*  -webkit-transition: 0.4s;*/
-/*  -o-transition: 0.4s;*/
-/*  transition: 0.4s;*/
-/*}*/
-
-/*input {*/
-/*  -webkit-appearance: none;*/
-/*  appearance: none;*/
-/*  border-radius: 0px;*/
-/*  height: 40px;*/
-/*  font-size: 16px;*/
-/*  padding: 7px 15px;*/
-/*  background: white;*/
-/*  border: 1px solid #e1e1e1;*/
-/*  -webkit-transition: 0.4s;*/
-/*  -o-transition: 0.4s;*/
-/*  transition: 0.4s;*/
-/*  width: 100%;*/
-/*  color: rgba(0,0,0,0.54);*/
-/*}*/
-
-/*textarea, button, select {*/
-/*  -webkit-appearance: none;*/
-/*  appearance: none;*/
-/*  border-radius: 0px;*/
-/*  font-size: 16px;*/
-/*  padding: 7px 15px;*/
-/*  background: white;*/
-/*  border: 1px solid #ebebeb;*/
-/*  -webkit-transition: 0.4s;*/
-/*  -o-transition: 0.4s;*/
-/*  transition: 0.4s;*/
-/*  width: 100%;*/
-/*  color: rgba(0,0,0,0.54);*/
-/*}*/
-
-/*button, html input[type="button"], input[type="reset"], input[type="submit"] {*/
-/*  color: #fff;*/
-/*  border-style: solid;*/
-/*  padding: 0 20px;*/
-/*  border-radius: 3px;*/
-/*  cursor: pointer;*/
-/*  width: unset;*/
-/*}*/
-
-/*button:hover, input[type="button"]:hover, input[type="reset"]:hover, input[type="submit"]:hover {*/
-/*  border: none;*/
-/*}*/
 
 /*404*/
 .page-404 .entry-wraper {

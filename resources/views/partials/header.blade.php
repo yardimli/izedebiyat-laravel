@@ -31,15 +31,15 @@
 				<a href="{{ url('/kunye') }}">Künye</a>
 			</div>
 			
-			@foreach(\App\Models\Kategori::where('ust_kategori_id', 0)->orderBy('slug_tr')->get() as $category)
+			@foreach($mainMenuCategories as $category)
 				<div class="pt-2">
-					<a href="{{ url('/kume/' . $category->slug_tr) }}" style="text-transform: uppercase;">
-						{{ $category->kategori_ad }}
+					<a href="{{ url('/kume/' . $category->slug) }}" style="text-transform: uppercase;">
+						{!! $category->kategori_ad !!}
 					</a>
 				</div>
 				<div class="pl-4">
 					@foreach($category->subCategories as $subCategory)
-						<a href="{{ url('/kume/' . $category->slug_tr . '/' . $subCategory->slug_tr) }}">
+						<a href="{{ url('/kume/' . $category->slug . '/' . $subCategory->slug) }}">
 							{{ $subCategory->kategori_ad }}
 						</a>,
 					@endforeach
@@ -50,7 +50,7 @@
 </div>
 
 <!--Desktop Header-->
-<div id="wrapper" class="container">
+<div id="wrapper">
 	<header id="header" class="d-lg-block d-none">
 		<div class="container">
 			<div class="w-100 d-flex align-items-center">

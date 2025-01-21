@@ -10,7 +10,7 @@
 
 		$ust_kategori_slug = $_GET["ust_kategori_slug"];
 		$ust_kategori_id = 0;
-		$command1 = "SELECT * FROM kategoriler WHERE ust_kategori_id=0 AND slug_tr='" . mysqli_real_escape_string($dbconn, $ust_kategori_slug) . "'";
+		$command1 = "SELECT * FROM kategoriler WHERE ust_kategori_id=0 AND slug='" . mysqli_real_escape_string($dbconn, $ust_kategori_slug) . "'";
 		$result1 = $dbconn->query($command1);
 		while ($row1 = $result1->fetch_assoc()) {
 			$ust_kategori_id = $row1["id"];
@@ -19,7 +19,7 @@
 
 
 		$alt_kategori_slug = $_GET["alt_kategori_slug"];
-		$command1 = "SELECT * FROM kategoriler WHERE ust_kategori_id='" . mysqli_real_escape_string($dbconn, $ust_kategori_id) . "' AND slug_tr='" . mysqli_real_escape_string($dbconn, $alt_kategori_slug) . "'";
+		$command1 = "SELECT * FROM kategoriler WHERE ust_kategori_id='" . mysqli_real_escape_string($dbconn, $ust_kategori_id) . "' AND slug='" . mysqli_real_escape_string($dbconn, $alt_kategori_slug) . "'";
 		$result1 = $dbconn->query($command1);
 		while ($row1 = $result1->fetch_assoc()) {
 			$alt_kategori_ad = $row1["kategori_ad"];

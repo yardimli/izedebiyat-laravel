@@ -1,5 +1,6 @@
 <?php
 
+	use App\Helpers\MyHelper;
 	use App\Http\Controllers\ChatController;
 	use App\Http\Controllers\FrontendController;
 	use App\Http\Controllers\ImageGenController;
@@ -27,15 +28,48 @@
 	|
 	*/
 
+
+	// New maintenance routes
+	Route::get('/maintenance/check-harmful', function() {
+		ob_start();
+		MyHelper::returnIsHarmful();
+		$output = ob_get_clean();
+		return response($output)->header('Content-Type', 'text/plain');
+	})->name('maintenance.check-harmful');
+
+	Route::get('/maintenance/check-religious', function() {
+		ob_start();
+		MyHelper::returnReligiousReason();
+		$output = ob_get_clean();
+		return response($output)->header('Content-Type', 'text/plain');
+	})->name('maintenance.check-religious');
+
+	Route::get('/maintenance/check-keywords', function() {
+		ob_start();
+		MyHelper::returnKeywords();
+		$output = ob_get_clean();
+		return response($output)->header('Content-Type', 'text/plain');
+	})->name('maintenance.check-keywords');
+
+	Route::get('/maintenance/check-moderation', function() {
+		ob_start();
+		MyHelper::returnModeration();
+		$output = ob_get_clean();
+		return response($output)->header('Content-Type', 'text/plain');
+	})->name('maintenance.check-moderation');
+
+	Route::get('/maintenance/update-yazilar-table', function() {
+		ob_start();
+		MyHelper::updateYaziTable();
+		$output = ob_get_clean();
+		return response($output)->header('Content-Type', 'text/plain');
+	})->name('maintenance.check-moderation');
+
 	//--- OLD IZED ROUTES -----------------------------------------------------
 	// Static pages
 	Route::get('404', function() {
 		return require __DIR__. '/../public/404.php';
 	})->name('404');
-
-	Route::get('son-eklenenler', function() {
-		return require __DIR__. '/../public/page-new.php';
-	})->name('son-eklenenler');
 
 	Route::get('yazarlar', function() {
 		return require __DIR__. '/../public/page-authors.php';
@@ -92,12 +126,6 @@
 		return require __DIR__. '/../public/sub_category.php';
 	})->name('kume.alt.sayfa');
 
-	Route::get('kume/{ustKategori}/sayfa/{page}', function($ustKategori, $page) {
-		$_GET['ust_kategori_slug'] = $ustKategori;
-		$_GET['sayfa'] = $page;
-		return require __DIR__. '/../public/categories.php';
-	})->name('kume.sayfa');
-
 	Route::get('yazar/{slug}/sayfa/{page}', function($slug, $page) {
 		$_GET['yazar_slug'] = $slug;
 		$_GET['sayfa'] = $page;
@@ -110,11 +138,6 @@
 		$_GET['sayfa'] = 1;
 		return require __DIR__. '/../public/sub_category.php';
 	})->name('kume.alt');
-
-	Route::get('kume/{ustKategori}', function($ustKategori) {
-		$_GET['ust_kategori_slug'] = $ustKategori;
-		return require __DIR__. '/../public/categories.php';
-	})->name('kume');
 
 	Route::get('yapit/{slug}', function($slug) {
 		$_GET['slug'] = $slug;
@@ -132,24 +155,32 @@
 		return require __DIR__. '/../public/author.php';
 	})->name('yazar');
 
-// Category specific routes
+
+	Route::get('/', [FrontendController::class, 'index'])->name('frontend-index');
+	Route::get('/ana-sayfa', [FrontendController::class, 'index'])->name('frontend-ana-sayfa');
+
+	Route::get('/son-eklenenler/{slug}', [FrontendController::class, 'recentTextsByCategory'])->name('recentTextsByCategory');
+
+	Route::get('/son-eklenenler', [FrontendController::class, 'recentTexts'])->name('recentTexts');
+
+	// Replace the old category routes with:
+	Route::get('kume/{slug}', [FrontendController::class, 'category'])->name('category');
+	Route::get('kume/{slug}/sayfa/{page}', [FrontendController::class, 'category'])->name('category.page');
+
+
+	// Category specific routes
 	$categories = ['siir', 'oyku', 'roman', 'deneme', 'elestiri', 'inceleme', 'bilimsel'];
 
 	foreach ($categories as $category) {
-		Route::get($category, function() use ($category) {
-			return require __DIR__. '/../public/categories.php';
-		})->name($category);
+		Route::get($category, [FrontendController::class, 'category'])->name('category');
+
+		Route::get($category, [FrontendController::class, 'category'])->name('category');
 
 		Route::get("$category/{altKategori}", function($altKategori) use ($category) {
 			$_GET['ust_kategori_slug'] = $category;
 			return require __DIR__. '/../public/sub_category.php';
 		})->name("$category.alt");
 	}
-
-
-	Route::get('/', [FrontendController::class, 'index'])->name('frontend-index');
-	Route::get('/ana-sayfa', [FrontendController::class, 'index'])->name('frontend-ana-sayfa');
-
 
 	//-------------------------------------------------------------------------
 	Route::get('/landing-page', [StaticPagesController::class, 'landing'])->name('landing-page');

@@ -40,7 +40,7 @@
 
 			<?php
 
-				$command1 = "SELECT * FROM kategoriler WHERE ust_kategori_id=0 ORDER BY slug_tr ASC";
+				$command1 = "SELECT * FROM kategoriler WHERE ust_kategori_id=0 ORDER BY slug ASC";
 				//echo $command1;
 				$result1 = $dbconn->query($command1);
 
@@ -50,7 +50,7 @@
 					$row2 = $result2->fetch_assoc();
 					$CatCount = $row2["CatCount"];
 					?>
-					<div class="pt-2"><a href="/kume/<?php echo $row1["slug_tr"]; ?>"
+					<div class="pt-2"><a href="/kume/<?php echo $row1["slug"]; ?>"
 					                     style="text-transform: uppercase;"><?php echo $row1["kategori_ad"]; ?></a></div>
 					<div class="pl-4">
 
@@ -61,7 +61,7 @@
 							while ($row2 = $result2->fetch_assoc()) {
 								?>
 								<a
-									href="/kume/<?php echo $row1["slug_tr"]; ?>/<?php echo $row2["slug_tr"]; ?>"><?php echo $row2["kategori_ad"]; ?></a>,
+									href="/kume/<?php echo $row1["slug"]; ?>/<?php echo $row2["slug"]; ?>"><?php echo $row2["kategori_ad"]; ?></a>,
 								<?php
 							}
 						?>
@@ -140,7 +140,7 @@
 
 						<?php
 
-							$command1 = "SELECT * FROM kategoriler WHERE ust_kategori_id=0 ORDER BY slug_tr ASC";
+							$command1 = "SELECT * FROM kategoriler WHERE ust_kategori_id=0 ORDER BY slug ASC";
 							//echo $command1;
 							$result1 = $dbconn->query($command1);
 
@@ -161,7 +161,7 @@
 									$ColName = "col-sm-6";
 								}
 								?>
-								<li class="menu-item-has-children"><a href="/kume/<?php echo $row1["slug_tr"]; ?>"
+								<li class="menu-item-has-children"><a href="/kume/<?php echo $row1["slug"]; ?>"
 								                                      style="text-transform: uppercase;"><?php echo $row1["kategori_ad"]; ?></a>
 									<ul class="sub-menu dropdown-menu multi-column columns-<?php echo $Colums; ?>">
 
@@ -187,7 +187,7 @@
 														}
 													?>
 													<li><a
-															href="/kume/<?php echo $row1["slug_tr"]; ?>/<?php echo $row2["slug_tr"]; ?>"><?php echo $row2["kategori_ad"]; ?></a>
+															href="/kume/<?php echo $row1["slug"]; ?>/<?php echo $row2["slug"]; ?>"><?php echo $row2["kategori_ad"]; ?></a>
 													</li>
 													<?php
 														}

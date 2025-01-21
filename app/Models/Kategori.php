@@ -7,6 +7,7 @@
 	class Kategori extends Model
 	{
 		protected $table = 'kategoriler';
+		public $timestamps = true;
 
 		protected $fillable = [
 			'kategori_ad',
@@ -16,8 +17,7 @@
 			'okuma_sayac',
 			'english',
 			'picture',
-			'slug_tr',
-			'slug_en'
+			'slug',
 		];
 
 		public function parentCategory()

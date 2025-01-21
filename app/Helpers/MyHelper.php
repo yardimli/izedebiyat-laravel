@@ -165,13 +165,15 @@
                     style='{$extraStyle}' alt='yazı resim'>{$aiResim}</div>";
 			}
 
-			return "<img src='/storage/catpicbox/" . self::$categoryImages[$categoryId] . "' 
+			if (key_exists($categoryId, self::$categoryImages)) {
+				return "<img src='/storage/catpicbox/" . self::$categoryImages[$categoryId] . "' 
                 class='{$extraClass}' style='{$extraStyle}' alt='yazı resim'>";
+			}
 		}
 
 		public static function timeElapsedString($datetime, $full = false)
 		{
-			return Carbon::parse($datetime)->diffForHumans();
+			return Carbon::parse($datetime)->locale('tr')->diffForHumans();
 		}
 
 		public static function estimatedReadingTime($content = '', $wpm = 250)
@@ -355,14 +357,10 @@
 
 		public static function moderation($message)
 		{
-			function isValidUtf8($string)
-			{
-				return mb_check_encoding($string, 'UTF-8');
-			}
 
 			$openai_api_key = self::getOpenAIKey();
 			//make sure $message can be json encoded
-			if (!isValidUtf8($message)) {
+			if (!self::isValidUtf8($message)) {
 				$message = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $message);
 			}
 
@@ -536,6 +534,11 @@
 			return $string1 . $string2;
 		}
 
+		public static function isValidUtf8($string)
+		{
+			return mb_check_encoding($string, 'UTF-8');
+		}
+
 		public static function getAnthropicKey()
 		{
 			$user = Auth::user();
@@ -552,6 +555,352 @@
 		{
 			$user = Auth::user();
 			return !empty($user->openrouter_key) ? $user->openrouter_key : $_ENV['OPEN_ROUTER_KEY'];
+		}
+
+		//------------------------------------------------------------
+
+		public static function returnIsHarmful()
+		{
+			$counter = 0;
+			$continue = true;
+
+			while ($continue && $counter < 100) {
+				// Get stories using Laravel's query builder
+				$stories = DB::table('yazilar')
+					->where('bad_critical', -1)
+					->where('silindi', 0)
+					->where('onay', 1)
+					->orderBy('id', 'DESC')
+					->limit(100)
+					->get();
+
+				$continue = $stories->count() > 0;
+
+				foreach ($stories as $story) {
+					$counter++;
+
+					$llm_result = self::llm_no_tool_call(
+						'openai/gpt-4o-mini',
+						'',
+						[[
+							'role' => 'user',
+							'content' => "take the following Turkish, and analyze it for being harmful to a subset of people, such as ethnic, religious, sexual orientation, or other minority groups. Rate it from 0 to 5, where 0 is not harmful at all, and 5 is extremely harmful. If harmful provide a brief explanation of why you rated it as such. Return reason in English. If not harmful, leave the explanation empty. The text is as follows: Title: " . $story->baslik . " Subtitle: " . $story->alt_baslik . " Category: " . $story->ust_kategori_ad . " Subcategory: " . $story->kategori_ad . " text: " . $story->yazi . " output in Turkish, output JSON as: ``` { \"harmful\": \"0-5\" \"explanation\": \"\" } ```"
+						]],
+						true
+					);
+
+					if (is_array($llm_result)) {
+						$harmful = $llm_result['harmful'] ?? '0';
+						$explanation = $llm_result['explanation'] ?? '';
+
+						// Update using Laravel's query builder
+						DB::table('yazilar')
+							->where('id', $story->id)
+							->update([
+								'bad_critical' => $harmful,
+								'critical_reason' => $explanation
+							]);
+
+						echo $counter . " - Moderation: - \n";
+						if ($harmful > 0 || $explanation !== '') {
+							echo $story->id . " " . $story->baslik . ", kategori " . $story->ust_kategori_ad . "/" . $story->kategori_ad . "<br>\n";
+							echo "Harmful: " . $harmful . "<br>\n";
+							echo "Explanation: " . $explanation . "<br>\n";
+						} else {
+							echo "id: " . $story->id . " - Not harmful.<br>\n";
+						}
+						flush();
+						ob_flush();
+					} else {
+						echo $counter . " - Error: <br>\n";
+						echo $story->id . " " . $story->baslik . ", kategori " . $story->ust_kategori_ad . "/" . $story->kategori_ad . "<br>\n";
+						echo var_dump($llm_result);
+						flush();
+						ob_flush();
+					}
+				}
+			}
+		}
+
+		public static function returnReligiousReason()
+		{
+			$counter = 0;
+			$continue = true;
+
+			while ($continue && $counter < 100) {
+				// Get stories using Laravel's query builder
+				$stories = DB::table('yazilar')
+					->where('has_religious_moderation', 0)
+					->where('silindi', 0)
+					->where('onay', 1)
+					->where('bad_critical', '<', 4)
+					->orderBy('id', 'DESC')
+					->limit(100)
+					->get();
+
+				$continue = $stories->count() > 0;
+
+				foreach ($stories as $story) {
+					$continue = true;
+					$counter++;
+
+					// Get first 1000 words
+					$yazi = $story->yazi;
+					$yazi_words = explode(' ', $yazi);
+					$yazi = implode(' ', array_slice($yazi_words, 0, 1000));
+
+					$llm_result = self::llm_no_tool_call(
+						'google/gemini-flash-1.5-8b',
+						'',
+						[[
+							'role' => 'user',
+							'content' => "take the following Turkish text and analyze it if it is religious and also respectful towards other religions and beliefs. The text is as follows: Title: " . $story->baslik . " Subtitle: " . $story->alt_baslik . " Category: " . $story->ust_kategori_ad . " Subcategory: " . $story->kategori_ad . " text: " . $yazi . " output JSON as: ``` { \"religious_reason\": { \"religious\": 0..5, \"respect\": 0..5, \"reason\": \"reasoning for the moderation\" } } ```"
+						]],
+						true
+					);
+
+					if (is_array($llm_result)) {
+						$moderation = $llm_result['religious_reason'] ?? '';
+						$moderation = json_encode($moderation);
+
+						// Update using Laravel's query builder
+						DB::table('yazilar')
+							->where('id', $story->id)
+							->update([
+								'religious_reason' => $moderation,
+								'has_religious_moderation' => 1
+							]);
+
+						echo $counter . "- Religious Moderation:<br>\n";
+						echo $story->id . " " . $story->baslik . " -- " . $story->ust_kategori_ad . '/' . $story->kategori_ad . "<br>\n";
+						echo $moderation . "<br>\n";
+						flush();
+						ob_flush();
+					} else {
+						echo $counter . " - Error: <br>\n";
+						echo var_dump($llm_result);
+						flush();
+						ob_flush();
+					}
+				}
+			}
+		}
+
+		public static function returnModeration()
+		{
+			$offset = request()->get('offset', 0);
+			$counter = 0;
+			$continue = true;
+
+			while ($continue && $counter < 100) {
+				echo "<hr>Offset: " . $offset . "<br>\n";
+
+				// Get stories using Laravel's query builder
+				$stories = DB::table('yazilar')
+					->where('has_moderation', -1)
+					->where('onay', 1)
+					->where('silindi', 0)
+					->orderBy('id', 'DESC')
+					->limit(100)
+					->get();
+
+				$continue = $stories->count() > 0;
+
+				foreach ($stories as $story) {
+					$continue = true;
+					$counter++;
+
+					$moderation = self::moderation($story->baslik . ' ' . $story->yazi);
+					$moderation = json_encode($moderation['results']);
+					echo $counter . "- Moderation:<br>\n";
+					echo $moderation . "<br>\n";
+					flush();
+					ob_flush();
+
+					DB::table('yazilar')
+						->where('id', $story->id)
+						->update([
+							'moderation' => $moderation,
+							'has_moderation' => 1
+						]);
+				}
+			}
+		}
+
+		public static function returnKeywords()
+		{
+			$counter = 0;
+			$continue = true;
+
+			while ($continue && $counter < 100) {
+
+				// Get stories using Laravel's query builder
+				$stories = DB::table('yazilar')
+					->whereNull('keywords')
+					->where('silindi', 0)
+					->where('onay', 1)
+					->where('bad_critical', '<', 4)
+					->orderBy('id', 'DESC')
+					->limit(10)
+					->get();
+
+				$continue = $stories->count() > 0;
+
+				foreach ($stories as $story) {
+					$continue = true;
+					$counter++;
+
+					$yazi = $story->baslik . ' ' . $story->yazi;
+					$yazi_words = explode(' ', $yazi);
+					$yazi = implode(' ', array_slice($yazi_words, 0, 500));
+
+					if (!empty($story->tanitim)) {
+						$yazi = $story->baslik . ' ' . $story->alt_baslik . ' ' . $story->tanitim . ' ' . $yazi;
+					}
+
+					$llm_result = self::llm_no_tool_call(
+						'google/gemini-flash-1.5-8b',
+						'',
+						[['role' => 'user', 'content' => "
+	take the following Turkish text and output the most meaningful 5 keywords that describe the text then do sentiment analysis on the text. the sentiment analysis should choose one of the following:
+Olumlu, Olumsuz, Nötr, Belirsiz, Karışık.
+
+The text is as follows:
+" .
+							$yazi . "
+				
+output in Turkish, output JSON as:
+
+```
+{
+	\"keywords\": [\"keyword1\", \"keyword2\", \"keyword3\"],
+	\"sentiment\": \"olumlu\"
+}"]], true);
+
+					if (is_array($llm_result)) {
+						$sentiment = $llm_result['sentiment'] ?? '';
+						$keywords = implode(', ', $llm_result['keywords'] ?? []);
+
+						// Update using Laravel's query builder
+						DB::table('yazilar')
+							->where('id', $story->id)
+							->update([
+								'keywords' => $keywords,
+								'sentiment' => $sentiment
+							]);
+
+						echo $counter."- Keywords:<br>\n";
+						echo $story->id . " " . $story->baslik . " -- " . $keywords . " - Sentiment: " . $sentiment . "<br>\n";
+						flush();
+						ob_flush();
+					} else {
+						echo $counter . " - Error: <br>\n";
+						echo var_dump($llm_result);
+						echo 'ERROR ON: id:'.$story->id . " - " . $story->baslik . "<br>\n";
+						flush();
+						ob_flush();
+					}
+				}
+			}
+		}
+
+		public static function updateYaziTable() {
+			$batchSize = 1000;
+			$offset = 0;
+
+			do {
+				$records = DB::table('yazilar as y')
+					->leftJoin('kategoriler as k', 'k.id', '=', 'y.kategori_id')
+					->leftJoin('kategoriler as uk', 'uk.id', '=', 'y.ust_kategori_id')
+					->leftJoin('yazar as yz', 'yz.id', '=', 'y.yazar_id')
+					->select([
+						'y.id',
+						'k.slug as kategori_slug',
+						'uk.slug as ust_kategori_slug',
+						'k.kategori_ad',
+						'uk.kategori_ad as ust_kategori_ad',
+						'yz.slug as yazar_slug',
+						'yz.yazar_ad',
+						'y.moderation',
+						'y.religious_reason'
+					])
+					->where('y.has_changed','=', '1')
+					->skip($offset)
+					->take($batchSize)
+					->get();
+
+				$recordsInBatch = $records->count();
+
+				if ($recordsInBatch > 0) {
+					$counter = 0;
+
+					foreach ($records as $record) {
+						// Parse moderation JSON
+						$moderationFlagged = 0;
+						if (!empty($record->moderation)) {
+							$moderationData = json_decode($record->moderation, true);
+							if (is_array($moderationData) && !empty($moderationData)) {
+								$moderationFlagged = !empty($moderationData[0]['flagged']) ? 1 : 0;
+							}
+						}
+
+						// Parse religious_reason JSON
+						$religiousValue = 0;
+						$respectValue = 0;
+						if (!empty($record->religious_reason)) {
+							$religiousData = json_decode($record->religious_reason, true);
+							if (is_array($religiousData)) {
+								$religiousValue = isset($religiousData['religious']) ?
+									intval($religiousData['religious']) : 0;
+								$respectValue = isset($religiousData['respect']) ?
+									intval($religiousData['respect']) : 0;
+							}
+						}
+
+						try {
+							DB::table('yazilar')
+								->where('id', $record->id)
+								->update([
+									'kategori_slug' => $record->kategori_slug,
+									'kategori_ad' => $record->kategori_ad,
+									'ust_kategori_slug' => $record->ust_kategori_slug,
+									'ust_kategori_ad' => $record->ust_kategori_ad,
+									'yazar_slug' => $record->yazar_slug,
+									'yazar_ad' => $record->yazar_ad,
+									'moderation_flagged' => $moderationFlagged,
+									'religious_moderation_value' => $religiousValue,
+									'respect_moderation_value' => $respectValue,
+									'has_changed' => 0,
+									'updated_at' => Carbon::now()
+								]);
+
+							$counter++;
+							if ($counter % 100 == 0) {
+								echo "Processed $counter records...";
+								flush();
+								ob_flush();							}
+						} catch (\Exception $e) {
+							echo "Error updating record ID {$record->id}: " . $e->getMessage() . '<br>';
+							flush();
+							ob_flush();
+						}
+					}
+
+					echo "Update completed. Total records updated: $counter<br>";
+					flush();
+					ob_flush();
+				} else {
+					echo "No records found to update<br>";
+					flush();
+					ob_flush();
+				}
+
+				$offset += $batchSize;
+				echo "Processed batch starting at offset $offset<br>";
+				flush();
+				ob_flush();
+
+			} while ($recordsInBatch > 0);
 		}
 
 		//------------------------------------------------------------
@@ -736,7 +1085,7 @@
 
 			if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
 			} else {
-				$chat_messages = [ [
+				$chat_messages = [[
 					'role' => 'system',
 					'content' => $system_prompt],
 					...$chat_messages
@@ -804,8 +1153,8 @@
 			} else {
 				$headers[] = 'Content-Type: application/json';
 				$headers[] = "Authorization: Bearer " . $llm_api_key;
-				$headers[] = "HTTP-Referer: https://my-laravel-saas-site.com";
-				$headers[] = "X-Title: IzEdebiyat";
+				$headers[] = "HTTP-Referer: https://fictionfusion.io";
+				$headers[] = "X-Title: FictionFusion";
 			}
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 

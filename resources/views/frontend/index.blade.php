@@ -15,7 +15,7 @@
 							<!--begin featured-->
 							<div class="col-sm-12 col-md-9 col-xl-9">
 								<h2 class="spanborder h4">
-									<span>{{ $category->kategori_ad }}</span>
+									<span>{!! $category->kategori_ad !!}</span>
 								</h2>
 								<div class="row">
 									@php
@@ -53,7 +53,7 @@
 														</div>
 														<div class="entry-meta align-items-center">
 															<a href="/yazar/{{ $story->yazar_slug }}">{{ $story->yazar_ad }}</a> -
-															<a href="/kume/{{ $story->ust_kategori_slug }}/{{ $story->kategori_slug }}">{{ $story->kategori_ad }}</a><br>
+															<a href="/kume/{{ $story->ust_kategori_slug }}/{{ $story->kategori_slug }}">{!! $story->kategori_ad !!}</a><br>
 															<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->katilma_tarihi) }}</span>
 															<span class="middotDivider"></span>
 															<span class="readingTime" title="{{ \App\Helpers\MyHelper::estimatedReadingTime($story->yazi) }}">{{ \App\Helpers\MyHelper::estimatedReadingTime($story->yazi) }}</span>
@@ -77,7 +77,7 @@
 																	</h5>
 																	<div class="entry-meta align-items-center">
 																		<a href="/yazar/{{ $story->yazar_slug }}">{{ $story->yazar_ad }}</a> -
-																		<a href="/kume/{{ $story->ust_kategori_slug }}/{{ $story->kategori_slug }}">{{ $story->kategori_ad }}</a><br>
+																		<a href="/kume/{{ $story->ust_kategori_slug }}/{{ $story->kategori_slug }}">{!! $story->kategori_ad !!}</a><br>
 																		<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->katilma_tarihi) }}</span>
 																		<span class="middotDivider"></span>
 																		<span class="readingTime" title="{{ \App\Helpers\MyHelper::estimatedReadingTime($story->yazi) }}">{{ \App\Helpers\MyHelper::estimatedReadingTime($story->yazi) }}</span>
@@ -123,7 +123,7 @@
 														</h5>
 														<div class="entry-meta align-items-center">
 															<a href="/yazar/{{ $story->yazar_slug }}">{{ $story->yazar_ad }}</a> -
-															<a href="/kume/{{ $story->ust_kategori_slug }}/{{ $story->kategori_slug }}">{{ $story->kategori_ad }}</a><br>
+															<a href="/kume/{{ $story->ust_kategori_slug }}/{{ $story->kategori_slug }}">{!! $story->kategori_ad !!}</a><br>
 															<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->katilma_tarihi) }}</span>
 															<span class="middotDivider"></span>
 															<span class="readingTime" title="{{ \App\Helpers\MyHelper::estimatedReadingTime($story->yazi) }}">{{ \App\Helpers\MyHelper::estimatedReadingTime($story->yazi) }}</span>
