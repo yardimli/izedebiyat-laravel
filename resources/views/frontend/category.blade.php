@@ -5,6 +5,8 @@
 @section('body-class', 'home')
 
 @section('content')
+	{{ \App\Helpers\MyHelper::initializeCategoryImages() }}
+	
 	<section class="archive">
 		<main id="content">
 			<div class="content-widget">
@@ -20,6 +22,7 @@
 								$authors = [];
 								$author_counts = [];
 								$previous_author = null;
+								$open_div = false;
 							@endphp
 							
 							@foreach($texts as $text)
@@ -211,8 +214,7 @@
 				@endif
 				<!-- End Pagination -->
 			</div>
-			</div>
-			</div>
+			
 			
 			<div class="content-widget">
 				<div class="container">
@@ -236,86 +238,5 @@
 
 @push('styles')
 	<style>
-      .pagination-container {
-          width: 100%;
-          margin: 30px 0;
-      }
-
-      .pagination {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 15px;
-      }
-
-      .pagination-info {
-          text-align: center;
-          color: #666;
-          font-size: 14px;
-      }
-
-      [data-bs-theme=dark] .pagination-info {
-          color: #ccc;
-      }
-
-      .page-numbers {
-          display: flex;
-          list-style: none;
-          padding: 0;
-          margin: 0;
-          gap: 5px;
-      }
-
-      .page-numbers li {
-          display: inline-block;
-      }
-
-      .page-numbers a {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          min-width: 35px;
-          height: 35px;
-          padding: 0 12px;
-          border: 1px solid #ddd;
-          color: #333;
-          text-decoration: none;
-          border-radius: 4px;
-          transition: all 0.3s ease;
-      }
-
-      [data-bs-theme=dark] .page-numbers a {
-          border-color: #555;
-          color: #ccc;
-      }
-
-      .page-numbers a:hover {
-          background-color: #f5f5f5;
-          border-color: #ccc;
-      }
-
-      [data-bs-theme=dark] .page-numbers a:hover {
-          background-color: #333;
-          color: #fff;
-      }
-
-      .page-numbers .current {
-          background-color: #007bff;
-          border-color: #007bff;
-          color: #fff;
-      }
-
-      [data-bs-theme=dark] .page-numbers .current {
-          background-color: #333;
-      }
-
-      .page-numbers .prev,
-      .page-numbers .next {
-          font-size: 18px;
-      }
-
-      .pagination i {
-          font-size: 14px;
-      }
 	</style>
 @endpush

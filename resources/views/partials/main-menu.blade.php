@@ -20,9 +20,9 @@
 				@foreach($mainMenuCategories as $category)
 					@php
 						$subCategoryCount = $category->subCategories->count();
-						$columns = $subCategoryCount > 20 ? 3 : 2;
-						$maxRows = $subCategoryCount > 20 ? 12 : 10;
-						$colClass = $subCategoryCount > 20 ? 'col-sm-4' : 'col-sm-6';
+						$columns = $subCategoryCount > 34 ? 3 : 2;
+						$maxRows = $subCategoryCount > 34 ? 17 : 15;
+						$colClass = $subCategoryCount > 34 ? 'col-sm-4' : 'col-sm-6';
 					@endphp
 					<li class="menu-item-has-children">
 						<a href="{{ url('/kume/' . $category->slug) }}" style="text-transform: uppercase;">

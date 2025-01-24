@@ -92,7 +92,7 @@
 				<p class="mt-5" style="font-family:Arial, Helvetica, sans-serif; font-size:16px;">
 					<b>Nasıl üye olunur?</b><a name="5" id="5"></a><br>
 					Bütün sayfalarda yer alan Katılım bağlantısını tıklayarak hemen üye olabilirsiniz. Aynı zamanda <a
-						href="/katilim">burayı tıklayarak</a> da hemen üye olabilirsiniz. Üye olmak için öncelikle kendinize bir
+						href="/resources/views/frontend/page-sign-up-step-1.php">burayı tıklayarak</a> da hemen üye olabilirsiniz. Üye olmak için öncelikle kendinize bir
 					Kişisel Yazar Sayfası oluşturmalısınız. Kişisel Sayfanız, yazılarınızı, bloglarınızı, bağlantılarınızı ve
 					resimlerinizi paylaşabileceğiniz ve aynı zamanda sizinle ilgili bilgiler içeren size özel bir sayfa. Bu
 					sayfanın içeriğine ve tasarımına siz karar veriyorsunuz. Bütün yazılarınız buraya toplanıyor ama elbette

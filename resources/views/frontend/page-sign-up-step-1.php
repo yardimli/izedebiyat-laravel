@@ -107,7 +107,7 @@
 				</p>
 
 				<p style="text-align: center">
-					<a href="/yayin-ilkeleri">
+					<a href="/resources/views/frontend/page-sign-up-step-2.php">
 						<img src="/frontend/anagrafikler/dugme_katilim.gif" width="250" height="70" style="border: 0">
 					</a>
 				</p>

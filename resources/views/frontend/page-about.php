@@ -309,7 +309,7 @@
 						<img src="/frontend/ikon/116.gif" style="width:43px; height:43px;" class="mt-1 mb-0"><br>
 						<p style="font-family: Tahoma, Verdana, Arial; font-size: 2rem; font-weight: bold; color: #FF0033">
 							Yazmak.<br><br>
-							<a href="/katilim" style="font-size: 1rem;">
+							<a href="/resources/views/frontend/page-sign-up-step-1.php" style="font-size: 1rem;">
 								Sonra da burayı tıklayarak kendinize bir İzEdebiyat Kişisel Yazar sayfası açmak.
 							</a>
 						</p>

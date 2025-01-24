@@ -109,7 +109,7 @@
 			}
 		}
 
-		public static function generateInitialsAvatar($pictureFile, $name, $extraCss = 'border-radius: 0px;', $extraClass = 'avatar')
+		public static function generateInitialsAvatar($pictureFile, $name, $extraCss = 'border-radius: 0px;', $extraClass = 'avatar', $aiClass = 'yz-yazar-resim')
 		{
 			$hasPicture = false;
 			if ($pictureFile !== null && $pictureFile !== "") {
@@ -118,7 +118,7 @@
 					$html = "<img alt='yazar' style='{$extraCss}' src='/storage/{$pictureFile}' class='{$extraClass}'>";
 
 					if (strpos($pictureFile, 'ai_yazar_resimler') !== false) {
-						$html .= "<span class='yz-yazar-resim' data-toggle='tooltip' data-placement='top' 
+						$html .= "<span class='" . $aiClass . "' data-toggle='tooltip' data-placement='top' 
                              title='Yapay zekaya yazarın bilgilerini vererek üretildi'>YZ</span>";
 					}
 					return $html;
@@ -145,7 +145,29 @@
 			$textColor = ($l > 0.5) ? '#000000' : '#FFFFFF';
 			$uniqueId = 'avatar_' . uniqid();
 
-			return view('components.initial-avatar', compact('uniqueId', 'bgColor', 'textColor', 'initials'))->render();
+			$css = "
+        <style>
+            #$uniqueId {
+                background-color: $bgColor;
+                color: $textColor;
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: Arial, sans-serif;
+                font-weight: bold;
+                font-size: 36px;
+                user-select: none;
+            }
+        </style>
+    ";
+
+			// HTML
+			$html = "<div id='$uniqueId'>$initials</div>";
+
+			return $css . $html;
 		}
 
 		public static function getImage($yaziAnaResim, $categoryId = '', $extraClass = '', $extraStyle = '')
@@ -168,12 +190,40 @@
 			if (key_exists($categoryId, self::$categoryImages)) {
 				return "<img src='/storage/catpicbox/" . self::$categoryImages[$categoryId] . "' 
                 class='{$extraClass}' style='{$extraStyle}' alt='yazı resim'>";
+			} else
+			{
+				echo "Category image not found for category id: " . $categoryId;
 			}
 		}
 
 		public static function timeElapsedString($datetime, $full = false)
 		{
-			return Carbon::parse($datetime)->locale('tr')->diffForHumans();
+			$carbon = Carbon::parse($datetime);
+			$now = Carbon::now();
+
+			$yearsDiff = $now->diffInYears($carbon);
+
+			if ($yearsDiff >= 1) {
+				// Custom formatting for Turkish abbreviated months with period
+				$months = [
+					'01' => 'Oca',
+					'02' => 'Şub',
+					'03' => 'Mar',
+					'04' => 'Nis',
+					'05' => 'May',
+					'06' => 'Haz',
+					'07' => 'Tem',
+					'08' => 'Ağu',
+					'09' => 'Eyl',
+					'10' => 'Eki',
+					'11' => 'Kas',
+					'12' => 'Ara'
+				];
+
+				return $carbon->format('d ') . $months[$carbon->format('m')] . $carbon->format(' Y');
+			} else {
+				return $carbon->locale('tr')->diffForHumans();
+			}
 		}
 
 		public static function estimatedReadingTime($content = '', $wpm = 250)
@@ -204,10 +254,22 @@
 		public static function getWords($sentence, $count = 10, $keepBreaks = true)
 		{
 			$sentence = trim($sentence);
+			// Remove [[...]] content
 			$sentence = preg_replace('/\[\[.*?\]\]/', '', $sentence);
 
+			// Normalize <br> tags
+			$sentence = str_ireplace(['<br/>', '<br>'], ']]br[[', $sentence);
+
+			// Remove all HTML tags except <br>
+			$sentence = strip_tags($sentence);
+
+			// replace <> with &lt; &gt;
+			$sentence = str_replace(['<', '>'], ['&lt;', '&gt;'], $sentence);
+
+			// Replace ]]br[[ with <br>
+			$sentence = str_ireplace(']]br[[', '<br>', $sentence);
+
 			$firstLines = "";
-			$sentence = str_ireplace(['<br/>', '<br>'], '<br>', $sentence);
 			$lines = explode('<br>', $sentence);
 
 			$i = 1;
@@ -806,7 +868,6 @@ output in Turkish, output JSON as:
 
 		public static function updateYaziTable() {
 			$batchSize = 1000;
-			$offset = 0;
 
 			do {
 				$records = DB::table('yazilar as y')
@@ -825,7 +886,6 @@ output in Turkish, output JSON as:
 						'y.religious_reason'
 					])
 					->where('y.has_changed','=', '1')
-					->skip($offset)
 					->take($batchSize)
 					->get();
 
@@ -895,8 +955,7 @@ output in Turkish, output JSON as:
 					ob_flush();
 				}
 
-				$offset += $batchSize;
-				echo "Processed batch starting at offset $offset<br>";
+				echo "Processed batch<br>";
 				flush();
 				ob_flush();
 
