@@ -12,7 +12,7 @@
 		
 		@foreach($sidebarTexts as $text)
 			@php
-				$current_author = $text->yazar_id;
+				$current_author = $text->user_id;
 				if (!isset($author_counts[$current_author])) {
 						$author_counts[$current_author] = 0;
 				}
@@ -32,7 +32,7 @@
 							<a href="{{ url('/yapit/' . $text->slug) }}">{{ \App\Helpers\MyHelper::replaceAscii($text->baslik) }}</a>
 						</h6>
 						<div class="entry-meta align-items-center">
-							<a href="{{ url('/yazar/' . $text->yazar_slug) }}">{{ $text->yazar_ad }}</a><br>
+							<a href="{{ url('/yazar/' . $text->name_slug) }}">{{ $text->name }}</a><br>
 							<span>{{ \App\Helpers\MyHelper::timeElapsedString($text->katilma_tarihi) }}</span>
 							<span class="middotDivider"></span>
 							<span class="readingTime" title="{{ \App\Helpers\MyHelper::estimatedReadingTime($text->yazi) }}">

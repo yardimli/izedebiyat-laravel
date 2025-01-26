@@ -3,10 +3,10 @@
 
 	=========================================================
 
-	* Song Page: https://my-laravel-saas-site.com/product
-	* Copyright 2018 my-laravel-saas-site.com (https://my-laravel-saas-site.com)
+	* Song Page: https://www.izedebiyat.com/product
+	* Copyright 2018 www.izedebiyat.com (https://www.izedebiyat.com)
 
-	* Coded by my-laravel-saas-site.com
+	* Coded by www.izedebiyat.com
 
 	=========================================================
 
@@ -99,18 +99,19 @@
 		protected function create(array $data)
 		{
 			$new_user = User::create([
-				                         'name' => $data['username'],
-				                         'email' => $data['email'],
-				                         'password' => Hash::make($data['password']),
-				                         'avatar' => '',
-				                         'picture' => 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($data['email']))) . '?s=200&d=mp',
-				                         'username' => $data['username'],
-				                         'about_me' => 'I am a new writer!',
-				                         'member_status' => 1,
-				                         'member_type' => 2,
-				                         'last_ip' => request()->ip(),
-				                         'background_image' => '',
-			                         ]);
+				'name' => $data['username'],
+				'email' => $data['email'],
+				'password' => Hash::make($data['password']),
+				'avatar' => '',
+				'picture' => 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($data['email']))) . '?s=200&d=mp',
+				'username' => $data['username'],
+				'slug' => $data['username'],
+				'about_me' => '',
+				'member_status' => 1,
+				'member_type' => 2,
+				'last_ip' => request()->ip(),
+				'background_image' => '',
+			]);
 
 			return $new_user;
 		}
@@ -118,6 +119,6 @@
 		protected function registered(Request $request, $user)
 		{
 			Mail::to($request->input('email'))->send(new WelcomeMail($user->name, $user->email));
-			return redirect()->route('my-settings');
+			return redirect()->route('sahne-arkasi');
 		}
 	}

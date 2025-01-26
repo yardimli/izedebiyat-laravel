@@ -13,6 +13,7 @@
 			Schema::create('users', function (Blueprint $table) {
 				$table->id();
 				$table->string('name');
+				$table->string('slug');
 				$table->string('email')->unique();
 				$table->timestamp('email_verified_at')->nullable();
 				$table->string('password');
@@ -21,14 +22,13 @@
 				$table->string('avatar')->nullable();
 				$table->string('picture')->nullable();
 				$table->string('background_image')->nullable();
+				$table->string('page_title')->nullable();
+				$table->string('personal_url')->nullable();
 				$table->text('about_me')->nullable();
 				$table->integer('member_status')->default(1);
 				$table->integer('member_type')->default(1);
 				$table->dateTime('last_login')->default(now())->nullable();
 				$table->string('last_ip')->nullable();
-				$table->string('openai_api_key')->nullable();
-				$table->string('anthropic_key')->nullable();
-				$table->string('openrouter_key')->nullable();
 
 
 				$table->rememberToken();

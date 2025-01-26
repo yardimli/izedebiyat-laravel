@@ -1,7 +1,7 @@
 /**
  * Boilerplate Site Tagline
  *
- * @author SAAS LARAVEL BOILERPLATE (https://www.my-laravel-saas-site.com/)
+ * @author İzEdebiyat (https://www.www.izedebiyat.com/)
  * @version 1.1.0
  **/
 
@@ -478,11 +478,11 @@ var e = {
 				showMessage: true,
 				messageContainer: '#pswmeter-message',
 				messagesList: [
-					'Write your password...',
-					'Easy peasy!',
-					'That is a simple one',
-					'That is better',
-					'Yeah! that password rocks ;)'
+				  'Şifrenizi Girin...',	// 'Write your password...',
+					'Fazla Basit',  // 'Easy peasy!',
+					'Basit', // 'That is a simple one',
+					'Güzel', // 'That is better',
+					'Harika!', // 'Yeah! that password rocks ;)'
 				],
 				height: 8,
 				borderRadius: 4,

@@ -17,7 +17,7 @@
 			App::setLocale($request->lang);
 			session()->put('locale', $request->lang);
 			//go to home page
-			return redirect()->route('landing-page');
+			return redirect()->route('frontend-index');
 		}
 
 	}

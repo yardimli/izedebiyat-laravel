@@ -6,7 +6,6 @@
 	use App\Http\Controllers\ImageGenController;
 	use App\Http\Controllers\LangController;
 	use App\Http\Controllers\LoginWithGoogleController;
-	use App\Http\Controllers\StaticPagesController;
 	use App\Http\Controllers\UserController;
 	use App\Http\Controllers\UserSettingsController;
 	use App\Http\Controllers\VerifyThankYouController;
@@ -65,10 +64,9 @@
 		return response($output)->header('Content-Type', 'text/plain');
 	})->name('maintenance.check-moderation');
 
-	//--- OLD IZED ROUTES -----------------------------------------------------
 	// Static pages
 	Route::get('404', [FrontendController::class, 'page_404'])->name('frontend-404');
-	Route::get('katilim', [FrontendController::class, 'page_about'])->name('frontend-katilim');
+	Route::get('katilim', [FrontendController::class, 'page_sign_up_step_1'])->name('frontend-katilim');
 	Route::get('yasallik', [FrontendController::class, 'page_legal'])->name('frontend-yasallik');
 	Route::get('gizlilik', [FrontendController::class, 'page_privacy'])->name('frontend-gizlilik');
 	Route::get('yayin-ilkeleri', [FrontendController::class, 'page_sign_up_step_2'])->name('frontend-yayin-ilkeleri');
@@ -77,12 +75,12 @@
 	Route::get('kunye', [FrontendController::class, 'page_about'])->name('frontend-kunye');
 
 
-	Route::get('arabul', function () {
-		return require __DIR__ . '/../public/search.php';
-	})->name('arabul');
-
 	Route::get('/', [FrontendController::class, 'index'])->name('frontend-index');
 	Route::get('/ana-sayfa', [FrontendController::class, 'index'])->name('frontend-ana-sayfa');
+
+// Replace the old search route
+	Route::get('/arabul', [FrontendController::class, 'search'])->name('search');
+	Route::get('/arabul/sayfa/{page}', [FrontendController::class, 'search'])->name('search.page');
 
 	Route::get('/son-eklenenler/{slug}', [FrontendController::class, 'recentTextsByCategory'])->name('recentTextsByCategory');
 
@@ -91,21 +89,6 @@
 	// Replace the old category routes with:
 	Route::get('kume/{slug}', [FrontendController::class, 'category'])->name('category');
 	Route::get('kume/{slug}/sayfa/{page}', [FrontendController::class, 'category'])->name('category.page');
-
-
-	// Category specific routes
-	$categories = ['siir', 'oyku', 'roman', 'deneme', 'elestiri', 'inceleme', 'bilimsel'];
-
-	foreach ($categories as $category) {
-		Route::get($category, [FrontendController::class, 'category'])->name('category');
-
-		Route::get($category, [FrontendController::class, 'category'])->name('category');
-
-		Route::get("$category/{altKategori}", function ($altKategori) use ($category) {
-			$_GET['ust_kategori_slug'] = $category;
-			return require __DIR__ . '/../public/sub_category.php';
-		})->name("$category.alt");
-	}
 
 	// Replace the old subcategory routes with:
 	Route::get('kume/{categorySlug}/{subcategorySlug}', [FrontendController::class, 'subcategory'])->name('subcategory');
@@ -126,8 +109,6 @@
 
 
 	//-------------------------------------------------------------------------
-	Route::get('/landing-page', [StaticPagesController::class, 'landing'])->name('landing-page');
-
 	Route::get('/lang/home', [LangController::class, 'index']);
 	Route::get('/lang/change', [LangController::class, 'change'])->name('changeLang');
 
@@ -136,32 +117,8 @@
 
 	Route::get('/logout', [LoginWithGoogleController::class, 'logout']);
 
-	Route::get('/verify-thank-you', [VerifyThankYouController::class, 'index'])->name('verify-thank-you')->middleware('verified');
-	Route::get('/verify-thank-you-zh_TW', [VerifyThankYouController::class, 'index_zh_TW'])->name('verify-thank-you-zh_TW')->middleware('verified');
+	Route::get('/verify-thank-you-tr_TR', [VerifyThankYouController::class, 'index'])->name('verify-thank-you-tr_TR')->middleware('verified');
 
-	Route::get('/blog', [StaticPagesController::class, 'blog'])->name('blog-page');
-	Route::get('/privacy', [StaticPagesController::class, 'privacy'])->name('privacy-page');
-	Route::get('/terms', [StaticPagesController::class, 'terms'])->name('terms-page');
-	Route::get('/help', [StaticPagesController::class, 'help'])->name('help-page');
-	Route::get('/help/{topic}', [StaticPagesController::class, 'helpDetails'])->name('help-details');
-	Route::get('/about', [StaticPagesController::class, 'about'])->name('about-page');
-	Route::get('/contact', [StaticPagesController::class, 'contact'])->name('contact-page');
-	Route::get('/onboarding', [StaticPagesController::class, 'onboarding'])->name('onboarding-page');
-	Route::get('/change-log', [StaticPagesController::class, 'changeLog'])->name('change-log-page');
-	Route::get('/buy-packages', [UserSettingsController::class, 'buyPackages'])->name('buy-packages');
-
-	Route::get('/help', [StaticPagesController::class, 'help'])->name('help-page');
-
-	//-------------------------------------------------------------------------
-
-	Route::get('/buy-packages', [UserSettingsController::class, 'buyPackages'])->name('buy-packages');
-
-	Route::get('/buy-credits-test/{id}', [PayPalController::class, 'beginTransaction'])->name('beginTransaction');
-	Route::get('/buy-credits/{id}', [PayPalController::class, 'processTransaction'])->name('processTransaction');
-	Route::get('/success-transaction', [PayPalController::class, 'successTransaction'])->name('successTransaction');
-	Route::get('/cancel-transaction', [PayPalController::class, 'cancelTransaction'])->name('cancelTransaction');
-
-	Route::get('/user-profile/{username}', [StaticPagesController::class, 'userProfile'])->name('user-profile');
 
 
 	//-------------------------------------------------------------------------
@@ -184,16 +141,15 @@
 		Route::delete('/image-gen/{session_id}', [ImageGenController::class, 'destroy'])->name('image-gen.destroy');
 
 
-		Route::get('/settings', [UserSettingsController::class, 'editSettings'])->name('my-settings');
-		Route::post('/settings', [UserSettingsController::class, 'updateSettings'])->name('settings-update');
+		Route::get('/sahne-arkasi', [UserSettingsController::class, 'editSettings'])->name('sahne-arkasi');
+		Route::post('/sahne-arkasi', [UserSettingsController::class, 'updateSettings'])->name('sahne-arkasi-guncelle');
 
-		Route::post('/settings/password', [UserSettingsController::class, 'updatePassword'])->name('settings-password-update');
-		Route::post('/settings/api-keys', [UserSettingsController::class, 'updateApiKeys'])->name('settings-update-api-keys');
+		Route::post('/sahne-arkasi/password', [UserSettingsController::class, 'updatePassword'])->name('sahne-arkasi-sifre-guncelle');
 
 		Route::get('/users', [UserController::class, 'index'])->name('users-index');
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');
 
-		Route::post('/settings/password', [UserSettingsController::class, 'updatePassword'])->name('settings-password-update');
+		Route::post('/sahne-arkasi/password', [UserSettingsController::class, 'updatePassword'])->name('sahne-arkasi-sifre-guncelle');
 
 	});
 

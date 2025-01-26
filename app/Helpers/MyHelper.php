@@ -873,15 +873,15 @@ output in Turkish, output JSON as:
 				$records = DB::table('yazilar as y')
 					->leftJoin('kategoriler as k', 'k.id', '=', 'y.kategori_id')
 					->leftJoin('kategoriler as uk', 'uk.id', '=', 'y.ust_kategori_id')
-					->leftJoin('yazar as yz', 'yz.id', '=', 'y.yazar_id')
+					->leftJoin('yazar as yz', 'yz.id', '=', 'y.user_id')
 					->select([
 						'y.id',
 						'k.slug as kategori_slug',
 						'uk.slug as ust_kategori_slug',
 						'k.kategori_ad',
 						'uk.kategori_ad as ust_kategori_ad',
-						'yz.slug as yazar_slug',
-						'yz.yazar_ad',
+						'yz.slug as name_slug',
+						'yz.name',
 						'y.moderation',
 						'y.religious_reason'
 					])
@@ -925,8 +925,8 @@ output in Turkish, output JSON as:
 									'kategori_ad' => $record->kategori_ad,
 									'ust_kategori_slug' => $record->ust_kategori_slug,
 									'ust_kategori_ad' => $record->ust_kategori_ad,
-									'yazar_slug' => $record->yazar_slug,
-									'yazar_ad' => $record->yazar_ad,
+									'name_slug' => $record->name_slug,
+									'name' => $record->name,
 									'moderation_flagged' => $moderationFlagged,
 									'religious_moderation_value' => $religiousValue,
 									'respect_moderation_value' => $respectValue,

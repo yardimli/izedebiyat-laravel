@@ -53,7 +53,7 @@
 			// Check if the current password is correct
 			if (!Hash::check($current_password, $user->password)) {
 				throw ValidationException::withMessages([
-					'current_password' => ['Current password is incorrect.'],
+					'current_password' =>  ['Girilen Şifre hatalı.'], // ['Current password is incorrect.'],
 				]);
 			}
 
@@ -61,8 +61,8 @@
 			$user->password = Hash::make($request->input('new_password'));
 			$user->save();
 
-			// Redirect back with success message
-			Session::flash('success', 'Your password has been updated successfully.');
+			// Redirect back with success message /Your password has been updated successfully.
+			Session::flash('success', 'Şifreniz başarıyla güncellendi.');
 			return redirect()->back();
 		}
 
@@ -135,33 +135,11 @@
 			$user->email = $request->input('email');
 			$user->save();
 
-			// Redirect back with success message
-			Session::flash('success', 'Your settings have been updated successfully.');
+			// Redirect back with success message /Your settings have been updated successfully.
+			Session::flash('success', 'Ayarlarınız başarıyla güncellendi.');
 			return redirect()->back();
 		}
 
-		public function updateApiKeys(Request $request)
-		{
-			$user = Auth::user();
 
-			$validator = Validator::make($request->all(), [
-				'openai_api_key' => 'nullable|string',
-				'anthropic_key' => 'nullable|string',
-				'openrouter_key' => 'nullable|string',
-			]);
-
-			if ($validator->fails()) {
-				return redirect()->back()->withErrors($validator)->withInput();
-			}
-
-			$user->update([
-				'openai_api_key' => $request->input('openai_api_key'),
-				'anthropic_key' => $request->input('anthropic_key'),
-				'openrouter_key' => $request->input('openrouter_key'),
-			]);
-
-			Session::flash('success', 'Your API keys have been updated successfully.');
-			return redirect()->back();
-		}
 
 	}

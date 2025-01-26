@@ -1,6 +1,6 @@
 @extends('layouts.app-frontend')
 
-@section('title', 'İzEdebiyat - ' . $author->yazar_ad . ' - ' . $article->baslik . ' - ' . $article->kategori_ad)
+@section('title', 'İzEdebiyat - ' . $author->name . ' - ' . $article->baslik . ' - ' . $article->kategori_ad)
 
 @section('body-class', 'home single')
 
@@ -16,9 +16,9 @@
 					</h1>
 					<div class="entry-meta align-items-center">
 						<a class="author-avatar" href="{{ url('/yazar/' . $author->slug) }}">
-							{!! \App\Helpers\MyHelper::generateInitialsAvatar($author->yazar_resim, $author->yazar_ad) !!}
+							{!! \App\Helpers\MyHelper::generateInitialsAvatar($author->picture, $author->name) !!}
 						</a>
-						<a href="{{ url('/yazar/' . $author->slug) }}">{{ $author->yazar_ad }}</a><br>
+						<a href="{{ url('/yazar/' . $author->slug) }}">{{ $author->name }}</a><br>
 						<a href="{{ url('/kume/' . $article->ust_kategori_slug . '/' . $article->kategori_slug) }}">
 							{{ $article->ust_kategori_ad }}<span class="middotDivider"></span>{{ $article->kategori_ad }}
 						</a><br>
@@ -31,7 +31,7 @@
 			
 			<div class="bar-long"></div>
 			
-			<article class="entry-wraper mb-5">
+			<article class="entry-wrapper mb-5">
 				<div class="entry-left-col">
 					<div class="social-sticky">
 						<a href="#"><i class="icon-heart"></i></a>
@@ -86,16 +86,7 @@
           top: 100px;
           left: 0;
       }
-
-      .hide {
-          display: none;
-      }
-
-      .readmore, .readless, .readmuchmore, .readmuchless {
-          text-align: right;
-          cursor: pointer;
-      }
-	</style>
+</style>
 @endpush
 
 @push('scripts')

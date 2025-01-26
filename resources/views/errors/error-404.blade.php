@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>{{__('default.SAAS LARAVEL BOILERPLATE')}} - {{__('default.Boilerplate Site Tagline')}}</title>
+	<title>{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}</title>
 
 	<!-- Meta Tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="author" content="my-laravel-saas-site.com">
-	<meta name="description" content="{{__('default.SAAS LARAVEL BOILERPLATE')}} - {{__('default.Boilerplate Site Tagline')}}">
+	<meta name="author" content="www.izedebiyat.com">
+	<meta name="description" content="{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}">
 
 	<!-- Favicon -->
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -194,7 +194,7 @@
         <h2 class="mb-2 h1">Page Not Found!</h2>
         <p>Either something went wrong or this page doesn't exist anymore.</p>
         <!-- Button -->
-        <a class="btn btn-primary-soft btn-sm" href="{{route('landing-page')}}">Got to home page</a>
+        <a class="btn btn-primary-soft btn-sm" href="{{route('frontend-index')}}">Got to home page</a>
       </div>
       <!-- Error 404 START -->
     </div>

@@ -79,7 +79,7 @@
 					
 					<!-- LOGO -->
 					<div style="text-align: center; margin-bottom: 20px">
-						<img style="width: auto; max-height: 90px;" src="/images/logo.png" id="site_logo" alt="logo-image">
+						<img style="width: auto; max-height: 90px;" src="{{ asset('/assets/images/logo/logo-large.png') }}" id="site_logo" alt="logo-image">
 					</div>
 					
 					

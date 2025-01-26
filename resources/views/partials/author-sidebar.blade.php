@@ -18,7 +18,7 @@
 						</a>
 					</h5>
 					<div class="entry-meta align-items-center">
-						{{ $text->yazar_ad }}<br>
+						{{ $text->name }}<br>
 						<span>{{ \App\Helpers\MyHelper::timeElapsedString($text->katilma_tarihi) }}</span>
 						<span class="middotDivider"></span>
 						<span class="readingTime">

@@ -16,8 +16,8 @@
 			'yayinlama_tarih',
 			'tanitim',
 			'yazi',
-			'yazar_ad',
-			'yazar_slug',
+			'name',
+			'name_slug',
 			'kategori_ad',
 			'kategori_slug',
 			'ust_kategori_ad',
@@ -31,7 +31,7 @@
 
 		public function yazar()
 		{
-			return $this->belongsTo(Yazar::class, 'yazar_id');
+			return $this->belongsTo(User::class, 'user_id');
 		}
 
 		public function kategori()

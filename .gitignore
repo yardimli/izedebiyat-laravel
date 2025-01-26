@@ -42,8 +42,8 @@ storage/app/public/ai-images/*-*-*-*-*.jpg
 /storage/app/public
 /public/frontend/ikon
 /public/frontend/assets/images/thumb
-public/RİGELİN GÖZLERİ.txt
-public/RIGELS ØYNE.txt
-public/grenser-en.txt
-public/grenser-no.txt
-public/grenser.php
+public/deniz/RİGELİN GÖZLERİ.txt
+public/deniz/RIGELS ØYNE.txt
+public/deniz/grenser-en.txt
+public/deniz/grenser-no.txt
+public/deniz/grenser.php

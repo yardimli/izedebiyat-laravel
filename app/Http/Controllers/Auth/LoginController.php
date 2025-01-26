@@ -3,10 +3,10 @@
 
 =========================================================
 
-* Song Page: https://my-laravel-saas-site.com/product
-* Copyright 2018 my-laravel-saas-site.com (https://my-laravel-saas-site.com)
+* Song Page: https://www.izedebiyat.com/product
+* Copyright 2018 www.izedebiyat.com (https://www.izedebiyat.com)
 
-* Coded by my-laravel-saas-site.com
+* Coded by www.izedebiyat.com
 
 =========================================================
 
@@ -48,7 +48,7 @@ class LoginController extends Controller
 
 	protected function authenticated(Request $request, $user)
 	{
-		return redirect()->route('my-settings');
+		return redirect()->route('sahne-arkasi');
 	}
 
 	/**

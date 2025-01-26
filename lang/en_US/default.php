@@ -5,8 +5,8 @@
 // Found in: app\Http\Controllers\BookCodexController.php
 		'Codex saved successfully' => 'Codex saved successfully',
 
-// Found in: resources\views\auth\forgot-password.blade.php, resources\views\emails\reset_password.blade.php, resources\views\emails\thankyouforyourorder.blade.php, resources\views\emails\verify-email.blade.php, resources\views\emails\welcome.blade.php, resources\views\errors\error-404.blade.php, resources\views\landing\landing.blade.php, resources\views\layouts\app.blade.php, resources\views\layouts\footer.blade.php, resources\views\user\codex.blade.php, resources\views\user\edit-book.blade.php, resources\views\user\my-books.blade.php, resources\views\user\privacy.blade.php, resources\views\user\showcase-library.blade.php, resources\views\user\stories.blade.php, resources\views\user\terms.blade.php, resources\views\welcome.blade.php
-		'SAAS LARAVEL BOILERPLATE' => 'SAAS LARAVEL BOILERPLATE',
+// Found in: resources\views\auth\forgot-password.blade.php, resources\views\emails\reset-password.blade.php, resources\views\emails\thankyouforyourorder.blade.php, resources\views\emails\verify-email.blade.php, resources\views\emails\welcome.blade.php, resources\views\errors\error-404.blade.php, resources\views\landing\landing.blade.php, resources\views\layouts\app.blade.php, resources\views\layouts\footer.blade.php, resources\views\user\codex.blade.php, resources\views\user\edit-book.blade.php, resources\views\user\my-books.blade.php, resources\views\user\privacy.blade.php, resources\views\user\showcase-library.blade.php, resources\views\user\stories.blade.php, resources\views\user\terms.blade.php, resources\views\welcome.blade.php
+		'İzEdebiyat' => 'İzEdebiyat',
 
 // Found in: resources\views\auth\forgot-password.blade.php, resources\views\auth\login.blade.php, resources\views\auth\register.blade.php, resources\views\emails\welcome.blade.php, resources\views\errors\error-404.blade.php, resources\views\landing\landing.blade.php, resources\views\layouts\app.blade.php, resources\views\paypal\paypal-finish-page.blade.php, resources\views\user\my-books.blade.php, resources\views\user\showcase-library.blade.php, resources\views\user\stories.blade.php
 		'Boilerplate Site Tagline' => 'Boilerplate Site Tagline',
@@ -48,7 +48,7 @@
 		'Settings' => 'Settings',
 
 // Found in: resources\views\user\all-beats.blade.php
-		'SAAS LARAVEL BOILERPLATE - Book Beats' => 'SAAS LARAVEL BOILERPLATE - Book Beats',
+		'İzEdebiyat - Book Beats' => 'İzEdebiyat - Book Beats',
 		'Back to Chapters' => 'Back to Chapters',
 
 // Found in: resources\views\user\all-beats.blade.php, resources\views\user\edit-book.blade.php
@@ -250,12 +250,6 @@
 		'Email' => 'Email',
 		'Avatar' => 'Avatar',
 		'Save changes' => 'Save changes',
-		'API Keys' => 'API Keys',
-		'Set your personal API keys for unmetered usage.' => 'Set your personal API keys for unmetered usage.',
-		'OpenAI API Key' => 'OpenAI API Key',
-		'Anthropic API Key' => 'Anthropic API Key',
-		'OpenRouter API Key' => 'OpenRouter API Key',
-		'Update API Keys' => 'Update API Keys',
 		'Change your password' => 'Change your password',
 		'If you signed up with Google, leave the current password blank the first time you update your password.' => 'If you signed up with Google, leave the current password blank the first time you update your password.',
 		'Current password' => 'Current password',
@@ -265,7 +259,7 @@
 		'Delete account' => 'Delete account',
 		'We are sorry to hear that you wish to delete your account.' => 'We are sorry to hear that you wish to delete your account.',
 		'Please note that deleting your account may result in the permanent loss of your data.' => 'Please note that deleting your account may result in the permanent loss of your data.',
-		'We are sad to see you go, but we hope that SAAS LARAVEL BOILERPLATE has been an enjoyable experience for you. We wish you the best in your future endeavors. Goodbye!' => 'We are sad to see you go, but we hope that SAAS LARAVEL BOILERPLATE has been an enjoyable experience for you. We wish you the best in your future endeavors. Goodbye!',
+		'We are sad to see you go, but we hope that İzEdebiyat has been an enjoyable experience for you. We wish you the best in your future endeavors. Goodbye!' => 'We are sad to see you go, but we hope that İzEdebiyat has been an enjoyable experience for you. We wish you the best in your future endeavors. Goodbye!',
 		'Before you go...' => 'Before you go...',
 		'If you delete your account, you will lose your all data.' => 'If you delete your account, you will lose your all data.',
 		'Keep my account' => 'Keep my account',
@@ -319,7 +313,7 @@
 		'We\'ll never share your email with anyone else.' => 'We\'ll never share your email with anyone else.',
 		'I Agree with' => 'I Agree with the <a href=":terms_url">Terms</a> and <a href=":privacy_url">Privacy</a>',
 		'Already Have Account Sign In' => 'Already Have Account <a href=":login_url">Sign In</a>',
-		'&copy; 2024 my-laravel-saas-site.com All rights reserved.' => '&copy; 2024 my-laravel-saas-site.com All rights reserved.',
+		'&copy; 2025 www.izedebiyat.com All rights reserved.' => '&copy; 2025 www.izedebiyat.com All rights reserved.',
 		'Email address' => 'Email address',
 		'Or' => 'Or',
 		'at least 8 characters' => 'at least 8 characters',
@@ -334,7 +328,7 @@
 
 		'I can\'t believe it\'s free!' => 'I can\'t believe it\'s free!',
 
-		'Welcome to SaaS Laravel Boilerplate' => 'Welcome to SaaS Laravel Boilerplate',
+		'Welcome to İzEdebiyat' => 'Welcome to İzEdebiyat',
 		'Within a few steps create your SaaS project skipping over all the boring parts.' => 'Within a few steps create your SaaS project skipping over all the boring parts.',
 
 		'Start Your Site Here' => 'Start Your Site Here',

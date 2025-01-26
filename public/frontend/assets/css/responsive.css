@@ -132,7 +132,7 @@
     top: 0;
   }
 
-  .entry-wraper, .entry-header, .single-comment {
+  .entry-wrapper, .entry-header, .single-comment {
     max-width: 800px;
     margin: 0 auto;
   }

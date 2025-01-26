@@ -16,7 +16,7 @@ return [
 	|
 	*/
 
-	'name' => env('APP_NAME', 'my-laravel-saas-site.com'),
+	'name' => env('APP_NAME', 'www.izedebiyat.com'),
 	'char_limit' => env('CHAR_LIMIT', 120),
 	'long_char_limit' => env('LONG_CHAR_LIMIT', 300),
 
@@ -57,7 +57,7 @@ return [
 	|
 	*/
 
-	'url' => env('APP_URL', 'https://my-laravel-saas-site.com'),
+	'url' => env('APP_URL', 'https://www.izedebiyat.com'),
 
 	'asset_url' => env('ASSET_URL'),
 

@@ -33,7 +33,7 @@
 													</a>
 												</h5>
 												<div class="entry-meta align-items-center">
-													<a href="{{ url('/yazar/' . $text->yazar_slug) }}">{{ $text->yazar_ad }}</a>
+													<a href="{{ url('/yazar/' . $text->name_slug) }}">{{ $text->name }}</a>
 													<br>
 													<a href="{{ url('/kume/' . $text->ust_kategori_slug . '/' . $text->kategori_slug) }}">
 														{{ $text->ust_kategori_ad }}

@@ -81,7 +81,7 @@
 							<!-- SIGN UP FORM -->
 							<div class="col-md-6">
 								<div class="text-center mt-2">
-									<a href="/" class="logo-black"><img src="/images/logo.png" id="site_logo" alt="logo"
+									<a href="/" class="logo-black"><img src="{{ asset('/assets/images/logo/logo-large.png') }}" id="site_logo" alt="logo"
 									                                    style="max-height: 80px;"></a>
 								</div>
 								<div class="register-page-form" style="margin-top: 5px; padding-top: 5px;">
@@ -206,7 +206,7 @@
 									
 									<!-- Copyright -->
 									<div class="register-page-copyright">
-										<p class="p-sm">{{__('default.&copy; 2024 my-laravel-saas-site.com All rights reserved.')}}</p>
+										<p class="p-sm">{{__('default.&copy; 2025 www.izedebiyat.com All rights reserved.')}}</p>
 									</div>
 								
 								</div>

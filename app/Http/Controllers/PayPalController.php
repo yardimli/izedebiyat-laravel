@@ -26,31 +26,31 @@
 				if ($id === 'short-stories') {
 					$product_name = 'Short Story Package';
 					$product_description_short = 'Short Story Package - 40,000 Token Credits';
-					$product_description = 'SAAS LARAVEL BOILERPLATE Short Story Package - 40,000 Token Credits';
+					$product_description = 'İzEdebiyat Short Story Package - 40,000 Token Credits';
 					$product_price = '19.90';
 					$reference_id = '1990';
 					$sku = '11990';
 					$custom_id = Auth::user()->id;
-					$soft_descriptor = 'SAAS LARAVEL BOILERPLATE Shorts';
+					$soft_descriptor = 'İzEdebiyat Shorts';
 				} else if ($id === 'novella') {
 					$product_name = 'Novella Package';
 					$product_description_short = 'Novella Package - 100,000 Token Credits';
-					$product_description = 'SAAS LARAVEL BOILERPLATE Novella Package - 100,000 Token Credits';
+					$product_description = 'İzEdebiyat Novella Package - 100,000 Token Credits';
 					$product_price = '39.90';
 					$reference_id = '3990';
 					$sku = '13990';
 					$custom_id = Auth::user()->id;
-					$soft_descriptor = 'SAAS LARAVEL BOILERPLATE Novella';
+					$soft_descriptor = 'İzEdebiyat Novella';
 
 				} else if ($id === 'novel') {
 					$product_name = 'Novel Package';
 					$product_description_short = 'Novel Package - 240,000 Token Credits';
-					$product_description = 'SAAS LARAVEL BOILERPLATE Novel Package - 240,000 Token Credits';
+					$product_description = 'İzEdebiyat Novel Package - 240,000 Token Credits';
 					$product_price = '69.90';
 					$reference_id = '6990';
 					$sku = '16990';
 					$custom_id = Auth::user()->id;
-					$soft_descriptor = 'SAAS LARAVEL BOILERPLATE Novel';
+					$soft_descriptor = 'İzEdebiyat Novel';
 
 				} else {
 					abort(404);
@@ -186,7 +186,7 @@
 
 					$user_id           = $response['purchase_units'][0]['payments']['captures'][0]['custom_id'];
 					$notification_type = 'purchase';
-					$message           = '<b>Order: #'.$order->id.'</b><br>Thank you for your purchase of the SAAS LARAVEL BOILERPLATE Short Story Package. You have received 20,000 GPT-4 Token Credits and 200,000 GPT 3.5 Token Credits.';
+					$message           = '<b>Order: #'.$order->id.'</b><br>Thank you for your purchase of the İzEdebiyat Short Story Package. You have received 20,000 GPT-4 Token Credits and 200,000 GPT 3.5 Token Credits.';
 					$chat_header_id    = null;
 
 				} else
@@ -217,7 +217,7 @@
 
 						$user_id           = $response['purchase_units'][0]['payments']['captures'][0]['custom_id'];
 						$notification_type = 'purchase';
-						$message           = '<b>Order: #'.$order->id.'</b><br>Thank you for your purchase of the SAAS LARAVEL BOILERPLATE Novella Package. You have received 50,000 GPT-4 Token Credits and 500,000 GPT 3.5 Token Credits.';
+						$message           = '<b>Order: #'.$order->id.'</b><br>Thank you for your purchase of the İzEdebiyat Novella Package. You have received 50,000 GPT-4 Token Credits and 500,000 GPT 3.5 Token Credits.';
 						$chat_header_id    = null;
 
 					} else if ($response['purchase_units'][0]['reference_id'] == '6990') {
@@ -247,7 +247,7 @@
 
 						$user_id           = $response['purchase_units'][0]['payments']['captures'][0]['custom_id'];
 						$notification_type = 'purchase';
-						$message           = '<b>Order: #'.$order->id.'</b><br>Thank you for your purchase of the SAAS LARAVEL BOILERPLATE Novel Package. You have received 240,000 GPT-4 Token Credits and 2,400,000 GPT 3.5 Token Credits.';
+						$message           = '<b>Order: #'.$order->id.'</b><br>Thank you for your purchase of the İzEdebiyat Novel Package. You have received 240,000 GPT-4 Token Credits and 2,400,000 GPT 3.5 Token Credits.';
 						$chat_header_id    = null;
 
 

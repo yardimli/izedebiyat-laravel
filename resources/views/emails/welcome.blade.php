@@ -4,7 +4,7 @@
 	
 	<meta charset="utf-8">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
-	<title>Welcome to {{__('default.SAAS LARAVEL BOILERPLATE')}}
+	<title>Welcome to {{__('default.İzEdebiyat')}}
 </title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">
@@ -100,7 +100,7 @@
 
 <!-- start preheader -->
 <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-	Welcome to {{__('default.SAAS LARAVEL BOILERPLATE')}}
+	Welcome to {{__('default.İzEdebiyat')}}
 ! We're excited to have you on board.
 </div>
 <!-- end preheader -->
@@ -119,8 +119,8 @@
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 				<tr>
 					<td align="center" valign="top" style="padding: 12px 24px;">
-						<a href="https://my-laravel-saas-site.com" target="_blank" style="display: inline-block;">
-							<img src="https://my-laravel-saas-site.com//images/logo.png" id="site_logo" alt="Logo" border="0" width="200" style="display: block; width: 200px; max-width: 200px; min-width: 200px;">
+						<a href="https://www.izedebiyat.com" target="_blank" style="display: inline-block;">
+							<img src="https://www.izedebiyat.com/images/logo.png" id="site_logo" alt="Logo" border="0" width="200" style="display: block; width: 200px; max-width: 200px; min-width: 200px;">
 						</a>
 					</td>
 				</tr>
@@ -145,7 +145,7 @@
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 				<tr>
 					<td align="left" bgcolor="#ffffff" style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-top: 3px solid #d4dadf;">
-						<h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">Welcome to {{__('default.SAAS LARAVEL BOILERPLATE')}}: {{__('default.Boilerplate Site Tagline')}}</h1>
+						<h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">Welcome to {{__('default.İzEdebiyat')}}: {{__('default.Boilerplate Site Tagline')}}</h1>
 					</td>
 				</tr>
 			</table>
@@ -174,11 +174,11 @@
 						<p style="margin: 0;">
 							Dear {{$name}},
 							<br><br>
-							Welcome to the vibrant world of <a href="https://my-laravel-saas-site.com">{{__('default.SAAS LARAVEL BOILERPLATE')}} - {{__('default.Boilerplate Site Tagline')}}! If you didn't create an account with us, please feel free to disregard this email.
+							Welcome to the vibrant world of <a href="https://www.izedebiyat.com">{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}! If you didn't create an account with us, please feel free to disregard this email.
 							<br><br>
-							We are excited to have you as a member of our community and can't wait to see your unique stories unfold. my-laravel-saas-site.com is an online platform dedicated to empowering writers by providing ample creative space and harnessing the power of AI to refine and expand ideas. Our community is constantly growing, and we are thrilled you have joined us in this exciting literary journey!
+							We are excited to have you as a member of our community and can't wait to see your unique stories unfold. www.izedebiyat.com is an online platform dedicated to empowering writers by providing ample creative space and harnessing the power of AI to refine and expand ideas. Our community is constantly growing, and we are thrilled you have joined us in this exciting literary journey!
 							<br><br>
-							As you explore <a href="https://my-laravel-saas-site.com">my-laravel-saas-site.com</a>, you'll find an extensive range of genres and writing styles, along with valuable insights from fellow members to help you evolve as a writer. Our team is committed to ensuring that you feel inspired, supported, and encouraged as you embark on this thrilling adventure.
+							As you explore <a href="https://www.izedebiyat.com">www.izedebiyat.com</a>, you'll find an extensive range of genres and writing styles, along with valuable insights from fellow members to help you evolve as a writer. Our team is committed to ensuring that you feel inspired, supported, and encouraged as you embark on this thrilling adventure.
 							<br><br>
 							{{__('default.Boilerplate Site Tagline')}}
 							</p>
@@ -192,7 +192,7 @@
 					<td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
 						<p style="margin: 0;">Best Regards,
 							<br><br>
-							The my-laravel-saas-site.com Team
+							The www.izedebiyat.com Team
 							<br><br>
 							{{__('default.Boilerplate Site Tagline')}}</p>
 					</td>
@@ -222,7 +222,7 @@
 				<!-- start permission -->
 				<tr>
 					<td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-						<p style="margin: 0;">You received this email because we received a request for you signing up to my-laravel-saas-site.com. If you didn't request signing up to my-laravel-saas-site.com you can safely delete this email.</p>
+						<p style="margin: 0;">You received this email because we received a request for you signing up to www.izedebiyat.com. If you didn't request signing up to www.izedebiyat.com you can safely delete this email.</p>
 					</td>
 				</tr>
 				<!-- end permission -->
@@ -230,7 +230,7 @@
 				<!-- start unsubscribe -->
 				<tr>
 					<td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-						<p style="margin: 0;">To stop receiving these emails, you can <a href="https://my-laravel-saas-site.com/unsubscribe" target="_blank">unsubscribe</a> at any time.</p>
+						<p style="margin: 0;">To stop receiving these emails, you can <a href="https://www.izedebiyat.com/unsubscribe" target="_blank">unsubscribe</a> at any time.</p>
 					</td>
 				</tr>
 				<!-- end unsubscribe -->

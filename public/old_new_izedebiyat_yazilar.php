@@ -2,157 +2,157 @@
 <html lang="tr">
 <head>
 	<meta charset="utf-8">
-	<body>
-	<?php
-		$unwanted_array = array(
-			'Š' => 'S',
-			'š' => 's',
-			'Ž' => 'Z',
-			'ž' => 'z',
-			'À' => 'A',
-			'Á' => 'A',
-			'Â' => 'A',
-			'Ã' => 'A',
-			'Ä' => 'A',
-			'Å' => 'A',
-			'Æ' => 'A',
-			'Ç' => 'C',
-			'È' => 'E',
-			'É' => 'E',
-			'Ê' => 'E',
-			'Ë' => 'E',
-			'Ì' => 'I',
-			'Í' => 'I',
-			'Î' => 'I',
-			'Ï' => 'I',
-			'Ñ' => 'N',
-			'Ò' => 'O',
-			'Ó' => 'O',
-			'Ô' => 'O',
-			'Õ' => 'O',
-			'Ö' => 'O',
-			'Ø' => 'O',
-			'Ù' => 'U',
-			'Ú' => 'U',
-			'Û' => 'U',
-			'Ü' => 'U',
-			'Ý' => 'Y',
-			'Þ' => 'B',
-			'ß' => 'Ss',
-			'à' => 'a',
-			'á' => 'a',
-			'â' => 'a',
-			'ã' => 'a',
-			'ä' => 'a',
-			'å' => 'a',
-			'æ' => 'a',
-			'ç' => 'c',
-			'è' => 'e',
-			'é' => 'e',
-			'ê' => 'e',
-			'ë' => 'e',
-			'ì' => 'i',
-			'í' => 'i',
-			'î' => 'i',
-			'ï' => 'i',
-			'ð' => 'o',
-			'ñ' => 'n',
-			'ò' => 'o',
-			'ó' => 'o',
-			'ô' => 'o',
-			'õ' => 'o',
-			'ö' => 'o',
-			'ø' => 'o',
-			'ù' => 'u',
-			'ú' => 'u',
-			'û' => 'u',
-			'ý' => 'y',
-			'þ' => 'b',
-			'ÿ' => 'y',
-			'Ş' => 's',
-			'ş' => 's',
-			'İ' => 'i',
-			'ı' => 'i',
-			'(' => '',
-			')' => '',
-			'.' => '',
-			',' => '',
-			':' => '',
-			';' => '',
-			'&' => '_',
-			'ğ' => 'g',
-			'ü' => 'u'
-		);
+<body>
+<?php
+	$unwanted_array = array(
+		'Š' => 'S',
+		'š' => 's',
+		'Ž' => 'Z',
+		'ž' => 'z',
+		'À' => 'A',
+		'Á' => 'A',
+		'Â' => 'A',
+		'Ã' => 'A',
+		'Ä' => 'A',
+		'Å' => 'A',
+		'Æ' => 'A',
+		'Ç' => 'C',
+		'È' => 'E',
+		'É' => 'E',
+		'Ê' => 'E',
+		'Ë' => 'E',
+		'Ì' => 'I',
+		'Í' => 'I',
+		'Î' => 'I',
+		'Ï' => 'I',
+		'Ñ' => 'N',
+		'Ò' => 'O',
+		'Ó' => 'O',
+		'Ô' => 'O',
+		'Õ' => 'O',
+		'Ö' => 'O',
+		'Ø' => 'O',
+		'Ù' => 'U',
+		'Ú' => 'U',
+		'Û' => 'U',
+		'Ü' => 'U',
+		'Ý' => 'Y',
+		'Þ' => 'B',
+		'ß' => 'Ss',
+		'à' => 'a',
+		'á' => 'a',
+		'â' => 'a',
+		'ã' => 'a',
+		'ä' => 'a',
+		'å' => 'a',
+		'æ' => 'a',
+		'ç' => 'c',
+		'è' => 'e',
+		'é' => 'e',
+		'ê' => 'e',
+		'ë' => 'e',
+		'ì' => 'i',
+		'í' => 'i',
+		'î' => 'i',
+		'ï' => 'i',
+		'ð' => 'o',
+		'ñ' => 'n',
+		'ò' => 'o',
+		'ó' => 'o',
+		'ô' => 'o',
+		'õ' => 'o',
+		'ö' => 'o',
+		'ø' => 'o',
+		'ù' => 'u',
+		'ú' => 'u',
+		'û' => 'u',
+		'ý' => 'y',
+		'þ' => 'b',
+		'ÿ' => 'y',
+		'Ş' => 's',
+		'ş' => 's',
+		'İ' => 'i',
+		'ı' => 'i',
+		'(' => '',
+		')' => '',
+		'.' => '',
+		',' => '',
+		':' => '',
+		';' => '',
+		'&' => '_',
+		'ğ' => 'g',
+		'ü' => 'u'
+	);
 
-		function slugify($str)
-		{
-			global $unwanted_array;
-			$divider = '_';
+	function slugify($str)
+	{
+		global $unwanted_array;
+		$divider = '_';
 
-			$text = strtr($str, $unwanted_array);
-			$text = str_replace(" ", $divider, $text);
-			$text = strtolower($text);
+		$text = strtr($str, $unwanted_array);
+		$text = str_replace(" ", $divider, $text);
+		$text = strtolower($text);
 
-			// replace non letter or digits by divider
-			$text = preg_replace('~[^\pL\d]+~u', $divider, $text);
+		// replace non letter or digits by divider
+		$text = preg_replace('~[^\pL\d]+~u', $divider, $text);
 
-			// transliterate
-			$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+		// transliterate
+		$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
 
-			// remove unwanted characters
-			$text = preg_replace('~[^-\w]+~', '', $text);
+		// remove unwanted characters
+		$text = preg_replace('~[^-\w]+~', '', $text);
 
-			// trim
-			$text = trim($text, $divider);
+		// trim
+		$text = trim($text, $divider);
 
-			// remove duplicate divider
-			$text = preg_replace('~-+~', $divider, $text);
+		// remove duplicate divider
+		$text = preg_replace('~-+~', $divider, $text);
 
-			// lowercase
-			$text = strtolower($text);
+		// lowercase
+		$text = strtolower($text);
 
-			if (empty($text)) {
-				return 'n-a';
-			}
-
-			return $text;
+		if (empty($text)) {
+			return 'n-a';
 		}
 
-		function replace_ascii($input)
-		{
+		return $text;
+	}
 
-			$input = preg_replace("/\r\n|\r|\n/", '<br/>', $input);
+	function replace_ascii($input)
+	{
 
-			$input = str_replace("", "...", $input);
-			$input = str_replace("", "-", $input);
-			$input = str_replace("", " ", $input);
-			$input = str_replace("", "'", $input);
-			$input = str_replace("", " ", $input);
+		$input = preg_replace("/\r\n|\r|\n/", '<br/>', $input);
 
-			$input = str_replace("  ", " ", $input);
-			$input = str_replace("  ", " ", $input);
-			$input = str_replace("  ", " ", $input);
+		$input = str_replace("", "...", $input);
+		$input = str_replace("", "-", $input);
+		$input = str_replace("", " ", $input);
+		$input = str_replace("", "'", $input);
+		$input = str_replace("", " ", $input);
 
-			//trim <br> from top and bottom
-			$input = preg_replace('/^(\s*<br\s*\/?>\s*)*/', '', $input);  // top
-			$input = preg_replace('/(\s*<br\s*\/?>\s*)*$/', '', $input);  // bottom
-			return $input;
+		$input = str_replace("  ", " ", $input);
+		$input = str_replace("  ", " ", $input);
+		$input = str_replace("  ", " ", $input);
 
-		}
+		//trim <br> from top and bottom
+		$input = preg_replace('/^(\s*<br\s*\/?>\s*)*/', '', $input);  // top
+		$input = preg_replace('/(\s*<br\s*\/?>\s*)*$/', '', $input);  // bottom
+		return $input;
 
-// Database connection parameters
+	}
+
+	// Database connection parameters
 	$host = 'localhost';
 	$username = 'root';
 	$password = 'A123456b!';
 
-// Connect to izedebiyat database
+	// Connect to izedebiyat database
 	$db1 = new mysqli($host, $username, $password, 'izedebiyat');
 	if ($db1->connect_error) {
 		die("Connection to izedebiyat failed: " . $db1->connect_error);
 	}
 	$db1->set_charset("utf8mb4");
 
-// Connect to izedebiyat_asp database
+	// Connect to izedebiyat_asp database
 	$db2 = new mysqli($host, $username, $password, 'izedebiyat_asp');
 	if ($db2->connect_error) {
 		die("Connection to izedebiyat_asp failed: " . $db2->connect_error);
@@ -184,8 +184,8 @@
             yayinlama_tarih = " . ($row['ytarih'] ? "'" . $db1->real_escape_string($row['ytarih']) . "'" : "NULL") . ",
             tanitim = " . ($row['tanitim'] ? "'" . $db1->real_escape_string(replace_ascii($row['tanitim'])) . "'" : "NULL") . ",
             yazi = " . ($row['yazi'] ? "'" . $db1->real_escape_string(replace_ascii($row['yazi'])) . "'" : "NULL") . ",
-            yazar_ad = " . ($row['yazarad'] ? "'" . $db1->real_escape_string($row['yazarad']) . "'" : "''") . ",
-            yazar_slug = " . ($row['yazarad'] ? "'" . slugify($db1->real_escape_string($row['yazarad'])) . "'" : "''") . ",
+            name = " . ($row['yazarad'] ? "'" . $db1->real_escape_string($row['yazarad']) . "'" : "''") . ",
+            name_slug = " . ($row['yazarad'] ? "'" . slugify($db1->real_escape_string($row['yazarad'])) . "'" : "''") . ",
             kategori_ad = " . ($row['katead'] ? "'" . $db1->real_escape_string($row['katead']) . "'" : "''") . ",
             kategori_slug = " . ($row['katead'] ? "'" . slugify($db1->real_escape_string($row['katead'])) . "'" : "''") . ",
             ust_kategori_ad = " . ($row['ustkatead'] ? "'" . $db1->real_escape_string($row['ustkatead']) . "'" : "''") . ",
@@ -193,7 +193,7 @@
             org_yazar = " . ($row['orgyazar'] ? "'" . $db1->real_escape_string($row['orgyazar']) . "'" : "NULL") . ",
             yazi_resim = " . ($row['yaziresim'] ? "'" . $db1->real_escape_string($row['yaziresim']) . "'" : "NULL") . ",
             silindi = {$row['silindi']},
-            yazar_id = {$row['yazarno']},
+            user_id = {$row['yazarno']},
             ust_kategori_id = {$row['ustkateno']},
             kategori_id = {$row['kateno']},
             formul_ekim = {$row['FormulEkim']},
@@ -247,7 +247,7 @@
 				// Create INSERT query
 				$insertQuery = "INSERT INTO izedebiyat.yazar SET 
             id = {$row['yazarID']},
-            yazar_ad = " . ($row['yazarad'] ? "'" . $db1->real_escape_string($row['yazarad']) . "'" : "NULL") . ",
+            name = " . ($row['yazarad'] ? "'" . $db1->real_escape_string($row['yazarad']) . "'" : "NULL") . ",
             slug = " . ($row['yazarad'] ? "'" . slugify($db1->real_escape_string($row['yazarad'])) . "'" : "NULL") . ",
             nick = " . ($row['nick'] ? "'" . $db1->real_escape_string($row['nick']) . "'" : "NULL") . ",
             sifre = " . ($row['sifre'] ? "'" . $db1->real_escape_string($row['sifre']) . "'" : "NULL") . ",

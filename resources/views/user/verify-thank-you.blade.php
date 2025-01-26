@@ -28,7 +28,7 @@
 							<br>
 							<br>
 							<div style="text-align: center; ">
-								<img src="{{ asset('assets/images/logo/logo-large.png') }}"
+								<img src="{{ asset('/assets/images/logo/logo-large.png') }}"
 								     style="height: 200px;" alt="Thank You" class="img-fluid">
 							</div>
 						</div>

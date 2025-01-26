@@ -87,32 +87,32 @@ function passwordStrengthMeter(opts) {
     switch(score) {
       case 1:
         scoreBar.className = 'password-strength-meter-score psms-20'
-        if (scoreMessage) { scoreMessage.textContent = messagesList[1] || 'Too simple' }
+        if (scoreMessage) { scoreMessage.textContent = messagesList[1] || 'Fazla Basit' }
         containerElement.dispatchEvent(new Event('onScore1', { bubbles: true }))
         break
       case 2:
         scoreBar.className = 'password-strength-meter-score psms-40'
-        if (scoreMessage) { scoreMessage.textContent = messagesList[2] || 'Simple' }
+        if (scoreMessage) { scoreMessage.textContent = messagesList[2] || 'Basit' }
         containerElement.dispatchEvent(new Event('onScore2', { bubbles: true }))
         break
       case 3:
         scoreBar.className = 'password-strength-meter-score psms-60'
-        if (scoreMessage) { scoreMessage.textContent = messagesList[3] || 'That\'s OK' }
+        if (scoreMessage) { scoreMessage.textContent = messagesList[3] || 'Tamam' }
         containerElement.dispatchEvent(new Event('onScore3', { bubbles: true }))
         break
       case 4:
         scoreBar.className = 'password-strength-meter-score psms-80'
-        if (scoreMessage) { scoreMessage.textContent = messagesList[4] || 'Great password!' }
+        if (scoreMessage) { scoreMessage.textContent = messagesList[4] || 'İyi Parola!' }
         containerElement.dispatchEvent(new Event('onScore4', { bubbles: true }))
         break
 	    case 5:
 		    scoreBar.className = 'password-strength-meter-score psms-100'
-		    if (scoreMessage) { scoreMessage.textContent = messagesList[5] || 'Best password!' }
+		    if (scoreMessage) { scoreMessage.textContent = messagesList[5] || 'Mükkemel!' }
 		    containerElement.dispatchEvent(new Event('onScore5', { bubbles: true }))
 		    break
       default:
         scoreBar.className = 'password-strength-meter-score'
-        if (scoreMessage) { scoreMessage.textContent = messagesList[0] || 'No data' }
+        if (scoreMessage) { scoreMessage.textContent = messagesList[0] || 'Bilgi yok' }
         containerElement.dispatchEvent(new Event('onScore0', { bubbles: true }))
     }
   }

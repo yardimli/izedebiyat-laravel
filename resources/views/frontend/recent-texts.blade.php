@@ -45,7 +45,7 @@
 											</p>
 										</div>
 										<div class="entry-meta">
-											<a href="/yazar/{{ $text->yazar_slug }}">{{ $text->yazar_ad }}</a> -
+											<a href="/yazar/{{ $text->name_slug }}">{{ $text->name }}</a> -
 											<a
 												href="/kume/{{ $text->ust_kategori_slug }}/{{ $text->kategori_slug }}">{!! $text->kategori_ad !!} </a>
 											<br>

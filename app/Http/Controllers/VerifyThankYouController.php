@@ -8,12 +8,7 @@
 	{
 		public function index()
 		{
-			return view('user.verify-thank-you');
-		}
-
-		public function index_zh_TW()
-		{
-			return view('user.verify-thank-you-zh_TW');
+			return view('user.verify-thank-you-tr_TR');
 		}
 
 	}

@@ -10,7 +10,7 @@
 					</li>
 					<li class="nav-item">
 						<div class="dropup mt-0 text-center text-sm-end">
-							<a class="dropdown-toggle nav-link" href="{{ route('landing-page') }}" role="button"
+							<a class="dropdown-toggle nav-link" href="{{ route('frontend-index') }}" role="button"
 							   id="languageSwitcher" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-globe  me-2"></i>{{__('default.Language')}}
 							</a>
@@ -40,7 +40,7 @@
 			</div>
 			<div class="col-md-4">
 				<!-- Copyright START -->
-				<p class="text-center text-md-end mb-0">©2024 <a class="text-body" href="https://www.my-laravel-saas-site.com"> {{__('default.SAAS LARAVEL BOILERPLATE')}}</p>
+				<p class="text-center text-md-end mb-0">©2025 <a class="text-body" href="https://www.www.izedebiyat.com"> {{__('default.İzEdebiyat')}}</p>
 				<!-- Copyright END -->
 			</div>
 		</div>

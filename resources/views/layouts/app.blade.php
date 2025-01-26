@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>{{__('default.SAAS LARAVEL BOILERPLATE')}} - @yield('title', 'Home')</title>
+	<title>{{__('default.İzEdebiyat')}} - @yield('title', 'Home')</title>
 	
 	<!-- Meta Tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="author" content="fictionfusion.io">
 	<meta name="description"
-	      content="{{__('default.SAAS LARAVEL BOILERPLATE')}} - {{__('default.Boilerplate Site Tagline')}}">
+	      content="{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	
 	<script src="/assets/js/core/jquery.min.js"></script>
@@ -114,9 +114,9 @@ Header START -->
 	<nav class="navbar navbar-expand-lg">
 		<div class="container">
 			<!-- Logo START -->
-			<a class="navbar-brand" href="{{route('landing-page')}}">
-				<img class="light-mode-item navbar-brand-item" src="/images/logo.png" alt="logo">
-				<img class="dark-mode-item navbar-brand-item" src="/images/logo.png" alt="logo">
+			<a class="navbar-brand" href="{{route('frontend-index')}}">
+				<img class="light-mode-item navbar-brand-item" src="{{ asset('/assets/images/logo/logo-large.png') }}" alt="logo">
+				<img class="dark-mode-item navbar-brand-item" src="{{ asset('/assets/images/logo/logo-large-transparent.png') }}" alt="logo">
 			</a>
 			<!-- Logo END -->
 			
@@ -198,16 +198,16 @@ Header START -->
 									</div>
 									<div>
 										<a class="h6 stretched-link"
-										   href="{{route('my-settings')}}">{{ Auth::user()->name }}</a>
+										   href="{{route('sahne-arkasi')}}">{{ Auth::user()->name }}</a>
 										<p class="small m-0">{{ Auth::user()->username }}</p>
 									</div>
 								</div>
 								<a class="dropdown-item btn btn-primary-soft btn-sm my-2 text-center"
-								   href="{{route('my-settings')}}">{{__('My Books')}}</a>
+								   href="{{route('sahne-arkasi')}}">{{__('default.My Books')}}</a>
 								<a class="dropdown-item btn btn-primary-soft btn-sm my-2 text-center"
-								   href="/blog_admin">{{__('Blog Admin')}}</a>
+								   href="/blog_admin">{{__('default.Blog Admin')}}</a>
 							</li>
-							<a class="dropdown-item" href="{{route('my-settings')}}"><i
+							<a class="dropdown-item" href="{{route('sahne-arkasi')}}"><i
 									class="bi bi-person  me-2"></i>{{__('default.Settings')}}</a>
 						@endif
 						<!-- Links -->
@@ -218,12 +218,12 @@ Header START -->
 						@if (Auth::user())
 							<li><a class="dropdown-item bg-danger-soft-hover" href="#"
 							       onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
-										class="bi bi-power  me-2"></i>Sign Out</a></li>
+										class="bi bi-power  me-2"></i>Oturumu Kapa</a></li>
 						@else
 							<li><a class="dropdown-item bg-primary-soft-hover" href="{{ route('login') }}"><i
-										class="bi bi-unlock  me-2"></i>Sign In</a></li>
+										class="bi bi-unlock  me-2"></i>Giriş Yap</a></li>
 							<li><a class="dropdown-item bg-primary-soft-hover" href="{{ route('register') }}"><i
-										class="bi bi-person-circle  me-2"></i>Sign Up</a></li>
+										class="bi bi-person-circle  me-2"></i>Üye Ol</a></li>
 						@endif
 						<!-- Dark mode options START -->
 						<hr class="dropdown-divider">

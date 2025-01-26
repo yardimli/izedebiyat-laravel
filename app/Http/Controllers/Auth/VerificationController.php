@@ -3,10 +3,10 @@
 
 	=========================================================
 
-	* Song Page: https://my-laravel-saas-site.com/product
-	* Copyright 2018 my-laravel-saas-site.com (https://my-laravel-saas-site.com)
+	* Song Page: https://www.izedebiyat.com/product
+	* Copyright 2018 www.izedebiyat.com (https://www.izedebiyat.com)
 
-	* Coded by my-laravel-saas-site.com
+	* Coded by www.izedebiyat.com
 
 	=========================================================
 
@@ -58,35 +58,19 @@
 
 		public function verify(Request $request)
 		{
-			$locale = \App::getLocale() ?: config('app.fallback_locale', 'zh_TW');
+			$locale = \App::getLocale() ?: config('app.fallback_locale', 'tr_TR');
 
 			auth()->loginUsingId($request->route('id'));
 
 
 			if ($request->user()->hasVerifiedEmail()) {
-				if ($locale == 'en_US') {
-					throw new AuthorizationException('You have already verified your email.');
-				} else if ($locale == 'zh_TW') {
-					throw new AuthorizationException('您已經驗證了您的電子郵件。');
-				} else if ($locale == 'tr_TR') {
-					throw new AuthorizationException('E-postanızı zaten doğruladınız.');
-				} else {
-					throw new AuthorizationException('You have already verified your email.');
-				}
+				throw new AuthorizationException('E-postanızı zaten doğruladınız.');
 			}
 
 			if ($request->user()->markEmailAsVerified()) {
 				event(new Verified($request->user()));
 			}
 
-			if ($locale == 'en_US') {
-				return redirect()->route('verify-thank-you');
-			} else if ($locale == 'zh_TW') {
-				return redirect()->route('verify-thank-you-zh_TW');
-			} else if ($locale == 'tr_TR') {
-				return redirect()->route('verify-thank-you-tr_TR');
-			} else {
-				return redirect()->route('verify-thank-you-zh_TW');
-			}
+			return redirect()->route('verify-thank-you-tr_TR');
 		}
 	}

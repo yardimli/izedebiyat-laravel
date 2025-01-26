@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>{{__('default.SAAS LARAVEL BOILERPLATE')}} - {{__('default.Boilerplate Site Tagline')}}</title>
+	<title>{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}</title>
 
 	<!-- Meta Tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="author" content="my-laravel-saas-site.com">
-	<meta name="description" content="{{__('default.SAAS LARAVEL BOILERPLATE')}} - {{__('default.Boilerplate Site Tagline')}}">
+	<meta name="author" content="www.izedebiyat.com">
+	<meta name="description" content="{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}">
 
 	<!-- Dark mode -->
 	<script>
@@ -140,7 +140,7 @@
              <!-- Button -->
              <div class="d-grid"><button type="submit" class="btn btn-lg btn-primary">Reset password</button></div>
              <!-- Copyright -->
-             <p class="mb-0 mt-3">©2024 <a target="_blank" href="https://www.my-laravel-saas-site.com/">{{__('default.SAAS LARAVEL BOILERPLATE')}}.</a> All rights reserved</p>
+             <p class="mb-0 mt-3">©2025 <a target="_blank" href="https://www.www.izedebiyat.com/">{{__('default.İzEdebiyat')}}.</a> All rights reserved</p>
            </form>
           <!-- Form END -->
         </div>

@@ -27,7 +27,7 @@
 							
 							@foreach($texts as $text)
 								@php
-									$current_author = $text->yazar_id;
+									$current_author = $text->user_id;
 									if (!isset($author_counts[$current_author])) {
 											$author_counts[$current_author] = 0;
 									}
@@ -61,7 +61,7 @@
 												</p>
 											</div>
 											<div class="entry-meta align-items-center">
-												<a href="{{ url('/yazar/' . $text->yazar_slug) }}">{{ $text->yazar_ad }}</a> -
+												<a href="{{ url('/yazar/' . $text->name_slug) }}">{{ $text->name }}</a> -
 												<a
 													href="{{ url('/kume/' . $text->ust_kategori_slug . '/' . $text->kategori_slug) }}">{{ $text->kategori_ad }}</a><br>
 												<span>{{ \App\Helpers\MyHelper::timeElapsedString($text->katilma_tarihi) }}</span>
@@ -95,7 +95,7 @@
 																	href="{{ url('/yapit/' . $text->slug) }}">{{ \App\Helpers\MyHelper::replaceAscii($text->baslik) }}</a>
 															</h5>
 															<div class="entry-meta align-items-center">
-																<a href="{{ url('/yazar/' . $text->yazar_slug) }}">{{ $text->yazar_ad }}</a> -
+																<a href="{{ url('/yazar/' . $text->name_slug) }}">{{ $text->name }}</a> -
 																<a
 																	href="{{ url('/kume/' . $text->ust_kategori_slug . '/' . $text->kategori_slug) }}">{{ $text->kategori_ad }}</a><br>
 																<span>{{ \App\Helpers\MyHelper::timeElapsedString($text->katilma_tarihi) }}</span>
@@ -137,7 +137,7 @@
 														</p>
 													</div>
 													<div class="entry-meta align-items-center">
-														<a href="{{ url('/yazar/' . $text->yazar_slug) }}">{{ $text->yazar_ad }}</a><br>
+														<a href="{{ url('/yazar/' . $text->name_slug) }}">{{ $text->name }}</a><br>
 														<span>{{ \App\Helpers\MyHelper::timeElapsedString($text->katilma_tarihi) }}</span>
 														<span class="middotDivider"></span>
 														<span class="readingTime"
@@ -219,7 +219,7 @@
 			<div class="content-widget">
 				<div class="container">
 					<div class="sidebar-widget ads">
-						<a href="#"><img src="{{ asset('frontend/assets/images/ads/ads-2.png') }}" alt="ads" style="max-width:80%;"></a>
+						<a href="#"><img src="{{ asset('/frontend/assets/images/ads/ads-2.png') }}" alt="ads" style="max-width:80%;"></a>
 					</div>
 					<div class="hr"></div>
 				</div>

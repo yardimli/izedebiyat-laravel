@@ -25,10 +25,10 @@
 									
 									@foreach($category->yazilar as $story)
 										
-										@if(!in_array($story->yazar_id, $authors))
+										@if(!in_array($story->user_id, $authors))
 											@php
 												$counter++;
-												$authors[] = $story->yazar_id;
+												$authors[] = $story->user_id;
 											@endphp
 											
 											@if($counter === 1)
@@ -52,7 +52,7 @@
 															</p>
 														</div>
 														<div class="entry-meta align-items-center">
-															<a href="/yazar/{{ $story->yazar_slug }}">{{ $story->yazar_ad }}</a> -
+															<a href="/yazar/{{ $story->name_slug }}">{{ $story->name }}</a> -
 															<a href="/kume/{{ $story->ust_kategori_slug }}/{{ $story->kategori_slug }}">{!! $story->kategori_ad !!}</a><br>
 															<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->katilma_tarihi) }}</span>
 															<span class="middotDivider"></span>
@@ -76,7 +76,7 @@
 																		<a href="/yapit/{{ $story->slug }}">{{ \App\Helpers\MyHelper::replaceAscii($story->baslik) }}</a>
 																	</h5>
 																	<div class="entry-meta align-items-center">
-																		<a href="/yazar/{{ $story->yazar_slug }}">{{ $story->yazar_ad }}</a> -
+																		<a href="/yazar/{{ $story->name_slug }}">{{ $story->name }}</a> -
 																		<a href="/kume/{{ $story->ust_kategori_slug }}/{{ $story->kategori_slug }}">{!! $story->kategori_ad !!}</a><br>
 																		<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->katilma_tarihi) }}</span>
 																		<span class="middotDivider"></span>
@@ -110,10 +110,10 @@
 										
 										@foreach($category->yeni_yazilar as $story)
 											
-											@if(!in_array($story->yazar_id, $authors) && $counter < 5)
+											@if(!in_array($story->user_id, $authors) && $counter < 5)
 												@php
 													$counter++;
-													$authors[] = $story->yazar_id;
+													$authors[] = $story->user_id;
 												@endphp
 												<li class="d-flex">
 													<div class="post-count">{{ str_pad($counter, 2, "0", STR_PAD_LEFT) }}</div>
@@ -122,7 +122,7 @@
 															<a href="/yapit/{{ $story->slug }}">{{ \App\Helpers\MyHelper::replaceAscii($story->baslik) }}</a>
 														</h5>
 														<div class="entry-meta align-items-center">
-															<a href="/yazar/{{ $story->yazar_slug }}">{{ $story->yazar_ad }}</a> -
+															<a href="/yazar/{{ $story->name_slug }}">{{ $story->name }}</a> -
 															<a href="/kume/{{ $story->ust_kategori_slug }}/{{ $story->kategori_slug }}">{!! $story->kategori_ad !!}</a><br>
 															<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->katilma_tarihi) }}</span>
 															<span class="middotDivider"></span>

@@ -25,20 +25,12 @@
 		public function build()
 		{
 
-			$locale = \App::getLocale() ?: config('app.fallback_locale', 'zh_TW');
+			$locale = \App::getLocale() ?: config('app.fallback_locale', 'tr_TR');
 
-			$subject = '【織音】- 密碼重設申請';
-			$email_view = 'emails.reset_password_zh_TW';
-			if ($locale == 'en_US') {
-				$subject = '【SAAS LARAVEL BOILERPLATE】- Password Reset Request';
-				$email_view = 'emails.reset_password';
-			}
-			if ($locale == 'tr_TR') {
-				$subject = '【SAAS LARAVEL BOILERPLATE】- Şifre Sıfırlama İsteği';
-				$email_view = 'emails.reset_password_tr';
-			}
+			$subject = 'İzEdebiyat- Şifre Sıfırlama İsteği';
+			$email_view = 'emails.reset-password-tr_TR';
 
-			return $this->from(env('MAIL_FROM_ADDRESS','support@my-laravel-saas-site.com'), env('MAIL_FROM_NAME', 'SAAS LARAVEL BOILERPLATE Support'))
+			return $this->from(env('MAIL_FROM_ADDRESS','yazisma@izedebiyat.com'), env('MAIL_FROM_NAME', 'İzEdebiyat Yazışma'))
 				->subject($subject)
 				->view($email_view)
 				->with(['token' => $this->token, 'email' => $this->email]);

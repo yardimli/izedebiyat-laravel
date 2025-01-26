@@ -1,6 +1,6 @@
 @extends('layouts.app-frontend')
 
-@section('title', 'İzEdebiyat - ' . $author->yazar_ad)
+@section('title', 'İzEdebiyat - ' . $author->name)
 @section('body-class', 'archive')
 
 @section('content')
@@ -11,49 +11,9 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-8 col-12">
-						<div class="box box-author mb-2">
-							<div class="post-author row-flex">
-								<div class="author-img">
-									{!! \App\Helpers\MyHelper::generateInitialsAvatar($author->yazar_resim, $author->yazar_ad) !!}
-								</div>
-								<div class="author-content">
-									<div class="top-author">
-										<h5 class="heading-font">{{ $author->yazar_ad }}</h5>
-									</div>
-									<p class="d-none d-md-block">
-										{!! nl2br(e($author->yazar_tanitim)) !!}
-									</p>
-									<div class="readmore" data-tid="yazar_hakkinda">
-										Devamını göster &gt;
-									</div>
-									<p class="hide mt-2" id="yazar_hakkinda">
-										{!! nl2br(e($author->yazar_gecmis)) !!}
-										@if($author->yazar_gecmis)
-											<br><br>
-										@endif
-										{!! nl2br(e($author->yazar_konum)) !!}
-										@if($author->yazar_konum)
-											<br><br>
-										@endif
-										{!! nl2br(e($author->yazar_resim_yazi)) !!}
-										@if($author->yazar_resim_yazi)
-											<br><br>
-										@endif
-										{!! nl2br(e($author->site_adres)) !!}
-										@if($author->site_adres)
-											<br><br>
-										@endif
-										{{ $author->katilma_tarihi }}
-									</p>
-									<div class="readless hide" data-tid="yazar_hakkinda">
-										Daha az &gt;
-									</div>
-								</div>
-							</div>
-						</div>
 						
 						<h4 class="spanborder pt-4">
-							<span>Yeni</span>
+							<span>{{ $author->name }}</span>
 						</h4>
 						
 						
@@ -88,7 +48,7 @@
 												</p>
 											</div>
 											<div class="entry-meta align-items-center">
-												<a href="{{ url('/yazar/' . $text->yazar_slug) }}">{{ $text->yazar_ad }}</a><br>
+												<a href="{{ url('/yazar/' . $text->name_slug) }}">{{ $text->name }}</a><br>
 												<span>{{ \App\Helpers\MyHelper::timeElapsedString($text->katilma_tarihi) }}</span>
 												<span class="middotDivider"></span>
 												<span class="readingTime"
@@ -109,6 +69,45 @@
 					</div>
 					
 					<div class="col-md-4 pl-md-5 sticky-sidebar">
+						<h4 class="spanborder pt-4">
+							<span>{{$author->page_title ?? 'Tanıtım' }}</span>
+						</h4>
+						
+						<div class="text-center" style="position:relative;">
+							<div>
+								<a href="{!! $author->personal_url_link !!}" target="_blank">{!! $author->personal_url !!}</a>
+							</div>
+							{!! \App\Helpers\MyHelper::generateInitialsAvatar($author->picture, $author->name, 'border-radius: 10px; width:60%; min-width:150px; min-height:150px;','mt-2 mb-2', 'yz-yazar-resim-2') !!}
+						</div>
+						
+						@php
+							$about_me = $author->about_me;
+							
+							// First clean up specific strings
+							$about_me = str_replace([
+									"<a href='http://'>http://</a><br>",
+									"<a href='http:/'>http:/</a><br>",
+									"<a href='http://'>http://</a>",
+									"<a href='http:/'>http:/</a>",
+							], '', $about_me);
+							
+							// Remove sections with empty paragraphs
+							$about_me = preg_replace('/<h5>[^<]*<\/h5>\s*<p>\s*<\/p>/', '', $about_me);
+							
+							// Remove sections with paragraphs that only contain whitespace
+							$about_me = preg_replace('/<h5>[^<]*<\/h5>\s*<p>\s*<\/p>/', '', $about_me);
+							
+							$about_me = str_replace('',"'", $about_me);
+							
+							$about_me = preg_replace('/(?<!<br>)\n/', '<br>', $about_me);
+
+							
+							$about_me = str_replace( "<a href='www", "<a href='//www",$about_me);
+							$about_me = str_replace( '<a href="www', '<a href="//www',$about_me);
+							$about_me = str_replace( '<a ', '<a target="_blank" ',$about_me);
+
+							echo $about_me;
+						@endphp
 						@include('partials.author-sidebar')
 					</div>
 				</div>
@@ -166,7 +165,7 @@
 		<div class="content-widget">
 			<div class="container">
 				<div class="sidebar-widget ads">
-					<a href="#"><img src="{{ asset('frontend/assets/images/ads/ads-2.png') }}" alt="ads"
+					<a href="#"><img src="{{ asset('/frontend/assets/images/ads/ads-2.png') }}" alt="ads"
 					                 style="max-width:80%;"></a>
 				</div>
 				<div class="hr"></div>
@@ -179,32 +178,11 @@
 @push('scripts')
 	<script>
 		$(document).ready(function () {
-			$('.readmore').click(function (event) {
-				$("#" + $(this).data("tid")).slideDown();
-				$(".readmore").hide();
-				$(".readless").show();
-				event.preventDefault();
-			});
-			
-			$('.readless').click(function (event) {
-				$("#" + $(this).data("tid")).slideUp();
-				$(".readless").hide();
-				$(".readmore").show();
-				event.preventDefault();
-			});
 		});
 	</script>
 @endpush
 
 @push('styles')
 	<style>
-      .hide {
-          display: none;
-      }
-
-      .readmore, .readless {
-          text-align: right;
-          cursor: pointer;
-      }
 	</style>
 @endpush

@@ -13,8 +13,10 @@
 			
 			<!-- Filter Buttons -->
 			<div class="filter-buttons mb-4 text-center">
+				<a href="{{ route('authors.harf', ['filter' => 'yeni']) }}"
+				   class="btn {{ $filter === 'yeni' ? 'btn-primary' : 'btn-outline-primary' }}">YENİ</a>
 				<a href="{{ route('authors.harf', ['filter' => 'tumu']) }}"
-				   class="btn {{ $filter === 'all' ? 'btn-primary' : 'btn-outline-primary' }}">Tümü</a>
+				   class="btn {{ $filter === 'tumu' ? 'btn-primary' : 'btn-outline-primary' }}">Tümü</a>
 				@foreach(['A','B','C','Ç','D','E','F','G','H','I','İ','J','K','L','M','N','O','Ö','P','R','S','Ş','T','U','Ü','V','Y','Z'] as $letter)
 					<a href="{{ route('authors.harf', ['filter' => $letter]) }}"
 					   class="btn {{ $filter === $letter ? 'btn-primary' : 'btn-outline-primary' }}">{{ $letter }}</a>
@@ -27,11 +29,11 @@
 					<div class="col-md-4 mb-4">
 						<div class="author-card">
 							<div class="author-image mb-3 position-relative">
-								<a href="{{ url('/yazar/' . $author->slug) }}">{!! \App\Helpers\MyHelper::generateInitialsAvatar($author->yazar_resim, $author->yazar_ad, 'width: 100px; height: 100px; object-fit: cover;', 'img-fluid rounded-circle', 'yz-resim') !!}
+								<a href="{{ url('/yazar/' . $author->slug) }}">{!! \App\Helpers\MyHelper::generateInitialsAvatar($author->picture, $author->name, 'width: 100px; height: 100px; object-fit: cover;', 'img-fluid rounded-circle', 'yz-resim') !!}
 								</a>
 							</div>
 							
-							<h4><a href="{{ url('/yazar/' . $author->slug) }}">{{ $author->yazar_ad }}</a></h4>
+							<h4><a href="{{ url('/yazar/' . $author->slug) }}">{{ $author->name }}</a></h4>
 							<p>{{ Str::limit($author->yazar_tanitim, 100) }}</p>
 							
 							<!-- Recent Works -->

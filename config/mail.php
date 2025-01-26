@@ -101,8 +101,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'support@my-laravel-saas-site.com'),
-        'name' => env('MAIL_FROM_NAME', 'SAAS LARAVEL BOILERPLATE Support'),
+        'address' => env('MAIL_FROM_ADDRESS', 'yazisma@izedebiyat.com'),
+        'name' => env('MAIL_FROM_NAME', 'İzEdebiyat Support'),
     ],
 
     /*

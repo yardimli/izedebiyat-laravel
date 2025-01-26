@@ -36,6 +36,7 @@
 		 */
 		protected $fillable = [
 			'name',
+			'slug',
 			'email',
 			'password',
 			'google_id',
@@ -44,6 +45,8 @@
 			'avatar',
 			'picture',
 			'username',
+			'page_title',
+			'personal_url',
 			'about_me',
 			'member_status',
 			'member_type',
@@ -51,9 +54,6 @@
 			'last_ip',
 			'background_image',
 			'email_verified_at',
-			'openai_api_key',
-			'anthropic_key',
-			'openrouter_key',
 
 
 		];
@@ -93,6 +93,11 @@
 		public function isAdmin()
 		{
 			return $this->member_type === 1;
+		}
+
+		public function yazilar()
+		{
+			return $this->hasMany(Yazi::class, 'user_id');
 		}
 
 

@@ -84,7 +84,7 @@
 					
 					<!-- LOGO -->
 					<div style="text-align: center; margin-bottom: 20px">
-						<img style="width: auto; max-height: 90px;" src="/images/logo.png" id="site_logo" alt="logo-image">
+						<img style="width: auto; max-height: 90px;" src="{{ asset('/assets/images/logo/logo-large.png') }}" id="site_logo" alt="logo-image">
 					</div>
 					
 					
@@ -101,14 +101,14 @@
 							<div class="col-md-12">
 								<div class="reset-form-title">
 									<h5 class="s-26 w-700">{{ __('default.Forgot password?') }}</h5>
-									<p class="p-sm color--grey">Please enter your email address. If the account exists, we will send a password reset link to your email address.
+									<p class="p-sm color--grey">{{ __('default.Please enter your email address. If the account exists, we will send a password reset link to your email address.') }}
 									</p>
 								</div>
 							</div>
 							
 							<!-- Form Input -->
 							<div class="col-md-12">
-								<input class="form-control email @error('email') is-invalid @enderror" type="email" name="email" value="{{ old('email') }}" placeholder="example@example.com" required autocomplete="email" autofocus>
+								<input class="form-control email @error('email') is-invalid @enderror" type="email" name="email" value="{{ old('email') }}" placeholder="ornek@izedebiyat.com" required autocomplete="email" autofocus>
 								@error('email')
 								<span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
 								@enderror
@@ -122,7 +122,7 @@
 							<!-- Form Data  -->
 							<div class="col-md-12">
 								<div class="form-data text-center">
-									<span><a href="{{route('login')}}">It's okay, I found my password!</a></span>
+									<span><a href="{{route('login')}}">{{ __('default.It\'s okay, I found my password!')}}</a></span>
 								</div>
 							</div>
 							

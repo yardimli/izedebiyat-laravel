@@ -15,6 +15,18 @@
   font-size: 0.7em;
 }
 
+.yz-yazar-resim-2 {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #aaa;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-size: 0.7em;
+}
+
+
 .yz-yazi-resim {
   position: absolute;
   bottom: 5px;

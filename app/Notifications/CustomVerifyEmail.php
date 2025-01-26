@@ -41,20 +41,10 @@
 			$logoPath = public_path('images/logo.png');
 			$logoData = base64_encode(file_get_contents($logoPath));
 
-			$locale = \App::getLocale() ?: config('app.fallback_locale', 'zh_TW');
+			$locale = \App::getLocale() ?: config('app.fallback_locale', 'tr_TR');
 
-
-			$subject = '織音-電子信箱驗證信';
-			$email_view = 'emails.verify-email_zh_TW';
-			if ($locale == 'en_US') {
-				$subject = 'Please verify your SAAS LARAVEL BOILERPLATE email address.';
-				$email_view = 'emails.verify-email';
-			}
-			if ($locale == 'tr_TR') {
-				$subject = 'Lütfen SAAS LARAVEL BOILERPLATE e-posta adresinizi doğrulayın.';
-				$email_view = 'emails.verify-email_tr';
-			}
-
+			$subject = 'Lütfen İzEdebiyat e-posta adresinizi doğrulayın.';
+			$email_view = 'emails.verify-email-tr_TR';
 
 			return (new MailMessage)
 				->subject($subject)

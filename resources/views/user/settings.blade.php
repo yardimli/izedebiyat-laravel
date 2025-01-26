@@ -76,7 +76,7 @@
 									<!-- Card body END -->
 									<!-- Card footer -->
 									<div class="card-footer text-center py-2 pb-3">
-										<a class="btn btn-secondary-soft btn-sm w-100 mb-2" href="{{route('my-settings')}}">{{__('default.My Books')}} </a>
+										<a class="btn btn-secondary-soft btn-sm w-100 mb-2" href="{{route('sahne-arkasi')}}">{{__('default.My Books')}} </a>
 {{--										<a class="btn btn-info-soft btn-sm w-100" href="{{route('buy-packages')}}">Purchase Tokens</a>--}}
 									</div>
 								
@@ -121,7 +121,7 @@
 										</div>
 									@endif
 									
-									<form action="{{ route('settings-update') }}" method="post" class="row g-3"
+									<form action="{{ route('sahne-arkasi-guncelle') }}" method="post" class="row g-3"
 									      enctype="multipart/form-data">
 										@csrf
 										<!-- First name -->
@@ -177,35 +177,6 @@
 								</div>
 								<!-- Card body END -->
 								
-								<!-- API Keys START -->
-								<div class="card mb-4">
-									<div class="card-header border-0 pb-0">
-										<h1 class="h5 card-title">{{__('default.API Keys')}}</h1>
-										<p class="mb-0">{{__('default.Set your personal API keys for unmetered usage.')}}</p>
-									</div>
-									<div class="card-body">
-										<form action="{{ route('settings-update-api-keys') }}" method="post" class="row g-3">
-											@csrf
-											<div class="col-12">
-												<label class="form-label">{{__('default.OpenAI API Key')}}</label>
-												<input type="text" name="openai_api_key" class="form-control" value="{{ old('openai_api_key', $user->openai_api_key) }}">
-											</div>
-											<div class="col-12">
-												<label class="form-label">{{__('default.Anthropic API Key')}}</label>
-												<input type="text" name="anthropic_key" class="form-control" value="{{ old('anthropic_key', $user->anthropic_key) }}">
-											</div>
-											<div class="col-12">
-												<label class="form-label">{{__('default.OpenRouter API Key')}}</label>
-												<input type="text" name="openrouter_key" class="form-control" value="{{ old('openrouter_key', $user->openrouter_key) }}">
-											</div>
-											<div class="col-12 text-end">
-												<button type="submit" class="btn btn-primary mb-0">{{__('default.Update API Keys')}}</button>
-											</div>
-										</form>
-									</div>
-								</div>
-								<!-- API Keys END -->
-								
 								<!-- Account settings END -->
 								
 								<!-- Change your password START -->
@@ -219,7 +190,7 @@
 									<!-- Title START -->
 									<div class="card-body">
 										
-										<form action="{{ route('settings-password-update') }}" method="post"
+										<form action="{{ route('sahne-arkasi-sifre-guncelle') }}" method="post"
 										      class="row g-3">
 											@csrf
 											<!-- Current password -->
@@ -332,7 +303,7 @@
 									<h5 class="card-title">{{__('default.Delete account')}}</h5>
 									<p class="mb-2">{{__('default.We are sorry to hear that you wish to delete your account.')}}</p>
 									<p class="mb-2">{{__('default.Please note that deleting your account may result in the permanent loss of your data.')}}</p>
-									<p class="mb-2">{{__('default.We are sad to see you go, but we hope that SAAS LARAVEL BOILERPLATE has been an enjoyable experience for you. We wish you the best in your future endeavors. Goodbye!')}}</p>
+									<p class="mb-2">{{__('default.We are sad to see you go, but we hope that İzEdebiyat has been an enjoyable experience for you. We wish you the best in your future endeavors. Goodbye!')}}</p>
 								</div>
 								<!-- Card header START -->
 								<!-- Card body START -->

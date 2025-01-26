@@ -20,7 +20,7 @@
 								</a>
 							</h5>
 							<div class="entry-meta align-items-center">
-								<a href="{{ url('/yazar/' . $post->yazar_slug) }}">{{ $post->yazar_ad }}</a> -
+								<a href="{{ url('/yazar/' . $post->name_slug) }}">{{ $post->name }}</a> -
 								<a href="{{ url('/kume/' . $post->ust_kategori_slug . '/' . $post->kategori_slug) }}">
 									{{ $post->ust_kategori_ad }}<br>{{ $post->kategori_ad }}
 								</a><br>
@@ -58,7 +58,7 @@
 								</a>
 							</h5>
 							<div class="entry-meta align-items-center">
-								<a href="{{ url('/yazar/' . $post->yazar_slug) }}">{{ $post->yazar_ad }}</a> -
+								<a href="{{ url('/yazar/' . $post->name_slug) }}">{{ $post->name }}</a> -
 								<a href="{{ url('/kume/' . $post->ust_kategori_slug . '/' . $post->kategori_slug) }}">
 									{{ $post->ust_kategori_ad }}<br>{{ $post->kategori_ad }}
 								</a><br>
@@ -96,7 +96,7 @@
 								</a>
 							</h5>
 							<div class="entry-meta align-items-center">
-								<a href="{{ url('/yazar/' . $post->yazar_slug) }}">{{ $post->yazar_ad }}</a> -
+								<a href="{{ url('/yazar/' . $post->name_slug) }}">{{ $post->name }}</a> -
 								<a href="{{ url('/kume/' . $post->ust_kategori_slug . '/' . $post->kategori_slug) }}">
 									{{ $post->ust_kategori_ad }}<br>{{ $post->kategori_ad }}
 								</a><br>

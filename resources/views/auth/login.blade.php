@@ -90,7 +90,7 @@
 										<div class="register-page-txt color--white">
 
 											<!-- Logo -->
-											<img class="img-fluid" src="/images/logo.png" id="site_logo" alt="logo-image">
+											<img class="img-fluid" src="{{ asset('/assets/images/logo/logo-large.png') }}" id="site_logo" alt="logo-image">
 											
 											<!-- Text -->
 											<p class="p-md mt-25">{{__('default.Boilerplate Site Tagline')}}
@@ -98,7 +98,7 @@
 
 											<!-- Copyright -->
 											<div class="register-page-copyright">
-												<p class="p-sm">&copy; 2024 my-laravel-saas-site.com</p>
+												<p class="p-sm">&copy; 2025 www.izedebiyat.com</p>
 											</div>
 
 										</div>
@@ -108,7 +108,7 @@
 									<!-- LOGIN FORM -->
 									<div class="col-md-6">
 										<div class="text-center mt-2">
-											<a href="/" class="logo-black"><img src="/images/logo.png" id="site_logo" alt="logo" style="max-height: 200px;"></a>
+											<a href="/" class="logo-black"><img src="{{ asset('/assets/images/logo/logo-large.png') }}" id="site_logo" alt="logo" style="width:75%;"></a>
 										</div>
 										
 										<div class="register-page-form" style="margin-top: 5px; padding-top: 5px;">

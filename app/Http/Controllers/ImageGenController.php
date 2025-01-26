@@ -42,7 +42,11 @@
 
 			$model = 'fast'; //$request->input('model', 'fast');
 
-			$prompt_enhancer = $request->input('prompt_enhancer', '##UserPrompt##');
+			$prompt_enhancer = '##UserPrompt##
+Write a prompt to create an image using the above text.:
+Write in English even if the above text is written in another language.
+With the above information, compose a image. Write it as a single paragraph. The instructions should focus on the text elements of the image. If the prompt above mentions texts then add them with the instructions of placement. The texts should not repeat. If no texts are mentioned don\'t add anything to the prompt.';
+
 			if ($prompt_enhancer === null || $prompt_enhancer === '') {
 				$prompt_enhancer = '##UserPrompt##';
 			}
@@ -51,13 +55,12 @@
 				$user_prompt = 'A fantasy picture of a cat';
 			}
 			$gpt_prompt = str_replace('##UserPrompt##', $user_prompt, $prompt_enhancer);
-			$llm = $request->input('llm');
+			$llm = 'anthropic/claude-3.5-sonnet:beta';
 
 			$chat_history[] = [
 				'role' => 'user',
 				'content' => $gpt_prompt,
 			];
-
 
 			$image_prompt = MyHelper::llm_no_tool_call($llm, '', $chat_history, false);
 			Log::info('Enhanced Cover Image Prompt');
