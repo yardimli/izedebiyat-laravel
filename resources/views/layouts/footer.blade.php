@@ -6,8 +6,9 @@
 				<!-- Footer nav START -->
 				<ul class="nav justify-content-center justify-content-md-start lh-1">
 					<li class="nav-item">
-						<a class="nav-link" href="{{route('about-page')}}"><i class="bi bi-info-circle  me-2"></i>{{__('default.About')}}</a>
+						<a class="nav-link" href="{{ url('/izedebiyat') }}"><i class="bi bi-info-circle  me-2"></i>{{__('default.About')}}</a>
 					</li>
+					@if (1===2)
 					<li class="nav-item">
 						<div class="dropup mt-0 text-center text-sm-end">
 							<a class="dropdown-toggle nav-link" href="{{ route('frontend-index') }}" role="button"
@@ -26,14 +27,13 @@
 					<li class="nav-item">
 						<a class="nav-link" href="{{route('help-page')}}"><i class="bi bi-exclamation-circle  me-2"></i>{{__('default.Help')}}</a>
 					</li>
+					@endif
+					
 					<li class="nav-item">
-						<a class="nav-link" href="{{route('terms-page')}}"><i class="bi bi-check-all  me-2"></i>{{__('default.Terms')}}</a>
+						<a class="nav-link" href="{{route('frontend-yasallik')}}"><i class="bi bi-check-all  me-2"></i>{{__('default.Terms')}}</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="{{route('privacy-page')}}"><i class="bi bi-list  me-2"></i>{{__('default.Privacy')}}</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{{route('change-log-page')}}"><i class="bi bi-list-check  me-2"></i>{{__('default.Change Log')}}</a>
+						<a class="nav-link" href="{{route('frontend-gizlilik')}}"><i class="bi bi-list  me-2"></i>{{__('default.Privacy')}}</a>
 					</li>
 				</ul>
 				<!-- Footer nav START -->

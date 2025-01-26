@@ -167,7 +167,7 @@
 												<input class="form-check-input" type="checkbox" name="policy" id="policy"
 												       style="float: left; margin-right: 5px;"
 												       value="1" {{ old('policy', 0) ? 'checked' : '' }}>
-												<span>{!! __('default.I Agree with', [ 'terms_url' => route('terms-page'), 'privacy_url' => route('privacy-page') ]) !!}</span>
+												<span>{!! __('default.I Agree with', [ 'terms_url' => route('frontend-yasallik'), 'privacy_url' => route('frontend-gizlilik') ]) !!}</span>
 											</div>
 										</div>
 										@if ($errors->has('policy'))

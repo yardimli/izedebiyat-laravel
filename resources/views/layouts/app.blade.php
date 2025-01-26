@@ -134,19 +134,6 @@ Header START -->
 			<!-- Main navbar START -->
 			<div class="collapse navbar-collapse" id="navbarCollapse">
 				
-				<!-- Nav Search START -->
-				<div class="nav mt-3 mt-lg-0 flex-nowrap align-items-center px-4 px-lg-0">
-					<div class="nav-item w-100">
-						<form class="rounded position-relative">
-							<input class="form-control ps-5 bg-light" type="search" placeholder="{{__('default.Search...')}}"
-							       aria-label="Search">
-							<button class="btn bg-transparent px-2 py-0 position-absolute top-50 start-0 translate-middle-y"
-							        type="submit"><i class="bi bi-search fs-5"> </i></button>
-						</form>
-					</div>
-				</div>
-				<!-- Nav Search END -->
-				
 				<ul class="navbar-nav navbar-nav-scroll ms-auto">
 					<li class="nav-item">
 						<a class="nav-link active" href="{{route('chat')}}">{{__('default.Chat')}}</a>
@@ -155,7 +142,7 @@ Header START -->
 						<a class="nav-link active" href="{{route('image-gen')}}">{{__('default.Image Gen')}}</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link active" href="{{route('blog-page')}}">{{__('default.Blog')}}</a>
+{{--						<a class="nav-link active" href="{{route('blog-page')}}">{{__('default.Blog')}}</a>--}}
 					</li>
 
 					
@@ -167,11 +154,6 @@ Header START -->
 			
 			<!-- Nav right START -->
 			<ul class="nav flex-nowrap align-items-center ms-sm-3 list-unstyled">
-				<li class="nav-item ms-2">
-					<a class="nav-link icon-md btn btn-light p-0" href="{{route('help-page')}}" title="{{__('default.Help')}}">
-						<i class="bi bi-life-preserver fs-6"> </i>
-					</a>
-				</li>
 				<li class="nav-item ms-2 dropdown">
 					<a class="nav-link btn icon-md p-0" href="#" id="profileDropdown" role="button"
 					   data-bs-auto-close="outside"

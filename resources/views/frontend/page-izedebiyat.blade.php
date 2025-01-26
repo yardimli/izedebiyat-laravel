@@ -10,12 +10,12 @@
 		<main id="content">
 			
 			<div class="mb-5">
-				<h1 class="entry-title mb-2">
+				<h1 class="entry-title mb-2 text-center">
 					İzEdebiyat Hakkında
 				</h1>
 				<div class="entry-meta align-items-center">
 					<p class="text-center">
-						<img src="/frontend/anagrafikler/amblem-buyuk.png" style="max-width: 350px;"><br>
+						<img src="/frontend/anagrafikler/amblem-buyuk.png" style="max-width: 350px; min-height: 300px;"><br>
 						<br>
 						<span style="font-family: Arial, Helvetica, sans-serif; color: red; font-size: 2rem; font-weight: bold">İzEdebiyat Nedir?</span>
 					</p>

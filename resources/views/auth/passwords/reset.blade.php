@@ -1,146 +1,230 @@
-<!doctype html>
-<!--[if lt IE 7 ]>
-<html class="ie ie6" lang="en"> <![endif]-->
-<!--[if IE 7 ]>
-<html class="ie ie7" lang="en"> <![endif]-->
-<!--[if IE 8 ]>
-<html class="ie ie8" lang="en"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!-->
+<!DOCTYPE html>
 <html lang="en">
-
-
 <head>
+	<title>{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}</title>
 	
+	<!-- Meta Tags -->
 	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="author" content="DSAThemes">
-	<meta name="description" content="Discover a new beginning.">
-	<meta name="keywords"
-	      content="Responsive, HTML5, DSAThemes, Landing, Software, Mobile App, SaaS, Startup, Creative, Digital Product">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="fictionfusion.io">
+	<meta name="description"
+	      content="Fiction Fusion - Unleash the Stories Within: Where Human Ingenuity and AI Creativity Converge">
 	
-	<!-- SITE TITLE -->
-	<title>Discover a new beginning.</title>
+	<!-- Dark mode -->
+	<script>
+		const storedTheme = localStorage.getItem('theme')
+		
+		const getPreferredTheme = () => {
+			if (storedTheme) {
+				return storedTheme
+			}
+			return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+		}
+		
+		const setTheme = function (theme) {
+			if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				document.documentElement.setAttribute('data-bs-theme', 'dark')
+			} else {
+				document.documentElement.setAttribute('data-bs-theme', theme)
+			}
+		}
+		
+		setTheme(getPreferredTheme())
+		
+		window.addEventListener('DOMContentLoaded', () => {
+			var el = document.querySelector('.theme-icon-active');
+			if (el != 'undefined' && el != null) {
+				const showActiveTheme = theme => {
+					const activeThemeIcon = document.querySelector('.theme-icon-active use')
+					const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
+					const svgOfActiveBtn = btnToActive.querySelector('.mode-switch use').getAttribute('href')
+					
+					document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+						element.classList.remove('active')
+					})
+					
+					btnToActive.classList.add('active')
+					activeThemeIcon.setAttribute('href', svgOfActiveBtn)
+				}
+				
+				window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+					if (storedTheme !== 'light' || storedTheme !== 'dark') {
+						setTheme(getPreferredTheme())
+					}
+				})
+				
+				showActiveTheme(getPreferredTheme())
+				
+				document.querySelectorAll('[data-bs-theme-value]')
+					.forEach(toggle => {
+						toggle.addEventListener('click', () => {
+							const theme = toggle.getAttribute('data-bs-theme-value')
+							localStorage.setItem('theme', theme)
+							setTheme(theme)
+							showActiveTheme(theme)
+						})
+					})
+				
+			}
+		})
 	
-	<!-- FAVICON AND TOUCH ICONS -->
-	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-	<link rel="manifest" href="/site.webmanifest">
+	</script>
 	
-	<!-- GOOGLE FONTS -->
-	<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&amp;display=swap"
-	      rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
-	      rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
-	      rel="stylesheet">
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="/assets/images/favicon.ico">
 	
-	<!-- BOOTSTRAP CSS -->
-	<link href="/assets/v2/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Google Font -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
 	
-	<!-- FONT ICONS -->
-	<link href="/assets/v2/css/flaticon.css" rel="stylesheet">
+	<!-- Plugins CSS -->
+	<link rel="stylesheet" type="text/css" href="/assets/vendor/font-awesome/css/all.min.css">
+	<link rel="stylesheet" type="text/css" href="/assets/vendor/bootstrap-icons/bootstrap-icons.css">
 	
-	<!-- PLUGINS STYLESHEET -->
-	<link href="/assets/v2/css/menu.css" rel="stylesheet">
-	<link id="effect" href="/assets/v2/css/dropdown-effects/fade-down.css" media="all" rel="stylesheet">
-	<link href="/assets/v2/css/magnific-popup.css" rel="stylesheet">
-	<link href="/assets/v2/css/owl.carousel.min.css" rel="stylesheet">
-	<link href="/assets/v2/css/owl.theme.default.min.css" rel="stylesheet">
-	<link href="/assets/v2/css/lunar.css" rel="stylesheet">
-	
-	<!-- ON SCROLL ANIMATION -->
-	<link href="/assets/v2/css/animate.css" rel="stylesheet">
-	
-	<!-- TEMPLATE CSS -->
-	<link href="/assets/v2/css/blue-theme.css" rel="stylesheet">
-	
-	<!-- RESPONSIVE CSS -->
-	<link href="/assets/v2/css/responsive.css" rel="stylesheet">
+	<!-- Theme CSS -->
+	<link rel="stylesheet" type="text/css" href="/assets/css/style.css">
 
 </head>
-
-
 <body>
 
-
-<!-- PAGE CONTENT ============================================= -->
-<div id="page" class="page font--jakarta">
+<main>
 	
+	<!-- **************** MAIN CONTENT START **************** -->
 	
-	<!-- RESET PASSWORD PAGE
-	============================================= -->
-	<section id="reset-password" class="bg--fixed reset-password-section division">
+	<!-- Main content START -->
+	<div class="bg-primary pt-5 pb-0 position-relative">
+		@include('layouts.svg-image')
+		
+		<!-- Container START -->
 		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-md-7 col-lg-5">
-					
-					
-					<!-- LOGO -->
-					<div style="text-align: center; margin-bottom: 20px">
-						<img style="width: auto; max-height: 90px;" src="{{ asset('/assets/images/logo/logo-large.png') }}" id="site_logo" alt="logo-image">
-					</div>
-					
-					
-					<!-- RESET PASSWORD FORM -->
-					@if (session('status'))
-						<div class="alert alert-success" role="alert">
-							{{ session('status') }}
-						</div>
-					@endif
-					<div class="reset-page-wrapper text-center">
-						<form name="resetpasswordform" roll="form" class="row reset-password-form r-10" method="POST"
-						      action="{{ route('password.email') }}">
+			<div class="row justify-content-center text-center">
+				<div class="col-12">
+					<!-- Title -->
+					<h1 class="display-4 text-white mb-4 position-relative">İzEdebiyat</span>'a Tekrar Hoş Geldiniz!</h1>
+					</h1>
+					@include('layouts.svg2-image')
+				</div>
+				<div class="col-sm-10 col-md-8 col-lg-6 position-relative z-index-1">
+					<!-- Sign in form START -->
+					<div class="card card-body p-4 p-sm-5 mt-sm-n5 mb-n5">
+						<!-- Title -->
+						<h2 class="h1 mb-2">Şifre Sıfırlama</h2>
+						<!-- Form START -->
+						<form roll="form" class="mt-4" method="POST" action="{{ route('password.update') }}">
 							@csrf
-							<!-- Title-->
-							<div class="col-md-12">
-								<div class="reset-form-title">
-									<h5 class="s-26 w-700">{{ __('default.Forgot password?') }}</h5>
-									<p class="p-sm color--grey">請輸入您的電子信箱，如果帳戶存在，我們將會發送一個重置密碼的連結到您的信箱。
-									</p>
-								</div>
-							</div>
 							
-							<!-- Form Input -->
-							<div class="col-md-12">
-								<input class="form-control email @error('email') is-invalid @enderror" type="email" name="email"
-								       value="{{ old('email') }}" placeholder="example@example.com" required autocomplete="email"
-								       autofocus>
+							<input type="hidden" name="token" value="{{ $token }}">
+							
+							<!-- Email -->
+							<div class="mb-3 position-relative input-group-lg">
+								
+								<input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+								       aria-label="E-posta" name="email" value="{{ old('email', $email) }}"
+								       placeholder="E-posta Giriniz..." required autocomplete="email" autofocus>
+								
+								
 								@error('email')
-								<span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+								<span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
 								@enderror
 							</div>
-							
-							<!-- Form Submit Button -->
-							<div class="col-md-12">
-								<button type="submit"
-								        class="btn btn--theme hover--theme submit">{{ __('default.Reset Password') }}</button>
-							</div>
-							
-							<!-- Form Data  -->
-							<div class="col-md-12">
-								<div class="form-data text-center">
-									<span><a href="{{route('login')}}">沒事，我把密碼找回了！</a></span>
+							<!-- New password -->
+							<div class="mb-3">
+								
+								<!-- Input group -->
+								<div class="input-group input-group-lg">
+									<input type="password" class="form-control fakepassword psw-input @error('password') is-invalid @enderror"
+									       aria-label="Şifre"
+									       id="psw-input" name="password"
+									       placeholder="Yeni Şifre..." value="" required autocomplete="new-password">
+									<span class="input-group-text p-0"><i
+											class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"></i></span>
+									@error('password')
+									<span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+									@enderror
+								</div>
+								<!-- Pswmeter -->
+								<div id="pswmeter" class="mt-2"></div>
+								<div class="d-flex mt-1">
+									<div id="pswmeter-message" class="rounded"></div>
+									<!-- Password message notification -->
+									<div class="ms-auto">
+										<i class="bi bi-info-circle ps-1" data-bs-container="body" data-bs-toggle="popover"
+										   data-bs-placement="top"
+										   data-bs-content="En az bir büyük harf, bir küçük harf, bir özel karakter, bir rakam içermeli ve 8 karakter uzunluğunda olmalıdır."
+										   data-bs-original-title="" title=""></i>
+									</div>
+								</div>
+								
+								
+								<div class="input-group input-group-lg">
+									<input type="password" class="form-control fakepassword2"
+									       aria-label="Şifre Onayı"
+									       id="password-confirm" name="password_confirmation"
+									       placeholder="Şifreyi Onaylayın..." value="" required autocomplete="new-password">
+									<span class="input-group-text p-0"><i
+											class="fakepasswordicon2 fa-solid fa-eye-slash cursor-pointer p-2 w-40px"></i></span>
 								</div>
 							</div>
-							
-							<!-- Form Message -->
-							<div class="col-lg-12 reset-form-msg">
-								<span class="loading"></span>
+							<!-- Button -->
+							<div class="d-grid">
+								<button type="submit" class="btn btn-lg btn-primary-soft">{{ __('default.Reset Password') }}</button>
 							</div>
+							<!-- Copyright -->
+							<p class="mb-0 mt-3">©2025 <a target="_blank" href="https://www.izedebiyat.com/">izedebiyat</a> Tüm hakları saklıdır</p>
 						
 						</form>
-					</div>  <!-- END RESET PASSWORD FORM -->
-				
-				
+						<!-- Form END -->
+					</div>
+					<!-- Sign in form START -->
 				</div>
-			</div>     <!-- End row -->
-		</div>     <!-- End container -->
-	</section>  <!-- END RESET PASSWORD PAGE -->
+			</div> <!-- Row END -->
+		</div>
+		<!-- Container END -->
+	</div>
+	<!-- Main content END -->
 
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
 
-</div>  <!-- END PAGE CONTENT -->
+<!-- =======================
+Footer START -->
+<footer class="pt-5 pb-2 pb-sm-4 position-relative bg-mode">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-sm-10 col-md-8 col-lg-6">
+				<div class="d-grid d-sm-flex justify-content-center justify-content-sm-between align-items-center mt-3">
+					<!-- Nav -->
+				</div>
+			</div>
+		</div>
+	</div>
+</footer>
+<!-- =======================
+Footer END -->
+
+<!-- **************** MAIN CONTENT END **************** -->
+
+<!-- =======================
+JS libraries, plugins and custom scripts -->
+
+<!-- Bootstrap JS -->
+<script src="/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Vendors -->
+<script src="/assets/vendor/pswmeter/pswmeter.min.js"></script>
+
+<!-- Theme Functions -->
+<script src="/assets/js/functions.js"></script>
+
 </body>
-
 </html>
+
+
+
+
+
+
