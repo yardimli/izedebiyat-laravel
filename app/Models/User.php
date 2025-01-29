@@ -95,9 +95,9 @@
 			return $this->member_type === 1;
 		}
 
-		public function yazilar()
+		public function articles()
 		{
-			return $this->hasMany(Yazi::class, 'user_id');
+			return $this->hasMany(Article::class, 'user_id');
 		}
 
 

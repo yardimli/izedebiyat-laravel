@@ -162,7 +162,7 @@
 				return redirect()->route('login');
 			}
 
-			return view('user.chat', ['current_session_id' => $session_id]);
+			return view('backend.chat', ['current_session_id' => $session_id]);
 		}
 
 	}

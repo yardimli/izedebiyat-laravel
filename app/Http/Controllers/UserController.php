@@ -20,29 +20,31 @@
 	{
 		public function index(Request $request)
 		{
-			// Check if the logged-in user is user_id 1
-			if (Auth::user()->id === 1) {
-				// Fetch all users
-				$query = User::query();
+			if (Auth::user()->member_type === 1) {
+				$query = User::query()
+					->select('users.*')
+					->selectRaw('(SELECT COUNT(*) FROM articles WHERE articles.user_id = users.id AND articles.approved = 1 AND articles.deleted = 0) as story_count')
+					->selectRaw('(SELECT MAX(created_at) FROM articles WHERE articles.user_id = users.id AND articles.approved = 1 AND articles.deleted = 0) as last_story_date');
 
 				if ($request->has('search')) {
 					$query->where('name', 'like', "%{$request->search}%")
 						->orWhere('email', 'like', "%{$request->search}%");
 				}
 
-//				$users = $query->paginate(200);
 				$users = $query->orderBy('id', 'desc')->get();
 
 				$page = LengthAwarePaginator::resolveCurrentPage() ?: 1;
-
-				// Create a new LengthAwarePaginator instance
 				$items = $users->forPage($page, 100);
-				$users = new LengthAwarePaginator($items, $users->count(), 100, $page, [
-					'path' => LengthAwarePaginator::resolveCurrentPath(),
-				]);
 
-				// Return to the users view
-				return view('user.users', compact('users'));
+				$users = new LengthAwarePaginator(
+					$items,
+					$users->count(),
+					100,
+					$page,
+					['path' => LengthAwarePaginator::resolveCurrentPath()]
+				);
+
+				return view('backend.users', compact('users'));
 			} else {
 				abort(403, 'Unauthorized action.');
 			}
@@ -50,9 +52,9 @@
 
 		public function loginAs(Request $request)
 		{
-			if (Auth::user()->id === 1) {
+			if (Auth::user()->member_type === 1) {
 				Auth::loginUsingId($request->user_id);
-				return redirect()->back();
+				return redirect()->route('articles.index');
 			} else {
 				abort(403, 'Unauthorized action.');
 			}

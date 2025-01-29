@@ -103,13 +103,13 @@
 
 		public static function initializeCategoryImages()
 		{
-			$categories = DB::table('kategoriler')->get();
+			$categories = DB::table('categories')->get();
 			foreach ($categories as $category) {
 				self::$categoryImages[$category->id] = $category->picture;
 			}
 		}
 
-		public static function generateInitialsAvatar($pictureFile, $name, $extraCss = 'border-radius: 0px;', $extraClass = 'avatar', $aiClass = 'yz-yazar-resim')
+		public static function generateInitialsAvatar($pictureFile, $name, $extraCss = 'border-radius: 0px;', $extraClass = 'avatar', $aiClass = 'art-author-picture')
 		{
 			$hasPicture = false;
 			if ($pictureFile !== null && $pictureFile !== "") {
@@ -150,15 +150,15 @@
             #$uniqueId {
                 background-color: $bgColor;
                 color: $textColor;
-                width: 100px;
-                height: 100px;
+                width: 40px;
+                height: 40px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-family: Arial, sans-serif;
                 font-weight: bold;
-                font-size: 36px;
+                font-size: 22px;
                 user-select: none;
             }
         </style>
@@ -170,20 +170,20 @@
 			return $css . $html;
 		}
 
-		public static function getImage($yaziAnaResim, $categoryId = '', $extraClass = '', $extraStyle = '')
+		public static function getImage($articleMainImage, $categoryId = '', $extraClass = '', $extraStyle = '')
 		{
-			$yaziAnaResim = str_ireplace('.png', '.jpg', $yaziAnaResim);
-			$yaziAnaResim = str_replace('\\', '/', $yaziAnaResim);
+			$articleMainImage = str_ireplace('.png', '.jpg', $articleMainImage);
+			$articleMainImage = str_replace('\\', '/', $articleMainImage);
 
 			$aiResim = '';
-			if (strpos($yaziAnaResim, '_00001_') !== false) {
-				$aiResim = '<span class="yz-yazi-resim" data-toggle="tooltip" data-placement="top" 
+			if (strpos($articleMainImage, '_00001_') !== false) {
+				$aiResim = '<span class="ai-article-image" data-toggle="tooltip" data-placement="top" 
                         title="Yapay zekaya yazının içeriğini vererek üretildi">YZ</span>';
 			}
 
-			if ($yaziAnaResim !== '' && Storage::disk('public')->exists("yazi_resimler/" . $yaziAnaResim)) {
+			if ($articleMainImage !== '' && Storage::disk('public')->exists("yazi_resimler/" . $articleMainImage)) {
 				return "<div style='position:relative;'>
-                    <img src='/storage/yazi_resimler/{$yaziAnaResim}' class='{$extraClass}' 
+                    <img src='/storage/yazi_resimler/{$articleMainImage}' class='{$extraClass}' 
                     style='{$extraStyle}' alt='yazı resim'>{$aiResim}</div>";
 			}
 
@@ -224,6 +224,29 @@
 			} else {
 				return $carbon->locale('tr')->diffForHumans();
 			}
+		}
+
+		public static function timeString($datetime, $full = false)
+		{
+			$carbon = Carbon::parse($datetime);
+			$now = Carbon::now();
+
+				$months = [
+					'01' => 'Oca',
+					'02' => 'Şub',
+					'03' => 'Mar',
+					'04' => 'Nis',
+					'05' => 'May',
+					'06' => 'Haz',
+					'07' => 'Tem',
+					'08' => 'Ağu',
+					'09' => 'Eyl',
+					'10' => 'Eki',
+					'11' => 'Kas',
+					'12' => 'Ara'
+				];
+
+			return $carbon->format('d ') . $months[$carbon->format('m')] . $carbon->format(' Y');
 		}
 
 		public static function estimatedReadingTime($content = '', $wpm = 250)
@@ -628,17 +651,17 @@
 
 			while ($continue && $counter < 100) {
 				// Get stories using Laravel's query builder
-				$stories = DB::table('yazilar')
+				$articles = DB::table('articles')
 					->where('bad_critical', -1)
-					->where('silindi', 0)
-					->where('onay', 1)
+					->where('deleted', 0)
+					->where('approved', 1)
 					->orderBy('id', 'DESC')
 					->limit(100)
 					->get();
 
-				$continue = $stories->count() > 0;
+				$continue = $articles->count() > 0;
 
-				foreach ($stories as $story) {
+				foreach ($articles as $article) {
 					$counter++;
 
 					$llm_result = self::llm_no_tool_call(
@@ -646,7 +669,7 @@
 						'',
 						[[
 							'role' => 'user',
-							'content' => "take the following Turkish, and analyze it for being harmful to a subset of people, such as ethnic, religious, sexual orientation, or other minority groups. Rate it from 0 to 5, where 0 is not harmful at all, and 5 is extremely harmful. If harmful provide a brief explanation of why you rated it as such. Return reason in English. If not harmful, leave the explanation empty. The text is as follows: Title: " . $story->baslik . " Subtitle: " . $story->alt_baslik . " Category: " . $story->ust_kategori_ad . " Subcategory: " . $story->kategori_ad . " text: " . $story->yazi . " output in Turkish, output JSON as: ``` { \"harmful\": \"0-5\" \"explanation\": \"\" } ```"
+							'content' => "take the following Turkish, and analyze it for being harmful to a subset of people, such as ethnic, religious, sexual orientation, or other minority groups. Rate it from 0 to 5, where 0 is not harmful at all, and 5 is extremely harmful. If harmful provide a brief explanation of why you rated it as such. Return reason in English. If not harmful, leave the explanation empty. The text is as follows: Title: " . $article->title . " Subtitle: " . $article->subtitle . " Category: " . $article->parent_category_name . " Subcategory: " . $article->category_name . " text: " . $article->main_text . " output in Turkish, output JSON as: ``` { \"harmful\": \"0-5\" \"explanation\": \"\" } ```"
 						]],
 						true
 					);
@@ -656,8 +679,8 @@
 						$explanation = $llm_result['explanation'] ?? '';
 
 						// Update using Laravel's query builder
-						DB::table('yazilar')
-							->where('id', $story->id)
+						DB::table('articles')
+							->where('id', $article->id)
 							->update([
 								'bad_critical' => $harmful,
 								'critical_reason' => $explanation
@@ -665,17 +688,17 @@
 
 						echo $counter . " - Moderation: - \n";
 						if ($harmful > 0 || $explanation !== '') {
-							echo $story->id . " " . $story->baslik . ", kategori " . $story->ust_kategori_ad . "/" . $story->kategori_ad . "<br>\n";
+							echo $article->id . " " . $article->title . ", kategori " . $article->parent_category_name . "/" . $article->category_name . "<br>\n";
 							echo "Harmful: " . $harmful . "<br>\n";
 							echo "Explanation: " . $explanation . "<br>\n";
 						} else {
-							echo "id: " . $story->id . " - Not harmful.<br>\n";
+							echo "id: " . $article->id . " - Not harmful.<br>\n";
 						}
 						flush();
 						ob_flush();
 					} else {
 						echo $counter . " - Error: <br>\n";
-						echo $story->id . " " . $story->baslik . ", kategori " . $story->ust_kategori_ad . "/" . $story->kategori_ad . "<br>\n";
+						echo $article->id . " " . $article->title . ", kategori " . $article->parent_category_name . "/" . $article->category_name . "<br>\n";
 						echo var_dump($llm_result);
 						flush();
 						ob_flush();
@@ -691,32 +714,32 @@
 
 			while ($continue && $counter < 100) {
 				// Get stories using Laravel's query builder
-				$stories = DB::table('yazilar')
+				$articles = DB::table('articles')
 					->where('has_religious_moderation', 0)
-					->where('silindi', 0)
-					->where('onay', 1)
+					->where('deleted', 0)
+					->where('approved', 1)
 					->where('bad_critical', '<', 4)
 					->orderBy('id', 'DESC')
 					->limit(100)
 					->get();
 
-				$continue = $stories->count() > 0;
+				$continue = $articles->count() > 0;
 
-				foreach ($stories as $story) {
+				foreach ($articles as $article) {
 					$continue = true;
 					$counter++;
 
 					// Get first 1000 words
-					$yazi = $story->yazi;
-					$yazi_words = explode(' ', $yazi);
-					$yazi = implode(' ', array_slice($yazi_words, 0, 1000));
+					$article = $article->main_text;
+					$article_words = explode(' ', $article);
+					$article = implode(' ', array_slice($article_words, 0, 1000));
 
 					$llm_result = self::llm_no_tool_call(
 						'google/gemini-flash-1.5-8b',
 						'',
 						[[
 							'role' => 'user',
-							'content' => "take the following Turkish text and analyze it if it is religious and also respectful towards other religions and beliefs. The text is as follows: Title: " . $story->baslik . " Subtitle: " . $story->alt_baslik . " Category: " . $story->ust_kategori_ad . " Subcategory: " . $story->kategori_ad . " text: " . $yazi . " output JSON as: ``` { \"religious_reason\": { \"religious\": 0..5, \"respect\": 0..5, \"reason\": \"reasoning for the moderation\" } } ```"
+							'content' => "take the following Turkish text and analyze it if it is religious and also respectful towards other religions and beliefs. The text is as follows: Title: " . $article->title . " Subtitle: " . $article->subtitle . " Category: " . $article->parent_category_name . " Subcategory: " . $article->category_name . " text: " . $article . " output JSON as: ``` { \"religious_reason\": { \"religious\": 0..5, \"respect\": 0..5, \"reason\": \"reasoning for the moderation\" } } ```"
 						]],
 						true
 					);
@@ -726,15 +749,15 @@
 						$moderation = json_encode($moderation);
 
 						// Update using Laravel's query builder
-						DB::table('yazilar')
-							->where('id', $story->id)
+						DB::table('articles')
+							->where('id', $article->id)
 							->update([
 								'religious_reason' => $moderation,
 								'has_religious_moderation' => 1
 							]);
 
 						echo $counter . "- Religious Moderation:<br>\n";
-						echo $story->id . " " . $story->baslik . " -- " . $story->ust_kategori_ad . '/' . $story->kategori_ad . "<br>\n";
+						echo $article->id . " " . $article->title . " -- " . $article->parent_category_name . '/' . $article->category_name . "<br>\n";
 						echo $moderation . "<br>\n";
 						flush();
 						ob_flush();
@@ -758,29 +781,29 @@
 				echo "<hr>Offset: " . $offset . "<br>\n";
 
 				// Get stories using Laravel's query builder
-				$stories = DB::table('yazilar')
+				$articles = DB::table('articles')
 					->where('has_moderation', -1)
-					->where('onay', 1)
-					->where('silindi', 0)
+					->where('approved', 1)
+					->where('deleted', 0)
 					->orderBy('id', 'DESC')
 					->limit(100)
 					->get();
 
-				$continue = $stories->count() > 0;
+				$continue = $articles->count() > 0;
 
-				foreach ($stories as $story) {
+				foreach ($articles as $article) {
 					$continue = true;
 					$counter++;
 
-					$moderation = self::moderation($story->baslik . ' ' . $story->yazi);
+					$moderation = self::moderation($article->title . ' ' . $article->main_text);
 					$moderation = json_encode($moderation['results']);
 					echo $counter . "- Moderation:<br>\n";
 					echo $moderation . "<br>\n";
 					flush();
 					ob_flush();
 
-					DB::table('yazilar')
-						->where('id', $story->id)
+					DB::table('articles')
+						->where('id', $article->id)
 						->update([
 							'moderation' => $moderation,
 							'has_moderation' => 1
@@ -797,27 +820,27 @@
 			while ($continue && $counter < 100) {
 
 				// Get stories using Laravel's query builder
-				$stories = DB::table('yazilar')
-					->whereNull('keywords')
-					->where('silindi', 0)
-					->where('onay', 1)
+				$articles = DB::table('articles')
+					->whereNull('keywords_string')
+					->where('deleted', 0)
+					->where('approved', 1)
 					->where('bad_critical', '<', 4)
 					->orderBy('id', 'DESC')
 					->limit(10)
 					->get();
 
-				$continue = $stories->count() > 0;
+				$continue = $articles->count() > 0;
 
-				foreach ($stories as $story) {
+				foreach ($articles as $article) {
 					$continue = true;
 					$counter++;
 
-					$yazi = $story->baslik . ' ' . $story->yazi;
-					$yazi_words = explode(' ', $yazi);
-					$yazi = implode(' ', array_slice($yazi_words, 0, 500));
+					$article = $article->title . ' ' . $article->main_text;
+					$article_words = explode(' ', $article);
+					$article = implode(' ', array_slice($article_words, 0, 500));
 
-					if (!empty($story->tanitim)) {
-						$yazi = $story->baslik . ' ' . $story->alt_baslik . ' ' . $story->tanitim . ' ' . $yazi;
+					if (!empty($article->subheading)) {
+						$article = $article->title . ' ' . $article->subtitle . ' ' . $article->subheading . ' ' . $article;
 					}
 
 					$llm_result = self::llm_no_tool_call(
@@ -829,7 +852,7 @@ Olumlu, Olumsuz, Nötr, Belirsiz, Karışık.
 
 The text is as follows:
 " .
-							$yazi . "
+							$article . "
 				
 output in Turkish, output JSON as:
 
@@ -844,21 +867,21 @@ output in Turkish, output JSON as:
 						$keywords = implode(', ', $llm_result['keywords'] ?? []);
 
 						// Update using Laravel's query builder
-						DB::table('yazilar')
-							->where('id', $story->id)
+						DB::table('articles')
+							->where('id', $article->id)
 							->update([
-								'keywords' => $keywords,
+								'keywords_string' => $keywords,
 								'sentiment' => $sentiment
 							]);
 
 						echo $counter."- Keywords:<br>\n";
-						echo $story->id . " " . $story->baslik . " -- " . $keywords . " - Sentiment: " . $sentiment . "<br>\n";
+						echo $article->id . " " . $article->title . " -- " . $keywords . " - Sentiment: " . $sentiment . "<br>\n";
 						flush();
 						ob_flush();
 					} else {
 						echo $counter . " - Error: <br>\n";
 						echo var_dump($llm_result);
-						echo 'ERROR ON: id:'.$story->id . " - " . $story->baslik . "<br>\n";
+						echo 'ERROR ON: id:'.$article->id . " - " . $article->title . "<br>\n";
 						flush();
 						ob_flush();
 					}
@@ -866,20 +889,20 @@ output in Turkish, output JSON as:
 			}
 		}
 
-		public static function updateYaziTable() {
+		public static function updateArticleTable() {
 			$batchSize = 1000;
 
 			do {
-				$records = DB::table('yazilar as y')
-					->leftJoin('kategoriler as k', 'k.id', '=', 'y.kategori_id')
-					->leftJoin('kategoriler as uk', 'uk.id', '=', 'y.ust_kategori_id')
+				$records = DB::table('articles as y')
+					->leftJoin('categories as k', 'k.id', '=', 'y.category_id')
+					->leftJoin('categories as uk', 'uk.id', '=', 'y.parent_category_id')
 					->leftJoin('yazar as yz', 'yz.id', '=', 'y.user_id')
 					->select([
 						'y.id',
-						'k.slug as kategori_slug',
-						'uk.slug as ust_kategori_slug',
-						'k.kategori_ad',
-						'uk.kategori_ad as ust_kategori_ad',
+						'k.slug as category_slug',
+						'uk.slug as parent_category_slug',
+						'k.category_name',
+						'uk.category_name as parent_category_name',
 						'yz.slug as name_slug',
 						'yz.name',
 						'y.moderation',
@@ -918,13 +941,13 @@ output in Turkish, output JSON as:
 						}
 
 						try {
-							DB::table('yazilar')
+							DB::table('articles')
 								->where('id', $record->id)
 								->update([
-									'kategori_slug' => $record->kategori_slug,
-									'kategori_ad' => $record->kategori_ad,
-									'ust_kategori_slug' => $record->ust_kategori_slug,
-									'ust_kategori_ad' => $record->ust_kategori_ad,
+									'category_slug' => $record->category_slug,
+									'category_name' => $record->category_name,
+									'parent_category_slug' => $record->parent_category_slug,
+									'parent_category_name' => $record->parent_category_name,
 									'name_slug' => $record->name_slug,
 									'name' => $record->name,
 									'moderation_flagged' => $moderationFlagged,

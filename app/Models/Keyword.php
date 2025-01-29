@@ -14,8 +14,8 @@
 			'count'
 		];
 
-		public function yazilar()
+		public function articles()
 		{
-			return $this->belongsToMany(Yazi::class, 'yazi_keyword', 'keyword_id', 'yazi_id');
+			return $this->belongsToMany(Article::class, 'article_keyword', 'keyword_id', 'article_id');
 		}
 	}

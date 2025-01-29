@@ -3,7 +3,7 @@
 
 }
 
-.yz-yazar-resim {
+.art-author-picture {
   position: absolute;
   bottom: 30px;
   right: 15px;
@@ -15,7 +15,7 @@
   font-size: 0.7em;
 }
 
-.yz-yazar-resim-2 {
+.art-author-picture-2 {
   position: absolute;
   bottom: 20px;
   left: 50%;
@@ -27,7 +27,7 @@
 }
 
 
-.yz-yazi-resim {
+.ai-article-image {
   position: absolute;
   bottom: 5px;
   right: 15px;

@@ -48,7 +48,7 @@ class LoginController extends Controller
 
 	protected function authenticated(Request $request, $user)
 	{
-		return redirect()->route('sahne-arkasi');
+		return redirect()->route('sahne-arkasi.account');
 	}
 
 	/**

@@ -8273,13 +8273,13 @@ span.release-date span {
   justify-content: flex-start;
 }
 
-.post-author-avatar {
+.post-user-avatar {
   position: relative;
   text-align: center;
   margin-right: 35px;
 }
 
-.post-author-avatar img {
+.post-user-avatar img {
   width: 100px;
   height: 100px;
   -webkit-border-radius: 100%;

@@ -11,7 +11,7 @@
 	      content="{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	
-	<script src="/assets/js/core/jquery.min.js"></script>
+	<script src="/js/jquery.min.js"></script>
 	
 	<!-- Favicon -->
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -23,6 +23,10 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
 	
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"></link>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"></link>
+	<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet"></link>
+	
 	<!-- Plugins CSS -->
 	<link rel="stylesheet" type="text/css" href="/assets/vendor/bootstrap-icons/bootstrap-icons.css">
 	<link rel="stylesheet" type="text/css" href="/assets/vendor/choices/css/choices.min.css">
@@ -32,13 +36,34 @@
 	<link rel="stylesheet" type="text/css" href="/assets/css/custom.css">
 	
 	{{--	@lemonJS--}}
-
+	
+	@stack('styles')
 </head>
 @php
 	use Carbon\Carbon;
 @endphp
 
 <script>
+	// Function to load CSS file
+	function loadCSS(href) {
+		const link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.href = href;
+		document.head.appendChild(link);
+	}
+	
+	// Function to handle theme change
+	function handleThemeChange(theme) {
+		// Remove existing SimpleMDE theme stylesheets
+		document.querySelectorAll('link[href*="simplemde-theme"]').forEach(link => link.remove());
+		
+		// Load appropriate CSS based on theme
+		if (theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			loadCSS('/css/simplemde-theme-bootstrap-dark.min.css');
+		} else {
+			loadCSS('/css/simplemde-theme-base.css');
+		}
+	}
 	
 	// <!-- Dark mode -->
 	const storedTheme = localStorage.getItem('theme')
@@ -91,10 +116,15 @@
 						localStorage.setItem('theme', theme)
 						setTheme(theme)
 						showActiveTheme(theme)
+						handleThemeChange(theme);
 					})
 				})
 			
 		}
+		
+		// Initial load
+		handleThemeChange(getPreferredTheme());
+		
 	});
 </script>
 
@@ -136,18 +166,8 @@ Header START -->
 				
 				<ul class="navbar-nav navbar-nav-scroll ms-auto">
 					<li class="nav-item">
-						<a class="nav-link active" href="{{route('chat')}}">{{__('default.Chat')}}</a>
+						<a class="nav-link active" href="{{route('articles.index')}}">{{__('default.My Books')}}</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link active" href="{{route('image-gen')}}">{{__('default.Image Gen')}}</a>
-					</li>
-					<li class="nav-item">
-{{--						<a class="nav-link active" href="{{route('blog-page')}}">{{__('default.Blog')}}</a>--}}
-					</li>
-
-					
-					
-				
 				</ul>
 			</div>
 			<!-- Main navbar END -->
@@ -180,16 +200,14 @@ Header START -->
 									</div>
 									<div>
 										<a class="h6 stretched-link"
-										   href="{{route('sahne-arkasi')}}">{{ Auth::user()->name }}</a>
+										   href="{{route('sahne-arkasi.account')}}">{{ Auth::user()->name }}</a>
 										<p class="small m-0">{{ Auth::user()->username }}</p>
 									</div>
 								</div>
 								<a class="dropdown-item btn btn-primary-soft btn-sm my-2 text-center"
-								   href="{{route('sahne-arkasi')}}">{{__('default.My Books')}}</a>
-								<a class="dropdown-item btn btn-primary-soft btn-sm my-2 text-center"
-								   href="/blog_admin">{{__('default.Blog Admin')}}</a>
+								   href="{{route('chat')}}">{{__('default.Chat')}}</a>
 							</li>
-							<a class="dropdown-item" href="{{route('sahne-arkasi')}}"><i
+							<a class="dropdown-item" href="{{route('sahne-arkasi.account')}}"><i
 									class="bi bi-person  me-2"></i>{{__('default.Settings')}}</a>
 						@endif
 						<!-- Links -->
@@ -274,7 +292,7 @@ JS libraries, plugins and custom scripts -->
 <script src="/assets/vendor/choices/js/choices.min.js"></script>
 
 <!-- Theme Functions -->
-<script src="/assets/js/functions.js"></script>
+<script src="/js/functions.js"></script>
 
 @php($title = View::getSection('title', 'Home'))
 

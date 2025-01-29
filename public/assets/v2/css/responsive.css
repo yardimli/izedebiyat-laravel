@@ -1059,8 +1059,8 @@
 
   .post-share-list { margin-top: 40px; padding-bottom: 60px; }
 
-  .post-author-avatar { margin-right: 25px; }
-  .post-author-avatar img { width: 80px; height: 80px; }
+  .post-user-avatar { margin-right: 25px; }
+  .post-user-avatar img { width: 80px; height: 80px; }
   .post-author-txt h5 { margin-bottom: 15px; }
 
   .author-follow-btn { padding: 5px 12px; top: 60px; right: 10px; }
@@ -2555,8 +2555,8 @@
   .post-share-list { margin-top: 30px; padding-bottom: 40px; }
 
   .post-author { padding-top: 50px; padding-bottom: 50px; }
-  .post-author-avatar { margin-right: 25px; }
-  .post-author-avatar img { width: 75px; height: 75px; }
+  .post-user-avatar { margin-right: 25px; }
+  .post-user-avatar img { width: 75px; height: 75px; }
   .post-author-txt h5 { margin-bottom: 12px; }
   .post-author-txt p { padding-right: 4%; }
 
@@ -4361,8 +4361,8 @@
   .post-share-list { margin-top: 30px; padding-bottom: 40px; }
 
   .post-author { padding-top: 60px; padding-bottom: 60px; }
-  .post-author-avatar { margin-right: 14px; }
-  .post-author-avatar img { width: 70px; height: 70px; }
+  .post-user-avatar { margin-right: 14px; }
+  .post-user-avatar img { width: 70px; height: 70px; }
   .post-author-txt h5 { margin-bottom: 15px; }
 
   .author-follow-btn { padding: 5px 12px; top: 60px; right: 10px; }
@@ -5505,8 +5505,8 @@
   .post-share-list { margin-top: 30px; padding-bottom: 40px; }
 
   .post-author { display: block!important; padding: 50px 0; }
-  .post-author-avatar { display: block!important; text-align: left; margin-right: 0; margin-bottom: 20px; }
-  .post-author-avatar img { width: 70px; height: 70px; }
+  .post-user-avatar { display: block!important; text-align: left; margin-right: 0; margin-bottom: 20px; }
+  .post-user-avatar img { width: 70px; height: 70px; }
   .post-author-txt h5 { margin-bottom: 10px; }
 
   .author-follow-btn { padding: 5px 12px; top: 135px; right: 10px; }
@@ -6673,8 +6673,8 @@
   .post-share-list { margin-top: 30px; padding-bottom: 40px; }
 
   .post-author { display: block!important; padding: 50px 0; }
-  .post-author-avatar { display: block!important; text-align: left; margin-right: 0; margin-bottom: 20px; }
-  .post-author-avatar img { width: 70px; height: 70px; }
+  .post-user-avatar { display: block!important; text-align: left; margin-right: 0; margin-bottom: 20px; }
+  .post-user-avatar img { width: 70px; height: 70px; }
   .post-author-txt h5 { margin-bottom: 10px; }
 
   .author-follow-btn { padding: 5px 12px; top: 135px; right: 10px; }
@@ -7888,8 +7888,8 @@
   .post-share-list { margin-top: 30px; padding-bottom: 40px; }
 
   .post-author { display: block!important; padding: 50px 0; }
-  .post-author-avatar { display: block!important; text-align: left; margin-right: 0; margin-bottom: 20px; }
-  .post-author-avatar img { width: 70px; height: 70px; }
+  .post-user-avatar { display: block!important; text-align: left; margin-right: 0; margin-bottom: 20px; }
+  .post-user-avatar img { width: 70px; height: 70px; }
   .post-author-txt h5 { margin-bottom: 10px; }
 
   .author-follow-btn { padding: 5px 12px; top: 135px; right: 10px; }
@@ -9140,8 +9140,8 @@
   .post-share-list { margin-top: 30px; padding-bottom: 40px; }
 
   .post-author { display: block!important; padding: 50px 0; }
-  .post-author-avatar { display: block!important; text-align: left; margin-right: 0; margin-bottom: 20px; }
-  .post-author-avatar img { width: 70px; height: 70px; }
+  .post-user-avatar { display: block!important; text-align: left; margin-right: 0; margin-bottom: 20px; }
+  .post-user-avatar img { width: 70px; height: 70px; }
   .post-author-txt h5 { margin-bottom: 10px; }
 
   .author-follow-btn { padding: 5px 12px; top: 130px; right: 10px; }

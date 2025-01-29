@@ -18,40 +18,10 @@
 					</ul>
 				</li>
 				@foreach($mainMenuCategories as $category)
-					@php
-						$subCategoryCount = $category->subCategories->count();
-						$columns = $subCategoryCount > 34 ? 3 : 2;
-						$maxRows = $subCategoryCount > 34 ? 17 : 15;
-						$colClass = $subCategoryCount > 34 ? 'col-sm-4' : 'col-sm-6';
-					@endphp
 					<li class="menu-item-has-children">
 						<a href="{{ url('/kume/' . $category->slug) }}" style="text-transform: uppercase;">
-							{!! $category->kategori_ad !!}
+							{!! $category->category_name !!}
 						</a>
-						<ul class="sub-menu dropdown-menu multi-column columns-{{ $columns }}">
-							<div class="row">
-								<div class="{{ $colClass }}">
-									<ul class="multi-column-dropdown">
-										@foreach($category->subCategories as $index => $subCategory)
-											@if($index > 0 && $index % $maxRows === 0)
-									</ul>
-								</div>
-								<div class="{{ $colClass }}">
-									<ul class="multi-column-dropdown">
-										@endif
-										<li style="font-size: 14px;">
-											<a href="{{ url('/kume/' . $category->slug . '/' . $subCategory->slug) }}">
-												{!! $subCategory->kategori_ad !!}
-												@if($subCategory->kac_yeni_yazi > 0)
-													<span>({{ $subCategory->kac_yeni_yazi }})</span>
-												@endif
-											</a>
-										</li>
-										@endforeach
-									</ul>
-								</div>
-							</div>
-						</ul>
 					</li>
 				@endforeach
 			</ul>

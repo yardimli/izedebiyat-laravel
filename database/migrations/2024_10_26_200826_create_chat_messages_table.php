@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
 	    Schema::create('chat_messages', function (Blueprint $table) {
+		    $table->engine('InnoDB');
 		    $table->id();
 		    $table->integer('session_id')->index();
 		    $table->enum('role', ['user', 'assistant', 'system']);

@@ -7429,6 +7429,15 @@ video {
   vertical-align: middle;
 }
 
+.blog-post-meta .divider-slim {
+  display: inline-block;
+  width: 1px;
+  height: 11px;
+  margin: 0 2px;
+  background-color: rgba(153, 153, 153, 0.5);
+  vertical-align: middle;
+}
+
 .blog-post-meta i {
   margin-top: -2px;
   vertical-align: middle;

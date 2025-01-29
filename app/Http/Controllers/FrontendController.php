@@ -3,10 +3,10 @@
 	namespace App\Http\Controllers;
 
 	use App\Helpers\MyHelper;
-	use App\Models\Kategori;
+	use App\Models\Category;
 	use App\Models\Keyword;
 	use App\Models\User;
-	use App\Models\Yazi;
+	use App\Models\Article;
 	use Carbon\Carbon;
 	use GuzzleHttp\Client;
 	use Illuminate\Http\Request;
@@ -28,23 +28,23 @@
 		public function __construct()
 		{
 			// Get main menu categories with their last update time
-			$firstCategory = Kategori::orderBy('updated_at')->first();
+			$firstCategory = Category::orderBy('updated_at')->first();
 
 			// Check if first category exists and if it was updated more than 2 minutes ago
 			if ($firstCategory && $firstCategory->updated_at->diffInMinutes(now()) > 60) {
 				Log::info('Updating category statistics...');
 
 				// Get all categories (including main and sub categories)
-				$allCategories = Kategori::all();
+				$allCategories = Category::all();
 
 				foreach ($allCategories as $category) {
 					// Count total approved texts
-					$totalTexts = Yazi::where(function ($query) use ($category) {
-						$query->where('kategori_id', $category->id)
-							->orWhere('ust_kategori_id', $category->id);
+					$totalTexts = Article::where(function ($query) use ($category) {
+						$query->where('category_id', $category->id)
+							->orWhere('parent_category_id', $category->id);
 					})
-						->where('onay', 1)
-						->where('silindi', 0)
+						->where('approved', 1)
+						->where('deleted', 0)
 						->where('bad_critical', '<', 4)
 						->where('religious_moderation_value', '<', 3)
 						->where('respect_moderation_value', '>=', 3)
@@ -52,40 +52,40 @@
 						->count();
 
 					// Count new texts (last 30 days)
-					$newTexts = Yazi::where(function ($query) use ($category) {
-						$query->where('kategori_id', $category->id)
-							->orWhere('ust_kategori_id', $category->id);
+					$newTexts = Article::where(function ($query) use ($category) {
+						$query->where('category_id', $category->id)
+							->orWhere('parent_category_id', $category->id);
 					})
-						->where('onay', 1)
-						->where('silindi', 0)
+						->where('approved', 1)
+						->where('deleted', 0)
 						->where('bad_critical', '<', 4)
 						->where('religious_moderation_value', '<', 3)
 						->where('respect_moderation_value', '>=', 3)
 						->where('moderation_flagged', 0)
-						->where('katilma_tarihi', '>=', now()->subDays(30))
+						->where('created_at', '>=', now()->subDays(30))
 						->count();
 
 					// Get total views/reads
-					$totalReads = Yazi::where(function ($query) use ($category) {
-						$query->where('kategori_id', $category->id)
-							->orWhere('ust_kategori_id', $category->id);
+					$totalReads = Article::where(function ($query) use ($category) {
+						$query->where('category_id', $category->id)
+							->orWhere('parent_category_id', $category->id);
 					})
-						->where('onay', 1)
-						->where('silindi', 0)
-						->sum('sayac');
+						->where('approved', 1)
+						->where('deleted', 0)
+						->sum('read_count');
 
 					// Update category
 					$category->update([
-						'kac_yazi' => $totalTexts,
-						'kac_yeni_yazi' => $newTexts,
-						'okuma_sayac' => $totalReads,
+						'total_articles' => $totalTexts,
+						'new_articles' => $newTexts,
+						'read_count' => $totalReads,
 						'updated_at' => now()
 					]);
 				}
 			}
 
 			// Get main menu categories for the view
-			$this->mainMenuCategories = Kategori::where('ust_kategori_id', 0)
+			$this->mainMenuCategories = Category::where('parent_category_id', 0)
 				->orderBy('slug')
 				->with('subCategories')
 				->get();
@@ -131,14 +131,14 @@
 
 		public function index()
 		{
-			$categories = Kategori::where('ust_kategori_id', 0)
-				->orderBy('kategori_ad')
+			$categories = Category::where('parent_category_id', 0)
+				->orderBy('category_name')
 				->get();
 
 			foreach ($categories as $category) {
-				$category->yazilar = Yazi::where('ust_kategori_id', $category->id)
-					->where('onay', 1)
-					->where('silindi', 0)
+				$category->articles = Article::where('parent_category_id', $category->id)
+					->where('approved', 1)
+					->where('deleted', 0)
 					->where('bad_critical', '<', 4)
 					->where('religious_moderation_value', '<', 3)
 					->where('respect_moderation_value', '>=', 3)
@@ -147,9 +147,9 @@
 					->limit(50)
 					->get();
 
-				$category->yeni_yazilar = Yazi::where('ust_kategori_id', $category->id)
-					->where('onay', 1)
-					->where('silindi', 0)
+				$category->yeni_articles = Article::where('parent_category_id', $category->id)
+					->where('approved', 1)
+					->where('deleted', 0)
 					->where('bad_critical', '<', 3)
 					->where('religious_moderation_value', '<', 3)
 					->where('respect_moderation_value', '>=', 3)
@@ -176,11 +176,11 @@
 			}
 
 			// Get the base query
-			$baseQuery = Yazi::where('onay', 1)
-				->where('silindi', 0)
+			$baseQuery = Article::where('approved', 1)
+				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
 				->where(function($q) use ($query) {
-					$q->where('baslik', 'LIKE', '%' . $query . '%')
+					$q->where('title', 'LIKE', '%' . $query . '%')
 						->orWhere('name', 'LIKE', '%' . $query . '%');
 				});
 
@@ -188,13 +188,13 @@
 			$total = $baseQuery->count();
 
 			// Get items for current page
-			$items = $baseQuery->orderBy('katilma_tarihi', 'DESC')
+			$items = $baseQuery->orderBy('created_at', 'DESC')
 				->skip(($page - 1) * 20)
 				->take(20)
 				->get();
 
 			// Create custom pagination
-			$texts = new LengthAwarePaginator(
+			$articles = new LengthAwarePaginator(
 				$items,
 				$total,
 				20,
@@ -205,87 +205,87 @@
 				]
 			);
 
-			return view('frontend.search', compact('texts', 'query'));
+			return view('frontend.search', compact('articles', 'query'));
 		}
 
 
 		public function recentTexts()
 		{
-			$texts = Yazi::where('onay', 1)
-				->where('silindi', 0)
+			$articles = Article::where('approved', 1)
+				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
 				->where('respect_moderation_value', '>=', 3)
 				->where('moderation_flagged', 0)
-				->where('katilma_tarihi', '>=', Carbon::now()->subDays(30))
-				->orderBy('katilma_tarihi', 'DESC')
+				->where('created_at', '>=', Carbon::now()->subDays(30))
+				->orderBy('created_at', 'DESC')
 				->limit(100)
 				->get();
 
-			$categories = Kategori::where('ust_kategori_id', 0)
-				->orderBy('kategori_ad')
+			$categories = Category::where('parent_category_id', 0)
+				->orderBy('category_name')
 				->get()
 				->map(function ($category) {
-					$category->new_count = Yazi::where('ust_kategori_id', $category->id)
-						->where('onay', 1)
-						->where('silindi', 0)
+					$category->new_count = Article::where('parent_category_id', $category->id)
+						->where('approved', 1)
+						->where('deleted', 0)
 						->where('bad_critical', '<', 4)
 						->where('religious_moderation_value', '<', 3)
 						->where('respect_moderation_value', '>=', 3)
 						->where('moderation_flagged', 0)
-						->where('katilma_tarihi', '>=', Carbon::now()->subDays(30))
+						->where('created_at', '>=', Carbon::now()->subDays(30))
 						->count();
 					return $category;
 				});
 
-			return view('frontend.recent-texts', compact('texts', 'categories'));
+			return view('frontend.recent-texts', compact('articles', 'categories'));
 		}
 
 		public function recentTextsByCategory($slug)
 		{
-			$category = Kategori::where('slug', $slug)->firstOrFail();
+			$category = Category::where('slug', $slug)->firstOrFail();
 
-			$texts = Yazi::where('ust_kategori_id', $category->id)
-				->where('onay', 1)
-				->where('silindi', 0)
+			$articles = Article::where('parent_category_id', $category->id)
+				->where('approved', 1)
+				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
 				->where('respect_moderation_value', '>=', 3)
 				->where('moderation_flagged', 0)
-				->where('katilma_tarihi', '>=', Carbon::now()->subDays(30))
-				->orderBy('katilma_tarihi', 'DESC')
+				->where('created_at', '>=', Carbon::now()->subDays(30))
+				->orderBy('created_at', 'DESC')
 				->limit(100)
 				->get();
 
-			$categories = Kategori::where('ust_kategori_id', 0)
-				->orderBy('kategori_ad')
+			$categories = Category::where('parent_category_id', 0)
+				->orderBy('category_name')
 				->get()
 				->map(function ($cat) {
-					$cat->new_count = Yazi::where('ust_kategori_id', $cat->id)
-						->where('onay', 1)
-						->where('silindi', 0)
+					$cat->new_count = Article::where('parent_category_id', $cat->id)
+						->where('approved', 1)
+						->where('deleted', 0)
 						->where('bad_critical', '<', 4)
 						->where('religious_moderation_value', '<', 3)
 						->where('respect_moderation_value', '>=', 3)
 						->where('moderation_flagged', 0)
-						->where('katilma_tarihi', '>=', Carbon::now()->subDays(30))
+						->where('created_at', '>=', Carbon::now()->subDays(30))
 						->count();
 					return $cat;
 				});
 
-			return view('frontend.recent-texts', compact('texts', 'categories', 'category'));
+			return view('frontend.recent-texts', compact('articles', 'categories', 'category'));
 		}
 
 		public function category($slug, $page = 1)
 		{
-			$category = Kategori::where('ust_kategori_id', 0)
+			$category = Category::where('parent_category_id', 0)
 				->where('slug', $slug)
 				->firstOrFail();
 
 			// Get the base query
-			$query = Yazi::where('ust_kategori_id', $category->id)
-				->where('onay', 1)
-				->where('silindi', 0)
+			$query = Article::where('parent_category_id', $category->id)
+				->where('approved', 1)
+				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
 				->where('respect_moderation_value', '>=', 3)
@@ -301,7 +301,7 @@
 				->get();
 
 			// Create custom pagination
-			$texts = new LengthAwarePaginator(
+			$articles = new LengthAwarePaginator(
 				$items,
 				$total,
 				20,
@@ -312,41 +312,41 @@
 				]
 			);
 
-			$sidebarTexts = Yazi::where('ust_kategori_id', $category->id)
-				->where('onay', 1)
-				->where('silindi', 0)
+			$sidebarTexts = Article::where('parent_category_id', $category->id)
+				->where('approved', 1)
+				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
 				->where('respect_moderation_value', '>=', 3)
 				->where('moderation_flagged', 0)
-				->orderBy('katilma_tarihi', 'DESC')
+				->orderBy('created_at', 'DESC')
 				->skip(($page - 1) * 10)
 				->limit(100)
 				->get();
 
-			if ($texts->currentPage() > $texts->lastPage()) {
+			if ($articles->currentPage() > $articles->lastPage()) {
 				abort(404);
 			}
 
-			return view('frontend.category', compact('category', 'texts', 'sidebarTexts'));
+			return view('frontend.category', compact('category', 'articles', 'sidebarTexts'));
 		}
 
 		public function subcategory($categorySlug, $subcategorySlug, $page = 1)
 		{
 			// Get main category
-			$category = Kategori::where('slug', $categorySlug)
-				->where('ust_kategori_id', 0)
+			$category = Category::where('slug', $categorySlug)
+				->where('parent_category_id', 0)
 				->firstOrFail();
 
 			// Get subcategory
-			$subCategory = Kategori::where('slug', $subcategorySlug)
-				->where('ust_kategori_id', $category->id)
+			$subCategory = Category::where('slug', $subcategorySlug)
+				->where('parent_category_id', $category->id)
 				->firstOrFail();
 
 			// Get the base query
-			$query = Yazi::where('kategori_id', $subCategory->id)
-				->where('onay', 1)
-				->where('silindi', 0)
+			$query = Article::where('category_id', $subCategory->id)
+				->where('approved', 1)
+				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
 				->where('respect_moderation_value', '>=', 3)
@@ -362,7 +362,7 @@
 				->get();
 
 			// Create custom pagination
-			$texts = new LengthAwarePaginator(
+			$articles = new LengthAwarePaginator(
 				$items,
 				$total,
 				20,
@@ -373,45 +373,45 @@
 				]
 			);
 
-			$sidebarTexts = Yazi::where('kategori_id', $subCategory->id)
-				->where('onay', 1)
-				->where('silindi', 0)
+			$sidebarTexts = Article::where('category_id', $subCategory->id)
+				->where('approved', 1)
+				->where('deleted', 0)
 				->where('bad_critical', '<', 3)
 				->where('religious_moderation_value', '<', 3)
 				->where('respect_moderation_value', '>=', 3)
 				->where('moderation_flagged', 0)
-				->orderBy('katilma_tarihi', 'DESC')
+				->orderBy('created_at', 'DESC')
 				->skip(($page - 1) * 10)
 				->limit(100)
 				->get();
 
-			if ($texts->currentPage() > $texts->lastPage()) {
+			if ($articles->currentPage() > $articles->lastPage()) {
 				abort(404);
 			}
 
-			return view('frontend.subcategory', compact('category', 'subCategory', 'texts', 'sidebarTexts'));
+			return view('frontend.subcategory', compact('category', 'subCategory', 'articles', 'sidebarTexts'));
 		}
 
-		public function author($slug, $page = 1)
+		public function user($slug, $page = 1)
 		{
-			$author = User::where('slug', $slug)->firstOrFail();
+			$user = User::where('slug', $slug)->firstOrFail();
 
 			// Get the base query for texts
-			$query = Yazi::where('user_id', $author->id)
-				->where('onay', 1)
-				->where('silindi', 0);
+			$query = Article::where('user_id', $user->id)
+				->where('approved', 1)
+				->where('deleted', 0);
 
 			// Get total count for pagination
 			$total = $query->count();
 
 			// Get the items for current page
-			$items = $query->orderBy('katilma_tarihi', 'DESC')
+			$items = $query->orderBy('created_at', 'DESC')
 				->skip(($page - 1) * 20)
 				->take(20)
 				->get();
 
 			// Create custom pagination
-			$texts = new LengthAwarePaginator(
+			$articles = new LengthAwarePaginator(
 				$items,
 				$total,
 				20,
@@ -423,42 +423,42 @@
 			);
 
 			// Get sidebar texts
-			$sidebarTexts = Yazi::where('user_id', $author->id)
-				->where('onay', 1)
-				->where('silindi', 0)
+			$sidebarTexts = Article::where('user_id', $user->id)
+				->where('approved', 1)
+				->where('deleted', 0)
 				->orderBy('formul_ekim', 'DESC')
 				->limit(20)
 				->get();
 
-			//check if $author->personal_url is not blank and if it is missing http add it
-			$author->personal_url_link = $author->personal_url ?? '';
-			if($author->personal_url_link && !Str::startsWith($author->personal_url_link, ['http://', 'https://'])) {
-				$author->personal_url_link = 'http://' . $author->personal_url;
+			//check if $user->personal_url is not blank and if it is missing http add it
+			$user->personal_url_link = $user->personal_url ?? '';
+			if($user->personal_url_link && !Str::startsWith($user->personal_url_link, ['http://', 'https://'])) {
+				$user->personal_url_link = 'http://' . $user->personal_url;
 			}
 
-			return view('frontend.author', compact('author', 'texts', 'sidebarTexts'));
+			return view('frontend.user', compact('user', 'articles', 'sidebarTexts'));
 		}
 
 
-		public function authors($filter = 'yeni', $page = 1)
+		public function users($filter = 'yeni', $page = 1)
 		{
 			// Base query
 			$query = User::whereExists(function ($query) {
 				$query->select(DB::raw(1))
-					->from('yazilar')
-					->whereColumn('yazilar.user_id', 'users.id')
-					->where('yazilar.onay', 1)
-					->where('yazilar.silindi', 0);
+					->from('articles')
+					->whereColumn('articles.user_id', 'users.id')
+					->where('articles.approved', 1)
+					->where('articles.deleted', 0);
 			});
 
 			// Apply filter
 			if ($filter === 'yeni') {
 				// Get users ordered by their latest text publication date
-				$query->addSelect(['latest_text_date' => Yazi::select('katilma_tarihi')
+				$query->addSelect(['latest_text_date' => Article::select('created_at')
 					->whereColumn('user_id', 'users.id')
-					->where('onay', 1)
-					->where('silindi', 0)
-					->latest('katilma_tarihi')
+					->where('approved', 1)
+					->where('deleted', 0)
+					->latest('created_at')
 					->limit(1)
 				])
 					->orderBy('latest_text_date', 'desc');
@@ -471,13 +471,13 @@
 			$total = $query->count();
 
 			// Get items for current page
-			$authors = $query->skip(($page - 1) * 24)
+			$users = $query->skip(($page - 1) * 24)
 				->take(24)
 				->get();
 
 			// Create custom pagination
-			$authors = new LengthAwarePaginator(
-				$authors,
+			$users = new LengthAwarePaginator(
+				$users,
 				$total,
 				24,
 				$page,
@@ -487,7 +487,7 @@
 				]
 			);
 
-			return view('frontend.authors', compact('authors', 'filter'));
+			return view('frontend.users', compact('users', 'filter'));
 		}
 
 
@@ -497,11 +497,11 @@
 			$keyword = Keyword::where('keyword_slug', $slug)->firstOrFail();
 
 			// Get the base query
-			$query = Yazi::whereHas('keywords', function ($q) use ($keyword) {
+			$query = Article::whereHas('keywords', function ($q) use ($keyword) {
 				$q->where('keywords.id', $keyword->id);
 			})
-				->where('onay', 1)
-				->where('silindi', 0)
+				->where('approved', 1)
+				->where('deleted', 0)
 				->where('bad_critical', '<', 4);
 
 			// Get total count for pagination
@@ -514,7 +514,7 @@
 				->get();
 
 			// Create custom pagination
-			$texts = new LengthAwarePaginator(
+			$articles = new LengthAwarePaginator(
 				$items,
 				$total,
 				21,
@@ -525,19 +525,19 @@
 				]
 			);
 
-			return view('frontend.articles-by-keyword', compact('texts', 'keyword'));
+			return view('frontend.articles-by-keyword', compact('articles', 'keyword'));
 		}
 
 		public function article($slug)
 		{
 			// Get the article
-			$article = Yazi::where('slug', $slug)
-				->where('onay', 1)
-				->where('silindi', 0)
+			$article = Article::where('slug', $slug)
+				->where('approved', 1)
+				->where('deleted', 0)
 				->firstOrFail();
 
-			// Get the author
-			$author = User::findOrFail($article->user_id);
+			// Get the user
+			$user = User::findOrFail($article->user_id);
 
 			// Get keywords for this article
 			$keywords = $article->keywords()
@@ -545,39 +545,39 @@
 				->get();
 
 			// Get related posts (you may want to customize this query)
-			$sameAuthorAndCategory = Yazi::where('kategori_id', $article->kategori_id)
+			$sameUserAndCategory = Article::where('category_id', $article->category_id)
 				->where('user_id', $article->user_id)
 				->where('id', '!=', $article->id)
-				->where('onay', 1)
-				->where('silindi', 0)
+				->where('approved', 1)
+				->where('deleted', 0)
 				->where('bad_critical', '<', 3)
-				->orderBy('katilma_tarihi', 'DESC')
+				->orderBy('created_at', 'DESC')
 				->limit(3)
 				->get();
 
-			$sameAuthorAndMainCategory = \App\Models\Yazi::where('ust_kategori_id', $article->ust_kategori_id)
+			$sameUserAndMainCategory = \App\Models\Article::where('parent_category_id', $article->parent_category_id)
 				->where('user_id', $article->user_id)
 				->where('id', '!=', $article->id)
-				->whereNotIn('id', $sameAuthorAndCategory->pluck('id'))
-				->where('onay', 1)
-				->where('silindi', 0)
+				->whereNotIn('id', $sameUserAndCategory->pluck('id'))
+				->where('approved', 1)
+				->where('deleted', 0)
 				->where('bad_critical', '<', 3)
-				->orderBy('katilma_tarihi', 'DESC')
+				->orderBy('created_at', 'DESC')
 				->limit(3)
 				->get();
 
-			$otherAuthorArticles = \App\Models\Yazi::where('user_id', $article->user_id)
+			$otherUserArticles = \App\Models\Article::where('user_id', $article->user_id)
 				->where('id', '!=', $article->id)
-				->whereNotIn('id', $sameAuthorAndCategory->pluck('id'))
-				->whereNotIn('id', $sameAuthorAndMainCategory->pluck('id'))
-				->where('onay', 1)
-				->where('silindi', 0)
+				->whereNotIn('id', $sameUserAndCategory->pluck('id'))
+				->whereNotIn('id', $sameUserAndMainCategory->pluck('id'))
+				->where('approved', 1)
+				->where('deleted', 0)
 				->where('bad_critical', '<', 3)
-				->orderBy('katilma_tarihi', 'DESC')
+				->orderBy('created_at', 'DESC')
 				->limit(6)
 				->get();
 
-			return view('frontend.article', compact('article', 'author', 'keywords', 'sameAuthorAndCategory', 'sameAuthorAndMainCategory', 'otherAuthorArticles'));
+			return view('frontend.article', compact('article', 'user', 'keywords', 'sameUserAndCategory', 'sameUserAndMainCategory', 'otherUserArticles'));
 		}
 
 	}

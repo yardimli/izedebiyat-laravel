@@ -35,20 +35,6 @@
 						</span>
 						<select id="llmSelect" class="form-select mx-auto">
 							<option value="">{{__('default.Select an AI Engine')}}</option>
-							@if (Auth::user() && Auth::user()->isAdmin())
-								<option value="anthropic-sonet">anthropic :: claude-3.5-sonnet (direct)</option>
-								<option value="anthropic-haiku">anthropic :: haiku (direct)</option>
-								<option value="open-ai-gpt-4o">openai :: gpt-4o (direct)</option>
-								<option value="open-ai-gpt-4o-mini">openai :: gpt-4o-mini (direct)</option>
-							@endif
-							@if (Auth::user() && !empty(Auth::user()->anthropic_key))
-								<option value="anthropic-sonet">anthropic :: claude-3.5-sonnet (direct)</option>
-								<option value="anthropic-haiku">anthropic :: haiku (direct)</option>
-							@endif
-							@if (Auth::user() && !empty(Auth::user()->openai_api_key))
-								<option value="open-ai-gpt-4o">openai :: gpt-4o (direct)</option>
-								<option value="open-ai-gpt-4o-mini">openai :: gpt-4o-mini (direct)</option>
-							@endif
 						</select>
 					</div>
 					
@@ -139,7 +125,7 @@
 						e.preventDefault();
 						e.stopPropagation();
 						const sessionId = $(this).data('session-id');
-						if (confirm('Are you sure you want to delete this chat session?')) {
+						if (confirm('{{__('default.Are you sure you want to delete this chat session?')}}')) {
 							deleteSession(sessionId);
 						}
 					});
@@ -164,11 +150,11 @@
 							window.location.href = '/chat';
 						}
 					} else {
-						alert('Error deleting session: ' + response.message);
+						alert('{{__('default.Error deleting session: ')}}' + response.message);
 					}
 				},
 				error: function() {
-					alert('Error deleting session');
+					alert('{{__('default.Error deleting session')}}');
 				}
 			});
 		}
@@ -186,8 +172,7 @@
 							`(Tokens: ${message.prompt_tokens}/${message.completion_tokens})` : '';
 						
 						$('#chatWindow').append(
-							`<div><strong>${message.role}:</strong> ${message.message}
-                         <small class="text-muted">${tokens}</small></div>`
+							`<div><strong>${message.role}:</strong> ${message.message}</div>`
 						);
 					});
 					
@@ -260,7 +245,7 @@
 					const completionPricePerMillion = (completionPrice * 1000000).toFixed(2);
 					
 					$('#modelPricing').html(`
-                <strong>Pricing (per million tokens):</strong> Prompt: $${promptPricePerMillion} - Completion: $${completionPricePerMillion}
+                <strong>Fiyat (600,000 sözcük):</strong> Komut: $${promptPricePerMillion} - Yanıt: $${completionPricePerMillion}
             `);
 				});
 				
@@ -292,10 +277,10 @@
 				const llm = $('#llmSelect').val();
 				
 				$('#userPrompt').val('');
-				$('#chatWindow').append('<div><strong>User:</strong> ' + userPrompt + '</div>');
+				$('#chatWindow').append('<div><strong>{{__('default.User')}}:</strong> ' + userPrompt + '</div>');
 				$('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
 				
-				$('#sendPromptBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...');
+				$('#sendPromptBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{__('default.Sending...')}}');
 				
 				$.ajax({
 					url: '{{ route('send-llm-prompt') }}',
@@ -307,12 +292,12 @@
 					dataType: 'json',
 					success: function (response) {
 						if (response.success) {
-							$('#chatWindow').append(`<div><strong>Assistant:</strong>${response.result.content}(Tokens: ${response.result.prompt_tokens}/${response.result.completion_tokens})</div>`);
+							$('#chatWindow').append(`<div><strong>{{__('default.Assistant')}}:</strong>${response.result.content}</div>`);
 						} else {
-							$('#chatWindow').append('<div><strong>Error:</strong> ' + JSON.stringify(response) + '</div>');
+							$('#chatWindow').append('<div><strong>{{__('default.Error:')}}</strong> ' + JSON.stringify(response) + '</div>');
 						}
 						$('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
-						$('#sendPromptBtn').prop('disabled', false).text('Send Prompt');
+						$('#sendPromptBtn').prop('disabled', false).text('{{__('default.Send Prompt')}}');
 					}
 				});
 			});

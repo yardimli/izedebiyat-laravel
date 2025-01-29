@@ -3,11 +3,7 @@
 	namespace App\Http\Controllers;
 
 	use Illuminate\Http\Request;
-	use App\Models\ChatHeader;
-	use App\Models\ChatBody;
 	use App\Models\User;
-	use App\Models\TokenUsage;
-	use App\Models\PaypalOrder;
 	use Illuminate\Support\Facades\Auth;
 	use Illuminate\Support\Facades\DB;
 	use Illuminate\Support\Facades\Log;
@@ -28,6 +24,22 @@
 		public function index(Request $request)
 		{
 
+		}
+
+		public function account()
+		{
+			$user = auth()->user();
+			return view('backend.account', compact('user'));
+		}
+
+		public function images()
+		{
+			return view('backend.images');
+		}
+
+		public function closeAccount()
+		{
+			return view('backend.close_account');
 		}
 
 
@@ -67,31 +79,12 @@
 		}
 
 		//-------------------------------------------------------------------------
-		// privacy
-		public function buyPackages(Request $request)
-		{
-			if (Auth::check()) {
-				$checkout_starter = 'starter';
-				$checkout_novella = 'novella';
-				$checkout_novel = 'novel';
-			} else {
-				$checkout_starter = null;
-				$checkout_novella = null;
-				$checkout_novel = null;
-			}
-
-			return view('user.buy-packages', compact('checkout_starter', 'checkout_novella', 'checkout_novel'));
-		}
-
-
-		//-------------------------------------------------------------------------
 		// settings
 
 
 		public function editSettings(Request $request)
 		{
-			// Get the authenticated user
-			$user = $request->user();
+			$user = auth()->user();
 
 			return view('user.settings', compact('user'));
 		}
@@ -106,13 +99,21 @@
 			$validator = Validator::make($request->all(), [
 				'name' => ['required', 'string', 'max:255'],
 				'username' => [
-					'required', 'string', 'max:255', 'alpha_dash',
+					'required',
+					'string',
+					'max:255',
+					'alpha_dash',
 					Rule::unique('users')->ignore($user->id),
 				],
 				'email' => [
-					'required', 'string', 'email', 'max:255',
+					'required',
+					'string',
+					'email',
+					'max:255',
 					Rule::unique('users')->ignore($user->id),
 				],
+				'page_title' => ['required', 'string', 'max:255'],
+				'about_me' => ['required', 'string', 'max:1000'],
 				'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:1024'],
 			]);
 
@@ -133,13 +134,14 @@
 			$user->name = $request->input('name');
 			$user->username = $request->input('username');
 			$user->email = $request->input('email');
+			$user->page_title = $request->input('page_title');
+			$user->about_me = $request->input('about_me');
 			$user->save();
 
-			// Redirect back with success message /Your settings have been updated successfully.
-			Session::flash('success', 'Ayarlarınız başarıyla güncellendi.');
+			// Redirect back with success message
+			Session::flash('success', 'Your settings have been updated successfully.');
 			return redirect()->back();
 		}
-
 
 
 	}

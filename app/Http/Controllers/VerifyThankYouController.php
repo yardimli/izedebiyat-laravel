@@ -8,7 +8,7 @@
 	{
 		public function index()
 		{
-			return view('user.verify-thank-you-tr_TR');
+			return view('backend.verify-thank-you-tr_TR');
 		}
 
 	}

@@ -218,7 +218,7 @@ JS libraries, plugins and custom scripts -->
 <script src="/assets/vendor/pswmeter/pswmeter.min.js"></script>
 
 <!-- Theme Functions -->
-<script src="/assets/js/functions.js"></script>
+<script src="/js/functions.js"></script>
 
 </body>
 </html>

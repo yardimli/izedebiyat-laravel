@@ -193,8 +193,8 @@ function fix_encoding( $text ) {
 $more_records = true;
 while ($more_records) {
 
-	$stmt = $dbconn->prepare( "SELECT id,baslik,tanitim,yazi FROM yazilar 
-WHERE onay=1 AND silindi=0 
+	$stmt = $dbconn->prepare( "SELECT id,title,subheading,main_text FROM articles 
+WHERE approved=1 AND deleted=0 
 ORDER by id ASC LIMIT 100" );
 
 	$stmt->execute();
@@ -202,27 +202,27 @@ ORDER by id ASC LIMIT 100" );
 	$more_records = false;
 	while ( $story_row = $story_result->fetch_assoc() ) {
 		$more_records = true;
-		$baslik  = $story_row["baslik"];
-		$tanitim = $story_row["tanitim"];
-		$yazi    = $story_row["yazi"];
+		$title  = $story_row["title"];
+		$subheading = $story_row["subheading"];
+		$article    = $story_row["main_text"];
 
-		$yazi    = html_entity_decode( $yazi, ENT_QUOTES );
-		$tanitim = html_entity_decode( $tanitim, ENT_QUOTES );
-		$baslik  = html_entity_decode( $baslik, ENT_QUOTES );
+		$article    = html_entity_decode( $article, ENT_QUOTES );
+		$subheading = html_entity_decode( $subheading, ENT_QUOTES );
+		$title  = html_entity_decode( $title, ENT_QUOTES );
 
-		$yazi    = fix_encoding( $yazi );
-		$tanitim = fix_encoding( $tanitim );
-		$baslik  = fix_encoding( $baslik );
+		$article    = fix_encoding( $article );
+		$subheading = fix_encoding( $subheading );
+		$title  = fix_encoding( $title );
 
-		$stmt_update = $dbconn->prepare( "UPDATE yazilar SET baslik=?, tanitim=?, yazi=? WHERE id=" . $story_row["id"] );
-		$stmt_update->bind_param( "sss", $baslik, $tanitim, $yazi );
+		$stmt_update = $dbconn->prepare( "UPDATE articles SET title=?, subheading=?, main_text=? WHERE id=" . $story_row["id"] );
+		$stmt_update->bind_param( "sss", $title, $subheading, $article );
 		$stmt_update->execute();
 
 		echo ". " . $story_row["id"] . " ";
 
 
-//	if ( stripos( $yeni_yazi, "[[" ) || stripos( $yeni_yazi, "]]" ) ) {
-//		echo $story_row["id"] . " ---<br>" . $yeni_yazi;
+//	if ( stripos( $yeni_article, "[[" ) || stripos( $yeni_article, "]]" ) ) {
+//		echo $story_row["id"] . " ---<br>" . $yeni_article;
 //		echo "<hr>";
 //	} else {
 ////		echo ". ";

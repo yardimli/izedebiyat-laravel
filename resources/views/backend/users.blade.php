@@ -1,41 +1,55 @@
 @extends('layouts.app')
-
 @section('title', 'Terms')
-
 @section('content')
 	<!-- **************** MAIN CONTENT START **************** -->
 	<main>
-		
 		<!-- Container START -->
 		<div class="container mt-5">
 			<div class="row">
-			<form action="/users" method="GET" class="col-9">
-				<div class="input-group mb-3">
-					<input name="search" type="text" class="form-control" placeholder="Search users"
-					       value="{{ request('search') }}">
-					<button class="btn btn-primary" type="submit">Search</button>
-				</div>
-			</form>
-				<div class="col-3">
-					<a href="/users?purchase=yes" class="btn btn-primary">Purchased</a>
-					<a href="/users?written=yes" class="btn btn-primary">Written</a>
-				</div>
+				<form action="/users" method="GET" class="col-9">
+					<div class="input-group mb-3">
+						<input name="search" type="text" class="form-control" placeholder="Search users" value="{{ request('search') }}">
+						<button class="btn btn-primary" type="submit">Search</button>
+					</div>
+				</form>
 			</div>
 			
 			<table class="table table-bordered">
 				<thead>
 				<tr>
+					<th style="width: 50px"></th>
 					<th>Name</th>
 					<th>Email</th>
+					<th>Stories</th>
+					<th>Last Story</th>
 					<th>Created</th>
+					<th>Actions</th>
 				</tr>
 				</thead>
 				<tbody>
 				@foreach($users as $user)
 					<tr style="background-color: #222;">
+						<td class="text-center">
+							@if($user->avatar)
+								<img src="{{ !empty($user->avatar) ? Storage::url($user->avatar) : '/assets/images/avatar/placeholder.jpg' }}" class="rounded-circle" width="40" height="40">
+							@else
+								<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+								     style="width: 40px; height: 40px; font-size: 18px;">
+									{{ strtoupper(substr($user->name, 0, 1)) }}
+								</div>
+							@endif
+						</td>
 						<td>{{ $user->name }}</td>
 						<td>{{ $user->email }}</td>
-						<td>{{ $user->created_at }}</td>
+						<td class="text-center">{{ $user->story_count }}</td>
+						<td>
+							@if($user->last_story_date)
+								{{ \Carbon\Carbon::parse($user->last_story_date)->format('d M Y') }}
+							@else
+								-
+							@endif
+						</td>
+						<td>{{ $user->created_at->format('d M Y') }}</td>
 						<td>
 							<form action="{{ route('users-login-as') }}" method="POST">
 								@csrf
@@ -44,16 +58,17 @@
 							</form>
 						</td>
 					</tr>
-					
 				@endforeach
 				</tbody>
 			</table>
 			
 			<!-- Pagination Links -->
-			<?php
-				$users = $users->appends(['purchase' => $_GET['purchase'] ?? 'no', 'written' => $_GET['written'] ?? 'no', 'search' => $_GET['search'] ?? '' ]);
-
-			?>
+			<?php $users = $users->appends([
+				'purchase' => $_GET['purchase'] ?? 'no',
+				'written' => $_GET['written'] ?? 'no',
+				'search' => $_GET['search'] ?? ''
+			]); ?>
+			
 			<div class="d-flex justify-content-center">
 				@if ($users->onFirstPage())
 					<button class="btn btn-secondary mx-1" disabled>First</button>
@@ -91,14 +106,10 @@
 			</div>
 			
 			<p>Viewing {{ $users->firstItem() }} - {{ $users->lastItem() }} out of {{ $users->total() }}</p>
-		
 		</div>
 	</main>
 	<!-- **************** MAIN CONTENT END **************** -->
-	
-	
 	@include('layouts.footer')
-
 @endsection
 
 @push('scripts')

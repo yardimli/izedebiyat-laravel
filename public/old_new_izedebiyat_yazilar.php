@@ -160,13 +160,13 @@
 	$db2->set_charset("utf8mb4");
 
 // Get the maximum ID from izedebiyat database
-	$maxIdQuery = "SELECT MAX(id) as max_id FROM yazilar";
+	$maxIdQuery = "SELECT MAX(id) as max_id FROM articles";
 	$result = $db1->query($maxIdQuery);
 	$row = $result->fetch_assoc();
 	$lastId = $row['max_id'];
 
 // Get new records from izedebiyat_asp
-	$query = "SELECT * FROM yazilar WHERE yaziID > $lastId ORDER BY yaziID ASC";
+	$query = "SELECT * FROM articles WHERE eserID > $lastId ORDER BY eserID ASC";
 	$result = $db2->query($query);
 
 	if ($result->num_rows > 0) {
@@ -174,31 +174,28 @@
 
 		while ($row = $result->fetch_assoc()) {
 			// Create INSERT query
-			$insertQuery = "INSERT INTO izedebiyat.yazilar SET 
-            id = {$row['yaziID']},
-            katilma_tarihi = " . ($row['ktarih'] ? "'{$row['ktarih']}'" : "NULL") . ",
+			$insertQuery = "INSERT INTO izedebiyat.articles SET 
+            id = {$row['articleID']},
+            created_at = " . ($row['ktarih'] ? "'{$row['ktarih']}'" : "NULL") . ",
             onay = {$row['onay']},
-            baslik = " . ($row['baslik'] ? "'" . $db1->real_escape_string($row['baslik']) . "'" : "NULL") . ",
-            slug = " . ($row['baslik'] ? "'" . slugify($db1->real_escape_string($row['baslik'])) . "'" : "NULL") . ",
-            alt_baslik = " . ($row['altbaslik'] ? "'" . $db1->real_escape_string($row['altbaslik']) . "'" : "NULL") . ",
-            yayinlama_tarih = " . ($row['ytarih'] ? "'" . $db1->real_escape_string($row['ytarih']) . "'" : "NULL") . ",
-            tanitim = " . ($row['tanitim'] ? "'" . $db1->real_escape_string(replace_ascii($row['tanitim'])) . "'" : "NULL") . ",
-            yazi = " . ($row['yazi'] ? "'" . $db1->real_escape_string(replace_ascii($row['yazi'])) . "'" : "NULL") . ",
+            title = " . ($row['title'] ? "'" . $db1->real_escape_string($row['title']) . "'" : "NULL") . ",
+            slug = " . ($row['title'] ? "'" . slugify($db1->real_escape_string($row['title'])) . "'" : "NULL") . ",
+            subtitle = " . ($row['subtitle'] ? "'" . $db1->real_escape_string($row['subtitle']) . "'" : "NULL") . ",
+            publishing_date = " . ($row['ytarih'] ? "'" . $db1->real_escape_string($row['ytarih']) . "'" : "NULL") . ",
+            subheading = " . ($row['subheading'] ? "'" . $db1->real_escape_string(replace_ascii($row['subheading'])) . "'" : "NULL") . ",
+            article = " . ($row['main_text'] ? "'" . $db1->real_escape_string(replace_ascii($row['main_text'])) . "'" : "NULL") . ",
             name = " . ($row['yazarad'] ? "'" . $db1->real_escape_string($row['yazarad']) . "'" : "''") . ",
             name_slug = " . ($row['yazarad'] ? "'" . slugify($db1->real_escape_string($row['yazarad'])) . "'" : "''") . ",
-            kategori_ad = " . ($row['katead'] ? "'" . $db1->real_escape_string($row['katead']) . "'" : "''") . ",
-            kategori_slug = " . ($row['katead'] ? "'" . slugify($db1->real_escape_string($row['katead'])) . "'" : "''") . ",
-            ust_kategori_ad = " . ($row['ustkatead'] ? "'" . $db1->real_escape_string($row['ustkatead']) . "'" : "''") . ",
-            ust_kategori_slug = " . ($row['ustkatead'] ? "'" . slugify($db1->real_escape_string($row['ustkatead'])) . "'" : "''") . ",
-            org_yazar = " . ($row['orgyazar'] ? "'" . $db1->real_escape_string($row['orgyazar']) . "'" : "NULL") . ",
-            yazi_resim = " . ($row['yaziresim'] ? "'" . $db1->real_escape_string($row['yaziresim']) . "'" : "NULL") . ",
+            category_name = " . ($row['katead'] ? "'" . $db1->real_escape_string($row['katead']) . "'" : "''") . ",
+            category_slug = " . ($row['katead'] ? "'" . slugify($db1->real_escape_string($row['katead'])) . "'" : "''") . ",
+            parent_category_name = " . ($row['ustkatead'] ? "'" . $db1->real_escape_string($row['ustkatead']) . "'" : "''") . ",
+            parent_category_slug = " . ($row['ustkatead'] ? "'" . slugify($db1->real_escape_string($row['ustkatead'])) . "'" : "''") . ",
             silindi = {$row['silindi']},
             user_id = {$row['yazarno']},
-            ust_kategori_id = {$row['ustkateno']},
-            kategori_id = {$row['kateno']},
+            parent_category_id = {$row['ustkateno']},
+            category_id = {$row['kateno']},
             formul_ekim = {$row['FormulEkim']},
-            sayac = {$row['sayac']},
-            gunluk_sayac = {$row['gunluksayac']},
+            read_count = {$row['read_count']},
             yaslilikgun = {$row['yaslilikgun']},
             oncekikonum = {$row['oncekikonum']},
             yorumsay = {$row['yorumsay']},
@@ -206,10 +203,10 @@
             oncekikonum_altkate = {$row['oncekikonum_altkate']},
             oncekikonum_ustkate = {$row['oncekikonum_ustkate']},
             
-            yazi_sira = {$row['yaziSira']}";
+            article_order = {$row['eserSira']}";
 
 			echo "<div style='margin-bottom: 20px;'>";
-			echo "<h3>New Record ID: {$row['yaziID']}</h3>";
+			echo "<h3>New Record ID: {$row['eserID']}</h3>";
 			echo "<pre>" . htmlspecialchars($insertQuery) . ";</pre>";
 			echo "</div>";
 
@@ -252,14 +249,14 @@
             nick = " . ($row['nick'] ? "'" . $db1->real_escape_string($row['nick']) . "'" : "NULL") . ",
             sifre = " . ($row['sifre'] ? "'" . $db1->real_escape_string($row['sifre']) . "'" : "NULL") . ",
             eposta = " . ($row['eposta'] ? "'" . $db1->real_escape_string($row['eposta']) . "'" : "NULL") . ",
-            sayfa_baslik = " . ($row['sayfabaslik'] ? "'" . $db1->real_escape_string($row['sayfabaslik']) . "'" : "NULL") . ",
+            page_title = " . ($row['sayfatitle'] ? "'" . $db1->real_escape_string($row['sayfatitle']) . "'" : "NULL") . ",
             site_adres = " . ($row['siteadres'] ? "'" . $db1->real_escape_string($row['siteadres']) . "'" : "NULL") . ",
-            yazar_tanitim = " . ($row['ytanitim'] ? "'" . $db1->real_escape_string(replace_ascii($row['ytanitim'])) . "'" : "NULL") . ",
+            page_title = " . ($row['ysubheading'] ? "'" . $db1->real_escape_string(replace_ascii($row['ysubheading'])) . "'" : "NULL") . ",
             yazar_ozellik = " . ($row['yozellik'] ? "'" . $db1->real_escape_string(replace_ascii($row['yozellik'])) . "'" : "NULL") . ",
             yazar_etkiler = " . ($row['yetkiler'] ? "'" . $db1->real_escape_string($row['yetkiler']) . "'" : "NULL") . ",
             yazar_benzerler = " . ($row['ybenzerler'] ? "'" . $db1->real_escape_string($row['ybenzerler']) . "'" : "NULL") . ",
             yazar_gecmis = " . ($row['ygecmis'] ? "'" . $db1->real_escape_string(replace_ascii($row['ygecmis'])) . "'" : "NULL") . ",
-            yazar_resim_yazi = " . ($row['yresimyazi'] ? "'" . $db1->real_escape_string(replace_ascii($row['yresimyazi'])) . "'" : "NULL") . ",
+            yazar_resim_eser = " . ($row['yresimeser'] ? "'" . $db1->real_escape_string(replace_ascii($row['yresimeser'])) . "'" : "NULL") . ",
             yazar_konum = " . ($row['ykonum'] ? "'" . $db1->real_escape_string($row['ykonum']) . "'" : "NULL") . ",
             yazar_adres = " . ($row['yadres'] ? "'" . $db1->real_escape_string($row['yadres']) . "'" : "NULL") . ",
             sehir = " . ($row['sehir'] ? $row['sehir'] : "NULL") . ",
@@ -290,7 +287,7 @@
             aylikbulten = {$row['aylikbulten']},
             otomatikonay = {$row['otomatikonay']},
             okur_uye_id = {$row['okurUyeID']},
-            yazi_var = {$row['yaziVar']},
+            article_var = {$row['eserVar']},
             ip_log = " . ($row['IPLog'] ? "'" . $db1->real_escape_string($row['IPLog']) . "'" : "NULL");
 
 				echo "<div style='margin-bottom: 20px;'>";

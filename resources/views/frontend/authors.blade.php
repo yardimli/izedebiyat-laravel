@@ -13,38 +13,38 @@
 			
 			<!-- Filter Buttons -->
 			<div class="filter-buttons mb-4 text-center">
-				<a href="{{ route('authors.harf', ['filter' => 'yeni']) }}"
+				<a href="{{ route('users.harf', ['filter' => 'yeni']) }}"
 				   class="btn {{ $filter === 'yeni' ? 'btn-primary' : 'btn-outline-primary' }}">YENİ</a>
-				<a href="{{ route('authors.harf', ['filter' => 'tumu']) }}"
+				<a href="{{ route('users.harf', ['filter' => 'tumu']) }}"
 				   class="btn {{ $filter === 'tumu' ? 'btn-primary' : 'btn-outline-primary' }}">Tümü</a>
 				@foreach(['A','B','C','Ç','D','E','F','G','H','I','İ','J','K','L','M','N','O','Ö','P','R','S','Ş','T','U','Ü','V','Y','Z'] as $letter)
-					<a href="{{ route('authors.harf', ['filter' => $letter]) }}"
+					<a href="{{ route('users.harf', ['filter' => $letter]) }}"
 					   class="btn {{ $filter === $letter ? 'btn-primary' : 'btn-outline-primary' }}">{{ $letter }}</a>
 				@endforeach
 			</div>
 			
-			<!-- Authors Grid -->
+			<!-- users Grid -->
 			<div class="row">
-				@foreach($authors as $author)
+				@foreach($users as $user)
 					<div class="col-md-4 mb-4">
 						<div class="author-card">
 							<div class="author-image mb-3 position-relative">
-								<a href="{{ url('/yazar/' . $author->slug) }}">{!! \App\Helpers\MyHelper::generateInitialsAvatar($author->picture, $author->name, 'width: 100px; height: 100px; object-fit: cover;', 'img-fluid rounded-circle', 'yz-resim') !!}
+								<a href="{{ url('/yazar/' . $user->slug) }}">{!! \App\Helpers\MyHelper::generateInitialsAvatar($user->avatar, $user->name, 'width: 100px; height: 100px; object-fit: cover;', 'img-fluid rounded-circle', 'ai-image') !!}
 								</a>
 							</div>
 							
-							<h4><a href="{{ url('/yazar/' . $author->slug) }}">{{ $author->name }}</a></h4>
-							<p>{{ Str::limit($author->yazar_tanitim, 100) }}</p>
+							<h4><a href="{{ url('/yazar/' . $user->slug) }}">{{ $user->name }}</a></h4>
+							<p>{{ Str::limit($user->page_title, 100) }}</p>
 							
-							<!-- Recent Works -->
-							<div class="recent-works">
+							<!-- Recent articles -->
+							<div class="recent-articles">
 								<h5>Son Yapıtları</h5>
 								<ul>
-									@foreach($author->yazilar()->where('onay', 1)->where('silindi', 0)->orderBy('katilma_tarihi', 'DESC')->limit(3)->get() as $work)
+									@foreach($user->articles()->where('approved', 1)->where('deleted', 0)->orderBy('created_at', 'DESC')->limit(3)->get() as $article)
 										<li>
-											<a href="{{ url('/yapit/' . $work->slug) }}">{{ $work->baslik }}</a>
+											<a href="{{ url('/yapit/' . $article->slug) }}">{{ $article->title }}</a>
 											<small class="text-muted">
-												({{ \App\Helpers\MyHelper::timeElapsedString($work->katilma_tarihi) }})
+												({{ \App\Helpers\MyHelper::timeElapsedString($article->created_at) }})
 											</small>
 										</li>
 									@endforeach
@@ -57,10 +57,10 @@
 			
 			<!-- Pagination -->
 			@php
-				$currentPage = $authors->currentPage();
-				$lastPage = $authors->lastPage();
-				$totalItems = $authors->total();
-				$perPage = $authors->perPage();
+				$currentPage = $users->currentPage();
+				$lastPage = $users->lastPage();
+				$totalItems = $users->total();
+				$perPage = $users->perPage();
 			@endphp
 			
 			@if($lastPage > 1)
@@ -107,7 +107,7 @@
 
 @push('styles')
 	<style>
-      .yz-resim {
+      .ai-image {
           position: absolute;
           bottom: 0;
           right: 40%;
@@ -129,16 +129,16 @@
           height: 100%;
           text-align: center;
       }
-      .recent-works {
+      .recent-articles {
           margin-top: 20px;
           font-size: 0.9em;
           text-align: left;
       }
-      .recent-works ul {
+      .recent-articles ul {
           list-style: none;
           padding-left: 0;
       }
-      .recent-works li {
+      .recent-articles li {
           margin-bottom: 5px;
       }
 	</style>

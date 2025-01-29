@@ -41,8 +41,6 @@
 	<link href="/assets/v2/css/menu.css" rel="stylesheet">
 	<link id="effect" href="/assets/v2/css/dropdown-effects/fade-down.css" media="all" rel="stylesheet">
 	<link href="/assets/v2/css/magnific-popup.css" rel="stylesheet">
-	<link href="/assets/v2/css/owl.carousel.min.css" rel="stylesheet">
-	<link href="/assets/v2/css/owl.theme.default.min.css" rel="stylesheet">
 	<link href="/assets/v2/css/lunar.css" rel="stylesheet">
 	
 	<!-- ON SCROLL ANIMATION -->

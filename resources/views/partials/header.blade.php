@@ -13,13 +13,13 @@
 			</button>
 			
 			@if (Auth::user())
-				<a href="{{route('sahne-arkasi')}}">
-					<img class="small-author-avatar"
+				<a href="{{route('sahne-arkasi.account')}}">
+					<img class="small-user-avatar"
 					     src="{{ !empty(Auth::user()->avatar) ? Storage::url(Auth::user()->avatar) : '/assets/images/avatar/placeholder.jpg' }}"
 					     alt="avatar">
 				</a>
 			@else
-				<a class="author-avatar" href="{{route('login')}}" style="cursor: pointer;">
+				<a class="user-avatar" href="{{route('login')}}" style="cursor: pointer;">
 					<img src="/assets/images/avatar/placeholder.jpg" alt="">
 				</a>
 			@endif
@@ -56,7 +56,7 @@
 			@foreach($mainMenuCategories as $category)
 				<div>
 					<a href="{{ url('/kume/' . $category->slug) }}" style="text-transform: uppercase;">
-						{!! $category->kategori_ad !!}
+						{!! $category->category_name !!}
 					</a>
 				</div>
 			@endforeach
@@ -95,7 +95,7 @@
 						</ul>
 						
 						@if (Auth::user())
-							<a href="{{route('sahne-arkasi')}}" class="author-avatar" id="UserMenu" style="cursor: pointer;">
+							<a href="{{route('sahne-arkasi.account')}}" class="user-avatar" id="UserMenu" style="cursor: pointer;">
 								<img src="{{ !empty(Auth::user()->avatar) ? Storage::url(Auth::user()->avatar) : '/assets/images/avatar/placeholder.jpg' }}"
 								     alt="avatar">
 							</a>
@@ -103,7 +103,7 @@
 							<ul class="top-menu navbar-nav w-100 d-lg-flex align-items-center ms-2">
 								<li><a href="{{route('register')}}" class="btn">ÜYE OL</a></li>
 							</ul>
-							<a href="{{route('login')}}" class="author-avatar" id="UserMenu" style="cursor: pointer;">
+							<a href="{{route('login')}}" class="user-avatar" id="UserMenu" style="cursor: pointer;">
 								<img src="{{ asset('/assets/images/avatar/placeholder.jpg') }}" alt="">
 							</a>
 						@endif

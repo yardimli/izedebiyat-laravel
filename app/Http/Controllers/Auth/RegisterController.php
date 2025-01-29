@@ -119,6 +119,6 @@
 		protected function registered(Request $request, $user)
 		{
 			Mail::to($request->input('email'))->send(new WelcomeMail($user->name, $user->email));
-			return redirect()->route('sahne-arkasi');
+			return redirect()->route('sahne-arkasi.account');
 		}
 	}

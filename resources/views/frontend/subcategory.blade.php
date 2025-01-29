@@ -1,6 +1,6 @@
 @extends('layouts.app-frontend')
 
-@section('title', 'İzEdebiyat - ' . $category->kategori_ad . ' - ' . $subCategory->kategori_ad)
+@section('title', 'İzEdebiyat - ' . $category->category_name . ' - ' . $subCategory->category_name)
 
 @section('body-class', 'home')
 
@@ -15,25 +15,25 @@
 						<div class="col-md-8 col-12">
 							<h4 class="spanborder">
                             <span style="text-transform: uppercase;">
-                                <a href="{{ url('/kume/' . $category->slug) }}">{{ $category->kategori_ad }}</a>
+                                <a href="{{ url('/kume/' . $category->slug) }}">{{ $category->category_name }}</a>
                                 @if($subCategory)
-		                            > {{ $subCategory->kategori_ad }}
+		                            > {{ $subCategory->category_name }}
 	                            @endif
                             </span>
 							</h4>
 							
 							@php
 								$counter = 0;
-								$authors = [];
-								$author_counts = [];
-								$previous_author = null;
+								$users = [];
+								$user_counts = [];
+								$previous_user = null;
 							@endphp
 							
-							@foreach($texts as $text)
+							@foreach($articles as $article)
 								@php
-									$current_author = $text->user_id;
-									if (!isset($author_counts[$current_author])) {
-											$author_counts[$current_author] = 0;
+									$current_user = $article->user_id;
+									if (!isset($user_counts[$current_user])) {
+											$user_counts[$current_user] = 0;
 									}
 								@endphp
 								
@@ -41,44 +41,44 @@
 									@break
 								@endif
 								
-								@if($author_counts[$current_author] < 3 && $current_author !== $previous_author)
+								@if($user_counts[$current_user] < 3 && $current_user !== $previous_user)
 									@php
-										$author_counts[$current_author]++;
-										$previous_author = $current_author;
+										$user_counts[$current_user]++;
+										$previous_user = $current_user;
 										$counter++;
 									@endphp
 									
 									<article class="row justify-content-between mb-5 mr-0">
 										<div class="col-md-9">
 											<div class="align-self-center" style="min-height: 200px;">
-												<div class="capsSubtle mb-2">{{ $text->sentiment }}</div>
+												<div class="capsSubtle mb-2">{{ $article->sentiment }}</div>
 												<h3 class="entry-title mb-2">
-													<a href="{{ url('/yapit/' . $text->slug) }}">
-														{{ \App\Helpers\MyHelper::replaceAscii($text->baslik) }}
+													<a href="{{ url('/yapit/' . $article->slug) }}">
+														{{ \App\Helpers\MyHelper::replaceAscii($article->title) }}
 													</a>
 												</h3>
 												<div class="entry-excerpt">
 													<p class="mb-1">
-														@if($text->ust_kategori_slug === "siir")
-															{!! \App\Helpers\MyHelper::getWords(\App\Helpers\MyHelper::replaceAscii($text->yazi), 16, false) !!}
+														@if($article->parent_category_slug === "siir")
+															{!! \App\Helpers\MyHelper::getWords(\App\Helpers\MyHelper::replaceAscii($article->main_text), 16, false) !!}
 														@else
-															{!! \App\Helpers\MyHelper::getWords(\App\Helpers\MyHelper::replaceAscii($text->tanitim), 48) !!}
+															{!! \App\Helpers\MyHelper::getWords(\App\Helpers\MyHelper::replaceAscii($article->subheading), 48) !!}
 														@endif
 													</p>
 												</div>
 												<div class="entry-meta align-items-center">
-													<a href="{{ url('/yazar/' . $text->name_slug) }}">{{ $text->name }}</a><br>
-													<span>{{ \App\Helpers\MyHelper::timeElapsedString($text->katilma_tarihi) }}</span>
+													<a href="{{ url('/yazar/' . $article->name_slug) }}">{{ $article->name }}</a><br>
+													<span>{{ \App\Helpers\MyHelper::timeElapsedString($article->created_at) }}</span>
 													<span class="middotDivider"></span>
 													<span class="readingTime">
-                                                    {{ \App\Helpers\MyHelper::estimatedReadingTime($text->yazi) }}
+                                                    {{ \App\Helpers\MyHelper::estimatedReadingTime($article->main_text) }}
                                                 </span>
 												</div>
 											</div>
 										</div>
 										<div class="col-md-3">
-											<a href="{{ url('/yapit/' . $text->slug) }}">
-												{!! \App\Helpers\MyHelper::getImage($text->yazi_ana_resim ?? '', $text->kategori_id, 'bgcover2', '') !!}
+											<a href="{{ url('/yapit/' . $article->slug) }}">
+												{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, 'bgcover2', '') !!}
 											</a>
 										</div>
 									</article>
@@ -93,10 +93,10 @@
 					
 					<!-- Pagination -->
 					@php
-						$currentPage = $texts->currentPage();
-						$lastPage = $texts->lastPage();
-						$totalItems = $texts->total();
-						$perPage = $texts->perPage();
+						$currentPage = $articles->currentPage();
+						$lastPage = $articles->lastPage();
+						$totalItems = $articles->total();
+						$perPage = $articles->perPage();
 					@endphp
 					
 					@if($lastPage > 1)

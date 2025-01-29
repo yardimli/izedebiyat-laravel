@@ -704,12 +704,12 @@ input.search_field {
     float: left;
 }
 
-.sticky-header .author-avatar {
+.sticky-header .user-avatar {
     float: right;
     margin-right: 42px;
 }
 
-.sticky-header .small-author-avatar {
+.sticky-header .small-user-avatar {
     float: right;
     margin-right: 42px;
     width: 32px;
@@ -743,12 +743,12 @@ input.search_field {
     line-height: 1.2;
 }
 
-.entry-meta .author-avatar {
+.entry-meta .user-avatar {
     float: left;
     margin: -3px 15px 0 0;
 }
 
-.entry-meta .author-avatar img {
+.entry-meta .user-avatar img {
     height: 40px;
     width: 40px;
 }
@@ -891,12 +891,12 @@ header .logo-wrapper {
     padding: 0;
 }
 
-.author-avatar {
+.user-avatar {
 
     margin-left: 1rem;
 }
 
-.author-avatar img {
+.user-avatar img {
 
     border-radius: 50%;
     height: 32px;
@@ -1407,7 +1407,7 @@ textarea.form-control {
 
 .entry-main-content {
     line-height: 1.7;
-    font-size: 1.25rem;
+    font-size: 18px;
     margin-bottom: 4rem;
 }
 

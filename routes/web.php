@@ -1,9 +1,11 @@
 <?php
 
 	use App\Helpers\MyHelper;
+	use App\Http\Controllers\ArticleController;
+	use App\Http\Controllers\CategoryController;
 	use App\Http\Controllers\ChatController;
 	use App\Http\Controllers\FrontendController;
-	use App\Http\Controllers\ImageGenController;
+	use App\Http\Controllers\ImageController;
 	use App\Http\Controllers\LangController;
 	use App\Http\Controllers\LoginWithGoogleController;
 	use App\Http\Controllers\UserController;
@@ -27,42 +29,6 @@
 	|
 	*/
 
-
-	// New maintenance routes
-	Route::get('/maintenance/check-harmful', function () {
-		ob_start();
-		MyHelper::returnIsHarmful();
-		$output = ob_get_clean();
-		return response($output)->header('Content-Type', 'text/plain');
-	})->name('maintenance.check-harmful');
-
-	Route::get('/maintenance/check-religious', function () {
-		ob_start();
-		MyHelper::returnReligiousReason();
-		$output = ob_get_clean();
-		return response($output)->header('Content-Type', 'text/plain');
-	})->name('maintenance.check-religious');
-
-	Route::get('/maintenance/check-keywords', function () {
-		ob_start();
-		MyHelper::returnKeywords();
-		$output = ob_get_clean();
-		return response($output)->header('Content-Type', 'text/plain');
-	})->name('maintenance.check-keywords');
-
-	Route::get('/maintenance/check-moderation', function () {
-		ob_start();
-		MyHelper::returnModeration();
-		$output = ob_get_clean();
-		return response($output)->header('Content-Type', 'text/plain');
-	})->name('maintenance.check-moderation');
-
-	Route::get('/maintenance/update-yazilar-table', function () {
-		ob_start();
-		MyHelper::updateYaziTable();
-		$output = ob_get_clean();
-		return response($output)->header('Content-Type', 'text/plain');
-	})->name('maintenance.check-moderation');
 
 	// Static pages
 	Route::get('404', [FrontendController::class, 'page_404'])->name('frontend-404');
@@ -94,12 +60,12 @@
 	Route::get('kume/{categorySlug}/{subcategorySlug}', [FrontendController::class, 'subcategory'])->name('subcategory');
 	Route::get('kume/{categorySlug}/{subcategorySlug}/sayfa/{page}', [FrontendController::class, 'subcategory'])->name('subcategory.page');
 
-	Route::get('yazar/{slug}', [FrontendController::class, 'author'])->name('author');
-	Route::get('yazar/{slug}/sayfa/{page}', [FrontendController::class, 'author'])->name('author.page');
+	Route::get('yazar/{slug}', [FrontendController::class, 'user'])->name('user');
+	Route::get('yazar/{slug}/sayfa/{page}', [FrontendController::class, 'user'])->name('author.page');
 
-	Route::get('/yazarlar', [FrontendController::class, 'authors'])->name('authors');
-	Route::get('/yazarlar/harf/{filter}', [FrontendController::class, 'authors'])->name('authors.harf');
-	Route::get('/yazarlar/harf/{filter}/sayfa/{page}', [FrontendController::class, 'authors'])->name('authors.harf.sayfa');
+	Route::get('/yazarlar', [FrontendController::class, 'users'])->name('users');
+	Route::get('/yazarlar/harf/{filter}', [FrontendController::class, 'users'])->name('users.harf');
+	Route::get('/yazarlar/harf/{filter}/sayfa/{page}', [FrontendController::class, 'users'])->name('users.harf.sayfa');
 
 	Route::get('/etiket/{slug}', [FrontendController::class, 'articlesByKeyword'])->name('articles-by-keyword');
 	Route::get('/etiket/{slug}/sayfa/{page}', [FrontendController::class, 'articlesByKeyword'])->name('articles-by-keyword.page');
@@ -124,8 +90,69 @@
 	//-------------------------------------------------------------------------
 	Route::middleware(['auth'])->group(function () {
 
+		// New maintenance routes
+		Route::get('/maintenance/check-harmful', function () {
+			ob_start();
+			MyHelper::returnIsHarmful();
+			$output = ob_get_clean();
+			return response($output)->header('Content-Type', 'text/plain');
+		})->name('maintenance.check-harmful');
+
+		Route::get('/maintenance/check-religious', function () {
+			ob_start();
+			MyHelper::returnReligiousReason();
+			$output = ob_get_clean();
+			return response($output)->header('Content-Type', 'text/plain');
+		})->name('maintenance.check-religious');
+
+		Route::get('/maintenance/check-keywords', function () {
+			ob_start();
+			MyHelper::returnKeywords();
+			$output = ob_get_clean();
+			return response($output)->header('Content-Type', 'text/plain');
+		})->name('maintenance.check-keywords');
+
+		Route::get('/maintenance/check-moderation', function () {
+			ob_start();
+			MyHelper::returnModeration();
+			$output = ob_get_clean();
+			return response($output)->header('Content-Type', 'text/plain');
+		})->name('maintenance.check-moderation');
+
+		Route::get('/maintenance/update-articles-table', function () {
+			ob_start();
+			MyHelper::updateArticleTable();
+			$output = ob_get_clean();
+			return response($output)->header('Content-Type', 'text/plain');
+		})->name('maintenance.check-moderation');
+
+
 		Route::get('/check-llms-json', [ChatController::class, 'checkLLMsJson']);
 
+		Route::get('/upload-images', [ImageController::class, 'index'])->name('upload-images.index');
+		Route::post('/upload-images', [ImageController::class, 'store'])->name('upload-images.store');
+		Route::put('/upload-images/{id}', [ImageController::class, 'update'])->name('upload-images.update');
+		Route::delete('/upload-images/{id}', [ImageController::class, 'destroy'])->name('upload-images.destroy');
+
+
+		Route::post('/image-gen', [ImageController::class, 'makeImage'])->name('send-image-gen-prompt');
+		Route::delete('/image-gen/{session_id}', [ImageController::class, 'destroyGenImage'])->name('image-gen.destroy');
+
+
+		Route::prefix('eserlerim')->group(function () {
+			Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
+			Route::get('/create', [ArticleController::class, 'create'])->name('articles.create');
+			Route::post('/', [ArticleController::class, 'store'])->name('articles.store');
+			Route::get('/{hashedId}/edit', [ArticleController::class, 'edit'])->name('articles.edit');
+			Route::put('/{hashedId}', [ArticleController::class, 'update'])->name('articles.update');
+			Route::delete('/{hashedId}', [ArticleController::class, 'destroy'])->name('articles.destroy');
+			Route::get('/get-images', [ArticleController::class, 'getImages'])->name('articles.get-images');
+
+			Route::get('/keywords/search', [ArticleController::class, 'searchKeywords'])->name('keywords.search');
+
+			Route::post('/upload-article-images', [ArticleController::class, 'storeArticleImage'])->name('upload-article-images.store');
+
+		});
 
 		Route::get('/chat/sessions', [ChatController::class, 'getChatSessions']);
 		Route::get('/chat/{session_id?}', [ChatController::class, 'index'])->name('chat');
@@ -135,21 +162,20 @@
 		Route::delete('/chat/{sessionId}', [ChatController::class, 'destroy'])->name('chat.destroy');
 
 
-		Route::get('/image-gen/sessions', [ImageGenController::class, 'getImageGenSessions'])->name('image-gen-sessions');
-		Route::get('/image-gen/{session_id?}', [ImageGenController::class, 'index'])->name('image-gen');
-		Route::post('/image-gen', [ImageGenController::class, 'makeImage'])->name('send-image-gen-prompt');
-		Route::delete('/image-gen/{session_id}', [ImageGenController::class, 'destroy'])->name('image-gen.destroy');
 
+		Route::post('/settings', [UserSettingsController::class, 'updateSettings'])->name('sahne-arkasi.update');
+		Route::get('/settings/account', [UserSettingsController::class, 'account'])->name('sahne-arkasi.account');
 
-		Route::get('/sahne-arkasi', [UserSettingsController::class, 'editSettings'])->name('sahne-arkasi');
-		Route::post('/sahne-arkasi', [UserSettingsController::class, 'updateSettings'])->name('sahne-arkasi-guncelle');
+		Route::get('/sahne-arkasi/images', [UserSettingsController::class, 'images'])->name('sahne-arkasi.images');
 
-		Route::post('/sahne-arkasi/password', [UserSettingsController::class, 'updatePassword'])->name('sahne-arkasi-sifre-guncelle');
+		Route::get('/sahne-arkasi/close-account', [UserSettingsController::class, 'closeAccount'])->name('sahne-arkasi.close-account');
+
+		Route::post('/sahne-arkasi/password', [UserSettingsController::class, 'updatePassword'])->name('sahne-arkasi.sifre-guncelle');
+
 
 		Route::get('/users', [UserController::class, 'index'])->name('users-index');
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');
 
-		Route::post('/sahne-arkasi/password', [UserSettingsController::class, 'updatePassword'])->name('sahne-arkasi-sifre-guncelle');
 
 	});
 

@@ -14,9 +14,6 @@
 	<link href="{{ asset('/frontend/assets/css/bootstrap.css') }}" rel="stylesheet">
 	<link href="{{ asset('/frontend/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
 	
-	<link href="{{ asset('/frontend/assets/css/owl.carousel.min.css') }}" rel="stylesheet">
-	<link href="{{ asset('/frontend/assets/css/owl.theme.default.min.css') }}" rel="stylesheet">
-	
 	<!-- Add other CSS -->
 	<link href="{{ asset('/frontend/assets/css/style.css') }}" rel="stylesheet">
 	<link href="{{ asset('/frontend/assets/css/widgets.css') }}" rel="stylesheet">
@@ -40,7 +37,6 @@
 	<script src="{{ asset('/frontend/js/bootstrap.bundle.js') }}"></script>
 	
 	<script src="{{ asset('/frontend/assets/js/jquery.lazy.min.js') }}"></script>
-	<script src="{{ asset('/frontend/assets/js/owl.carousel.min.js') }}"></script>
 	<script src="{{ asset('/frontend/assets/js/jquery-scrolltofixed-min.js') }}"></script>
 	<script src="{{ asset('/frontend/assets/js/theia-sticky-sidebar.js') }}"></script>
 	<script src="{{ asset('/frontend/assets/js/scripts.js') }}"></script>

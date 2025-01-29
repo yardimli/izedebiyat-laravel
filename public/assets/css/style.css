@@ -17374,8 +17374,8 @@ a.badge:hover {
 }
 
 [data-bs-theme=dark] {
-  --bs-gray-100: #313235;
-  --bs-gray-200: #464950;
+  --bs-gray-100: #414245;
+  --bs-gray-200: #495258;
   --bs-gray-300: #5f5f68;
   --bs-gray-400: #a1a1a8;
   --bs-gray-500: #bfc0c9;
@@ -17389,7 +17389,7 @@ a.badge:hover {
   --bs-body-color: #a1a1a8;
   --bs-mode:#0f0f10;
   --bs-mode-rgb:15, 15, 16;
-  --bs-border-color: rgba(255, 255, 255, 0.07);
+  --bs-border-color: rgba(255, 255, 255, 0.2);
   --bs-card-bg-dark: #141519;
 }
 [data-bs-theme=dark] .navbar {

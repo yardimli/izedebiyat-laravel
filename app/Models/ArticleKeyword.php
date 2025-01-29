@@ -4,18 +4,18 @@
 
 	use Illuminate\Database\Eloquent\Model;
 
-	class YaziKeyword extends Model
+	class ArticleKeyword extends Model
 	{
-		protected $table = 'yazi_keyword';
+		protected $table = 'article_keyword';
 
 		protected $fillable = [
-			'yazi_id',
+			'article_id',
 			'keyword_id'
 		];
 
-		public function yazi()
+		public function article()
 		{
-			return $this->belongsTo(Yazi::class, 'yazi_id');
+			return $this->belongsTo(Article::class, 'article_id');
 		}
 
 		public function keyword()
