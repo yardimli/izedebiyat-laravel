@@ -22,7 +22,7 @@
 
 		'Search...' => 'Ara...',
 		'Blog' => 'Blog',
-		'My Books' => 'Eserlerim',
+		'My Works' => 'Eserlerim',
 		'Help' => 'Yardım',
 		'Settings' => 'Ayarlar',
 
@@ -54,7 +54,7 @@
 		'Name' => 'Ad',
 
 		'Order' => 'Sıra',
-		'Short Description' => 'Kısa Açıklama',
+		'Short Description' => 'Tanıtım',
 
 		'User Name' => 'Yazar Adı',
 
@@ -163,7 +163,7 @@
 		'Delete' => 'Sil',
 
 		'Articles' => 'Eserler',
-		'Create New Article' => 'Yeni Eser',
+		'Create New Article' => 'Yeni',
 		'No articles found' => 'Eser bulunamadı',
 		'Title' => 'Başlık',
 		'Created At' => 'Kayıt tarihi',
@@ -171,7 +171,7 @@
 		'Draft' => 'Taslak',
 		'Are you sure you want to delete this article?' => 'Bu eseri silmek istediğinizden emin misiniz?',
 		'Edit Article' => 'Eseri Düzenle',
-		'Create Article' => 'Yeni Eser',
+		'Create Article' => 'Sakla',
 		'Subtitle' => 'Alt Başlık',
 		'Featured Image' => 'Kapak Görseli',
 		'Select Featured Image' => 'Kapak görselini Seç',
@@ -179,7 +179,7 @@
 		'Meta Description' => 'Meta Açıklama',
 		'Publish Article' => 'Eseri Yayınla',
 		'Publication Date' => 'Yayın Tarihi',
-		'Update Article' => 'Eseri Güncelle',
+		'Update Article' => 'Güncelle',
 		'Categories' => 'Kümeler',
 		'Category' => 'Küme',
 		'Select Category' => 'Kümeyi Seç',
@@ -197,5 +197,29 @@
 		'Error deleting session: ' => 'Oturum silinirken hata oluştu: ',
 		'Error deleting session' => 'Oturum silinirken hata oluştu',
 		'Yes, I\'d like to delete my account' => 'Evet, hesabımı silmek istiyorum',
+		'Start Writing' => 'Yazmaya Başla',
+		'My Page' => 'Benim Sayfam',
+		'Read Count' => 'Okuma Sayısı',
+		'All Status' => 'Tüm Durumlar',
+		'Newest First' => 'Yeniden Eskiye',
+		'Oldest First' => 'Eskiden Yeniye',
+		'Most Read' => 'En Çok Okunan',
+		'Search articles...' => 'Eserlerde ara...',
+		'Filter' => 'Süz',
+
+		'Please enter some content first.' => 'Lütfen önce biraz içerik girin.',
+		'Category generated successfully.' => 'Küme başarıyla oluşturuldu.',
+		'Error generating category:' => 'Küme oluşturulurken hata oluştu:',
+		'Description generated successfully.' => 'Tanıtım başarıyla oluşturuldu.',
+		'Error generating description:' => 'Tanıtım oluşturulurken hata oluştu:',
+		'Keywords generated successfully.' => 'Anahtar sözcükler başarıyla oluşturuldu.',
+		'Error generating keywords:' => 'Anahtar sözcükler oluşturulurken hata oluştu:',
+
+		'About Me' => 'Yazar Tanıtım',
+		'Page Title' => 'Sayfanızın Başlığı',
+		'Personal URL' => 'Kişisel Site Adresiniz',
+
+		'Your settings have been updated successfully.' => 'Ayarlarınız başarıyla güncellendi.',
+
 
 	];

@@ -1,9 +1,7 @@
 @extends('layouts.app')
-
 @section('content')
 	<main>
 		<div class="container" style="min-height: calc(88vh);">
-			
 			@if(session('success'))
 				<div class="alert alert-success alert-dismissible fade show" role="alert">
 					{{ session('success') }}
@@ -20,6 +18,48 @@
 						</a>
 					</div>
 					
+					<!-- Filter Form -->
+					<div class="card mb-4">
+						<div class="card-body">
+							<form method="GET" class="row g-3">
+								<div class="col-md-4">
+									<input type="text" class="form-control" name="search"
+									       placeholder="{{ __('default.Search articles...') }}"
+									       value="{{ request('search') }}">
+								</div>
+								<div class="col-md-3">
+									<select class="form-select" name="status">
+										<option value="">{{ __('default.All Status') }}</option>
+										<option value="published" {{ request('status') === 'published' ? 'selected' : '' }}>
+											{{ __('default.Published') }}
+										</option>
+										<option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>
+											{{ __('default.Draft') }}
+										</option>
+									</select>
+								</div>
+								<div class="col-md-3">
+									<select class="form-select" name="sort">
+										<option value="newest" {{ request('sort') === 'newest' ? 'selected' : '' }}>
+											{{ __('default.Newest First') }}
+										</option>
+										<option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>
+											{{ __('default.Oldest First') }}
+										</option>
+										<option value="read_count" {{ request('sort') === 'read_count' ? 'selected' : '' }}>
+											{{ __('default.Most Read') }}
+										</option>
+									</select>
+								</div>
+								<div class="col-md-2">
+									<button type="submit" class="btn btn-primary w-100">
+										{{ __('default.Filter') }}
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					
 					<!-- Articles List -->
 					<div class="card">
 						<div class="card-body">
@@ -32,6 +72,7 @@
 										<tr>
 											<th>{{ __('default.Title') }}</th>
 											<th>{{ __('default.Status') }}</th>
+											<th>{{ __('default.Read Count') }}</th>
 											<th>{{ __('default.Created At') }}</th>
 											<th>{{ __('default.Actions') }}</th>
 										</tr>
@@ -41,15 +82,15 @@
 											<tr>
 												<td>{!! $article->title !!}</td>
 												<td>
-									        <span class="badge bg-{{ $article->is_published ? 'success' : 'warning' }}">
-									            {{ $article->is_published ? __('default.Published') : __('default.Draft') }}
-									        </span>
+                                                <span class="badge bg-{{ $article->is_published ? 'success' : 'warning' }}">
+                                                    {{ $article->is_published ? __('default.Published') : __('default.Draft') }}
+                                                </span>
 												</td>
+												<td>{{ number_format($article->read_count) }}</td>
 												<td>{{ \App\Helpers\MyHelper::timeString($article->created_at)}}</td>
 												<td>
 													<div class="btn-group">
-														<a href="{{ route('yapit', $article->slug) }}"
-														   class="btn btn-sm btn-info">
+														<a href="{{ route('yapit', $article->slug) }}" class="btn btn-sm btn-info">
 															{{ __('default.Read') }}
 														</a>
 														<a href="{{ route('articles.edit', \App\Helpers\IdHasher::encode($article->id)) }}"
@@ -72,10 +113,9 @@
 										</tbody>
 									</table>
 								</div>
-								
 								<!-- Pagination -->
 								<div class="d-flex justify-content-center mt-4">
-									{{ $articles->links() }}
+									{{ $articles->withQueryString()->links() }}
 								</div>
 							@endif
 						</div>

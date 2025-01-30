@@ -139,7 +139,7 @@
 			$user->save();
 
 			// Redirect back with success message
-			Session::flash('success', 'Your settings have been updated successfully.');
+			Session::flash('success', __('default.Your settings have been updated successfully.'));
 			return redirect()->back();
 		}
 

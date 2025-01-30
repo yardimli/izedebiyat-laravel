@@ -165,9 +165,27 @@ Header START -->
 			<div class="collapse navbar-collapse" id="navbarCollapse">
 				
 				<ul class="navbar-nav navbar-nav-scroll ms-auto">
-					<li class="nav-item">
-						<a class="nav-link active" href="{{route('articles.index')}}">{{__('default.My Books')}}</a>
-					</li>
+					@if (Auth::check())
+						<li class="nav-item">
+							<a class="nav-link active" href="{{route('user', Auth::user()->slug)}}">{{__('default.My Page')}}</a>
+						</li>
+
+						<li class="nav-item">
+							<a class="nav-link active" href="{{route('articles.index')}}">{{__('default.My Works')}}</a>
+						</li>
+
+						<li class="nav-item">
+							<a class="nav-link" href="{{route('articles.create')}}">{{__('default.Start Writing')}}</a>
+						</li>
+					@endif
+					@if (Auth::check())
+						@if (Auth::user()->member_type === 1)
+							<li class="nav-item">
+								<a class="nav-link" href="{{route('admin-users-index')}}">Kullanicilar</a>
+							</li>
+						@endif
+					@endif
+				
 				</ul>
 			</div>
 			<!-- Main navbar END -->

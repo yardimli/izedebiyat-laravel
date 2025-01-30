@@ -21,7 +21,7 @@
 					<div class="entry-meta align-items-center divider pb-4" style="margin-top: 10px;
     margin-bottom: 0px;">
 						<a class="user-avatar" href="{{ url('/yazar/' . $user->slug) }}">
-							{!! \App\Helpers\MyHelper::generateInitialsAvatar($user->avatar, $user->name,'width:40px; height:40px;') !!}
+							{!! \App\Helpers\MyHelper::generateInitialsAvatar($user->avatar, $user->name,'width:50px; height:50px; border-radius:50%;','','art-author-picture-3') !!}
 						</a>
 						<a href="{{ url('/yazar/' . $user->slug) }}">{{ $user->name }}</a><br>
 						<span class="readingTime">{{ \App\Helpers\MyHelper::estimatedReadingTime($article->main_text) }}</span>
@@ -58,15 +58,7 @@
 				</figure>
 				
 				<div class="entry-main-content">
-					<p>{!! nl2br(
-                    preg_replace('/\[\[.*?\]\]/', ' ',
-                        str_ireplace(
-                            ['[[I]]', '[[K]]', '[[/I]]', '[[/K]]'],
-                            ['<i>', '<b>', '</i>', '</b>'],
-                            str_ireplace("\n", "</p><p>", $article->main_text)
-                        )
-                    )
-                ) !!}</p>
+					<p>{!! $article->main_text !!}</p>
 				</div>
 				
 				<div class="entry-bottom">

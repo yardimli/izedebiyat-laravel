@@ -85,14 +85,15 @@
 									<div class="">
 										<p class="mb-0">{{__('default.Upload and manage your images')}}</p>
 										<div class=""> <!-- Added container for buttons -->
-											<div type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#imageModal">
+											<div type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+											     data-bs-target="#imageModal">
 												{{ __('default.Select Featured Image') }}
 											</div>
 											<div class="btn btn-sm btn-primary" id="uploadImageBtn">
 												{{__('default.Upload Image')}}
 											</div>
 											<div class="btn btn-sm btn-success" data-bs-toggle="collapse"
-											        data-bs-target="#imageGenSection">
+											     data-bs-target="#imageGenSection">
 												{{__('default.Generate with AI')}}
 											</div>
 										</div>
@@ -130,6 +131,7 @@
 						<!-- Category -->
 						<div class="mb-3 mt-3">
 							<label for="category_id" class="form-label">{{ __('default.Categories') }}</label>
+							<div id="generateCategory" class="ai-generate-button">Yapay Zeka ile Oluştur</div>
 							<select class="form-select" id="category_id" name="category_id">
 								<option value="">{{ __('default.Select Category') }}</option>
 								@foreach($categories as $mainCategory)
@@ -149,6 +151,7 @@
 						<!-- Short Description -->
 						<div class="mb-3">
 							<label for="subheading" class="form-label">{{ __('default.Short Description') }}</label>
+							<div id="generateDescription" class="ai-generate-button">Yapay Zeka ile Oluştur</div>
 							<textarea class="form-control" id="subheading" name="subheading"
 							          rows="3">{!! isset($article) ? $article->subheading : old('subheading')  !!}</textarea>
 						</div>
@@ -156,6 +159,7 @@
 						<!-- Keywords -->
 						<div class="mb-3">
 							<label for="keywords" class="form-label">{{ __('default.Keywords') }}</label>
+							<div id="generateKeywords" class="ai-generate-button">Yapay Zeka ile Oluştur</div>
 							<input type="text" class="form-control" id="keywords" name="keywords"
 							       value="{{ isset($article) ? $article->keywords->pluck('keyword')->implode(', ') : old('keywords') }}"
 							       placeholder="{{ __('default.Enter keywords separated by commas or spaces') }}">
@@ -248,6 +252,34 @@
 
 @push('styles')
 	<style>
+      .ai-generate-button {
+          border: 1px solid #ccc;
+          font-size: 14px;
+          border-radius: 3px;
+          padding-left: 5px;
+          padding-right: 5px;
+          margin-left: 5px;
+          display: inline-block;
+		      cursor: pointer;
+      }
+      
+      .ai-generate-button:hover {
+		      text-decoration: underline;
+			}
+
+      #notification-container {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 9999;
+      }
+
+      .notification-toast {
+          min-width: 200px;
+          max-width: 500px;
+          margin-bottom: 10px;
+      }
+
       #modalImageGrid .card {
           height: 100%;
       }
@@ -280,6 +312,26 @@
 
 @push('scripts')
 	<script>
+		function showNotification(message, type = 'error') {
+			// Create the notification element
+			const notification = $(`
+        <div class="alert alert-${type} alert-dismissible fade show notification-toast" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `);
+			
+			// Add the notification to the page
+			if (!$('#notification-container').length) {
+				$('body').append('<div id="notification-container"></div>');
+			}
+			$('#notification-container').append(notification);
+			
+			// Remove the notification after 5 seconds
+			setTimeout(() => {
+				notification.alert('close');
+			}, 5000);
+		}
 		
 		
 		// Add this to your existing $(document).ready() function
@@ -420,6 +472,7 @@
 				spellChecker: false,
 				forceSync: true,
 				lineWrapping: true,
+				status: ["lines", "words"],
 				toolbar: ["bold", "italic", "heading", "quote", "horizontal-rule", "|", "unordered-list", "ordered-list", "|", "preview", {
 					name: "upload-image",
 					action: function customFunction(editor) {
@@ -554,7 +607,6 @@
 			});
 			
 			
-			
 			// Upload Image
 			$('#uploadImageBtn').on('click', function (e) {
 				e.preventDefault();
@@ -669,6 +721,98 @@
 						.catch(error => console.error('Error:', error));
 				}
 			}
+			
+			//AI Auto Generation
+			// AI Generation handlers
+			$('#generateCategory').on('click', function () {
+				const mainText = easyMDE.value();
+				if (!mainText) {
+					showNotification('{{__('default.Please enter some content first.')}}', 'warning');
+					return;
+				}
+				
+				$(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
+				
+				$.ajax({
+					url: '{{ route("articles.generate-category") }}',
+					method: 'POST',
+					data: {
+						main_text: mainText,
+						_token: '{{ csrf_token() }}'
+					},
+					success: function (response) {
+						if (response.category_id) {
+							$('#category_id').val(response.category_id);
+						}
+						showNotification('{{__('default.Category generated successfully.') }}', 'success');
+					},
+					error: function () {
+						showNotification('{{__('default.Error generating category:') }}', 'error');
+					},
+					complete: function () {
+						$('#generateCategory').prop('disabled', false).html('Yapay Zeka ile Oluştur');
+					}
+				});
+			});
+			
+			$('#generateDescription').on('click', function () {
+				const mainText = easyMDE.value();
+				if (!mainText) {
+					showNotification('{{__('default.Please enter some content first.')}}', 'warning');
+					return;
+				}
+				
+				$(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
+				
+				$.ajax({
+					url: '{{ route("articles.generate-description") }}',
+					method: 'POST',
+					data: {
+						main_text: mainText,
+						_token: '{{ csrf_token() }}'
+					},
+					success: function (response) {
+						$('#subheading').val(response.description);
+						showNotification('{{__('default.Description generated successfully.') }}', 'success');
+					},
+					error: function () {
+						showNotification('{{__('default.Error generating description:') }}', 'error');
+					},
+					complete: function () {
+						$('#generateDescription').prop('disabled', false).html('Yapay Zeka ile Oluştur');
+					}
+				});
+			});
+			
+			$('#generateKeywords').on('click', function () {
+				const mainText = easyMDE.value();
+				if (!mainText) {
+					showNotification('{{__('default.Please enter some content first.')}}', 'warning');
+					return;
+				}
+				
+				$(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
+				
+				$.ajax({
+					url: '{{ route("articles.generate-keywords") }}',
+					method: 'POST',
+					data: {
+						main_text: mainText,
+						_token: '{{ csrf_token() }}'
+					},
+					success: function (response) {
+						tagify.removeAllTags();
+						tagify.addTags(response.keywords);
+						showNotification('{{__('default.Keywords generated successfully.') }}', 'success');
+					},
+					error: function () {
+						showNotification('{{__('default.Error generating keywords:') }}', 'error');
+					},
+					complete: function () {
+						$('#generateKeywords').prop('disabled', false).html('Yapay Zeka ile Oluştur');
+					}
+				});
+			});
 		});
 	</script>
 @endpush

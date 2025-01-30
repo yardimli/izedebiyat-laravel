@@ -24,7 +24,7 @@
 							You can start writing your story by clicking the "Compose" link above.
 							<br>
 							<br>
-							To view your books, click the "My Books" link above.
+							To view your books, click the "My Works" link above.
 							<br>
 							<br>
 							<div style="text-align: center; ">

@@ -18,6 +18,7 @@
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Str;
 	use Illuminate\Support\Facades\Validator;
+	use League\CommonMark\CommonMarkConverter;
 
 
 	class FrontendController extends Controller
@@ -396,6 +397,23 @@
 		{
 			$user = User::where('slug', $slug)->firstOrFail();
 
+			$converter = new CommonMarkConverter([
+				'html_input' => 'strip',
+				'allow_unsafe_links' => false,
+			]);
+
+			$user->about_me = $converter->convertToHtml($user->about_me);
+//			$about_me = $user->about_me;
+//			$about_me = explode('\n', $about_me);
+//			remove lines with only <br> tags if above line starts with <p or <h
+//			foreach ($about_me as $key => $line) {
+//				if (preg_match('/^<br>$/', $line) && ($key == 0 || preg_match('/^<p|^<h/', $about_me[$key - 1]))) {
+//					unset($about_me[$key]);
+//				}
+//			}
+//			$user->about_me = implode('\n', $about_me);
+
+
 			// Get the base query for texts
 			$query = Article::where('user_id', $user->id)
 				->where('approved', 1)
@@ -535,6 +553,13 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->firstOrFail();
+
+			$converter = new CommonMarkConverter([
+				'html_input' => 'strip',
+				'allow_unsafe_links' => false,
+			]);
+
+			$article->main_text = $converter->convertToHtml($article->main_text);
 
 			// Get the user
 			$user = User::findOrFail($article->user_id);

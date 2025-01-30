@@ -36,7 +36,7 @@
 									
 									<div class="card-footer text-center py-2 pb-3">
 										<a class="btn btn-secondary-soft btn-sm w-100 mb-2"
-										   href="{{route('articles.index')}}">{{__('default.My Books')}} </a>
+										   href="{{route('articles.index')}}">{{__('default.My Works')}} </a>
 										{{--										<a class="btn btn-info-soft btn-sm w-100" href="{{route('buy-packages')}}">Purchase Tokens</a>--}}
 									</div>
 								</div>

@@ -126,6 +126,13 @@
 			return response($output)->header('Content-Type', 'text/plain');
 		})->name('maintenance.check-moderation');
 
+		Route::get('/maintenance/check-markdown', function () {
+			ob_start();
+			MyHelper::returnMarkdown();
+			$output = ob_get_clean();
+			return response($output)->header('Content-Type', 'text/plain');
+		})->name('maintenance.check-markdown');
+
 
 		Route::get('/check-llms-json', [ChatController::class, 'checkLLMsJson']);
 
@@ -152,6 +159,10 @@
 
 			Route::post('/upload-article-images', [ArticleController::class, 'storeArticleImage'])->name('upload-article-images.store');
 
+			Route::post('/generate-category', [ChatController::class, 'generateCategory'])->name('articles.generate-category');
+			Route::post('/generate-description', [ChatController::class, 'generateDescription'])->name('articles.generate-description');
+			Route::post('/generate-keywords', [ChatController::class, 'generateKeywords'])->name('articles.generate-keywords');
+
 		});
 
 		Route::get('/chat/sessions', [ChatController::class, 'getChatSessions']);
@@ -173,7 +184,7 @@
 		Route::post('/sahne-arkasi/password', [UserSettingsController::class, 'updatePassword'])->name('sahne-arkasi.sifre-guncelle');
 
 
-		Route::get('/users', [UserController::class, 'index'])->name('users-index');
+		Route::get('/users', [UserController::class, 'index'])->name('admin-users-index');
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');
 
 

@@ -832,15 +832,15 @@ span.CodeMirror-selectedtext {
 }
 
 .editor-statusbar .lines::before {
-    content: 'lines: '
+    content: 'satır: '
 }
 
 .editor-statusbar .words::before {
-    content: 'words: '
+    content: 'sözcük: '
 }
 
 .editor-statusbar .characters::before {
-    content: 'characters: '
+    content: 'karakter: '
 }
 
 /*# sourceMappingURL=simplemde-theme-bootstrap-dark.min.css.map */

@@ -16,6 +16,7 @@
 	use Illuminate\Support\Facades\Validator;
 	use Intervention\Image\ImageManagerStatic as Image;
 	use Ahc\Json\Fixer;
+	use League\HTMLToMarkdown\HtmlConverter;
 
 	class MyHelper
 	{
@@ -190,8 +191,7 @@
 			if (key_exists($categoryId, self::$categoryImages)) {
 				return "<img src='/storage/catpicbox/" . self::$categoryImages[$categoryId] . "' 
                 class='{$extraClass}' style='{$extraStyle}' alt='yazı resim'>";
-			} else
-			{
+			} else {
 				echo "Category image not found for category id: " . $categoryId;
 			}
 		}
@@ -231,20 +231,20 @@
 			$carbon = Carbon::parse($datetime);
 			$now = Carbon::now();
 
-				$months = [
-					'01' => 'Oca',
-					'02' => 'Şub',
-					'03' => 'Mar',
-					'04' => 'Nis',
-					'05' => 'May',
-					'06' => 'Haz',
-					'07' => 'Tem',
-					'08' => 'Ağu',
-					'09' => 'Eyl',
-					'10' => 'Eki',
-					'11' => 'Kas',
-					'12' => 'Ara'
-				];
+			$months = [
+				'01' => 'Oca',
+				'02' => 'Şub',
+				'03' => 'Mar',
+				'04' => 'Nis',
+				'05' => 'May',
+				'06' => 'Haz',
+				'07' => 'Tem',
+				'08' => 'Ağu',
+				'09' => 'Eyl',
+				'10' => 'Eki',
+				'11' => 'Kas',
+				'12' => 'Ara'
+			];
 
 			return $carbon->format('d ') . $months[$carbon->format('m')] . $carbon->format(' Y');
 		}
@@ -812,6 +812,271 @@
 			}
 		}
 
+
+		public static function fix_encoding($text)
+		{
+			$text = preg_replace("/\r\n|\r|\n/", ' <br> ', $text);
+			$text = preg_replace('/[\x00-\x1F\x7F-\x9F]/u', '', $text);
+
+			$text = str_replace('[[K]]', '<span class="bold-font">', $text);
+			$text = str_replace('[[/K]]', '</span>', $text);
+			$text = str_replace('[[K]', '<span class="bold-font">', $text);
+			$text = str_replace('[[/K]', '</span>', $text);
+			$text = str_replace('[K]]', '<span class="bold-font">', $text);
+			$text = str_replace('[/K]]', '</span>', $text);
+			$text = str_replace('[K]', '<span class="bold-font">', $text);
+			$text = str_replace('[/K]', '</span>', $text);
+
+			$text = str_replace('[[I]]', '<span class="italic-font">', $text);
+			$text = str_replace('[[İ]]', '', $text);
+			$text = str_replace('[[/I]]', '</span>', $text);
+			$text = str_replace('[I]]', '<span class="italic-font">', $text);
+			$text = str_replace('[/I]]', '</span>', $text);
+			$text = str_replace('[[I]', '<span class="italic-font">', $text);
+			$text = str_replace('[[/I]', '</span>', $text);
+			$text = str_replace('[I]', '<span class="italic-font">', $text);
+			$text = str_replace('[/I]', '</span>', $text);
+
+			$text = str_replace('[[O]]', '', $text);
+			$text = str_replace('[[/O]]', '', $text);
+			$text = str_replace('[O]]', '', $text);
+			$text = str_replace('[/O]]', '', $text);
+			$text = str_replace('[[O]', '', $text);
+			$text = str_replace('[[/O]', '', $text);
+			$text = str_replace('[O]', '', $text);
+			$text = str_replace('[/O]', '', $text);
+
+			$text = str_replace('[[[SA]]', '', $text);
+			$text = str_replace('[[[/SA]]', '', $text);
+			$text = str_replace('[[SA]]', '', $text);
+			$text = str_replace('[[/SA]]', '', $text);
+			$text = str_replace('[[[SA]', '', $text);
+			$text = str_replace('[[[/SA]', '', $text);
+			$text = str_replace('[[SA]', '', $text);
+			$text = str_replace('[[/SA]', '', $text);
+
+			$text = str_replace('[[[SO]]', '', $text);
+			$text = str_replace('[[[/SO]]', '', $text);
+			$text = str_replace('[[SO]]', '', $text);
+			$text = str_replace('[[/SO]]', '', $text);
+			$text = str_replace('[[[SO]', '', $text);
+			$text = str_replace('[[[/SO]', '', $text);
+			$text = str_replace('[[SO]', '', $text);
+			$text = str_replace('[[/SO]', '', $text);
+
+			$text = str_replace('[[[A]]', '', $text);
+			$text = str_replace('[[[/A]]', '', $text);
+			$text = str_replace('[[A]]', '', $text);
+			$text = str_replace('[[/A]]', '', $text);
+			$text = str_replace('[[[A]', '', $text);
+			$text = str_replace('[[[/A]', '', $text);
+			$text = str_replace('[[A]', '', $text);
+			$text = str_replace('[[/A]', '', $text);
+
+			$text = str_replace('[[BP]]', '<br>', $text);
+			$text = str_replace('[[PB]]', '<br>', $text);
+			$text = str_replace('[[YS]]', '<br>', $text);
+			$text = str_replace('[[BP]', '<br>', $text);
+			$text = str_replace('[[PB]', '<br>', $text);
+			$text = str_replace('[[YS]', '<br>', $text);
+			$text = str_replace('[[P]]', '<br>', $text);
+
+			$text = str_replace('search q=', 'search?q=', $text);
+
+			$re = '/(\[\[|\[)( *)YB( *)\=([^\]]*)(\]\]|\])/im';
+			$subst = '';
+			$text = preg_replace($re, $subst, $text);
+
+			$text = str_replace('[[/YB]', '', $text);
+
+			$re = '/(\[\[|\[)( *)YR( *)\=([^\]]*)(\]\]|\])/mi';
+			$subst = '';
+			$text = preg_replace($re, $subst, $text);
+
+			$re = '/\[\[( *)(RESİMSAĞ|RESİMSAG|RESİM SAĞ|RESİM SAG|RESIMSAG|RESIM SAG|RESÝMSAG|RESÝMSAÐ)( *)\=( *)([^]]+)( *)\]\]/mi';
+			$subst = '<img src="$4" class="picture-left">';
+			$text = preg_replace($re, $subst, $text);
+
+			$re = '/\[\[( *)(RESİMSAĞ|RESİMSAG|RESİM SAĞ|RESİM SAG|RESIMSAG|RESIM SAG|RESÝMSAG)( *)\=( *)([^]]+)( *)\]/mi';
+			$subst = '<img src="$4" class="picture-left">';
+			$text = preg_replace($re, $subst, $text);
+
+			$re = '/\[\[( *)(RESİMSOL|RESÝMSOL|RESİM SOL|RESÝM SOL|resimsol|RESEMSOL)( *)\=( *)([^]]+)( *)\]\]/mi';
+			$subst = '<img src="$4" class="picture-right">';
+			$text = preg_replace($re, $subst, $text);
+
+			$re = '/\[\[( *)(RESİMSOL|RESÝMSOL|RESİM SOLA|RESİM SOL|RESÝM SOL)( *)\=( *)([^]]+)( *)\]/mi';
+			$subst = '<img src="$4" class="picture-right">';
+			$text = preg_replace($re, $subst, $text);
+
+
+			$text = str_replace('YR=kavunici]]', '', $text);
+			$text = str_replace('[[K/]]', '', $text);
+			$text = str_replace('[[B]]', '', $text);
+			$text = str_replace(' [[SA ]]', '', $text);
+			$text = str_replace('[[/YR]', '', $text);
+			$text = str_replace('[[/YB', '', $text);
+			$text = str_replace('[[YB]]', '', $text);
+			$text = str_replace('[[Y', '', $text);
+			$text = str_replace('[[/Y', '', $text);
+			$text = str_replace('[[IK]]', '', $text);
+			$text = str_replace('[[/]]', '', $text);
+			$text = str_replace('[[/', '', $text);
+			$text = str_replace('/I]]', '', $text);
+			$text = str_replace('I]]', '', $text);
+			$text = str_replace('K]]', '', $text);
+			$text = str_replace('[[/YR]]', '', $text);
+			$text = str_replace('[/YR]]', '', $text);
+			$text = str_replace('[/YB]]', '', $text);
+			$text = str_replace('SO]]', '', $text);
+			$text = str_replace('YB]]', '', $text);
+			$text = str_replace('YR]]', '', $text);
+			$text = str_replace('B]]', '', $text);
+			$text = str_replace('[[o]]', '', $text);
+			$text = str_replace('[[ı]]', '', $text);
+			$text = str_replace('YB=2]]', '', $text);
+			$text = str_replace('YB=3]]', '', $text);
+			$text = str_replace('YB=2]', '', $text);
+			$text = str_replace('YB=3]', '', $text);
+			$text = str_replace('=2]]', '', $text);
+			$text = str_replace('=2]', '', $text);
+			$text = str_replace('=1]]', '', $text);
+			$text = str_replace('=1]', '', $text);
+			$text = str_replace('B=1]]', '', $text);
+			$text = str_replace('RYR=siyah]]', '', $text);
+			$text = str_replace('[[SO', '', $text);
+			$text = str_replace('[[K', '', $text);
+			$text = str_replace('][[', '', $text);
+			$text = str_replace('O]]', '', $text);
+			$text = str_replace('R]]', '', $text);
+			$text = str_replace(']] ]', '', $text);
+			$text = str_replace('SA ]]', '', $text);
+
+			$text = str_replace('þ', 'ş', $text);
+			$text = str_replace('Þ', 'Ş', $text);
+
+			$text = str_replace('ý', 'ı', $text);
+			$text = str_replace('ð', 'ğ', $text);
+
+			$text = str_replace('<br>  <br>  <br>  <br>', '<br>  <br>', $text);
+			$text = str_replace('<br>  <br>  <br>', '<br>  <br>', $text);
+
+//	$text = str_replace( '[[/I', '', $text );
+//	$text = str_replace( '[[/', '', $text );
+//	$text = str_replace( '[[', '', $text );
+
+
+			$text = trim($text);
+			$text = preg_replace('/^(?:<br\s*\/?>\s*)+/i', '', $text);
+
+			$text = preg_replace('/(<br>)+$/i', '', $text);
+
+			$text = preg_replace('~<(\w+)[^>]*>[\p{Z}\p{C}]*</\1>~ui', '', $text);
+
+			$text = str_replace('  ', ' ', $text);
+			$text = str_replace('  ', ' ', $text);
+			$text = str_replace('  ', ' ', $text);
+			$text = str_replace('<3', '❤️', $text);
+			$text = str_replace('< Silah ile Söz >', '&lt; Silah ile Söz &gt;', $text);
+			$text = str_replace('< Bir Zamana Dönüşebilir Değerler... >', '&lt; Bir Zamana Dönüşebilir Değerler... &gt;', $text);
+			$text = str_replace('< Gerisi Unutulur... >', '&lt; Gerisi Unutulur... &gt;', $text);
+
+			return $text;
+		}
+
+		public static function returnMarkdown()
+		{
+
+			$converter = new HtmlConverter();
+			$converter->getConfig()->setOption('strip_tags', true);
+
+			$counter = 0;
+			$continue = true;
+			while ($continue && $counter < 100) {
+				$counter++;
+				echo "Counter: " . $counter . "\n";
+
+				// Get stories using Laravel's query builder
+				$articles = DB::table('articles')
+					->where('markdown', 0)
+					->orderBy('id', 'DESC')
+					->limit(100)
+					->get();
+
+				$continue = $articles->count() > 0;
+
+				foreach ($articles as $article) {
+					$main_text = $article->main_text;
+					$main_text = html_entity_decode($main_text, ENT_QUOTES);
+					$main_text = self::fix_encoding($main_text);
+					$main_text = $converter->convert($main_text);
+
+					$subheading = $article->subheading;
+					$subheading = html_entity_decode($subheading, ENT_QUOTES);
+					$subheading = self::fix_encoding($subheading);
+					$subheading = $converter->convert($subheading);
+
+					$title = $article->title;
+					$title = html_entity_decode($title, ENT_QUOTES);
+					$title = self::fix_encoding($title);
+					$title = $converter->convert($title);
+
+					$subtitle = $article->subtitle;
+					$subtitle = html_entity_decode($subtitle, ENT_QUOTES);
+					$subtitle = self::fix_encoding($subtitle);
+					$subtitle = $converter->convert($subtitle);
+
+					$updateQuery = DB::table('articles')
+						->where('id', $article->id)
+						->update([
+							'main_text' => $main_text,
+							'subheading' => $subheading,
+							'title' => $title,
+							'subtitle' => $subtitle,
+							'markdown' => 1,
+							'updated_at' => Carbon::now()
+						]);
+				}
+			}
+
+			$counter = 0;
+			$continue = true;
+			while ($continue && $counter < 100) {
+				$counter++;
+				echo "Counter: " . $counter . "\n";
+
+				// Get stories using Laravel's query builder
+				$users = DB::table('users')
+					->where('markdown', 0)
+					->orderBy('id', 'DESC')
+					->limit(100)
+					->get();
+
+				$continue = $users->count() > 0;
+
+				foreach ($users as $user) {
+					$about_me = $user->about_me;
+					$about_me = html_entity_decode($about_me, ENT_QUOTES);
+					$about_me = self::fix_encoding($about_me);
+					$about_me = $converter->convert($about_me);
+
+					$page_title = $user->page_title;
+					$page_title = html_entity_decode($page_title, ENT_QUOTES);
+					$page_title = self::fix_encoding($page_title);
+					$page_title = $converter->convert($page_title);
+
+					$updateQuery = DB::table('users')
+						->where('id', $user->id)
+						->update([
+							'about_me' => $about_me,
+							'page_title' => $page_title,
+							'markdown' => 1,
+							'updated_at' => Carbon::now()
+						]);
+				}
+			}
+		}
+
 		public static function returnKeywords()
 		{
 			$counter = 0;
@@ -874,14 +1139,14 @@ output in Turkish, output JSON as:
 								'sentiment' => $sentiment
 							]);
 
-						echo $counter."- Keywords:<br>\n";
+						echo $counter . "- Keywords:<br>\n";
 						echo $article->id . " " . $article->title . " -- " . $keywords . " - Sentiment: " . $sentiment . "<br>\n";
 						flush();
 						ob_flush();
 					} else {
 						echo $counter . " - Error: <br>\n";
 						echo var_dump($llm_result);
-						echo 'ERROR ON: id:'.$article->id . " - " . $article->title . "<br>\n";
+						echo 'ERROR ON: id:' . $article->id . " - " . $article->title . "<br>\n";
 						flush();
 						ob_flush();
 					}
@@ -889,7 +1154,8 @@ output in Turkish, output JSON as:
 			}
 		}
 
-		public static function updateArticleTable() {
+		public static function updateArticleTable()
+		{
 			$batchSize = 1000;
 
 			do {
@@ -908,7 +1174,7 @@ output in Turkish, output JSON as:
 						'y.moderation',
 						'y.religious_reason'
 					])
-					->where('y.has_changed','=', '1')
+					->where('y.has_changed', '=', '1')
 					->take($batchSize)
 					->get();
 
@@ -961,7 +1227,8 @@ output in Turkish, output JSON as:
 							if ($counter % 100 == 0) {
 								echo "Processed $counter records...";
 								flush();
-								ob_flush();							}
+								ob_flush();
+							}
 						} catch (\Exception $e) {
 							echo "Error updating record ID {$record->id}: " . $e->getMessage() . '<br>';
 							flush();

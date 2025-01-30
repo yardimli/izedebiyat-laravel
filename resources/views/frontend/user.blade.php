@@ -83,25 +83,10 @@
 						@php
 							$about_me = $user->about_me;
 							
-							// First clean up specific strings
-							$about_me = str_replace([
-									"<a href='http://'>http://</a><br>",
-									"<a href='http:/'>http:/</a><br>",
-									"<a href='http://'>http://</a>",
-									"<a href='http:/'>http:/</a>",
-							], '', $about_me);
-							
-							// Remove sections with empty paragraphs
-							$about_me = preg_replace('/<h5>[^<]*<\/h5>\s*<p>\s*<\/p>/', '', $about_me);
-							
-							// Remove sections with paragraphs that only contain whitespace
-							$about_me = preg_replace('/<h5>[^<]*<\/h5>\s*<p>\s*<\/p>/', '', $about_me);
-							
-							$about_me = str_replace('',"'", $about_me);
-							
-							$about_me = preg_replace('/(?<!<br>)\n/', '<br>', $about_me);
-
-							
+							$about_me = str_replace( '<a href="http://">http://</a>', '',$about_me);
+							$about_me = str_replace( '<a href="http:/">http:/</a>', '',$about_me);
+							$about_me = str_replace( '<a href="https://">https://</a>', '',$about_me);
+							$about_me = str_replace( '<a href="https:/">https:/</a>', '',$about_me);
 							$about_me = str_replace( "<a href='www", "<a href='//www",$about_me);
 							$about_me = str_replace( '<a href="www', '<a href="//www',$about_me);
 							$about_me = str_replace( '<a ', '<a target="_blank" ',$about_me);

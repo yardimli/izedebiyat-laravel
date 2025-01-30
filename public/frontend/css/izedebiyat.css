@@ -6,7 +6,7 @@
 .art-author-picture {
   position: absolute;
   bottom: 30px;
-  right: 15px;
+  left: 5px;
   transform: translateX(50%);
   background-color: rgba(0, 0, 0, 0.8);
   color: #aaa;
@@ -15,10 +15,23 @@
   font-size: 0.7em;
 }
 
+.art-author-picture-3 {
+  position: absolute;
+  bottom: 15px;
+  left: -10px;
+  transform: translateX(50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #aaa;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-size: 0.7em;
+  opacity: 0.4;
+}
+
 .art-author-picture-2 {
   position: absolute;
-  bottom: 20px;
-  left: 50%;
+  bottom: 10px;
+  left: calc(50% - 12px);
   background-color: rgba(0, 0, 0, 0.8);
   color: #aaa;
   padding: 2px 6px;

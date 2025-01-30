@@ -40,23 +40,35 @@
 						       value="{{ old('email', $user->email) }}">
 					</div>
 					
-					<!-- Company name -->
-					<div class="col-sm-6">
-						<label class="form-label">{{__('default.Company Name')}}</label>
+					<!-- Page Title -->
+					<div class="col-sm-12">
+						<label class="form-label">{{__('default.Page Title')}}</label>
 						<input type="text"
 						       name="page_title"
 						       class="form-control"
-						       placeholder="Enter your company name"
+						       placeholder="Enter your Page Title"
 							       value="{{ old('page_title', $user->page_title) }}">
 					</div>
 					
-					<!-- Company description -->
+					<!-- Personal URL -->
+					<div class="col-sm-12">
+						<label class="form-label">{{__('default.Personal URL')}}</label>
+						<input type="text"
+						       name="personal_url"
+						       class="form-control"
+						       placeholder="https://"
+						       value="{{ old('personal_url', $user->personal_url) }}">
+						<span class="form-text text-muted">İzEdebiyat'daki sayfanız dışında başka bir sayfanız varsa onun adresini buraya girin.</span></span>
+					</div>
+					
+					<!-- About Me -->
 					<div class="col-12">
-						<label class="form-label">{{__('default.Company Description')}}</label>
-						<textarea name="about_me"
+						<label class="form-label">{{__('default.About Me')}}</label>
+						<textarea name="about_me" id="about_me"
 						          class="form-control"
 						          rows="3"
-						          placeholder="Enter your company description">{{ old('about_me', $user->about_me) }}</textarea>
+						          placeholder="About Me">{{ old('about_me', $user->about_me) }}</textarea>
+						<span class="form-text text-muted"> Kendinizi okurlarınıza, uygun gördüğünüz yolla tanıtın. Örnek: Yazınızın Özellikleri, Edebi Etkileriniz, Özgeçmişiniz, Bulunduğunuz Yer, vb.</span></span>
 					</div>
 					
 					<!-- Avatar upload -->
@@ -105,7 +117,7 @@
 							<div class="input-group">
 								<input class="form-control fakepassword psw-input" type="password"
 								       name="new_password" id="psw-input"
-								       placeholder="Enter new password">
+								       placeholder="Yeni Şifrenizi Girin">
 								<span class="input-group-text p-0">
                           <i class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"></i>
                         </span>
@@ -160,9 +172,71 @@
 @endsection
 
 @push('scripts')
+<script src="/js/easymde.min.js"></script>
+@endpush
+
+@push('scripts')
 	<script>
 		$(document).ready(function () {
-		
+			// Initialize EasyMDE
+			const easyMDE = new EasyMDE({
+				element: document.getElementById('about_me'),
+				spellChecker: false,
+				forceSync: true,
+				lineWrapping: true,
+				status: ["lines", "words"],
+				toolbar: ["bold", "italic", "heading", "quote", "horizontal-rule", "|", "unordered-list", "ordered-list", "|", "preview", {
+					name: "upload-image",
+					action: function customFunction(editor) {
+						// Trigger file input click
+						$('#image-upload-input').click();
+					},
+					className: "fa fa-upload",
+					title: "Upload Image",
+				}, "guide"],
+				toolbarButtonClassPrefix: "mde",
+				
+			});
+			
+			easyMDE.codemirror.setSize(null, '40vh');
+			
+			$('#image-upload-input').on('change', function () {
+				const file = this.files[0];
+				if (file) {
+					const formData = new FormData();
+					formData.append('image', file);
+					formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+					
+					$.ajax({
+						url: '{{route('upload-article-images.store')}}',
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function (response) {
+							// Get the image URL from the response
+							const imageUrl = response.url;
+							
+							// Insert the image markdown at cursor position
+							const imageMarkdown = `![${file.name}](${imageUrl})`;
+							const cm = easyMDE.codemirror;
+							const pos = cm.getCursor();
+							cm.replaceRange(imageMarkdown, pos);
+						},
+						error: function (xhr, status, error) {
+							console.error('Upload failed:', error);
+							alert('Image upload failed. Please try again.');
+						}
+					});
+				}
+			});
+			
+			$('#articleForm').on('submit', function (e) {
+				if (easyMDE) {
+					// Update the textarea with the current editor content
+					$('#article_alan').val(easyMDE.value());
+				}
+			});
 		});
 	</script>
 @endpush

@@ -39,7 +39,7 @@
 
 
 // Found in: resources\views\layouts\app.blade.php, resources\views\user\settings.blade.php
-		'My Books' => 'My Books',
+		'My Works' => 'My Works',
 
 // Found in: resources\views\layouts\app.blade.php
 		'Help' => 'Help',
@@ -188,7 +188,7 @@
 		'Error updating codex' => 'Error updating codex',
 
 // Found in: resources\views\user\edit-book.blade.php
-		'Back to My Books' => 'Back to My Books',
+		'Back to My Works' => 'Back to My Works',
 		'Back to Book Page' => 'Back to Book Page',
 		'Write All Beats' => 'Write All Beats',
 		'Edit Book Details' => 'Edit Book Details',

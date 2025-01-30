@@ -13,15 +13,43 @@
 
 	class ArticleController extends Controller
 	{
-		public function index()
+		public function index(Request $request)
 		{
-			$articles = Article::where('user_id', Auth::id())
+			$query = Article::where('user_id', Auth::id())
 				->where('approved', 1)
-				->where('deleted', 0)
-				->orderBy('id', 'desc')
-				->paginate(10);
+				->where('deleted', 0);
 
-			//loop remove html tags from title, subtitle, subheading
+			// Apply filters
+			if ($request->has('search')) {
+				$query->where('title', 'like', '%' . $request->search . '%');
+			}
+
+			if ($request->has('status')) {
+				if ($request->status === 'published') {
+					$query->where('is_published', 1);
+				} elseif ($request->status === 'draft') {
+					$query->where('is_published', 0);
+				}
+			}
+
+			if ($request->has('sort')) {
+				switch ($request->sort) {
+					case 'read_count':
+						$query->orderBy('read_count', 'desc');
+						break;
+					case 'newest':
+						$query->orderBy('created_at', 'desc');
+						break;
+					case 'oldest':
+						$query->orderBy('created_at', 'asc');
+						break;
+				}
+			} else {
+				$query->orderBy('id', 'desc');
+			}
+
+			$articles = $query->paginate(10);
+
 			foreach ($articles as $article) {
 				$article->title = strip_tags($article->title);
 				$article->subtitle = strip_tags($article->subtitle);

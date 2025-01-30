@@ -3,6 +3,7 @@
 	namespace App\Http\Controllers;
 
 	use App\Helpers\MyHelper;
+	use App\Models\Category;
 	use App\Models\ChatMessage;
 	use App\Models\ChatSession;
 	use Carbon\Carbon;
@@ -163,6 +164,85 @@
 			}
 
 			return view('backend.chat', ['current_session_id' => $session_id]);
+		}
+
+		//-------------------------------------------------------------------------
+		// AI AUTO GENERATION METHODS
+
+		public function generateCategory(Request $request)
+		{
+			$mainText = $request->input('main_text');
+
+			$prompt = "Analyze this text and suggest the most appropriate category from the following options:\n\n";
+			$categories = Category::where('parent_category_id', '!=', 0)->get();
+			foreach ($categories as $category) {
+				$prompt .= "- {$category->category_name}\n";
+			}
+			$prompt .= "\nText to analyze:\n{$mainText}\n\nRespond with only the category name.";
+
+			try {
+				$chat_history = [
+					['role' => 'user', 'content' => $prompt]
+				];
+
+				$result = MyHelper::llm_no_tool_call('anthropic/claude-3.5-sonnet:beta', '', $chat_history, false);
+
+				$suggestedCategory = trim($result['content']);
+				$category = Category::where('category_name', 'LIKE', "%{$suggestedCategory}%")->first();
+
+				return response()->json([
+					'category_id' => $category ? $category->id : null
+				]);
+			} catch (\Exception $e) {
+				return response()->json(['error' => $e->getMessage()], 500);
+			}
+		}
+
+		public function generateDescription(Request $request)
+		{
+			$mainText = $request->input('main_text');
+
+			$prompt = "Create a brief, engaging description (maximum 500 characters) for this text:\n\n{$mainText}\n\nRespond with only the description. Respond in Turkish.";
+
+			try {
+				$chat_history = [
+					['role' => 'user', 'content' => $prompt]
+				];
+
+				$result = MyHelper::llm_no_tool_call('anthropic/claude-3.5-sonnet:beta', '', $chat_history, false);
+
+				return response()->json([
+					'description' => trim($result['content'])
+				]);
+			} catch (\Exception $e) {
+				return response()->json(['error' => $e->getMessage()], 500);
+			}
+		}
+
+		public function generateKeywords(Request $request)
+		{
+			$mainText = $request->input('main_text');
+
+			$prompt = "Generate 5-10 relevant keywords (maximum 16 characters each) for this text. Separate keywords with commas:\n\n{$mainText}\n\nRespond with only the comma-separated keywords. Respond in Turkish.";
+
+			try {
+				$chat_history = [
+					['role' => 'user', 'content' => $prompt]
+				];
+
+				$result = MyHelper::llm_no_tool_call('anthropic/claude-3.5-sonnet:beta', '', $chat_history, false);
+
+				$keywords = array_map('trim', explode(',', $result['content']));
+				$keywords = array_map(function($keyword) {
+					return ['value' => $keyword];
+				}, $keywords);
+
+				return response()->json([
+					'keywords' => $keywords
+				]);
+			} catch (\Exception $e) {
+				return response()->json(['error' => $e->getMessage()], 500);
+			}
 		}
 
 	}
