@@ -120,6 +120,14 @@
 			$validated['user_id'] = Auth::id();
 			$validated['approved'] = 1;
 			$validated['slug'] = Str::slug($validated['title']);
+			$validated['has_changed'] = 1;
+
+			//find category_id slug and parent_category_id slug
+			$category = Category::findOrFail($validated['category_id']);
+			$validated['category_name'] = $category->category_name;
+			$validated['category_slug'] = $category->category_slug;
+			$validated['parent_category_name'] = $category->parentCategory->category_name;
+			$validated['parent_category_slug'] = $category->parentCategory->category_slug;
 
 			$article = Article::create($validated);
 
@@ -160,6 +168,14 @@
 
 			// Set is_published based on checkbox
 			$validated['is_published'] = $request->has('is_published');
+			$validated['has_changed'] = 1;
+
+			//find category_id slug and parent_category_id slug
+			$category = Category::findOrFail($validated['category_id']);
+			$validated['category_name'] = $category->category_name;
+			$validated['category_slug'] = $category->category_slug;
+			$validated['parent_category_name'] = $category->parentCategory->category_name;
+			$validated['parent_category_slug'] = $category->parentCategory->category_slug;
 
 			if ($request->has('keywords')) {
 				$keywordsData = json_decode($request->keywords, true);
