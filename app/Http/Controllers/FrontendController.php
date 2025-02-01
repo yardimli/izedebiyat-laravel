@@ -575,12 +575,14 @@
 
 		public function article($slug)
 		{
+			Log::info('Article page accessed: ' . $slug);
 			// Get the article
 			$article = Article::where('slug', $slug)
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
 				->firstOrFail();
+			Log::info('Article found: ' . $article->id);
 
 			$converter = new CommonMarkConverter([
 				'html_input' => 'strip',

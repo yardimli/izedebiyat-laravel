@@ -783,7 +783,7 @@
 					echo $counter . "- Moderation:<br>\n";
 					echo $moderation . "<br>\n";
 					flush();
-					
+
 
 					DB::table('articles')
 						->where('id', $article->id)
