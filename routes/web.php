@@ -184,7 +184,7 @@
 			MyHelper::returnKeywords();
 			MyHelper::updateArticleTable();
 			MyHelper::returnMarkdown();
-		});
+		})->name('maintenance.all');
 
 		// New maintenance routes
 		Route::get('/maintenance/check-harmful', function () {
