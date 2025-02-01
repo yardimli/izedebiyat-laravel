@@ -129,6 +129,11 @@
 			$validated['parent_category_name'] = $category->parentCategory->category_name;
 			$validated['parent_category_slug'] = $category->parentCategory->slug;
 
+			//find user_id name and name_slug
+			$user = Auth::user();
+			$validated['name'] = $user->name;
+			$validated['name_slug'] = Str::slug($user->name);
+
 			$article = Article::create($validated);
 
 			if ($request->has('keywords')) {
@@ -176,6 +181,11 @@
 			$validated['category_slug'] = $category->slug;
 			$validated['parent_category_name'] = $category->parentCategory->category_name;
 			$validated['parent_category_slug'] = $category->parentCategory->slug;
+
+			//find user_id name and name_slug
+			$user = Auth::user();
+			$validated['name'] = $user->name;
+			$validated['name_slug'] = Str::slug($user->name);
 
 			if ($request->has('keywords')) {
 				$keywordsData = json_decode($request->keywords, true);
