@@ -702,7 +702,7 @@
 					->where('has_religious_moderation', 0)
 					->where('deleted', 0)
 					->where('approved', 1)
-					->where('bad_critical', '<', 5)
+					->where('bad_critical', '<', 4)
 					->orderBy('id', 'DESC')
 					->limit(10)
 					->get();
@@ -1068,7 +1068,10 @@
 
 				// Get stories using Laravel's query builder
 				$articles = DB::table('articles')
-					->whereNull('keywords_string')
+					->where(function ($query) {
+						$query->whereNull('keywords_string')
+							->orWhere('keywords_string', '');
+					})
 					->where('deleted', 0)
 					->where('approved', 1)
 					->where('bad_critical', '<', 5)
@@ -1188,7 +1191,7 @@ output in Turkish, output JSON as:
 							}
 						}
 
-						if ($record->article_slug==='n-a') {
+						if ($record->article_slug === 'n-a') {
 							$record->article_slug = Str::slug($record->article_title);
 						}
 
