@@ -425,7 +425,7 @@
 				'allow_unsafe_links' => false,
 			]);
 
-			$user->about_me = $converter->convert($user->about_me);
+			$user->about_me = $converter->convertToHtml($user->about_me);
 //			$about_me = $user->about_me;
 //			$about_me = explode('\n', $about_me);
 //			remove lines with only <br> tags if above line starts with <p or <h
@@ -591,7 +591,7 @@
 
 			Log::info('Converting article text to HTML...');
 			try {
-				$article->main_text = $converter->convert($article->main_text);
+				$article->main_text = $converter->convertToHtml($article->main_text);
 			} catch (\Exception $e) {
 				Log::error('Error converting article text to HTML: ' . $e->getMessage());
 				$article->main_text = str_replace("\n", '<br>', $article->main_text);
