@@ -701,7 +701,7 @@
 					->where('has_religious_moderation', 0)
 					->where('deleted', 0)
 					->where('approved', 1)
-					->where('bad_critical', '<', 4)
+					->where('bad_critical', '<', 5)
 					->orderBy('id', 'DESC')
 					->limit(100)
 					->get();
@@ -756,13 +756,10 @@
 
 		public static function returnModeration()
 		{
-			$offset = request()->get('offset', 0);
 			$counter = 0;
 			$continue = true;
 
 			while ($continue && $counter < 100) {
-				echo "<hr>Offset: " . $offset . "<br>\n";
-
 				// Get stories using Laravel's query builder
 				$articles = DB::table('articles')
 					->where('has_moderation', -1)
@@ -1072,7 +1069,7 @@
 					->whereNull('keywords_string')
 					->where('deleted', 0)
 					->where('approved', 1)
-					->where('bad_critical', '<', 4)
+					->where('bad_critical', '<', 5)
 					->orderBy('id', 'DESC')
 					->limit(10)
 					->get();
