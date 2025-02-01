@@ -237,7 +237,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 			Log::info('Enhanced Cover Image Prompt');
 			Log::info($image_prompt);
 
-			$falApiKey = $_ENV['FAL_API_KEY'];
+			$falApiKey = env('FAL_API_KEY');
 			if (empty($falApiKey)) {
 				echo json_encode(['error' => 'FAL_API_KEY environment variable is not set']);
 			}

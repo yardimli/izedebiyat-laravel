@@ -451,7 +451,7 @@
 
 			$response = Http::withHeaders([
 				'Content-Type' => 'application/json',
-				'Authorization' => 'Bearer ' . $_ENV['OPEN_AI_API_KEY'],
+				'Authorization' => 'Bearer ' . env('OPEN_AI_API_KEY'),
 			])->post(env('OPEN_AI_API_BASE_MODERATION'), [
 				'input' => $message,
 			]);
@@ -1240,27 +1240,27 @@ output in Turkish, output JSON as:
 			session_write_close();
 
 			if ($llm === 'anthropic-haiku') {
-				$llm_base_url = $_ENV['ANTHROPIC_HAIKU_BASE'];
-				$llm_api_key = $_ENV['ANTHROPIC_KEY'];
-				$llm_model = $_ENV['ANTHROPIC_HAIKU_MODEL'];
+				$llm_base_url = env('ANTHROPIC_HAIKU_BASE');
+				$llm_api_key = env('ANTHROPIC_KEY');
+				$llm_model = env('ANTHROPIC_HAIKU_MODEL');
 
 			} else if ($llm === 'anthropic-sonet') {
-				$llm_base_url = $_ENV['ANTHROPIC_SONET_BASE'];
-				$llm_api_key = $_ENV['ANTHROPIC_KEY'];
-				$llm_model = $_ENV['ANTHROPIC_SONET_MODEL'];
+				$llm_base_url = env('ANTHROPIC_SONET_BASE');
+				$llm_api_key = env('ANTHROPIC_KEY');
+				$llm_model = env('ANTHROPIC_SONET_MODEL');
 
 			} else if ($llm === 'open-ai-gpt-4o') {
-				$llm_base_url = $_ENV['OPEN_AI_GPT4_BASE'];
-				$llm_api_key = $_ENV['OPEN_AI_API_KEY'];
-				$llm_model = $_ENV['OPEN_AI_GPT4_MODEL'];
+				$llm_base_url = env('OPEN_AI_GPT4_BASE');
+				$llm_api_key = env('OPEN_AI_API_KEY');
+				$llm_model = env('OPEN_AI_GPT4_MODEL');
 
 			} else if ($llm === 'open-ai-gpt-4o-mini') {
-				$llm_base_url = $_ENV['OPEN_AI_GPT4_MINI_BASE'];
-				$llm_api_key = $_ENV['OPEN_AI_API_KEY'];
-				$llm_model = $_ENV['OPEN_AI_GPT4_MINI_MODEL'];
+				$llm_base_url = env('OPEN_AI_GPT4_MINI_BASE');
+				$llm_api_key = env('OPEN_AI_API_KEY');
+				$llm_model = env('OPEN_AI_GPT4_MINI_MODEL');
 			} else {
-				$llm_base_url = $_ENV['OPEN_ROUTER_BASE'];
-				$llm_api_key = $_ENV['OPEN_ROUTER_KEY'];
+				$llm_base_url = env('OPEN_ROUTER_BASE');
+				$llm_api_key = env('OPEN_ROUTER_KEY');
 				$llm_model = $llm;
 			}
 
@@ -1388,27 +1388,27 @@ output in Turkish, output JSON as:
 			session_write_close();
 
 			if ($llm === 'anthropic-haiku') {
-				$llm_base_url = $_ENV['ANTHROPIC_HAIKU_BASE'];
-				$llm_api_key = $_ENV['ANTHROPIC_KEY'];
-				$llm_model = $_ENV['ANTHROPIC_HAIKU_MODEL'];
+				$llm_base_url = env('ANTHROPIC_HAIKU_BASE');
+				$llm_api_key = env('ANTHROPIC_KEY');
+				$llm_model = env('ANTHROPIC_HAIKU_MODEL');
 
 			} else if ($llm === 'anthropic-sonet') {
-				$llm_base_url = $_ENV['ANTHROPIC_SONET_BASE'];
-				$llm_api_key = $_ENV['ANTHROPIC_KEY'];
-				$llm_model = $_ENV['ANTHROPIC_SONET_MODEL'];
+				$llm_base_url = env('ANTHROPIC_SONET_BASE');
+				$llm_api_key = env('ANTHROPIC_KEY');
+				$llm_model = env('ANTHROPIC_SONET_MODEL');
 
 			} else if ($llm === 'open-ai-gpt-4o') {
-				$llm_base_url = $_ENV['OPEN_AI_GPT4_BASE'];
-				$llm_api_key = $_ENV['OPEN_AI_API_KEY'];
-				$llm_model = $_ENV['OPEN_AI_GPT4_MODEL'];
+				$llm_base_url = env('OPEN_AI_GPT4_BASE');
+				$llm_api_key = env('OPEN_AI_API_KEY');
+				$llm_model = env('OPEN_AI_GPT4_MODEL');
 
 			} else if ($llm === 'open-ai-gpt-4o-mini') {
-				$llm_base_url = $_ENV['OPEN_AI_GPT4_MINI_BASE'];
-				$llm_api_key = $_ENV['OPEN_AI_API_KEY'];
-				$llm_model = $_ENV['OPEN_AI_GPT4_MINI_MODEL'];
+				$llm_base_url = env('OPEN_AI_GPT4_MINI_BASE');
+				$llm_api_key = env('OPEN_AI_API_KEY');
+				$llm_model = env('OPEN_AI_GPT4_MINI_MODEL');
 			} else {
-				$llm_base_url = $_ENV['OPEN_ROUTER_BASE'];
-				$llm_api_key = $_ENV['OPEN_ROUTER_KEY'];
+				$llm_base_url = env('OPEN_ROUTER_BASE');
+				$llm_api_key = env('OPEN_ROUTER_KEY');
 				$llm_model = $llm;
 			}
 
