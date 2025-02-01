@@ -1201,7 +1201,7 @@ output in Turkish, output JSON as:
 									'parent_category_name' => $record->parent_category_name,
 									'name_slug' => $record->name_slug,
 									'name' => $record->name,
-									'article_slug' => $record->article_slug,
+									'slug' => $record->article_slug,
 									'moderation_flagged' => $moderationFlagged,
 									'religious_moderation_value' => $religiousValue,
 									'respect_moderation_value' => $respectValue,
