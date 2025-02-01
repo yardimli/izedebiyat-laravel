@@ -599,6 +599,7 @@
 			Log::info('Article text converted to HTML');
 
 			// Get the user
+			Log::info('Finding user... with id: ' . $article->user_id);
 			$user = User::findOrFail($article->user_id);
 			Log::info('User found: ' . $user->id);
 
