@@ -175,11 +175,15 @@
 
 
 	Route::get('/maintenance/all', function () {
+		echo "Checking harmful content...<br>\n";
 		MyHelper::returnIsHarmful();
+		echo "<br>Checking religious content...<br>\n";
 		MyHelper::returnReligiousReason();
+		echo "<br>Checking keywords...<br>\n";
 		MyHelper::returnKeywords();
-		MyHelper::returnKeywords();
+		echo "<br>Checking moderation...<br>\n";
 		MyHelper::updateArticleTable();
+		echo "<br>Checking markdown...<br>\n";
 		MyHelper::returnMarkdown();
 	})->name('maintenance.all');
 
