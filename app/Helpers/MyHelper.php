@@ -1146,6 +1146,7 @@ output in Turkish, output JSON as:
 					->select([
 						'y.id',
 						'y.slug as article_slug',
+						'y.title as article_title',
 						'k.slug as category_slug',
 						'uk.slug as parent_category_slug',
 						'k.category_name',
@@ -1188,7 +1189,7 @@ output in Turkish, output JSON as:
 						}
 
 						if ($record->article_slug==='n-a') {
-							$record->article_slug = Str::slug($record->title);
+							$record->article_slug = Str::slug($record->article_title);
 						}
 
 						try {
