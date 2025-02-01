@@ -1189,6 +1189,10 @@ output in Turkish, output JSON as:
 							}
 						}
 
+						if ($record->slug==='n-a') {
+							$record->slug = Str::slug($record->title);
+						}
+
 						try {
 							DB::table('articles')
 								->where('id', $record->id)
@@ -1199,6 +1203,7 @@ output in Turkish, output JSON as:
 									'parent_category_name' => $record->parent_category_name,
 									'name_slug' => $record->name_slug,
 									'name' => $record->name,
+									'slug' => $record->slug,
 									'moderation_flagged' => $moderationFlagged,
 									'religious_moderation_value' => $religiousValue,
 									'respect_moderation_value' => $respectValue,
