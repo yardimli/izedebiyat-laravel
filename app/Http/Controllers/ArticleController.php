@@ -101,6 +101,10 @@
 
 		public function store(Request $request)
 		{
+		if (!Auth::check()) {
+			return redirect()->route('frontend.join');
+		}
+
 			$validated = $request->validate([
 				'title' => 'required|max:255',
 				'subtitle' => 'nullable|max:255',
@@ -113,6 +117,8 @@
 			]);
 
 			$validated['is_published'] = $request->has('is_published');
+
+			$validated['user_id'] = Auth::id();
 
 			$article = Article::create($validated);
 
