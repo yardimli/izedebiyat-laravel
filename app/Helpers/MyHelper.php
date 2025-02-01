@@ -633,14 +633,14 @@
 			$counter = 0;
 			$continue = true;
 
-			while ($continue && $counter < 5) {
+			while ($continue && $counter < 50) {
 				// Get stories using Laravel's query builder
 				$articles = DB::table('articles')
 					->where('bad_critical', -1)
 					->where('deleted', 0)
 					->where('approved', 1)
 					->orderBy('id', 'DESC')
-					->limit(100)
+					->limit(10)
 					->get();
 
 				$continue = $articles->count() > 0;
@@ -696,7 +696,7 @@
 			$counter = 0;
 			$continue = true;
 
-			while ($continue && $counter < 5) {
+			while ($continue && $counter < 50) {
 				// Get stories using Laravel's query builder
 				$articles = DB::table('articles')
 					->where('has_religious_moderation', 0)
@@ -704,7 +704,7 @@
 					->where('approved', 1)
 					->where('bad_critical', '<', 5)
 					->orderBy('id', 'DESC')
-					->limit(100)
+					->limit(10)
 					->get();
 
 				$continue = $articles->count() > 0;
@@ -760,14 +760,14 @@
 			$counter = 0;
 			$continue = true;
 
-			while ($continue && $counter < 5) {
+			while ($continue && $counter < 50) {
 				// Get stories using Laravel's query builder
 				$articles = DB::table('articles')
 					->where('has_moderation', -1)
 					->where('approved', 1)
 					->where('deleted', 0)
 					->orderBy('id', 'DESC')
-					->limit(100)
+					->limit(10)
 					->get();
 
 				$continue = $articles->count() > 0;
@@ -973,10 +973,7 @@
 
 			$counter = 0;
 			$continue = true;
-			while ($continue && $counter < 100) {
-				$counter++;
-				echo "Counter: " . $counter . "\n";
-
+			while ($continue && $counter < 10000) {
 				// Get stories using Laravel's query builder
 				$articles = DB::table('articles')
 					->where('markdown', 0)
@@ -987,6 +984,9 @@
 				$continue = $articles->count() > 0;
 
 				foreach ($articles as $article) {
+					$counter++;
+					echo "Counter: " . $counter . "\n";
+
 					$main_text = $article->main_text;
 					$main_text = html_entity_decode($main_text, ENT_QUOTES);
 					$main_text = self::fix_encoding($main_text);
@@ -1022,9 +1022,7 @@
 
 			$counter = 0;
 			$continue = true;
-			while ($continue && $counter < 100) {
-				$counter++;
-				echo "Counter: " . $counter . "\n";
+			while ($continue && $counter < 10000) {
 
 				// Get stories using Laravel's query builder
 				$users = DB::table('users')
@@ -1036,6 +1034,9 @@
 				$continue = $users->count() > 0;
 
 				foreach ($users as $user) {
+					$counter++;
+					echo "Counter: " . $counter . "\n";
+
 					$about_me = $user->about_me;
 					$about_me = html_entity_decode($about_me, ENT_QUOTES);
 					$about_me = self::fix_encoding($about_me);
