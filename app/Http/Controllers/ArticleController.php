@@ -125,9 +125,9 @@
 			//find category_id slug and parent_category_id slug
 			$category = Category::findOrFail($validated['category_id']);
 			$validated['category_name'] = $category->category_name;
-			$validated['category_slug'] = $category->category_slug;
+			$validated['category_slug'] = $category->slug;
 			$validated['parent_category_name'] = $category->parentCategory->category_name;
-			$validated['parent_category_slug'] = $category->parentCategory->category_slug;
+			$validated['parent_category_slug'] = $category->parentCategory->slug;
 
 			$article = Article::create($validated);
 
@@ -173,9 +173,9 @@
 			//find category_id slug and parent_category_id slug
 			$category = Category::findOrFail($validated['category_id']);
 			$validated['category_name'] = $category->category_name;
-			$validated['category_slug'] = $category->category_slug;
+			$validated['category_slug'] = $category->slug;
 			$validated['parent_category_name'] = $category->parentCategory->category_name;
-			$validated['parent_category_slug'] = $category->parentCategory->category_slug;
+			$validated['parent_category_slug'] = $category->parentCategory->slug;
 
 			if ($request->has('keywords')) {
 				$keywordsData = json_decode($request->keywords, true);
