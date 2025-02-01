@@ -71,7 +71,7 @@
 						<div class="mb-3">
 							<div id="selectedImagePreview" class="mt-2">
 								@if(isset($article) && $article->featured_image)
-									<img src="{{ $article->getSmallUrl() }}" alt="Featured Image" class="img-fluid"
+									<img src="{{ $article->featured_image }}" alt="Featured Image" class="img-fluid"
 									     style="max-width: 600px;">
 								@endif
 							</div>

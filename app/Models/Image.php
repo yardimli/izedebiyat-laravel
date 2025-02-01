@@ -32,6 +32,6 @@
 
 		public function articles(): HasMany
 		{
-			return $this->hasMany(Article::class, 'featured_image_id');
+			return $this->hasMany(Article::class, 'featured_image');
 		}
 	}
