@@ -13,12 +13,12 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="author" content="DSAThemes">
-	<meta name="description" content="Discover a new beginning.">
-	<meta name="keywords" content="Responsive, HTML5, DSAThemes, Landing, Software, Mobile App, SaaS, Startup, Creative, Digital Product">
+	<meta name="description" content="{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}">
+	<meta name="keywords" content="{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
 	<!-- SITE TITLE -->
-	<title>Discover a new beginning.</title>
+	<title>{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}</title>
 	
 	<!-- FAVICON AND TOUCH ICONS -->
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
