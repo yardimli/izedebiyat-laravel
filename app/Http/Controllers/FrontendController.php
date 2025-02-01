@@ -503,6 +503,7 @@
 					->orderBy('latest_text_date', 'desc');
 			} elseif ($filter !== 'tumu' && mb_strlen($filter, 'UTF-8') === 1) {
 				$query->where('name', 'LIKE', $filter . '%');
+				$query->orderBy('name');
 			}
 
 			// Get total count for pagination
