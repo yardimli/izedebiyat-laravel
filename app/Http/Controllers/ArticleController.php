@@ -126,6 +126,7 @@
 			$category = Category::findOrFail($validated['category_id']);
 			$validated['category_name'] = $category->category_name;
 			$validated['category_slug'] = $category->slug;
+			$validated['parent_category_id'] = $category->parent_category_id;
 			$validated['parent_category_name'] = $category->parentCategory->category_name;
 			$validated['parent_category_slug'] = $category->parentCategory->slug;
 
@@ -179,6 +180,7 @@
 			$category = Category::findOrFail($validated['category_id']);
 			$validated['category_name'] = $category->category_name;
 			$validated['category_slug'] = $category->slug;
+			$validated['parent_category_id'] = $category->parent_category_id;
 			$validated['parent_category_name'] = $category->parentCategory->category_name;
 			$validated['parent_category_slug'] = $category->parentCategory->slug;
 
