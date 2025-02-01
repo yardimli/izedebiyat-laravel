@@ -589,15 +589,19 @@
 				'allow_unsafe_links' => false,
 			]);
 
+			Log::info('Converting article text to HTML...');
 			$article->main_text = $converter->convertToHtml($article->main_text);
+			Log::info('Article text converted to HTML');
 
 			// Get the user
 			$user = User::findOrFail($article->user_id);
+			Log::info('User found: ' . $user->id);
 
 			// Get keywords for this article
 			$keywords = $article->keywords()
 				->where('count', '>', 1)
 				->get();
+			Log::info('Keywords found: ' . $keywords->count());
 
 			// Get related posts (you may want to customize this query)
 			$sameUserAndCategory = Article::where('category_id', $article->category_id)
