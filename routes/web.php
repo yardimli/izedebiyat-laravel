@@ -174,17 +174,17 @@
 	Route::get('/verify-thank-you-tr_TR', [VerifyThankYouController::class, 'index'])->name('verify-thank-you-tr_TR')->middleware('verified');
 
 
+	Route::get('/maintenance/all', function () {
+		MyHelper::returnIsHarmful();
+		MyHelper::returnReligiousReason();
+		MyHelper::returnKeywords();
+		MyHelper::returnKeywords();
+		MyHelper::updateArticleTable();
+		MyHelper::returnMarkdown();
+	})->name('maintenance.all');
 
 	//-------------------------------------------------------------------------
 	Route::middleware(['auth'])->group(function () {
-		Route::get('/maintenance/all', function () {
-			MyHelper::returnIsHarmful();
-			MyHelper::returnReligiousReason();
-			MyHelper::returnKeywords();
-			MyHelper::returnKeywords();
-			MyHelper::updateArticleTable();
-			MyHelper::returnMarkdown();
-		})->name('maintenance.all');
 
 		// New maintenance routes
 		Route::get('/maintenance/check-harmful', function () {
