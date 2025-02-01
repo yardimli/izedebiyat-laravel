@@ -1140,15 +1140,16 @@ output in Turkish, output JSON as:
 				$records = DB::table('articles as y')
 					->leftJoin('categories as k', 'k.id', '=', 'y.category_id')
 					->leftJoin('categories as uk', 'uk.id', '=', 'y.parent_category_id')
-					->leftJoin('users as yz', 'yz.id', '=', 'y.user_id')
+					->leftJoin('users as usr', 'usr.id', '=', 'y.user_id')
 					->select([
 						'y.id',
+						'y.slug as article_slug',
 						'k.slug as category_slug',
 						'uk.slug as parent_category_slug',
 						'k.category_name',
 						'uk.category_name as parent_category_name',
-						'yz.slug as name_slug',
-						'yz.name',
+						'usr.slug as name_slug',
+						'usr.name',
 						'y.moderation',
 						'y.religious_reason'
 					])
@@ -1184,8 +1185,8 @@ output in Turkish, output JSON as:
 							}
 						}
 
-						if ($record->slug==='n-a') {
-							$record->slug = Str::slug($record->title);
+						if ($record->article_slug==='n-a') {
+							$record->article_slug = Str::slug($record->title);
 						}
 
 						try {
@@ -1198,7 +1199,7 @@ output in Turkish, output JSON as:
 									'parent_category_name' => $record->parent_category_name,
 									'name_slug' => $record->name_slug,
 									'name' => $record->name,
-									'slug' => $record->slug,
+									'article_slug' => $record->article_slug,
 									'moderation_flagged' => $moderationFlagged,
 									'religious_moderation_value' => $religiousValue,
 									'respect_moderation_value' => $respectValue,
