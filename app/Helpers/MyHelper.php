@@ -192,7 +192,7 @@
 
 			if ($storage_path !== '' && Storage::disk('public')->exists($storage_path)) {
 				return "<div style='position:relative;'>
-                    <img src='{$storage_path}' class='{$extraClass}' 
+                    <img src='/storage{$storage_path}' class='{$extraClass}' 
                     style='{$extraStyle}' alt='yazı resim'></div>";
 			}
 
