@@ -546,7 +546,7 @@
 				const imageUrl = $(this).data('image-url');
 				
 				// Update the hidden input and previewed
-				$('#featured_image').val(imageId);
+				$('#featured_image').val(imageUrl);
 				$('#selectedImagePreview').html(`
             <img src="${imageUrl}" alt="Selected Image" class="img-fluid" style="max-width: 600px;">
         `);

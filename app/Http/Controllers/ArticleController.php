@@ -110,7 +110,7 @@
 				'subtitle' => 'nullable|max:255',
 				'main_text' => 'required',
 				'subheading' => 'nullable|max:500',
-				'featured_image' => 'nullable|exists:images,id',
+				'featured_image' => 'nullable',
 				'category_id' => 'nullable|exists:categories,id', // Update this line
 				'is_published' => 'boolean',
 				'keywords' => 'nullable|string|max:255',
@@ -151,7 +151,7 @@
 				'subtitle' => 'nullable|max:255',
 				'main_text' => 'required',
 				'subheading' => 'nullable|max:500',
-				'featured_image' => 'nullable|exists:images,id',
+				'featured_image' => 'nullable',
 				'category_id' => 'nullable|exists:categories,id', // Update this line
 				'is_published' => 'boolean',
 				'keywords' => 'nullable|string|max:255',
