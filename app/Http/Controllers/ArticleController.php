@@ -117,8 +117,9 @@
 			]);
 
 			$validated['is_published'] = $request->has('is_published');
-
 			$validated['user_id'] = Auth::id();
+			$validated['approved'] = 1;
+			$validated['slug'] = Str::slug($validated['title']);
 
 			$article = Article::create($validated);
 
