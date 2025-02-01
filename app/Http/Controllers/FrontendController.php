@@ -50,7 +50,6 @@
 							->where('deleted', 0)
 							->where('bad_critical', '<', 4)
 							->where('religious_moderation_value', '<', 3)
-							->where('respect_moderation_value', '>=', 3)
 							->where('moderation_flagged', 0)
 							->count();
 
@@ -63,7 +62,6 @@
 							->where('deleted', 0)
 							->where('bad_critical', '<', 4)
 							->where('religious_moderation_value', '<', 3)
-							->where('respect_moderation_value', '>=', 3)
 							->where('moderation_flagged', 0)
 							->where('created_at', '>=', now()->subDays(30))
 							->count();
@@ -163,7 +161,6 @@
 					->where('deleted', 0)
 					->where('bad_critical', '<', 4)
 					->where('religious_moderation_value', '<', 3)
-					->where('respect_moderation_value', '>=', 3)
 					->where('moderation_flagged', 0)
 					->orderBy('formul_ekim', 'DESC')
 					->limit(50)
@@ -172,11 +169,10 @@
 				$category->yeni_articles = Article::where('parent_category_id', $category->id)
 					->where('approved', 1)
 					->where('deleted', 0)
-					->where('bad_critical', '<', 3)
+					->where('bad_critical', '<', 4)
 					->where('religious_moderation_value', '<', 3)
-					->where('respect_moderation_value', '>=', 3)
 					->where('moderation_flagged', 0)
-					->orderBy('id', 'DESC')
+					->orderBy('created_at', 'DESC')
 					->limit(100)
 					->get();
 			}
@@ -237,7 +233,6 @@
 				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
-				->where('respect_moderation_value', '>=', 3)
 				->where('moderation_flagged', 0)
 				->where('created_at', '>=', Carbon::now()->subDays(30))
 				->orderBy('created_at', 'DESC')
@@ -253,7 +248,6 @@
 						->where('deleted', 0)
 						->where('bad_critical', '<', 4)
 						->where('religious_moderation_value', '<', 3)
-						->where('respect_moderation_value', '>=', 3)
 						->where('moderation_flagged', 0)
 						->where('created_at', '>=', Carbon::now()->subDays(30))
 						->count();
@@ -272,7 +266,6 @@
 				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
-				->where('respect_moderation_value', '>=', 3)
 				->where('moderation_flagged', 0)
 				->where('created_at', '>=', Carbon::now()->subDays(30))
 				->orderBy('created_at', 'DESC')
@@ -288,7 +281,6 @@
 						->where('deleted', 0)
 						->where('bad_critical', '<', 4)
 						->where('religious_moderation_value', '<', 3)
-						->where('respect_moderation_value', '>=', 3)
 						->where('moderation_flagged', 0)
 						->where('created_at', '>=', Carbon::now()->subDays(30))
 						->count();
@@ -310,7 +302,6 @@
 				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
-				->where('respect_moderation_value', '>=', 3)
 				->where('moderation_flagged', 0);
 
 			// Get total count for pagination
@@ -339,7 +330,6 @@
 				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
-				->where('respect_moderation_value', '>=', 3)
 				->where('moderation_flagged', 0)
 				->orderBy('created_at', 'DESC')
 				->skip(($page - 1) * 10)
@@ -371,7 +361,6 @@
 				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
-				->where('respect_moderation_value', '>=', 3)
 				->where('moderation_flagged', 0);
 
 			// Get total count for pagination
@@ -398,9 +387,8 @@
 			$sidebarTexts = Article::where('category_id', $subCategory->id)
 				->where('approved', 1)
 				->where('deleted', 0)
-				->where('bad_critical', '<', 3)
+				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
-				->where('respect_moderation_value', '>=', 3)
 				->where('moderation_flagged', 0)
 				->orderBy('created_at', 'DESC')
 				->skip(($page - 1) * 10)
@@ -596,7 +584,7 @@
 				->where('id', '!=', $article->id)
 				->where('approved', 1)
 				->where('deleted', 0)
-				->where('bad_critical', '<', 3)
+				->where('bad_critical', '<', 4)
 				->orderBy('created_at', 'DESC')
 				->limit(3)
 				->get();
@@ -607,7 +595,7 @@
 				->whereNotIn('id', $sameUserAndCategory->pluck('id'))
 				->where('approved', 1)
 				->where('deleted', 0)
-				->where('bad_critical', '<', 3)
+				->where('bad_critical', '<', 4)
 				->orderBy('created_at', 'DESC')
 				->limit(3)
 				->get();
@@ -618,7 +606,7 @@
 				->whereNotIn('id', $sameUserAndMainCategory->pluck('id'))
 				->where('approved', 1)
 				->where('deleted', 0)
-				->where('bad_critical', '<', 3)
+				->where('bad_critical', '<', 4)
 				->orderBy('created_at', 'DESC')
 				->limit(6)
 				->get();
