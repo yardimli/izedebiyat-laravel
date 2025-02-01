@@ -177,6 +177,14 @@
 
 	//-------------------------------------------------------------------------
 	Route::middleware(['auth'])->group(function () {
+		Route::get('/maintenance/all', function () {
+			MyHelper::returnIsHarmful();
+			MyHelper::returnReligiousReason();
+			MyHelper::returnKeywords();
+			MyHelper::returnKeywords();
+			MyHelper::updateArticleTable();
+			MyHelper::returnMarkdown();
+		});
 
 		// New maintenance routes
 		Route::get('/maintenance/check-harmful', function () {
