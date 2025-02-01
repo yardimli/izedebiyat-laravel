@@ -443,7 +443,6 @@
 		public static function moderation($message)
 		{
 
-			$openai_api_key = self::getOpenAIKey();
 			//make sure $message can be json encoded
 			if (!self::isValidUtf8($message)) {
 				$message = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $message);
@@ -452,7 +451,7 @@
 
 			$response = Http::withHeaders([
 				'Content-Type' => 'application/json',
-				'Authorization' => 'Bearer ' . $openai_api_key,
+				'Authorization' => 'Bearer ' . $_ENV['OPEN_AI_API_KEY'],
 			])->post(env('OPEN_AI_API_BASE_MODERATION'), [
 				'input' => $message,
 			]);
@@ -622,24 +621,6 @@
 		public static function isValidUtf8($string)
 		{
 			return mb_check_encoding($string, 'UTF-8');
-		}
-
-		public static function getAnthropicKey()
-		{
-			$user = Auth::user();
-			return !empty($user->anthropic_key) ? $user->anthropic_key : $_ENV['ANTHROPIC_KEY'];
-		}
-
-		public static function getOpenAIKey()
-		{
-			$user = Auth::user();
-			return !empty($user->openai_api_key) ? $user->openai_api_key : $_ENV['OPEN_AI_API_KEY'];
-		}
-
-		public static function getOpenRouterKey()
-		{
-			$user = Auth::user();
-			return !empty($user->openrouter_key) ? $user->openrouter_key : $_ENV['OPEN_ROUTER_KEY'];
 		}
 
 		//------------------------------------------------------------
@@ -1260,26 +1241,26 @@ output in Turkish, output JSON as:
 
 			if ($llm === 'anthropic-haiku') {
 				$llm_base_url = $_ENV['ANTHROPIC_HAIKU_BASE'];
-				$llm_api_key = getAnthropicKey();
+				$llm_api_key = $_ENV['ANTHROPIC_KEY'];
 				$llm_model = $_ENV['ANTHROPIC_HAIKU_MODEL'];
 
 			} else if ($llm === 'anthropic-sonet') {
 				$llm_base_url = $_ENV['ANTHROPIC_SONET_BASE'];
-				$llm_api_key = getAnthropicKey();
+				$llm_api_key = $_ENV['ANTHROPIC_KEY'];
 				$llm_model = $_ENV['ANTHROPIC_SONET_MODEL'];
 
 			} else if ($llm === 'open-ai-gpt-4o') {
 				$llm_base_url = $_ENV['OPEN_AI_GPT4_BASE'];
-				$llm_api_key = self::getOpenAIKey();
+				$llm_api_key = $_ENV['OPEN_AI_API_KEY'];
 				$llm_model = $_ENV['OPEN_AI_GPT4_MODEL'];
 
 			} else if ($llm === 'open-ai-gpt-4o-mini') {
 				$llm_base_url = $_ENV['OPEN_AI_GPT4_MINI_BASE'];
-				$llm_api_key = self::getOpenAIKey();
+				$llm_api_key = $_ENV['OPEN_AI_API_KEY'];
 				$llm_model = $_ENV['OPEN_AI_GPT4_MINI_MODEL'];
 			} else {
 				$llm_base_url = $_ENV['OPEN_ROUTER_BASE'];
-				$llm_api_key = self::getOpenRouterKey();
+				$llm_api_key = $_ENV['OPEN_ROUTER_KEY'];
 				$llm_model = $llm;
 			}
 
@@ -1408,26 +1389,26 @@ output in Turkish, output JSON as:
 
 			if ($llm === 'anthropic-haiku') {
 				$llm_base_url = $_ENV['ANTHROPIC_HAIKU_BASE'];
-				$llm_api_key = elf::getAnthropicKey();;
+				$llm_api_key = $_ENV['ANTHROPIC_KEY'];
 				$llm_model = $_ENV['ANTHROPIC_HAIKU_MODEL'];
 
 			} else if ($llm === 'anthropic-sonet') {
 				$llm_base_url = $_ENV['ANTHROPIC_SONET_BASE'];
-				$llm_api_key = elf::getAnthropicKey();;
+				$llm_api_key = $_ENV['ANTHROPIC_KEY'];
 				$llm_model = $_ENV['ANTHROPIC_SONET_MODEL'];
 
 			} else if ($llm === 'open-ai-gpt-4o') {
 				$llm_base_url = $_ENV['OPEN_AI_GPT4_BASE'];
-				$llm_api_key = self::getOpenAIKey();
+				$llm_api_key = $_ENV['OPEN_AI_API_KEY'];
 				$llm_model = $_ENV['OPEN_AI_GPT4_MODEL'];
 
 			} else if ($llm === 'open-ai-gpt-4o-mini') {
 				$llm_base_url = $_ENV['OPEN_AI_GPT4_MINI_BASE'];
-				$llm_api_key = self::getOpenAIKey();
+				$llm_api_key = $_ENV['OPEN_AI_API_KEY'];
 				$llm_model = $_ENV['OPEN_AI_GPT4_MINI_MODEL'];
 			} else {
 				$llm_base_url = $_ENV['OPEN_ROUTER_BASE'];
-				$llm_api_key = self::getOpenRouterKey();
+				$llm_api_key = $_ENV['OPEN_ROUTER_KEY'];
 				$llm_model = $llm;
 			}
 
