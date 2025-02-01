@@ -14,6 +14,7 @@
 	use Illuminate\Support\Facades\Session;
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Facades\Validator;
+	use Illuminate\Support\Str;
 	use Intervention\Image\ImageManagerStatic as Image;
 	use Ahc\Json\Fixer;
 	use League\HTMLToMarkdown\HtmlConverter;
