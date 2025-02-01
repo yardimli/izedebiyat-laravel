@@ -425,7 +425,7 @@
 				'allow_unsafe_links' => false,
 			]);
 
-			$user->about_me = $converter->convertToHtml($user->about_me);
+			$user->about_me = $converter->convert($user->about_me);
 //			$about_me = $user->about_me;
 //			$about_me = explode('\n', $about_me);
 //			remove lines with only <br> tags if above line starts with <p or <h
@@ -590,7 +590,7 @@
 			]);
 
 			Log::info('Converting article text to HTML...');
-			$article->main_text = $converter->convertToHtml($article->main_text);
+			$article->main_text = $converter->convert($article->main_text);
 			Log::info('Article text converted to HTML');
 
 			// Get the user
