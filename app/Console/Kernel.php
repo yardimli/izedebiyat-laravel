@@ -12,8 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-	    $schedule->command('app:create-image-cron-job')->everyMinute();
-
+	    $schedule->command('app:moderate-texts')->everyTenMinutes();
     }
 
     /**
