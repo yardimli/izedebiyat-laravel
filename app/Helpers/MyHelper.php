@@ -681,13 +681,13 @@
 							echo "id: " . $article->id . " - Not harmful.<br>\n";
 						}
 						flush();
-						ob_flush();
+
 					} else {
 						echo $counter . " - Error: <br>\n";
 						echo $article->id . " " . $article->title . ", kategori " . $article->parent_category_name . "/" . $article->category_name . "<br>\n";
 						echo var_dump($llm_result);
 						flush();
-						ob_flush();
+
 					}
 				}
 			}
@@ -746,12 +746,12 @@
 						echo $article->id . " " . $article->title . " -- " . $article->parent_category_name . '/' . $article->category_name . "<br>\n";
 						echo $moderation . "<br>\n";
 						flush();
-						ob_flush();
+
 					} else {
 						echo $counter . " - Error: <br>\n";
 						echo var_dump($llm_result);
 						flush();
-						ob_flush();
+
 					}
 				}
 			}
@@ -783,7 +783,7 @@
 					echo $counter . "- Moderation:<br>\n";
 					echo $moderation . "<br>\n";
 					flush();
-					ob_flush();
+					
 
 					DB::table('articles')
 						->where('id', $article->id)
@@ -1129,13 +1129,13 @@ output in Turkish, output JSON as:
 						echo $counter . "- Keywords:<br>\n";
 						echo $article->id . " " . $article->title . " -- " . $keywords . " - Sentiment: " . $sentiment . "<br>\n";
 						flush();
-						ob_flush();
+
 					} else {
 						echo $counter . " - Error: <br>\n";
 						echo var_dump($llm_result);
 						echo 'ERROR ON: id:' . $article->id . " - " . $article->title . "<br>\n";
 						flush();
-						ob_flush();
+
 					}
 				}
 			}
@@ -1243,27 +1243,22 @@ output in Turkish, output JSON as:
 							if ($counter % 100 == 0) {
 								echo "Processed $counter records...";
 								flush();
-								ob_flush();
 							}
 						} catch (\Exception $e) {
 							echo "Error updating record ID {$record->id}: " . $e->getMessage() . '<br>';
 							flush();
-							ob_flush();
 						}
 					}
 
 					echo "Update completed. Total records updated: $counter<br>";
 					flush();
-					ob_flush();
 				} else {
 					echo "No records found to update<br>";
 					flush();
-					ob_flush();
 				}
 
 				echo "Processed batch<br>";
 				flush();
-				ob_flush();
 
 			} while ($recordsInBatch > 0);
 		}
