@@ -525,7 +525,7 @@
 				]
 			);
 
-			return view('frontend.users', compact('users', 'filter'));
+			return view('frontend.authors', compact('users', 'filter'));
 		}
 
 
