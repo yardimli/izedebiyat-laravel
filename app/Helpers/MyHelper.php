@@ -114,6 +114,8 @@
 		{
 			$hasPicture = false;
 			if ($pictureFile !== null && $pictureFile !== "") {
+				$pictureFile = str_replace('public/', '', $pictureFile);
+				$pictureFile = str_replace('public\\', '', $pictureFile);
 				if (Storage::disk('public')->exists($pictureFile)) {
 					$hasPicture = true;
 					$html = "<img alt='yazar' style='{$extraCss}' src='/storage/{$pictureFile}' class='{$extraClass}'>";
