@@ -354,7 +354,6 @@
 							type: 'DELETE',
 							data: {"_token": "{{ csrf_token() }}"},
 							success: function () {
-								loadImages();
 								showNotification('Image deleted successfully', 'success');
 							},
 							error: function () {
@@ -596,7 +595,6 @@
 						type: 'DELETE',
 						data: {"_token": "{{ csrf_token() }}"},
 						success: function () {
-							loadImages();
 							showNotification('Generated image deleted successfully', 'success');
 						},
 						error: function () {
@@ -625,7 +623,6 @@
 					contentType: false,
 					success: function () {
 						$('#uploadImageModal').modal('hide');
-						loadImages();
 						showNotification('Image uploaded successfully', 'success');
 					},
 					error: function () {
