@@ -41,6 +41,7 @@
 			// Look up the article by ID
 			$article = Article::where('id', $id)
 				->where('approved', 1)
+				->where('is_published', 1)
 				->where('deleted', 0)
 				->first();
 

@@ -40,7 +40,7 @@
 							<div class="recent-articles">
 								<h5>Son Yapıtları</h5>
 								<ul>
-									@foreach($user->articles()->where('approved', 1)->where('deleted', 0)->orderBy('created_at', 'DESC')->limit(3)->get() as $article)
+									@foreach($user->articles()->where('approved', 1)->where('deleted', 0)->where('is_published', 1)->orderBy('created_at', 'DESC')->limit(3)->get() as $article)
 										<li>
 											<a href="{{ url('/yapit/' . $article->slug) }}">{{ $article->title }}</a>
 											<small class="text-muted">

@@ -47,6 +47,7 @@
 								->orWhere('parent_category_id', $category->id);
 						})
 							->where('approved', 1)
+							->where('is_published', 1)
 							->where('deleted', 0)
 							->where('bad_critical', '<', 4)
 							->where('religious_moderation_value', '<', 3)
@@ -59,6 +60,7 @@
 								->orWhere('parent_category_id', $category->id);
 						})
 							->where('approved', 1)
+							->where('is_published', 1)
 							->where('deleted', 0)
 							->where('bad_critical', '<', 4)
 							->where('religious_moderation_value', '<', 3)
@@ -72,6 +74,7 @@
 								->orWhere('parent_category_id', $category->id);
 						})
 							->where('approved', 1)
+							->where('is_published', 1)
 							->where('deleted', 0)
 							->sum('read_count');
 
@@ -159,6 +162,7 @@
 				$category->articles = Article::where('parent_category_id', $category->id)
 					->where('approved', 1)
 					->where('deleted', 0)
+					->where('is_published', 1)
 					->where('bad_critical', '<', 4)
 					->where('religious_moderation_value', '<', 3)
 					->where('moderation_flagged', 0)
@@ -169,6 +173,7 @@
 				$category->yeni_articles = Article::where('parent_category_id', $category->id)
 					->where('approved', 1)
 					->where('deleted', 0)
+					->where('is_published', 1)
 					->where('bad_critical', '<', 4)
 					->where('religious_moderation_value', '<', 3)
 					->where('moderation_flagged', 0)
@@ -196,6 +201,7 @@
 			// Get the base query
 			$baseQuery = Article::where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->where('bad_critical', '<', 4)
 				->where(function ($q) use ($query) {
 					$q->where('title', 'LIKE', '%' . $query . '%')
@@ -231,6 +237,7 @@
 		{
 			$articles = Article::where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
 				->where('moderation_flagged', 0)
@@ -246,6 +253,7 @@
 					$category->new_count = Article::where('parent_category_id', $category->id)
 						->where('approved', 1)
 						->where('deleted', 0)
+						->where('is_published', 1)
 						->where('bad_critical', '<', 4)
 						->where('religious_moderation_value', '<', 3)
 						->where('moderation_flagged', 0)
@@ -264,6 +272,7 @@
 			$articles = Article::where('parent_category_id', $category->id)
 				->where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
 				->where('moderation_flagged', 0)
@@ -279,6 +288,7 @@
 					$cat->new_count = Article::where('parent_category_id', $cat->id)
 						->where('approved', 1)
 						->where('deleted', 0)
+						->where('is_published', 1)
 						->where('bad_critical', '<', 4)
 						->where('religious_moderation_value', '<', 3)
 						->where('moderation_flagged', 0)
@@ -300,6 +310,7 @@
 			$query = Article::where('parent_category_id', $category->id)
 				->where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
 				->where('moderation_flagged', 0);
@@ -328,6 +339,7 @@
 			$sidebarTexts = Article::where('parent_category_id', $category->id)
 				->where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
 				->where('moderation_flagged', 0)
@@ -359,6 +371,7 @@
 			$query = Article::where('category_id', $subCategory->id)
 				->where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
 				->where('moderation_flagged', 0);
@@ -387,6 +400,7 @@
 			$sidebarTexts = Article::where('category_id', $subCategory->id)
 				->where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
 				->where('moderation_flagged', 0)
@@ -426,6 +440,7 @@
 			// Get the base query for texts
 			$query = Article::where('user_id', $user->id)
 				->where('approved', 1)
+				->where('is_published', 1)
 				->where('deleted', 0);
 
 			// Get total count for pagination
@@ -453,6 +468,7 @@
 			$sidebarTexts = Article::where('user_id', $user->id)
 				->where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->orderBy('formul_ekim', 'DESC')
 				->limit(20)
 				->get();
@@ -485,6 +501,7 @@
 					->whereColumn('user_id', 'users.id')
 					->where('approved', 1)
 					->where('deleted', 0)
+					->where('is_published', 1)
 					->latest('created_at')
 					->limit(1)
 				])
@@ -529,6 +546,7 @@
 			})
 				->where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->where('bad_critical', '<', 4);
 
 			// Get total count for pagination
@@ -561,6 +579,7 @@
 			$article = Article::where('slug', $slug)
 				->where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->firstOrFail();
 
 			$converter = new CommonMarkConverter([
@@ -584,6 +603,7 @@
 				->where('id', '!=', $article->id)
 				->where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->where('bad_critical', '<', 4)
 				->orderBy('created_at', 'DESC')
 				->limit(3)
@@ -595,6 +615,7 @@
 				->whereNotIn('id', $sameUserAndCategory->pluck('id'))
 				->where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->where('bad_critical', '<', 4)
 				->orderBy('created_at', 'DESC')
 				->limit(3)
@@ -606,6 +627,7 @@
 				->whereNotIn('id', $sameUserAndMainCategory->pluck('id'))
 				->where('approved', 1)
 				->where('deleted', 0)
+				->where('is_published', 1)
 				->where('bad_critical', '<', 4)
 				->orderBy('created_at', 'DESC')
 				->limit(6)
