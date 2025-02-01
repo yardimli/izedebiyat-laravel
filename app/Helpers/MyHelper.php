@@ -187,6 +187,15 @@
                         title="Yapay zekaya yazının içeriğini vererek üretildi">YZ</span>';
 			}
 
+			$storage_path = $articleMainImage;
+			$storage_path = str_replace('storage/', '', $storage_path);
+
+			if ($storage_path !== '' && Storage::disk('public')->exists($storage_path)) {
+				return "<div style='position:relative;'>
+                    <img src='{$storage_path}' class='{$extraClass}' 
+                    style='{$extraStyle}' alt='yazı resim'></div>";
+			}
+
 			if ($articleMainImage !== '' && Storage::disk('public')->exists("yazi_resimler/" . $articleMainImage)) {
 				return "<div style='position:relative;'>
                     <img src='/storage/yazi_resimler/{$articleMainImage}' class='{$extraClass}' 
