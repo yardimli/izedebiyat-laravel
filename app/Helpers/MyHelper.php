@@ -632,7 +632,7 @@
 			$counter = 0;
 			$continue = true;
 
-			while ($continue && $counter < 100) {
+			while ($continue && $counter < 5) {
 				// Get stories using Laravel's query builder
 				$articles = DB::table('articles')
 					->where('bad_critical', -1)
@@ -695,7 +695,7 @@
 			$counter = 0;
 			$continue = true;
 
-			while ($continue && $counter < 100) {
+			while ($continue && $counter < 5) {
 				// Get stories using Laravel's query builder
 				$articles = DB::table('articles')
 					->where('has_religious_moderation', 0)
@@ -759,7 +759,7 @@
 			$counter = 0;
 			$continue = true;
 
-			while ($continue && $counter < 100) {
+			while ($continue && $counter < 5) {
 				// Get stories using Laravel's query builder
 				$articles = DB::table('articles')
 					->where('has_moderation', -1)
@@ -1062,7 +1062,7 @@
 			$counter = 0;
 			$continue = true;
 
-			while ($continue && $counter < 100) {
+			while ($continue && $counter < 5) {
 
 				// Get stories using Laravel's query builder
 				$articles = DB::table('articles')
@@ -1071,7 +1071,7 @@
 					->where('approved', 1)
 					->where('bad_critical', '<', 5)
 					->orderBy('id', 'DESC')
-					->limit(10)
+					->limit(100)
 					->get();
 
 				$continue = $articles->count() > 0;
@@ -1136,8 +1136,6 @@ output in Turkish, output JSON as:
 
 		public static function updateArticleTable()
 		{
-			$batchSize = 1000;
-
 			do {
 				$records = DB::table('articles as y')
 					->leftJoin('categories as k', 'k.id', '=', 'y.category_id')
@@ -1155,7 +1153,7 @@ output in Turkish, output JSON as:
 						'y.religious_reason'
 					])
 					->where('y.has_changed', '=', '1')
-					->take($batchSize)
+					->limit(100)
 					->get();
 
 				$recordsInBatch = $records->count();
