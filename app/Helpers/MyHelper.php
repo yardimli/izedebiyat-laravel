@@ -1152,6 +1152,7 @@ output in Turkish, output JSON as:
 						'y.id',
 						'y.slug as article_slug',
 						'y.title as article_title',
+						'y.keywords_string as keywords_string',
 						'k.slug as category_slug',
 						'uk.slug as parent_category_slug',
 						'k.category_name',
