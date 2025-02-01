@@ -590,7 +590,12 @@
 			]);
 
 			Log::info('Converting article text to HTML...');
-			$article->main_text = $converter->convert($article->main_text);
+			try {
+				$article->main_text = $converter->convert($article->main_text);
+			} catch (\Exception $e) {
+				Log::error('Error converting article text to HTML: ' . $e->getMessage());
+				$article->main_text = str_replace("\n", '<br>', $article->main_text);
+			}
 			Log::info('Article text converted to HTML');
 
 			// Get the user
