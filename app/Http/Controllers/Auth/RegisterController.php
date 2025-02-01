@@ -82,7 +82,8 @@
 //			}, 'The selected email domain is not allowed for registration.');
 
 			return Validator::make($data, [
-				'username' => ['required', 'string', 'max:255', 'alpha_dash', 'unique:users'],
+				'username' => ['required', 'string', 'max:60', 'alpha_dash', 'unique:users'],
+				'name' => ['required', 'string', 'max:60'],
 				'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
 				'password' => ['required', 'string', 'min:8', 'confirmed'],
 				'policy' => ['required', 'accepted'],
@@ -99,7 +100,7 @@
 		protected function create(array $data)
 		{
 			$new_user = User::create([
-				'name' => $data['username'],
+				'name' => $data['name'],
 				'email' => $data['email'],
 				'password' => Hash::make($data['password']),
 				'avatar' => '',
@@ -119,6 +120,6 @@
 		protected function registered(Request $request, $user)
 		{
 			Mail::to($request->input('email'))->send(new WelcomeMail($user->name, $user->email));
-			return redirect()->route('sahne-arkasi.account');
+			return redirect()->route('backend.account');
 		}
 	}

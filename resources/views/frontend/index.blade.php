@@ -10,7 +10,7 @@
 		<main id="content">
 			@foreach($categories as $category)
 				<div class="section-featured featured-style-1 pt-2 mb-4 {{ $loop->iteration % 2 == 0 ? 'alternate_background' : '' }}">
-					<div class="container">
+					<div class="container-lg">
 						<div class="row">
 							<!--begin featured-->
 							<div class="col-sm-12 col-md-9 col-xl-9">
@@ -142,9 +142,10 @@
 			@endforeach
 			
 			<div class="content-widget">
-				<div class="container">
+				<div class="container-lg">
 					<div class="sidebar-widget ads">
-						<a href="#"><img src="/frontend/assets/images/ads/ads-2.png" alt="ads" style="max-width:80%;"></a>
+						<a href="https://herkesyazar.app"><img src="{{ asset('/images/herkes-yazar.png') }}" alt="herkes yazar"
+						                                       style="max-width:80%;"></a>
 					</div>
 					<div class="hr"></div>
 				</div>

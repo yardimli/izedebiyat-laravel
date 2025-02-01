@@ -51,7 +51,58 @@
 	
 		<!-- RESPONSIVE CSS -->
 		<link href="/assets/v2/css/responsive.css" rel="stylesheet">
+		
+		<style>
+        .reset-page-wrapper .form-control,
+        .register-page-form .form-control {
+            height: 50px;
+            font-size: 16px !important;
+            line-height: 1;
+            margin-bottom: 25px;
+            padding: 5px 20px;
+        }
 
+        .input-header {
+            font-size: 14px !important;
+            margin-bottom: 10px;
+        }
+
+        .form-data span {
+            font-size: 14px !important;
+        }
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-top: 3px;
+        }
+
+        .separator-line {
+            font-size: 14px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .btn {
+            padding: 10px !important;
+            font-size: 16px !important;
+            height: 40px !important;
+        }
+
+        .register-page-form p.create-account {
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .errors-field-username {
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .form-check-label {
+						font-size: 16px;
+				}
+		</style>
+		
 	</head>
 
 
@@ -154,7 +205,7 @@
 																   name="remember" {{ old('remember') ? 'checked' : '' }} id="rememberCheck">
 															<label class="form-check-label" for="rememberCheck">{{__('default.Remember me?')}}</label>
 														</div>
-														<a href="/password/reset">{{__('default.Forgot password?')}}</a>
+														<a style="font-size: 16px;" href="/password/reset">{{__('default.Forgot password?')}}</a>
 													</div>
 												</div>
 

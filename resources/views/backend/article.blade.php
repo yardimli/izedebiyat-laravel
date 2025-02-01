@@ -707,7 +707,7 @@
 			function onInput(e) {
 				var value = e.detail.value;
 				if (value.length >= 2) {
-					fetch(`/articles/keywords/search?q=${value}`, {
+					fetch(`/eserlerim/keywords/search?q=${value}`, {
 						headers: {
 							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
 							'Accept': 'application/json'

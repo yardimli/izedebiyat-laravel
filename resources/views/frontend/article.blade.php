@@ -8,7 +8,7 @@
 	{{ \App\Helpers\MyHelper::initializeCategoryImages() }}
 	
 	<main id="content">
-		<div class="container">
+		<div class="container-lg">
 			<div class="entry-header">
 				<div class="mb-5">
 					<h1 class="entry-title mb-2">
@@ -23,17 +23,23 @@
 						<a class="user-avatar" href="{{ url('/yazar/' . $user->slug) }}">
 							{!! \App\Helpers\MyHelper::generateInitialsAvatar($user->avatar, $user->name,'width:50px; height:50px; border-radius:50%;','','art-author-picture-3') !!}
 						</a>
-						<a href="{{ url('/yazar/' . $user->slug) }}">{{ $user->name }}</a><br>
+						<a href="{{ url('/yazar/' . $user->slug) }}">{{ $user->name }}</a>
+						<span class="middotDivider"></span>
+						<div class="d-inline-block follow-text" data-user-id="{{ $user->id }}"
+						     onclick="toggleFollow({{ $user->id }})">
+							{{ Auth::check() && $user->followers->contains('follower_id', Auth::id()) ? __('default.Following') : __('default.Follow') }}
+						</div>
+						<br>
+						<a
+							href="{{ url('/kume/' . $article->parent_category_slug . '/' . $article->category_slug) }}">{{ $article->category_name }}</a>
+						<span class="middotDivider"></span>
 						<span class="readingTime">{{ \App\Helpers\MyHelper::estimatedReadingTime($article->main_text) }}</span>
 						<span class="middotDivider"></span>
 						<span>{{ \App\Helpers\MyHelper::timeElapsedString($article->created_at) }}</span>
-						<span class="middotDivider"></span>
-						<a
-							href="{{ url('/kume/' . $article->parent_category_slug . '/' . $article->category_slug) }}">{{ $article->category_name }}</a>
 					</div>
 					<div class="entry-meta align-items-center divider pb-2" style="margin-top: 10px;
     margin-bottom: 10px;">
-						<button id="clap" class="clap">
+						<button id="clap" class="clap" data-article-id="{{ $article->id }}">
   <span>
     <!--  SVG Created by Luis Durazo from the Noun Project  -->
     <svg id="clap--icon" xmlns="http://www.w3.org/2000/svg" viewBox="-549 338 100.1 125">
@@ -44,9 +50,25 @@
 </svg>
   </span>
 							<span id="clap--count" class="clap--count"></span>
-							<span id="clap--count-total" class="clap--count-total"></span>
+							<span id="clap--count-total" class="clap--count-total">{{ $article->claps()->sum('count') }}</span>
 						</button>
+						
+						<div class="share-btn d-inline-block" onclick="showShareOptions()" style="float:right;">
+							<i class="material-icons fs-4">share</i>
+						</div>
+						<div class="favorite-btn d-inline-block" data-article-id="{{ $article->id }}"
+						     onclick="toggleFavorite({{ $article->id }})" style="float:right; margin-right: 10px;">
+							<i class="material-icons fs-4">{{ Auth::check() && $article->favorites->contains('follower_id', Auth::id()) ? 'bookmark' : 'bookmark_border' }}</i>
+						</div>
+						
+						<div id="share-options" class="share-options" style="display: none;">
+							<a href="https://twitter.com/share?url={{ urlencode(url()->current()) }}" target="_blank">{{__('default.Share on X')}}</a>
+							<a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank">{{__('default.Share on Facebook')}}</a>
+							<a href="#" onclick="copyShareLink()">{{__('default.Copy Link')}}</a>
+						</div>
+					
 					</div>
+				
 				</div>
 			</div>
 			
@@ -57,8 +79,8 @@
 					{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%') !!}
 				</figure>
 				
-				<div class="entry-main-content">
-					<p>{!! $article->main_text !!}</p>
+				<div class="entry-main-content article-text-color">
+					{!! $article->main_text !!}
 				</div>
 				
 				<div class="entry-bottom">
@@ -70,7 +92,7 @@
 				</div>
 				
 				@include('partials.author-box', ['user' => $user])
-				@include('partials.subscription-box')
+				{{--				@include('partials.subscription-box')--}}
 			</article>
 			
 			@include('partials.related-posts', ['sameUserAndCategory' => $sameUserAndCategory,'sameUserAndMainCategory' => $sameUserAndMainCategory, 'otherUserArticles' => $otherUserArticles])
@@ -179,9 +201,9 @@
           position: absolute;
           font-size: 0.8rem;
           width: 40px;
-          text-align: center;
-          left: 50px;
-          top: 15px;
+          text-align: left;
+          left: 40px;
+          top: 10px;
           color: #bdc3c7;
       }
 
@@ -214,6 +236,59 @@
               box-shadow: 0 0 50px #8e44ad, inset 0 0 10px #9b59b6;
           }
       }
+
+      .follow-text {
+          cursor: pointer;
+          foht-weight: 600;
+          color: #333;
+      }
+
+      .follow-text:hover {
+          text-decoration: underline;
+      }
+
+      [data-bs-theme=dark] .follow-text {
+          color: #99FF99 !important;
+      }
+      
+      .share-options {
+		      					display: none;
+					position: absolute;
+					top: 40px;
+					right: 0;
+					background-color: #fff;
+					border: 1px solid #ccc;
+					border-radius: 5px;
+					box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+					padding: 10px;
+					z-index: 1000;
+      }
+      
+      [data-bs-theme=dark] .share-options {
+					background-color: #333 !important;
+					border: 1px solid #ccc !important;
+			}
+
+      .share-options a {
+          display: block;
+          margin-bottom: 5px;
+          color: inherit;
+          text-decoration: none;
+      }
+
+      .share-options a:hover {
+          text-decoration: underline;
+      }
+
+      .favorite-btn {
+          cursor: pointer;
+      }
+      
+      
+      
+      .share-btn {
+					cursor: pointer;
+			}
 	
 	
 	</style>
@@ -223,6 +298,61 @@
 @push('scripts')
 	<script src="/js/mo.min.js"></script>
 	<script>
+		
+		function toggleFollow(userId) {
+			$.ajax({
+				url: '/favori/yazar/' + userId,
+				type: 'POST',
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				success: function (response) {
+					const btn = $(`.follow-text[data-user-id="${userId}"]`);
+					if (response.following) {
+						btn.html('{{__('default.Following')}}');
+					} else {
+						btn.html('{{__('default.Follow')}}');
+					}
+				}
+			});
+		}
+		
+		function toggleFavorite(articleId) {
+			$.ajax({
+				url: '/favori/eser/' + articleId,
+				type: 'POST',
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				success: function (response) {
+					const btn = $(`.favorite-btn[data-article-id="${articleId}"]`);
+					if (response.favorited) {
+						btn.html('<i class="material-icons fs-4">bookmark</i>');
+					} else {
+						btn.html('<i class="material-icons fs-4">bookmark_border</i>');
+					}
+				}
+			});
+		}
+		
+		function showShareOptions() {
+			const shareOptions = document.getElementById('share-options');
+			shareOptions.style.display = shareOptions.style.display === 'none' ? 'block' : 'none';
+		}
+		
+		function copyShareLink() {
+			const dummy = document.createElement('input');
+			const text = window.location.href;
+			
+			document.body.appendChild(dummy);
+			dummy.value = text;
+			dummy.select();
+			document.execCommand('copy');
+			document.body.removeChild(dummy);
+			
+			alert('{{__('default.Link copied to clipboard!')}}');
+		}
+		
 		$(window).scroll(function () {
 			const element = document.querySelector('#main-menu');
 			const computedStyle = window.getComputedStyle(element);
@@ -249,6 +379,24 @@
 			}
 		});
 		
+		function clapArticle(articleId) {
+			$.ajax({
+				url: `/article/${articleId}/clap`,
+				method: 'POST',
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				success: function(response) {
+					$('#clap--count-total').text(response.claps);
+				},
+				error: function(xhr) {
+					if (xhr.status === 401) {
+						window.location.href = '{{ route('register') }}';
+					}
+				}
+			});
+		}
+		
 		
 		$(document).ready(function () {
 			//clap
@@ -257,7 +405,7 @@
 			const clapIcon = document.getElementById('clap--icon')
 			const clapCount = document.getElementById('clap--count')
 			const clapTotalCount = document.getElementById('clap--count-total')
-			const initialNumberOfClaps = generateRandomNumber(500, 10000);
+			const initialNumberOfClaps = {{ $article->claps()->sum('count') }};
 			const btnDimension = 40
 			const tlDuration = 300
 			let numberOfClaps = 0
@@ -333,6 +481,8 @@
 				scaleButton
 			])
 			
+			$("#clap--count-total").css({"opacity": 1, "transform": "scale(1, 1)"});
+			
 			
 			clap.addEventListener('click', function () {
 				repeatClapping();
@@ -364,6 +514,12 @@
 			function generateRandomNumber(min, max) {
 				return Math.floor(Math.random() * (max - min + 1) + min);
 			}
+			
+			$('#clap').on('click', function() {
+				clapArticle($(this).data('article-id'));
+			});
+			
+			
 		});
 	
 	

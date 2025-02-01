@@ -133,7 +133,7 @@
   }
 
   .entry-wrapper, .entry-header, .single-comment {
-    max-width: 800px;
+    max-width: 700px;
     margin: 0 auto;
   }
   .latest-tpl-4 .post-count {display: block;}

@@ -100,5 +100,21 @@
 			return $this->hasMany(Article::class, 'user_id');
 		}
 
+		public function followers()
+		{
+			return $this->hasMany(UserFollow::class, 'following_id');
+		}
+
+		public function following()
+		{
+			return $this->hasMany(UserFollow::class, 'follower_id');
+		}
+
+		public function favorites()
+		{
+			return $this->hasMany(ArticleFavorite::class);
+		}
+
+
 
 	}

@@ -1,8 +1,8 @@
 <!--Mobile navigation-->
 <div class="sticky-header fixed d-lg-none d-md-block">
 	<div class="text-right">
-		<div class="container mobile-menu-fixed pr-5">
-			<a class="navbar-brand" href="{{route('frontend-index')}}">
+		<div class="container-lg mobile-menu-fixed pr-5">
+			<a class="navbar-brand" href="{{route('frontend.index')}}">
 				<img class="light-mode-item navbar-brand-item" src="{{ asset('/assets/images/logo/logo-large.png') }}" alt="logo">
 				<img class="dark-mode-item navbar-brand-item" src="{{ asset('/assets/images/logo/logo-large-transparent.png') }}" alt="logo">
 			</a>
@@ -13,7 +13,7 @@
 			</button>
 			
 			@if (Auth::user())
-				<a href="{{route('sahne-arkasi.account')}}">
+				<a href="{{route('backend.account')}}">
 					<img class="small-user-avatar"
 					     src="{{ !empty(Auth::user()->avatar) ? Storage::url(Auth::user()->avatar) : '/assets/images/avatar/placeholder.jpg' }}"
 					     alt="avatar">
@@ -77,9 +77,9 @@
 <!--Desktop Header-->
 <div id="wrapper">
 	<header id="header" class="d-lg-block d-none">
-		<div class="container">
+		<div class="container-lg">
 			<div class="w-100 d-flex align-items-center">
-				<a class="navbar-brand me-auto " href="{{route('frontend-index')}}">
+				<a class="navbar-brand me-auto " href="{{route('frontend.index')}}">
 					<img class="light-mode-item navbar-brand-item" src="{{ asset('/assets/images/logo/logo-large.png') }}" alt="logo">
 					<img class="dark-mode-item navbar-brand-item" src="{{ asset('/assets/images/logo/logo-large-transparent.png') }}" alt="logo">
 				</a>
@@ -95,7 +95,7 @@
 						</ul>
 						
 						@if (Auth::user())
-							<a href="{{route('sahne-arkasi.account')}}" class="user-avatar" id="UserMenu" style="cursor: pointer;">
+							<a href="{{route('backend.account')}}" class="user-avatar" id="UserMenu" style="cursor: pointer;">
 								<img src="{{ !empty(Auth::user()->avatar) ? Storage::url(Auth::user()->avatar) : '/assets/images/avatar/placeholder.jpg' }}"
 								     alt="avatar">
 							</a>

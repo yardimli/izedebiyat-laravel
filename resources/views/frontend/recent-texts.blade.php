@@ -8,7 +8,7 @@
 	
 	<section class="home recent-texts">
 		<main id="content">
-			<div class="container">
+			<div class="container-lg">
 				
 				<div class="row">
 					<div class="col-md-9">

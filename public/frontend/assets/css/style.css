@@ -157,6 +157,7 @@ html, body {
 }
 
 [data-bs-theme=dark] .spanborder span {
+    color: rgba(255,255,255,.84) !important;
     border-bottom: 1px solid rgba(255, 255, 255, .53);
 }
 
@@ -174,6 +175,10 @@ html, body {
 
 [data-bs-theme=dark] .menu-toggle-icon > span:after, [data-bs-theme=dark] .menu-toggle-icon > span:before {
     background-color: rgba(245, 245, 245, 0.84);
+}
+
+[data-bs-theme=dark] .heading-font {
+    color: #fff !important;
 }
 
 .navbar-brand {
@@ -213,6 +218,15 @@ html, body {
 
 .alternate_background {
     background: rgba(245, 245, 245, 0.84);
+}
+
+
+[data-bs-theme=dark] .article-text-color {
+    color: var(--bs-gray-400) !important;
+}
+
+[data-bs-theme=dark] .theiaStickySidebar {
+    color: #acacac !important;
 }
 
     /* Base styles */

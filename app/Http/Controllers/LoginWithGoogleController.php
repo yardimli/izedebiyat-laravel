@@ -64,7 +64,7 @@
 
 					Auth::login($finduser);
 
-					return redirect()->intended('/articles');
+					return redirect()->intended('/eserlerim');
 
 				} else {
 					$username = $user->getNickname() ?? Str::slug($user->name);
@@ -78,7 +78,7 @@
 					$new_user = User::create([
 						'name' => $user->name,
 						'email' => $user->email,
-						'password' => Hash::make('123456dummy_password'),
+						'password' => Hash::make('123456_gecici_sifre'),
 						'picture' => $user['picture'],
 						'username' => $username,
 						'slug' => $username,
@@ -108,7 +108,7 @@
 
 					Auth::login($new_user);
 
-					return redirect()->intended('/articles');
+					return redirect()->intended('/eserlerim');
 				}
 
 			} catch

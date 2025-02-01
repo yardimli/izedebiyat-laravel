@@ -9,7 +9,7 @@
 	<section class="home">
 		<main id="content">
 			
-			<div class="container">
+			<div class="container-lg">
 				<div class="entry-header">
 					<div class="mb-5">
 						<h1 class="entry-title mb-2">
@@ -103,7 +103,7 @@
 						</p>
 						
 						<p style="text-align: center">
-							<a href="{{route('frontend-yayin-ilkeleri')}}">
+							<a href="{{route('frontend.principles')}}">
 								<img src="/frontend/anagrafikler/dugme_katilim.gif" width="250" height="70" style="border: 0">
 							</a>
 						</p>

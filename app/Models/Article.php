@@ -141,4 +141,14 @@
 			}
 		}
 
+		public function favorites()
+		{
+			return $this->hasMany(ArticleFavorite::class);
+		}
+
+		public function claps()
+		{
+			return $this->hasMany(Clap::class);
+		}
+
 	}

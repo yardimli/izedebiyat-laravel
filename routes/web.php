@@ -4,6 +4,7 @@
 	use App\Http\Controllers\ArticleController;
 	use App\Http\Controllers\CategoryController;
 	use App\Http\Controllers\ChatController;
+	use App\Http\Controllers\FollowController;
 	use App\Http\Controllers\FrontendController;
 	use App\Http\Controllers\ImageController;
 	use App\Http\Controllers\LangController;
@@ -12,6 +13,9 @@
 	use App\Http\Controllers\UserSettingsController;
 	use App\Http\Controllers\VerifyThankYouController;
 	use App\Mail\WelcomeMail;
+	use App\Models\Article;
+	use App\Models\Category;
+	use App\Models\User;
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Auth;
 	use Illuminate\Support\Facades\Mail;
@@ -29,48 +33,132 @@
 	|
 	*/
 
+	// Handle legacy ASP URLs
+	Route::get('yazi.asp', function(Request $request) {
+		$id = $request->query('id');
+
+		if ($id) {
+			// Look up the article by ID
+			$article = Article::where('id', $id)
+				->where('approved', 1)
+				->where('deleted', 0)
+				->first();
+
+			if ($article) {
+				// Redirect to the new slug-based URL with 301 (permanent) redirect
+				return redirect()->route('article', ['slug' => $article->slug], 301);
+			}
+		}
+
+		// If article not found or no ID provided, redirect to homepage
+		return redirect()->route('frontend.index', 301);
+	});
+
+	Route::get('kume.asp', function(Request $request) {
+		$id = $request->query('id');
+
+		if ($id) {
+			// Look up the article by ID
+			$category = Category::where('id', $id)
+				->first();
+
+			if ($category) {
+				// Redirect to the new slug-based URL with 301 (permanent) redirect
+				return redirect()->route('frontend.category', ['slug' => $category->slug], 301);
+			}
+		}
+
+		// If article not found or no ID provided, redirect to homepage
+		return redirect()->route('frontend.index', 301);
+	});
+
+	Route::get('list.asp', function(Request $request) {
+		$id = $request->query('id');
+
+		if ($id) {
+			// Look up the article by ID
+			$category = Category::where('id', $id)
+				->first();
+
+			$parentCategory = Category::where('id', $category->parent_category_id)
+				->first();
+
+			if ($category) {
+				// Redirect to the new slug-based URL with 301 (permanent) redirect
+				return redirect()->route('frontend.subcategory', ['categorySlug' => $parentCategory->slug, 'subcategorySlug' => $category->slug], 301);
+			}
+		}
+
+		// If article not found or no ID provided, redirect to homepage
+		return redirect()->route('frontend.index', 301);
+	});
+
+	Route::get('yazar.asp', function (Request $request) {
+		// Retrieve the user ID from the query string
+		$userId = $request->query('id');
+
+		// Find the user by ID
+		$user = User::find($userId);
+
+		// Check if the user exists
+		if ($user) {
+			// Redirect permanently to the URL based on the user's slug
+			return redirect()->route('user', ['slug' => $user->slug], 301);
+		}
+
+		// If no user found, return a 404 response
+		abort(404);
+	})->where('id', '[0-9]+');
+
+	Route::get('arsiv.asp', function (Request $request) {
+			return redirect()->route('frontend.recent-articles', [], 301);
+	});
+
+	Route::get('yazarlar.asp', function (Request $request) {
+		return redirect()->route('users', [], 301);
+	});
 
 	// Static pages
-	Route::get('404', [FrontendController::class, 'page_404'])->name('frontend-404');
-	Route::get('katilim', [FrontendController::class, 'page_sign_up_step_1'])->name('frontend-katilim');
-	Route::get('yasallik', [FrontendController::class, 'page_legal'])->name('frontend-yasallik');
-	Route::get('gizlilik', [FrontendController::class, 'page_privacy'])->name('frontend-gizlilik');
-	Route::get('yayin-ilkeleri', [FrontendController::class, 'page_sign_up_step_2'])->name('frontend-yayin-ilkeleri');
-	Route::get('izedebiyat', [FrontendController::class, 'page_izedebiyat'])->name('frontend-izedebiyat');
-	Route::get('sorular', [FrontendController::class, 'page_faq'])->name('frontend-sorular');
-	Route::get('kunye', [FrontendController::class, 'page_about'])->name('frontend-kunye');
+	Route::get('404', [FrontendController::class, 'page_404'])->name('frontend.404');
+	Route::get('katilim', [FrontendController::class, 'page_sign_up_step_1'])->name('frontend.join');
+	Route::get('yasallik', [FrontendController::class, 'page_legal'])->name('frontend.legal');
+	Route::get('gizlilik', [FrontendController::class, 'page_privacy'])->name('frontend.secrecy');
+	Route::get('yayin-ilkeleri', [FrontendController::class, 'page_sign_up_step_2'])->name('frontend.principles');
+	Route::get('izedebiyat', [FrontendController::class, 'page_izedebiyat'])->name('frontend.izedebiyat');
+	Route::get('sorular', [FrontendController::class, 'page_faq'])->name('frontend.faq');
+	Route::get('kunye', [FrontendController::class, 'page_about'])->name('frontend.who-we-are');
 
 
-	Route::get('/', [FrontendController::class, 'index'])->name('frontend-index');
-	Route::get('/ana-sayfa', [FrontendController::class, 'index'])->name('frontend-ana-sayfa');
+	Route::get('/', [FrontendController::class, 'index'])->name('frontend.index');
+	Route::get('/ana-sayfa', [FrontendController::class, 'index'])->name('frontend.home-page');
 
 // Replace the old search route
 	Route::get('/arabul', [FrontendController::class, 'search'])->name('search');
 	Route::get('/arabul/sayfa/{page}', [FrontendController::class, 'search'])->name('search.page');
 
-	Route::get('/son-eklenenler/{slug}', [FrontendController::class, 'recentTextsByCategory'])->name('recentTextsByCategory');
+	Route::get('/son-eklenenler/{slug}', [FrontendController::class, 'recentTextsByCategory'])->name('frontend.recent-articles-by-category');
 
-	Route::get('/son-eklenenler', [FrontendController::class, 'recentTexts'])->name('recentTexts');
+	Route::get('/son-eklenenler', [FrontendController::class, 'recentTexts'])->name('frontend.recent-articles');
 
 	// Replace the old category routes with:
-	Route::get('kume/{slug}', [FrontendController::class, 'category'])->name('category');
-	Route::get('kume/{slug}/sayfa/{page}', [FrontendController::class, 'category'])->name('category.page');
+	Route::get('kume/{slug}', [FrontendController::class, 'category'])->name('frontend.category');
+	Route::get('kume/{slug}/sayfa/{page}', [FrontendController::class, 'category'])->name('frontend.category.page');
 
 	// Replace the old subcategory routes with:
-	Route::get('kume/{categorySlug}/{subcategorySlug}', [FrontendController::class, 'subcategory'])->name('subcategory');
-	Route::get('kume/{categorySlug}/{subcategorySlug}/sayfa/{page}', [FrontendController::class, 'subcategory'])->name('subcategory.page');
+	Route::get('kume/{categorySlug}/{subcategorySlug}', [FrontendController::class, 'subcategory'])->name('frontend.subcategory');
+	Route::get('kume/{categorySlug}/{subcategorySlug}/sayfa/{page}', [FrontendController::class, 'subcategory'])->name('frontend.subcategory.page');
 
 	Route::get('yazar/{slug}', [FrontendController::class, 'user'])->name('user');
-	Route::get('yazar/{slug}/sayfa/{page}', [FrontendController::class, 'user'])->name('author.page');
+	Route::get('yazar/{slug}/sayfa/{page}', [FrontendController::class, 'user'])->name('user.page');
 
 	Route::get('/yazarlar', [FrontendController::class, 'users'])->name('users');
-	Route::get('/yazarlar/harf/{filter}', [FrontendController::class, 'users'])->name('users.harf');
-	Route::get('/yazarlar/harf/{filter}/sayfa/{page}', [FrontendController::class, 'users'])->name('users.harf.sayfa');
+	Route::get('/yazarlar/harf/{filter}', [FrontendController::class, 'users'])->name('users.letter');
+	Route::get('/yazarlar/harf/{filter}/sayfa/{page}', [FrontendController::class, 'users'])->name('users.letter.page');
 
 	Route::get('/etiket/{slug}', [FrontendController::class, 'articlesByKeyword'])->name('articles-by-keyword');
 	Route::get('/etiket/{slug}/sayfa/{page}', [FrontendController::class, 'articlesByKeyword'])->name('articles-by-keyword.page');
 
-	Route::get('yapit/{slug}', [FrontendController::class, 'article'])->name('yapit');
+	Route::get('yapit/{slug}', [FrontendController::class, 'article'])->name('article');
 
 
 
@@ -174,15 +262,19 @@
 
 
 
-		Route::post('/settings', [UserSettingsController::class, 'updateSettings'])->name('sahne-arkasi.update');
-		Route::get('/settings/account', [UserSettingsController::class, 'account'])->name('sahne-arkasi.account');
+		Route::post('/sahne-arkasi', [UserSettingsController::class, 'updateSettings'])->name('backend.update');
+		Route::get('/sahne-arkasi/hesap', [UserSettingsController::class, 'account'])->name('backend.account');
 
-		Route::get('/sahne-arkasi/images', [UserSettingsController::class, 'images'])->name('sahne-arkasi.images');
+		Route::get('/sahne-arkasi/images', [UserSettingsController::class, 'images'])->name('backend.images');
 
-		Route::get('/sahne-arkasi/close-account', [UserSettingsController::class, 'closeAccount'])->name('sahne-arkasi.close-account');
+		Route::get('/sahne-arkasi/close-account', [UserSettingsController::class, 'closeAccount'])->name('backend.close-account');
 
-		Route::post('/sahne-arkasi/password', [UserSettingsController::class, 'updatePassword'])->name('sahne-arkasi.sifre-guncelle');
+		Route::post('/sahne-arkasi/password', [UserSettingsController::class, 'updatePassword'])->name('backend.sifre-guncelle');
 
+		Route::post('/favori/yazar/{user}', [FollowController::class, 'toggleFollow'])->name('follow.user');
+		Route::post('/favori/eser/{article}', [FollowController::class, 'toggleFavorite'])->name('follow.article');
+		Route::get('/favorilerim', [FollowController::class, 'following'])->name('backend.following');
+		Route::post('/article/{article}/clap', [ArticleController::class, 'toggleClap'])->name('article.clap');
 
 		Route::get('/users', [UserController::class, 'index'])->name('admin-users-index');
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');

@@ -2,6 +2,7 @@
 
 	namespace App\Http\Controllers;
 
+	use App\Models\Clap;
 	use App\Models\Image;
 	use App\Models\Category;
 	use App\Models\Article;
@@ -271,4 +272,25 @@
 
 			return implode(', ', $keywordArray);
 		}
+
+	public function toggleClap(Request $request, Article $article)
+	{
+		if (!Auth::check()) {
+			return redirect()->route('frontend.join');
+		}
+
+		$clap = Clap::firstOrNew([
+			'user_id' => Auth::id(),
+			'article_id' => $article->id
+		]);
+
+		if ($clap->count < 50) {
+			$clap->count++;
+			$clap->save();
+		}
+
+		$totalClaps = Clap::where('article_id', $article->id)->sum('count');
+
+		return response()->json(['claps' => $totalClaps]);
+	}
 	}

@@ -6,7 +6,7 @@
 	<!-- Meta Tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="author" content="fictionfusion.io">
+	<meta name="author" content="izedebiyat.com">
 	<meta name="description"
 	      content="{{__('default.İzEdebiyat')}} - {{__('default.Boilerplate Site Tagline')}}">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
@@ -36,6 +36,17 @@
 	<link rel="stylesheet" type="text/css" href="/assets/css/custom.css">
 	
 	{{--	@lemonJS--}}
+	
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-WSXNSG0STF"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		
+		gtag('config', 'G-WSXNSG0STF');
+	</script>
+	
 	
 	@stack('styles')
 </head>
@@ -144,7 +155,7 @@ Header START -->
 	<nav class="navbar navbar-expand-lg">
 		<div class="container">
 			<!-- Logo START -->
-			<a class="navbar-brand" href="{{route('frontend-index')}}">
+			<a class="navbar-brand" href="{{route('frontend.index')}}">
 				<img class="light-mode-item navbar-brand-item" src="{{ asset('/assets/images/logo/logo-large.png') }}" alt="logo">
 				<img class="dark-mode-item navbar-brand-item" src="{{ asset('/assets/images/logo/logo-large-transparent.png') }}" alt="logo">
 			</a>
@@ -218,14 +229,14 @@ Header START -->
 									</div>
 									<div>
 										<a class="h6 stretched-link"
-										   href="{{route('sahne-arkasi.account')}}">{{ Auth::user()->name }}</a>
+										   href="{{route('backend.account')}}">{{ Auth::user()->name }}</a>
 										<p class="small m-0">{{ Auth::user()->username }}</p>
 									</div>
 								</div>
 								<a class="dropdown-item btn btn-primary-soft btn-sm my-2 text-center"
 								   href="{{route('chat')}}">{{__('default.Chat')}}</a>
 							</li>
-							<a class="dropdown-item" href="{{route('sahne-arkasi.account')}}"><i
+							<a class="dropdown-item" href="{{route('backend.account')}}"><i
 									class="bi bi-person  me-2"></i>{{__('default.Settings')}}</a>
 						@endif
 						<!-- Links -->

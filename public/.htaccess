@@ -5,56 +5,25 @@
 
     RewriteEngine On
 
+    RewriteCond %{HTTP_USER_AGENT} ^.*Bytespider [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*Baidu [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*Petal [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*Semrush [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*DotBot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*Ahrefs [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*Geedo [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*DataForSeoBot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*MJ12bot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*Amazonbot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*BLEXBot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*Pinterestbot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*GPTBot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*YaBrowser [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*SeekportBot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^.*meta-external [NC,OR]
+    RewriteCond %{REMOTE_ADDR} ^47\.76\. [NC]
 
-          # OLD IZEDEBIYAT STATIC --------------------- START
-        RewriteRule ^404$ 404.php [END,NC]
-
-        RewriteRule ^son-eklenenler$ page-new.php [END,NC]
-        RewriteRule ^yazarlar$ page-authors.php [END,NC]
-        RewriteRule ^katilim$ page-sign-up-step-1.php [END,NC]
-        RewriteRule ^yasallik$ page-legal.php [END,NC]
-        RewriteRule ^gizlilik$ page-privacy.php [END,NC]
-        RewriteRule ^yayin-ilkeleri$ page-sign-up-step-2.php [END,NC]
-        RewriteRule ^izedebiyat$ page-izedebiyat.php [END,NC]
-        RewriteRule ^sorular$ page-faq.php [END,NC]
-        RewriteRule ^kunye$ page-about.php [END,NC]
-
-        RewriteRule ^arabul$ search.php [END,NC]
-
-        RewriteRule ^etiket/(.*)/sayfa/(.*)$ articles-by-keyword.php?etiket_slug=$1&sayfa=$2 [END,NC]
-        RewriteRule ^etiket/(.*)$ articles-by-keyword.php?etiket_slug=$1 [END,NC]
-
-        RewriteRule ^kume/(.*)/(.*)/sayfa/(.*)$ sub_category.php?ust_kategori_slug=$1&alt_kategori_slug=$2&sayfa=$3 [END,NC]
-        RewriteRule ^kume/(.*)/sayfa/(.*)$ categories.php?ust_kategori_slug=$1&sayfa=$2 [END,NC]
-        RewriteRule ^yazar/(.*)/sayfa/(.*)$ author.php?slug=$1&sayfa=$2 [END,NC]
-
-        RewriteRule ^kume/(.*)/(.*)$ sub_category.php?ust_kategori_slug=$1&alt_kategori_slug=$2&sayfa=1 [END,NC]
-        RewriteRule ^kume/(.*)$ categories.php?ust_kategori_slug=$1&sayfa=1 [END,NC]
-
-        RewriteRule ^yapit/(.*)$ single.php?slug=$1 [END,NC]
-        RewriteRule ^yazar/(.*)$ author.php?slug=$1&sayfa=1 [END,NC]
-
-        RewriteRule ^siir$ categories.php?ust_kategori_slug=siir&altkate= [END,NC]
-        RewriteRule ^siir/(.*)$ sub_category.php?ust_kategori_slug=siir&altkate=$1 [END,NC]
-
-        RewriteRule ^oyku$ categories.php?ust_kategori_slug=oyku&altkate= [END,NC]
-        RewriteRule ^oyku/(.*)$ sub_category.php?ust_kategori_slug=oyku&altkate=$1 [END,NC]
-
-        RewriteRule ^roman$ categories.php?ust_kategori_slug=roman&altkate= [END,NC]
-        RewriteRule ^roman/(.*)$ sub_category.php?ust_kategori_slug=roman&altkate=$1 [END,NC]
-
-        RewriteRule ^deneme$ categories.php?ust_kategori_slug=deneme&altkate= [END,NC]
-        RewriteRule ^deneme/(.*)$ sub_category.php?ust_kategori_slug=deneme&altkate=$1 [END,NC]
-
-        RewriteRule ^elestiri$ categories.php?ust_kategori_slug=elestiri&altkate= [END,NC]
-        RewriteRule ^elestiri/(.*)$ sub_category.php?ust_kategori_slug=elestiri&altkate=$1 [END,NC]
-
-        RewriteRule ^inceleme$ categories.php?ust_kategori_slug=inceleme&altkate= [END,NC]
-        RewriteRule ^inceleme/(.*)$ sub_category.php?ust_kategori_slug=inceleme&altkate=$1 [END,NC]
-
-        RewriteRule ^bilimsel$ categories.php?ust_kategori_slug=bilimsel&altkate= [END,NC]
-        RewriteRule ^bilimsel/(.*)$ sub_category.php?ust_kategori_slug=bilimsel&altkate=$1 [END,NC]
-            # OLD IZEDEBIYAT STATIC --------------------- END
+    RewriteRule .*  - [L,F]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

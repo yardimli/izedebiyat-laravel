@@ -10,7 +10,7 @@
 	<section class="archive">
 		<main id="content">
 			<div class="content-widget">
-				<div class="container">
+				<div class="container-lg">
 					<div class="row">
 						<div class="col-md-8 col-12">
 							<h4 class="spanborder">
@@ -217,9 +217,10 @@
 			
 			
 			<div class="content-widget">
-				<div class="container">
+				<div class="container-lg">
 					<div class="sidebar-widget ads">
-						<a href="#"><img src="{{ asset('/frontend/assets/images/ads/ads-2.png') }}" alt="ads" style="max-width:80%;"></a>
+						<a href="https://herkesyazar.app"><img src="{{ asset('/images/herkes-yazar.png') }}" alt="herkes yazar"
+						                                       style="max-width:80%;"></a>
 					</div>
 					<div class="hr"></div>
 				</div>

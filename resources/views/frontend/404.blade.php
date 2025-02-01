@@ -11,7 +11,7 @@
 		<main id="content">
 			
 			
-			<div class="container">
+			<div class="container-lg">
 				<article class="entry-wrapper mb-5">
 					<h1 class="text-center mb-3 mt-5">404</h1>
 					

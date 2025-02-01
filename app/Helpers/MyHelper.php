@@ -730,16 +730,16 @@
 					$counter++;
 
 					// Get first 1000 words
-					$article = $article->main_text;
-					$article_words = explode(' ', $article);
-					$article = implode(' ', array_slice($article_words, 0, 1000));
+					$article_text = $article->main_text;
+					$article_words = explode(' ', $article_text);
+					$article_text = implode(' ', array_slice($article_words, 0, 1000));
 
 					$llm_result = self::llm_no_tool_call(
 						'google/gemini-flash-1.5-8b',
 						'',
 						[[
 							'role' => 'user',
-							'content' => "take the following Turkish text and analyze it if it is religious and also respectful towards other religions and beliefs. The text is as follows: Title: " . $article->title . " Subtitle: " . $article->subtitle . " Category: " . $article->parent_category_name . " Subcategory: " . $article->category_name . " text: " . $article . " output JSON as: ``` { \"religious_reason\": { \"religious\": 0..5, \"respect\": 0..5, \"reason\": \"reasoning for the moderation\" } } ```"
+							'content' => "take the following Turkish text and analyze it if it is religious and also respectful towards other religions and beliefs. The text is as follows: Title: " . $article->title . " Subtitle: " . $article->subtitle . " Category: " . $article->parent_category_name . " Subcategory: " . $article->category_name . " text: " . $article_text . " output JSON as: ``` { \"religious_reason\": { \"religious\": 0..5, \"respect\": 0..5, \"reason\": \"reasoning for the moderation\" } } ```"
 						]],
 						true
 					);
@@ -1100,12 +1100,12 @@
 					$continue = true;
 					$counter++;
 
-					$article = $article->title . ' ' . $article->main_text;
-					$article_words = explode(' ', $article);
-					$article = implode(' ', array_slice($article_words, 0, 500));
+					$article_text = $article->title . ' ' . $article->main_text;
+					$article_words = explode(' ', $article_text);
+					$article_text = implode(' ', array_slice($article_words, 0, 500));
 
 					if (!empty($article->subheading)) {
-						$article = $article->title . ' ' . $article->subtitle . ' ' . $article->subheading . ' ' . $article;
+						$article_text = $article->title . ' ' . $article->subtitle . ' ' . $article->subheading . ' ' . $article_text;
 					}
 
 					$llm_result = self::llm_no_tool_call(
@@ -1117,7 +1117,7 @@ Olumlu, Olumsuz, Nötr, Belirsiz, Karışık.
 
 The text is as follows:
 " .
-							$article . "
+							$article_text . "
 				
 output in Turkish, output JSON as:
 
@@ -1162,7 +1162,7 @@ output in Turkish, output JSON as:
 				$records = DB::table('articles as y')
 					->leftJoin('categories as k', 'k.id', '=', 'y.category_id')
 					->leftJoin('categories as uk', 'uk.id', '=', 'y.parent_category_id')
-					->leftJoin('yazar as yz', 'yz.id', '=', 'y.user_id')
+					->leftJoin('users as yz', 'yz.id', '=', 'y.user_id')
 					->select([
 						'y.id',
 						'k.slug as category_slug',

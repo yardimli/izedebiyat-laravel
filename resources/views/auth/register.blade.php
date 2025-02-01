@@ -56,6 +56,53 @@
 	
 	<!-- RESPONSIVE CSS -->
 	<link href="/assets/v2/css/responsive.css" rel="stylesheet">
+	
+	<style>
+      .reset-page-wrapper .form-control,
+      .register-page-form .form-control {
+          height: 50px;
+          font-size: 16px !important;
+          line-height: 1;
+          margin-bottom: 25px;
+          padding: 5px 20px;
+      }
+
+      .input-header {
+          font-size: 14px !important;
+          margin-bottom: 10px;
+      }
+
+      .form-data span {
+          font-size: 14px !important;
+      }
+      .form-check-input {
+		      width: 20px;
+		      height: 20px;
+		      margin-top: 3px;
+      }
+      
+      .separator-line {
+		      font-size: 14px;
+		      margin-top: 5px;
+		      margin-bottom: 5px;
+      }
+      
+      .btn {
+		      padding: 10px !important;
+		      font-size: 16px !important;
+		      height: 40px !important;
+      }
+
+      .register-page-form p.create-account {
+					font-size: 14px;
+					margin-top: 20px;
+			}
+      
+      .errors-field-username {
+		      font-size: 14px;
+		      font-weight: normal;
+      }
+	</style>
 
 </head>
 
@@ -81,7 +128,8 @@
 							<!-- SIGN UP FORM -->
 							<div class="col-md-6">
 								<div class="text-center mt-2">
-									<a href="/" class="logo-black"><img src="{{ asset('/assets/images/logo/logo-large.png') }}" id="site_logo" alt="logo"
+									<a href="/" class="logo-black"><img src="{{ asset('/assets/images/logo/logo-large.png') }}"
+									                                    id="site_logo" alt="logo"
 									                                    style="max-height: 80px;"></a>
 								</div>
 								<div class="register-page-form" style="margin-top: 5px; padding-top: 5px;">
@@ -106,33 +154,47 @@
 										
 										<!-- Form Input -->
 										<div class="col-md-12 {{ $errors->has('username') ? ' has-danger' : '' }}">
-											<p class="p-sm input-header">{{__('default.User Name')}}</p>
-											<input class="form-control name" type="text" name="username"
+											<p class="p-sm input-header" style="margin-bottom: 5px;">{{__('default.Name Slug')}}</p>
+											<input class="form-control name" type="text" name="username" style="margin-bottom: 15px;"
 											       placeholder="{{__('default.Enter Username...') }}" value="{{ old('username') }}"
 											       autocomplete="username" autofocus required>
 											@if ($errors->has('username'))
-												<div id="name-error" class="error text-danger pl-3" for="username"
-												     style="display: block; font-size: 0.85rem">
-													<strong class="errors-field-username">{{ $errors->first('username') }}</strong>
+												<div id="username-error" class="error text-danger pl-3" for="username"
+												     style="display: block; font-size: 14px">
+													<span class="errors-field-username">{{ $errors->first('username') }}</span>
+												</div>
+											@endif
+										</div>
+										
+										<div class="col-md-12 {{ $errors->has('name') ? ' has-danger' : '' }}">
+											<p class="p-sm input-header" style="margin-bottom: 5px;">{{__('default.Real Name')}}</p>
+											<input class="form-control name" type="text" name="name" style="margin-bottom: 15px;"
+											       placeholder="{{__('default.Enter real name...') }}" value="{{ old('name') }}"
+											       autocomplete="name" autofocus required>
+											@if ($errors->has('name'))
+												<div id="name-error" class="error text-danger pl-3" for="name"
+												     style="display: block; font-size: 14px">
+													<span class="errors-field-username">{{ $errors->first('name') }}</span>
 												</div>
 											@endif
 										</div>
 										
 										<!-- Form Input -->
 										<div class="col-md-12 {{ $errors->has('email') ? ' has-danger' : '' }}">
-											<p class="p-sm input-header">{{__('default.Email')}}<span
+											<p class="p-sm input-header" style="margin-bottom: 5px;">{{__('default.Email')}}<span
 													style="font-size: 12px; margin-left: 10px; color: gray">{{__('default.We\'ll never share your email with anyone else.')}}</span>
 											</p>
 											
-											<input class="form-control email" type="email" name="email" placeholder="example@example.com"
+											<input class="form-control email" type="email" name="email" style="margin-bottom: 15px;"
+											       placeholder="example@example.com"
 											       value="{{ old('email') }}"
 											       required autocomplete="email">
 											
 											
 											@if ($errors->has('email'))
 												<div id="email-error" class="error text-danger pl-3" for="name"
-												     style="display: block; font-size: 0.85rem">
-													<strong class="errors-field-email">{{ $errors->first('email') }}</strong>
+												     style="display: block; font-size: 14px">
+													<span class="errors-field-email">{{ $errors->first('email') }}</span>
 												</div>
 											@endif
 										</div>
@@ -141,23 +203,23 @@
 										<div class="col-md-12">
 											<p class="p-sm input-header">{{__('default.Password')}}</p>
 											<div class="wrap-input">
-												<span class="btn-show-pass ico-20"><span class="flaticon-visibility eye-pass"></span></span>
-												<input class="form-control password" type="password" name="password"
+												<input class="form-control password" type="password" name="password" style="margin-bottom: 5px;"
 												       placeholder="{{__('default.at least 8 characters')}}"
 												       autocomplete="new-password" required>
 											</div>
 										</div>
 										
 										<div class="col-md-12">
-											<input class="form-control" type="password" placeholder="{{__('default.Confirm Password')}}"
+											<input class="form-control" style="margin-bottom: 5px;" type="password"
+											       placeholder="{{__('default.Confirm Password')}}"
 											       autocomplete="new-password"
 											       name="password_confirmation" id="password_confirmation" required>
 										</div>
 										
 										@if ($errors->has('password'))
 											<div id="password-error" class="error text-danger pl-3" for="password"
-											     style="display: block; font-size: 0.85rem">
-												<strong class="errors-field-pass">{{ $errors->first('password') }}</strong>
+											     style="display: block; font-size: 14px">
+												<span class="errors-field-pass">{{ $errors->first('password') }}</span>
 											</div>
 										@endif
 										
@@ -167,13 +229,13 @@
 												<input class="form-check-input" type="checkbox" name="policy" id="policy"
 												       style="float: left; margin-right: 5px;"
 												       value="1" {{ old('policy', 0) ? 'checked' : '' }}>
-												<span>{!! __('default.I Agree with', [ 'terms_url' => route('frontend-yasallik'), 'privacy_url' => route('frontend-gizlilik') ]) !!}</span>
+												<span>{!! __('default.I Agree with', [ 'terms_url' => route('frontend.legal'), 'privacy_url' => route('frontend.secrecy') ]) !!}</span>
 											</div>
 										</div>
 										@if ($errors->has('policy'))
 											<div id="policy-error" class="error text-danger pl-3" for="policy"
-											     style="display: block; font-size: 0.85rem">
-												<strong class="errors-field-pass">{{ $errors->first('policy') }}</strong>
+											     style="display: block; font-size: 14px">
+												<span class="errors-field-pass">{{ $errors->first('policy') }}</span>
 											</div>
 										@endif
 										
@@ -206,7 +268,7 @@
 									
 									<!-- Copyright -->
 									<div class="register-page-copyright">
-										<p class="p-sm">{{__('default.&copy; 2025 www.izedebiyat.com All rights reserved.')}}</p>
+										<p class="p-sm">{!! __('default.&copy; 2025 www.izedebiyat.com All rights reserved.') !!}</p>
 									</div>
 								
 								</div>

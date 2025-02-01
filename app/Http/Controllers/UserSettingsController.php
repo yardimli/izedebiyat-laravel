@@ -60,7 +60,7 @@
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
 
-			$current_password = $request->input('current_password') ?? '123456dummy_password';
+			$current_password = $request->input('current_password') ?? '123456_gecici_sifre';
 //dd($user->password, $current_password, Hash::check($current_password, $user->password), Hash::make($current_password));
 			// Check if the current password is correct
 			if (!Hash::check($current_password, $user->password)) {
@@ -113,7 +113,7 @@
 					Rule::unique('users')->ignore($user->id),
 				],
 				'page_title' => ['required', 'string', 'max:255'],
-				'about_me' => ['required', 'string', 'max:1000'],
+				'about_me' => ['required', 'string', 'max:1500'],
 				'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:1024'],
 			]);
 
@@ -136,6 +136,7 @@
 			$user->email = $request->input('email');
 			$user->page_title = $request->input('page_title');
 			$user->about_me = $request->input('about_me');
+			$user->personal_url = $request->input('personal_url');
 			$user->save();
 
 			// Redirect back with success message

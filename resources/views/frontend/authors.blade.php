@@ -8,7 +8,7 @@
 	{{ \App\Helpers\MyHelper::initializeCategoryImages() }}
 
 	<main id="content">
-		<div class="container">
+		<div class="container-lg">
 			<h1 class="text-center mb-4">Yazarlar</h1>
 			
 			<!-- Filter Buttons -->

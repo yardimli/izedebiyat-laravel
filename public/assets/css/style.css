@@ -134,7 +134,7 @@
 }
 
 [data-bs-theme=dark] {
-  --bs-body-color: #a1a1a8;
+  --bs-body-color: #a1a1a8 !important;
   --bs-body-color-rgb: 161, 161, 168;
   --bs-body-bg: #0f0f10;
   --bs-body-bg-rgb: 15, 15, 16;
@@ -17632,6 +17632,9 @@ a.badge:hover {
   display: none !important;
 }
 
+[data-bs-theme=dark] .article-text-color {
+    color: var(--bs-gray-400) !important;
+}
 
 
 

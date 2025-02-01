@@ -17,14 +17,24 @@
 		</div>
 		<div class="row">
 			<div class="col-md-6 copyright text-xs-center">
-				<p>Copyright (c) {{ date('Y') }} İzEdebiyat</p>
+				Copyright (c) {{ date('Y') }} İzEdebiyat
 			</div>
 			<div class="col-md-6">
-				<ul class="social-network inline text-md-right text-sm-center">
-					<li class="list-inline-item"><a href="#"><i class="icon-facebook"></i></a></li>
-					<li class="list-inline-item"><a href="#"><i class="icon-twitter"></i></a></li>
-				</ul>
+{{--				<ul class="social-network inline text-md-right text-sm-center">--}}
+{{--					<li class="list-inline-item"><a href="#"><i class="icon-facebook"></i></a></li>--}}
+{{--					<li class="list-inline-item"><a href="#"><i class="icon-twitter"></i></a></li>--}}
+{{--				</ul>--}}
 			</div>
+			<div class="col-md-12 mt-2 mb-1">
+				<div class="text-center">
+					<a href="https://bookcoverzone.com" style="font-family:Verdana; font-size:12px;"><img src="/images/bookcoverzone-logo.jpg" alt="Custom &amp; Premade Book Covers" style="width:64px"><br>Book Cover Zone - Premade Book Covers</a>
+				</div>
+			</div>
+			<div class="col-md-9 text-muted" style="font-size: 12px;">
+				İzEdebiyat'da yayınlanan bütün yazılar, telif hakları yasalarınca korunmaktadır. Tümü yazarlarının ya da telif hakkı sahiplerinin izniyle sitemizde yer almaktadır. Yazarların ya da telif hakkı sahiplerinin izni olmaksızın sitede yer alan metinlerin -kısa alıntı ve tanıtımlar dışında- herhangi bir biçimde basılması/yayınlanması kesinlikle yasaktır.
+				Ayrıntılı bilgi icin Yasallık bölümüne bkz.
+			</div>
+		
 		</div>
 	</div>
 </footer>

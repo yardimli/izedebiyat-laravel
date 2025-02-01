@@ -17,7 +17,7 @@
 				
 				<!-- Display success or error messages -->
 				
-				<form action="{{ route('sahne-arkasi.update') }}" method="post" class="row g-3"
+				<form action="{{ route('backend.update') }}" method="post" class="row g-3"
 				      enctype="multipart/form-data">
 					@csrf
 					<!-- First name -->
@@ -101,7 +101,7 @@
 				<!-- Title START -->
 				<div class="card-body">
 					
-					<form action="{{ route('sahne-arkasi.sifre-guncelle') }}" method="post"
+					<form action="{{ route('backend.sifre-guncelle') }}" method="post"
 					      class="row g-3">
 						@csrf
 						<!-- Current password -->

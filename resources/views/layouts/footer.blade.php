@@ -11,7 +11,7 @@
 					@if (1===2)
 					<li class="nav-item">
 						<div class="dropup mt-0 text-center text-sm-end">
-							<a class="dropdown-toggle nav-link" href="{{ route('frontend-index') }}" role="button"
+							<a class="dropdown-toggle nav-link" href="{{ route('frontend.index') }}" role="button"
 							   id="languageSwitcher" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-globe  me-2"></i>{{__('default.Language')}}
 							</a>
@@ -30,10 +30,10 @@
 					@endif
 					
 					<li class="nav-item">
-						<a class="nav-link" href="{{route('frontend-yasallik')}}"><i class="bi bi-check-all  me-2"></i>{{__('default.Terms')}}</a>
+						<a class="nav-link" href="{{route('frontend.legal')}}"><i class="bi bi-check-all  me-2"></i>{{__('default.Terms')}}</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="{{route('frontend-gizlilik')}}"><i class="bi bi-list  me-2"></i>{{__('default.Privacy')}}</a>
+						<a class="nav-link" href="{{route('frontend.secrecy')}}"><i class="bi bi-list  me-2"></i>{{__('default.Privacy')}}</a>
 					</li>
 				</ul>
 				<!-- Footer nav START -->

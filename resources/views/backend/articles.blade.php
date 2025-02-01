@@ -90,7 +90,7 @@
 												<td>{{ \App\Helpers\MyHelper::timeString($article->created_at)}}</td>
 												<td>
 													<div class="btn-group">
-														<a href="{{ route('yapit', $article->slug) }}" class="btn btn-sm btn-info">
+														<a href="{{ route('article', $article->slug) }}" class="btn btn-sm btn-info">
 															{{ __('default.Read') }}
 														</a>
 														<a href="{{ route('articles.edit', \App\Helpers\IdHasher::encode($article->id)) }}"

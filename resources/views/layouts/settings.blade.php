@@ -9,24 +9,31 @@
 				<!-- Sidenav START -->
 				<div class="col-lg-3">
 					<nav class="navbar navbar-light navbar-expand-lg mx-0">
-						<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar">
-							<div class="offcanvas-header">
-								<button type="button" class="btn-close text-reset ms-auto" data-bs-dismiss="offcanvas"></button>
-							</div>
-							<div class="offcanvas-body p-0">
+{{--						<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar">--}}
+{{--							<div class="offcanvas-header">--}}
+{{--								<button type="button" class="btn-close text-reset ms-auto" data-bs-dismiss="offcanvas"></button>--}}
+{{--							</div>--}}
+{{--							<div class="offcanvas-body p-0">--}}
 								<div class="card w-100">
 									<div class="card-body">
 										<ul class="nav nav-tabs nav-pills nav-pills-soft flex-column fw-bold gap-2 border-0">
 											<li class="nav-item">
-												<a class="nav-link {{ Route::currentRouteName() == 'sahne-arkasi.account' ? 'active' : '' }}" style="margin-bottom: 0px;"
-												   href="{{ route('sahne-arkasi.account') }}">
+												<a class="nav-link {{ Route::currentRouteName() == 'backend.following' ? 'active' : '' }}" style="margin-bottom: 0px;"
+												   href="{{ route('backend.following') }}">
+													<img class="me-2 h-20px" src="/assets/images/icon/star-outline-filled.svg" alt="">
+													{{__('default.Favorites')}}
+												</a>
+											</li>
+											<li class="nav-item">
+												<a class="nav-link {{ Route::currentRouteName() == 'backend.account' ? 'active' : '' }}" style="margin-bottom: 0px;"
+												   href="{{ route('backend.account') }}">
 													<img class="me-2 h-20px" src="/assets/images/icon/person-outline-filled.svg" alt="">
 													{{__('default.Account')}}
 												</a>
 											</li>
 											<li class="nav-item">
-												<a class="nav-link {{ Route::currentRouteName() == 'sahne-arkasi.close-account' ? 'active' : '' }}" style="margin-bottom: 0px;"
-												   href="{{ route('sahne-arkasi.close-account') }}">
+												<a class="nav-link {{ Route::currentRouteName() == 'backend.close-account' ? 'active' : '' }}" style="margin-bottom: 0px;"
+												   href="{{ route('backend.close-account') }}">
 													<img class="me-2 h-20px" src="/assets/images/icon/trash-var-outline-filled.svg" alt="">
 													{{__('default.Close Account')}}
 												</a>
@@ -40,8 +47,8 @@
 										{{--										<a class="btn btn-info-soft btn-sm w-100" href="{{route('buy-packages')}}">Purchase Tokens</a>--}}
 									</div>
 								</div>
-							</div>
-						</div>
+{{--							</div>--}}
+{{--						</div>--}}
 					</nav>
 				</div>
 				<!-- Main content START -->

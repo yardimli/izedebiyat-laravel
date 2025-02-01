@@ -57,6 +57,9 @@
 		'Short Description' => 'Tanıtım',
 
 		'User Name' => 'Yazar Adı',
+		'Real Name' => 'Ad Soyad',
+		'Enter real name...' => 'Ad Soyad Girin...',
+		'Name Slug' => 'Kullanıcı Adı',
 
 		'Save Changes' => 'Değişiklikleri Kaydet',
 		'LLM Response' => 'LLM Yanıtı',
@@ -137,7 +140,6 @@
 		//-------------------------------------------
 
 
-
 		'Images' => 'Resimler',
 		'Manage Images' => 'Resimleri Yönet',
 		'Upload and manage your images' => 'Resimlerinizi yükleyin ve yönetin',
@@ -198,7 +200,7 @@
 		'Error deleting session' => 'Oturum silinirken hata oluştu',
 		'Yes, I\'d like to delete my account' => 'Evet, hesabımı silmek istiyorum',
 		'Start Writing' => 'Yazmaya Başla',
-		'My Page' => 'Benim Sayfam',
+		'My Page' => 'Yazar Sayfam',
 		'Read Count' => 'Okuma Sayısı',
 		'All Status' => 'Tüm Durumlar',
 		'Newest First' => 'Yeniden Eskiye',
@@ -220,6 +222,19 @@
 		'Personal URL' => 'Kişisel Site Adresiniz',
 
 		'Your settings have been updated successfully.' => 'Ayarlarınız başarıyla güncellendi.',
+		'Favorites' => 'Beğdiklerim',
+		'Following since:' => 'Takip tarihi:',
+		'Authors I Follow' => 'Takip Ettiğim Yazarlar',
+		'Bookmarked Articles' => 'Beğendiğim Eserler',
+		'Bookmarked on:' => 'Beğenme tarihi:',
+
+		'Following' => 'Takip Ediliyor',
+		'Follow' => 'Takip Et',
+
+		'Share on X' => 'X üzerinde paylaş',
+		'Share on Facebook' => 'Facebook\'ta Paylaş',
+		'Copy Link' => 'Bağlantıyı Kopyala',
+		'Link copied to clipboard!' => 'Bağlantı panoya kopyalandı!',
 
 
 	];

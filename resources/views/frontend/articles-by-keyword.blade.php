@@ -10,7 +10,7 @@
 	<section class="archive">
 		<main id="content">
 			<div class="content-widget">
-				<div class="container">
+				<div class="container-lg">
 					<div class="row">
 						<div class="col-12">
 							<h4 class="spanborder">

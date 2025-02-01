@@ -6,7 +6,7 @@
 @section('content')
 	<main id="content">
 		<div class="content-widget">
-			<div class="container">
+			<div class="container-lg">
 				<!--Begin Archive Header-->
 				<div class="row">
 					<div class="col-12 archive-header text-center pt-3 pb-0">

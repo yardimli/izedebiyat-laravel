@@ -23,11 +23,11 @@
 		public function render($request, Throwable $exception)
 		{
 			if ($exception instanceof NotFoundHttpException) {
-				return response()->view('errors.error-404', [], 404);
+				return response()->view('errors.404', [], 404);
 			}
 
 			if ($exception instanceof HttpException && $exception->getStatusCode() === 419) {
-				return response()->view('errors.error-419', [], 419);
+				return response()->view('errors.419', [], 419);
 			}
 
 			return parent::render($request, $exception);
@@ -50,7 +50,7 @@
 
 			$this->renderable(function (\Exception $e) {
 				if ($e instanceof HttpException && $e->getStatusCode() === 419) {
-					return response()->view('errors.error-419', [], 419);
+					return response()->view('errors.419', [], 419);
 				}
 
 				if ($e->getPrevious() instanceof \Illuminate\Session\TokenMismatchException) {

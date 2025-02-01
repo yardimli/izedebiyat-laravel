@@ -12,6 +12,7 @@
 	use Illuminate\Http\Request;
 	use Illuminate\Pagination\LengthAwarePaginator;
 	use Illuminate\Support\Facades\Auth;
+	use Illuminate\Support\Facades\Cache;
 	use Illuminate\Support\Facades\DB;
 	use Illuminate\Support\Facades\File;
 	use Illuminate\Support\Facades\Log;
@@ -28,61 +29,64 @@
 
 		public function __construct()
 		{
-			// Get main menu categories with their last update time
-			$firstCategory = Category::orderBy('updated_at')->first();
+			if (Cache::lock('updating_category_stats', 3600)->get()) {
+				// Get main menu categories with their last update time
+				$firstCategory = Category::orderBy('updated_at')->first();
 
-			// Check if first category exists and if it was updated more than 2 minutes ago
-			if ($firstCategory && $firstCategory->updated_at->diffInMinutes(now()) > 60) {
-				Log::info('Updating category statistics...');
+				// Check if first category exists and if it was updated more than 2 minutes ago
+				if ($firstCategory && $firstCategory->updated_at->diffInMinutes(now()) > 60) {
+					Log::info('Updating category statistics...');
 
-				// Get all categories (including main and sub categories)
-				$allCategories = Category::all();
+					// Get all categories (including main and sub categories)
+					$allCategories = Category::all();
 
-				foreach ($allCategories as $category) {
-					// Count total approved texts
-					$totalTexts = Article::where(function ($query) use ($category) {
-						$query->where('category_id', $category->id)
-							->orWhere('parent_category_id', $category->id);
-					})
-						->where('approved', 1)
-						->where('deleted', 0)
-						->where('bad_critical', '<', 4)
-						->where('religious_moderation_value', '<', 3)
-						->where('respect_moderation_value', '>=', 3)
-						->where('moderation_flagged', 0)
-						->count();
+					foreach ($allCategories as $category) {
+						// Count total approved texts
+						$totalTexts = Article::where(function ($query) use ($category) {
+							$query->where('category_id', $category->id)
+								->orWhere('parent_category_id', $category->id);
+						})
+							->where('approved', 1)
+							->where('deleted', 0)
+							->where('bad_critical', '<', 4)
+							->where('religious_moderation_value', '<', 3)
+							->where('respect_moderation_value', '>=', 3)
+							->where('moderation_flagged', 0)
+							->count();
 
-					// Count new texts (last 30 days)
-					$newTexts = Article::where(function ($query) use ($category) {
-						$query->where('category_id', $category->id)
-							->orWhere('parent_category_id', $category->id);
-					})
-						->where('approved', 1)
-						->where('deleted', 0)
-						->where('bad_critical', '<', 4)
-						->where('religious_moderation_value', '<', 3)
-						->where('respect_moderation_value', '>=', 3)
-						->where('moderation_flagged', 0)
-						->where('created_at', '>=', now()->subDays(30))
-						->count();
+						// Count new texts (last 30 days)
+						$newTexts = Article::where(function ($query) use ($category) {
+							$query->where('category_id', $category->id)
+								->orWhere('parent_category_id', $category->id);
+						})
+							->where('approved', 1)
+							->where('deleted', 0)
+							->where('bad_critical', '<', 4)
+							->where('religious_moderation_value', '<', 3)
+							->where('respect_moderation_value', '>=', 3)
+							->where('moderation_flagged', 0)
+							->where('created_at', '>=', now()->subDays(30))
+							->count();
 
-					// Get total views/reads
-					$totalReads = Article::where(function ($query) use ($category) {
-						$query->where('category_id', $category->id)
-							->orWhere('parent_category_id', $category->id);
-					})
-						->where('approved', 1)
-						->where('deleted', 0)
-						->sum('read_count');
+						// Get total views/reads
+						$totalReads = Article::where(function ($query) use ($category) {
+							$query->where('category_id', $category->id)
+								->orWhere('parent_category_id', $category->id);
+						})
+							->where('approved', 1)
+							->where('deleted', 0)
+							->sum('read_count');
 
-					// Update category
-					$category->update([
-						'total_articles' => $totalTexts,
-						'new_articles' => $newTexts,
-						'read_count' => $totalReads,
-						'updated_at' => now()
-					]);
+						// Update category
+						$category->update([
+							'total_articles' => $totalTexts,
+							'new_articles' => $newTexts,
+							'read_count' => $totalReads,
+							'updated_at' => now()
+						]);
+					}
 				}
+				Cache::lock('updating_category_stats')->release();
 			}
 
 			// Get main menu categories for the view
@@ -136,6 +140,23 @@
 				->orderBy('category_name')
 				->get();
 
+			$category_order_slug_array = ['oyku', 'elestiri', 'bilimsel', 'siir', 'inceleme', 'roman', 'deneme'];
+			// Use the sort method directly to handle non-found slugs.
+			$categories = $categories->sort(function ($a, $b) use ($category_order_slug_array) {
+				$posA = array_search($a->slug, $category_order_slug_array);
+				$posB = array_search($b->slug, $category_order_slug_array);
+
+				// Handle case where position is not found, push to end of sorted list
+				$posA = $posA !== false ? $posA : count($category_order_slug_array);
+				$posB = $posB !== false ? $posB : count($category_order_slug_array);
+
+				return $posA - $posB;
+			});
+
+			// If needed, re-index the collection
+			$categories = $categories->values();
+
+
 			foreach ($categories as $category) {
 				$category->articles = Article::where('parent_category_id', $category->id)
 					->where('approved', 1)
@@ -180,7 +201,7 @@
 			$baseQuery = Article::where('approved', 1)
 				->where('deleted', 0)
 				->where('bad_critical', '<', 4)
-				->where(function($q) use ($query) {
+				->where(function ($q) use ($query) {
 					$q->where('title', 'LIKE', '%' . $query . '%')
 						->orWhere('name', 'LIKE', '%' . $query . '%');
 				});
@@ -450,7 +471,7 @@
 
 			//check if $user->personal_url is not blank and if it is missing http add it
 			$user->personal_url_link = $user->personal_url ?? '';
-			if($user->personal_url_link && !Str::startsWith($user->personal_url_link, ['http://', 'https://'])) {
+			if ($user->personal_url_link && !Str::startsWith($user->personal_url_link, ['http://', 'https://'])) {
 				$user->personal_url_link = 'http://' . $user->personal_url;
 			}
 
@@ -480,8 +501,7 @@
 					->limit(1)
 				])
 					->orderBy('latest_text_date', 'desc');
-			}
-			elseif ($filter !== 'tumu' && mb_strlen($filter, 'UTF-8') === 1) {
+			} elseif ($filter !== 'tumu' && mb_strlen($filter, 'UTF-8') === 1) {
 				$query->where('name', 'LIKE', $filter . '%');
 			}
 
