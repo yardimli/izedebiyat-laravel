@@ -2,6 +2,8 @@
 
 	namespace App\Helpers;
 
+	use App\Models\Article;
+	use App\Models\Keyword;
 	use App\Models\SentencesTable;
 	use Carbon\Carbon;
 	use GuzzleHttp\Client;
@@ -1212,6 +1214,29 @@ output in Turkish, output JSON as:
 									'has_changed' => 0,
 									'updated_at' => Carbon::now()
 								]);
+
+
+							$keywordString = $record->keywords_string;
+							$keywordArray = array_map('trim', preg_split('/[,\s]+/', $keywordString));
+							$keywordArray = array_filter($keywordArray); // Remove empty values
+
+							$keywordIds = [];
+							foreach ($keywordArray as $keywordText) {
+								$keywordText = substr($keywordText, 0, 16); // Limit to 16 characters
+								if (empty($keywordText)) continue;
+
+								// Find or create keyword
+								$keyword = Keyword::firstOrCreate(
+									['keyword' => $keywordText],
+									['keyword_slug' => Str::slug($keywordText)]
+								);
+
+								$keywordIds[] = $keyword->id;
+							}
+
+							// Sync keywords with article
+							$article = Article::findOrFail($record->id);
+							$article->keywords()->sync($keywordIds);
 
 							$counter++;
 							if ($counter % 100 == 0) {
