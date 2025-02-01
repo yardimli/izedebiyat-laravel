@@ -13,12 +13,12 @@
 			
 			<!-- Filter Buttons -->
 			<div class="filter-buttons mb-4 text-center">
-				<a href="{{ route('users.harf', ['filter' => 'yeni']) }}"
+				<a href="{{ route('users.letter', ['filter' => 'yeni']) }}"
 				   class="btn {{ $filter === 'yeni' ? 'btn-primary' : 'btn-outline-primary' }}">YENİ</a>
-				<a href="{{ route('users.harf', ['filter' => 'tumu']) }}"
+				<a href="{{ route('users.letter', ['filter' => 'tumu']) }}"
 				   class="btn {{ $filter === 'tumu' ? 'btn-primary' : 'btn-outline-primary' }}">Tümü</a>
 				@foreach(['A','B','C','Ç','D','E','F','G','H','I','İ','J','K','L','M','N','O','Ö','P','R','S','Ş','T','U','Ü','V','Y','Z'] as $letter)
-					<a href="{{ route('users.harf', ['filter' => $letter]) }}"
+					<a href="{{ route('users.letter', ['filter' => $letter]) }}"
 					   class="btn {{ $filter === $letter ? 'btn-primary' : 'btn-outline-primary' }}">{{ $letter }}</a>
 				@endforeach
 			</div>
