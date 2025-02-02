@@ -20,7 +20,6 @@
 
 		public function redirectToGoogle()
 		{
-//		return Socialite::driver('google')->stateless()->redirect();
 			return Socialite::driver('google')->redirect();
 		}
 
@@ -33,34 +32,27 @@
 		public function handleGoogleCallback()
 		{
 			try {
-
 				$user = Socialite::driver('google')->user();
 
 				$finduser = User::where('google_id', $user->id)->first();
 
-				if ($finduser) {
+				if (!$finduser) {
+					$finduser = User::where('email', $user->email)->first();
 
+					// If user exists with email, update their Google ID
+					if ($finduser) {
+						$finduser->update([
+							'google_id' => $user->id,
+							'email_verified_at' => now() // Ensure email is verified
+						]);
+					}
+				}
+
+				if ($finduser) {
 					// Update the user's information
 					$finduser->update([
-//						'name' => $user->name,
-//						'username' => $user->getNickname() ?? Str::slug($user->name),
 						'email' => $user->email,
-//						'picture' => $user['picture']
-						// Any other fields you want to update
 					]);
-
-					// Save and update the avatar image locally
-
-//					$avatarUrl = $user->getAvatar();
-//					$avatarContents = file_get_contents($avatarUrl);
-//					$avatarName = $finduser->id . '.jpg';
-//					$avatarPath = 'public/user_avatars/' . $avatarName;
-//					Storage::put($avatarPath, $avatarContents);
-
-					// Update the avatar field with the local path
-//					$finduser->update([
-//						'avatar' => $avatarPath
-//					]);
 
 					Auth::login($finduser);
 
@@ -103,14 +95,10 @@
 						'avatar' => $avatarPath
 					]);
 
-					//MyHelper::addStarterPackage($new_user->id);
-					///-------------- ADD NEW USER TOKENS
-
 					Auth::login($new_user);
 
 					return redirect()->intended('/eserlerim');
 				}
-
 			} catch
 			(Exception $e) {
 				dd($e);
