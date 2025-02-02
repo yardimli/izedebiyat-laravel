@@ -1207,6 +1207,20 @@ output in Turkish, output JSON as:
 							$record->article_slug = Str::slug($record->article_title);
 						}
 
+						// Verify unique article slug
+						$baseArticleSlug = $record->article_slug;
+						$articleSlugCounter = 0;
+						$tempArticleSlug = $baseArticleSlug;
+
+						while (DB::table('articles')
+							->where('slug', $tempArticleSlug)
+							->where('id', '!=', $record->id)
+							->exists()) {
+							$articleSlugCounter++;
+							$tempArticleSlug = $baseArticleSlug . '_' . $articleSlugCounter;
+						}
+						$record->article_slug = $tempArticleSlug;
+
 						try {
 							DB::table('articles')
 								->where('id', $record->id)
