@@ -176,8 +176,8 @@
 
 
 	Route::get('/maintenance/all', function () {
-		echo "Checking harmful content...<br>\n";
-		MyHelper::returnIsHarmful();
+//		echo "Checking harmful content...<br>\n";
+//		MyHelper::returnIsHarmful();
 		echo "<br>Checking religious content...<br>\n";
 		MyHelper::returnReligiousReason();
 		echo "<br>Checking keywords...<br>\n";

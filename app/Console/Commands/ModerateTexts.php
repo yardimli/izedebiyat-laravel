@@ -26,9 +26,8 @@ class ModerateTexts extends Command
      */
     public function handle()
     {
-	    MyHelper::returnIsHarmful();
+	    //MyHelper::returnIsHarmful();
 	    MyHelper::returnReligiousReason();
-	    MyHelper::returnKeywords();
 	    MyHelper::returnKeywords();
 	    MyHelper::updateArticleTable();
 	    MyHelper::returnMarkdown();

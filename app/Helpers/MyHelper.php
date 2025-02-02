@@ -713,7 +713,7 @@
 					->where('has_religious_moderation', 0)
 					->where('deleted', 0)
 					->where('approved', 1)
-					->where('bad_critical', '<', 4)
+//					->where('bad_critical', '<', 4)
 					->orderBy('id', 'DESC')
 					->limit(10)
 					->get();
@@ -1085,7 +1085,7 @@
 					})
 					->where('deleted', 0)
 					->where('approved', 1)
-					->where('bad_critical', '<', 5)
+					//->where('bad_critical', '<', 5)
 					->orderBy('id', 'DESC')
 					->limit(100)
 					->get();

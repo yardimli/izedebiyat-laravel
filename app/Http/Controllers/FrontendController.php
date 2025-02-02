@@ -49,7 +49,6 @@
 							->where('approved', 1)
 							->where('is_published', 1)
 							->where('deleted', 0)
-							->where('bad_critical', '<', 4)
 							->where('religious_moderation_value', '<', 3)
 							->where('moderation_flagged', 0)
 							->count();
@@ -62,7 +61,6 @@
 							->where('approved', 1)
 							->where('is_published', 1)
 							->where('deleted', 0)
-							->where('bad_critical', '<', 4)
 							->where('religious_moderation_value', '<', 3)
 							->where('moderation_flagged', 0)
 							->where('created_at', '>=', now()->subDays(30))
@@ -163,9 +161,7 @@
 					->where('approved', 1)
 					->where('deleted', 0)
 					->where('is_published', 1)
-					->where('bad_critical', '<', 4)
 					->where('religious_moderation_value', '<', 3)
-					->where('moderation_flagged', 0)
 					->orderBy('formul_ekim', 'DESC')
 					->limit(50)
 					->get();
@@ -174,9 +170,7 @@
 					->where('approved', 1)
 					->where('deleted', 0)
 					->where('is_published', 1)
-					->where('bad_critical', '<', 4)
 					->where('religious_moderation_value', '<', 3)
-					->where('moderation_flagged', 0)
 					->orderBy('created_at', 'DESC')
 					->limit(100)
 					->get();
@@ -202,7 +196,6 @@
 			$baseQuery = Article::where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('bad_critical', '<', 4)
 				->where(function ($q) use ($query) {
 					$q->where('title', 'LIKE', '%' . $query . '%')
 						->orWhere('name', 'LIKE', '%' . $query . '%');
@@ -238,9 +231,7 @@
 			$articles = Article::where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
-				->where('moderation_flagged', 0)
 				->where('created_at', '>=', Carbon::now()->subDays(30))
 				->orderBy('created_at', 'DESC')
 				->limit(100)
@@ -254,9 +245,7 @@
 						->where('approved', 1)
 						->where('deleted', 0)
 						->where('is_published', 1)
-						->where('bad_critical', '<', 4)
 						->where('religious_moderation_value', '<', 3)
-						->where('moderation_flagged', 0)
 						->where('created_at', '>=', Carbon::now()->subDays(30))
 						->count();
 					return $category;
@@ -273,9 +262,7 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
-				->where('moderation_flagged', 0)
 				->where('created_at', '>=', Carbon::now()->subDays(30))
 				->orderBy('created_at', 'DESC')
 				->limit(100)
@@ -289,9 +276,7 @@
 						->where('approved', 1)
 						->where('deleted', 0)
 						->where('is_published', 1)
-						->where('bad_critical', '<', 4)
 						->where('religious_moderation_value', '<', 3)
-						->where('moderation_flagged', 0)
 						->where('created_at', '>=', Carbon::now()->subDays(30))
 						->count();
 					return $cat;
@@ -311,9 +296,7 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('bad_critical', '<', 4)
-				->where('religious_moderation_value', '<', 3)
-				->where('moderation_flagged', 0);
+				->where('religious_moderation_value', '<', 3);
 
 			// Get total count for pagination
 			$total = $query->count();
@@ -340,9 +323,7 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
-				->where('moderation_flagged', 0)
 				->orderBy('created_at', 'DESC')
 				->skip(($page - 1) * 10)
 				->limit(100)
@@ -372,9 +353,7 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('bad_critical', '<', 4)
-				->where('religious_moderation_value', '<', 3)
-				->where('moderation_flagged', 0);
+				->where('religious_moderation_value', '<', 3);
 
 			// Get total count for pagination
 			$total = $query->count();
@@ -401,9 +380,7 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('bad_critical', '<', 4)
 				->where('religious_moderation_value', '<', 3)
-				->where('moderation_flagged', 0)
 				->orderBy('created_at', 'DESC')
 				->skip(($page - 1) * 10)
 				->limit(100)
@@ -546,8 +523,7 @@
 			})
 				->where('approved', 1)
 				->where('deleted', 0)
-				->where('is_published', 1)
-				->where('bad_critical', '<', 4);
+				->where('is_published', 1);
 
 			// Get total count for pagination
 			$total = $query->count();
@@ -616,7 +592,6 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('bad_critical', '<', 4)
 				->orderBy('created_at', 'DESC')
 				->limit(3)
 				->get();
@@ -628,7 +603,6 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('bad_critical', '<', 4)
 				->orderBy('created_at', 'DESC')
 				->limit(3)
 				->get();
@@ -640,12 +614,10 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('bad_critical', '<', 4)
 				->orderBy('created_at', 'DESC')
 				->limit(6)
 				->get();
 
 			return view('frontend.article', compact('article', 'user', 'keywords', 'sameUserAndCategory', 'sameUserAndMainCategory', 'otherUserArticles'));
 		}
-
 	}
