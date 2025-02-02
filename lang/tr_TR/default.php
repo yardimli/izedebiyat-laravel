@@ -152,6 +152,9 @@
 		'Prompt Enhancer' => 'İpucu Geliştirici',
 		'Generated Image Preview' => 'Oluşturulan Resim Önizlemesi',
 		'Generate Image' => 'Resim Oluştur',
+		'Are you sure you want to delete this generated image?' => 'Bu oluşturulan resmi silmek istediğinizden emin misiniz?',
+		'Generated image deleted successfully' => 'Oluşturulan resim başarıyla silindi',
+		'Error deleting generated image' => 'Oluşturulan resim silinirken hata oluştu',
 
 		'Model' => 'Model',
 		'Size' => 'Boyut',

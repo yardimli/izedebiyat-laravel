@@ -346,7 +346,7 @@
 				
 				// Delete Image
 				$('.delete-upload-image').on('click', function () {
-					if (confirm('{{__('default.Are you sure you want to delete this image?')}}') {
+					if (confirm('{{__('default.Are you sure you want to delete this image?')}}')) {
 						const id = $(this).data('id');
 						
 						$.ajax({
@@ -590,17 +590,17 @@
 			
 			// Delete generated image
 			$(document).on('click', '.delete-generated-image', function () {
-				if (confirm('Are you sure you want to delete this generated image?')) {
+				if (confirm('{{__('default.Are you sure you want to delete this generated image?')}}')) {
 					const imageId = $(this).data('id');
 					$.ajax({
 						url: `/image-gen/${imageId}`,
 						type: 'DELETE',
 						data: {"_token": "{{ csrf_token() }}"},
 						success: function () {
-							showNotification('Generated image deleted successfully', 'success');
+							showNotification('{{__('default.Generated image deleted successfully')}}', 'success');
 						},
 						error: function () {
-							showNotification('Error deleting generated image');
+							showNotification('{{__('default.Error deleting generated image')}}');
 						}
 					});
 				}
