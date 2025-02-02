@@ -155,6 +155,8 @@
 		'Are you sure you want to delete this generated image?' => 'Bu oluşturulan resmi silmek istediğinizden emin misiniz?',
 		'Generated image deleted successfully' => 'Oluşturulan resim başarıyla silindi',
 		'Error deleting generated image' => 'Oluşturulan resim silinirken hata oluştu',
+		'generated' => 'YZ',
+		'Select' => 'seç',
 
 		'Model' => 'Model',
 		'Size' => 'Boyut',

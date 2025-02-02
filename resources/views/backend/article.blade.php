@@ -395,22 +395,22 @@
                     <h6 class="card-title">${image_alt}</h6>
                     <p class="card-text small text-muted">
                         ${new Date(image.created_at).toLocaleDateString()}
-                        <span class="badge bg-${image.image_type === 'generated' ? 'success' : 'primary'}">${image.image_type}</span>
+                        <span class="badge bg-${image.image_type === '{{__('default.generated')}}' ? 'success' : 'primary'}">${image.image_type}</span>
                     </p>
                     <div>
 											  <button class="btn btn-sm btn-primary select-modal-image"
                             data-image-id="${image.id}"
                             data-image-url="${image_url}">
-                        Select
+                        {{__('default.Select')}}
                         </button>
 												${image.image_type === 'upload' ? `
 														<button class="btn btn-sm btn-danger delete-upload-image"
 																		data-id="${image.id}">
-																Delete
+																{{__('default.Delete')}}
                         ` : `
 														<button class="btn btn-sm btn-danger delete-generated-image"
                                 data-id="${image.id}">
-                            Delete
+                            {{__('default.Delete')}}
                         </button>`}
                     </div>
                 </div>
