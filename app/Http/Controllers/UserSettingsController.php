@@ -47,6 +47,11 @@
 		// Update user password
 		public function updatePassword(Request $request)
 		{
+			//check if user is logged in
+			if (!Auth::check()) {
+				return redirect()->route('frontend.join');
+			}
+
 			// Get the authenticated user
 			$user = $request->user();
 
@@ -84,6 +89,11 @@
 
 		public function editSettings(Request $request)
 		{
+			//check if user is logged in
+			if (!Auth::check()) {
+				return redirect()->route('frontend.join');
+			}
+
 			$user = auth()->user();
 
 			return view('user.settings', compact('user'));
@@ -92,6 +102,11 @@
 // Update user settings
 		public function updateSettings(Request $request)
 		{
+			//check if user is logged in
+			if (!Auth::check()) {
+				return redirect()->route('frontend.join');
+			}
+
 			// Get the authenticated user
 			$user = $request->user();
 

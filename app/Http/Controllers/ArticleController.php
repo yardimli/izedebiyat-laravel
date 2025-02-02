@@ -71,6 +71,11 @@
 
 		public function edit($hashedId)
 		{
+			//check if user is logged in
+			if (!Auth::check()) {
+				return redirect()->route('frontend.join');
+			}
+
 			$id = IdHasher::decode($hashedId);
 			if (!$id) {
 				abort(404);
@@ -154,6 +159,11 @@
 
 		public function update(Request $request, $hashedId)
 		{
+			//check if user is logged in
+			if (!Auth::check()) {
+				return redirect()->route('frontend.join');
+			}
+
 			$id = IdHasher::decode($hashedId);
 			if (!$id) {
 				abort(404);
@@ -209,6 +219,11 @@
 
 		public function destroy($hashedId)
 		{
+			//check if user is logged in
+			if (!Auth::check()) {
+				return redirect()->route('frontend.join');
+			}
+
 			$id = IdHasher::decode($hashedId);
 			if (!$id) {
 				abort(404);
