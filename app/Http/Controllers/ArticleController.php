@@ -215,7 +215,6 @@
 			}
 
 			$article = Article::findOrFail($id);
-			$article->categories()->detach();
 			$article->delete();
 
 			return redirect()->route('articles.index')
