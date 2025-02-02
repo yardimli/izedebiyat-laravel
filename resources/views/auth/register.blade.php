@@ -57,6 +57,8 @@
 	<!-- RESPONSIVE CSS -->
 	<link href="/assets/v2/css/responsive.css" rel="stylesheet">
 	
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+	
 	<style>
       .reset-page-wrapper .form-control,
       .register-page-form .form-control {
@@ -102,6 +104,22 @@
 		      font-size: 14px;
 		      font-weight: normal;
       }
+
+      .g-recaptcha {
+          margin-bottom: 15px;
+      }
+
+      .g-recaptcha > div {
+          margin: 0 auto;
+      }
+
+      @media screen and (max-width: 767px) {
+          .g-recaptcha {
+              transform: scale(0.95);
+              transform-origin: 0 0;
+          }
+      }
+      
 	</style>
 
 </head>
@@ -238,6 +256,15 @@
 												<span class="errors-field-pass">{{ $errors->first('policy') }}</span>
 											</div>
 										@endif
+										
+										<div class="col-md-12 mb-3">
+											<div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+											@if ($errors->has('g-recaptcha-response'))
+												<div class="error text-danger">
+													{{ $errors->first('g-recaptcha-response') }}
+												</div>
+											@endif
+										</div>
 										
 										<!-- Form Submit Button -->
 										<div class="col-md-12">

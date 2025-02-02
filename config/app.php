@@ -72,7 +72,7 @@ return [
 	|
 	*/
 
-	'timezone' => 'Asia/Taipei',
+	'timezone' => 'Europe/Istanbul',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -85,7 +85,7 @@ return [
 	|
 	*/
 
-	'locale' => env('APP_LOCALE', 'en_US'),
+	'locale' => env('APP_LOCALE', 'tr_TR'),
 //	'locale' => 'en',
 
 	/*
@@ -173,6 +173,7 @@ return [
 		App\Providers\RouteServiceProvider::class,
 		App\Providers\HelperServiceProvider::class,
         \SocialiteProviders\Manager\ServiceProvider::class,
+		App\Providers\RecaptchaServiceProvider::class,
 
 
 	])->toArray(),
