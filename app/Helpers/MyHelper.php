@@ -1152,6 +1152,7 @@ output in Turkish, output JSON as:
 
 		public static function updateArticleTable()
 		{
+			set_time_limit(0);
 			do {
 				// First, find articles with duplicate slugs
 				$records = DB::table('articles as a1')
