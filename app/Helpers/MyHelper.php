@@ -1155,13 +1155,19 @@ output in Turkish, output JSON as:
 			set_time_limit(0);
 			do {
 				// First, find articles with duplicate slugs
-				$records = DB::table('articles as a1')
-					->join('articles as a2', function($join) {
-						$join->on('a1.slug', '=', 'a2.slug')
-							->where('a1.id', '>', 'a2.id'); // This ensures we don't get the same pair twice
-					})
-					->where('a1.has_changed', '=', '1')
-					->select('a1.*')
+				$records = DB::table('articles')
+					->select('articles.*')
+					->joinSub(
+						DB::table('articles')
+							->select('slug')
+							->groupBy('slug')
+							->havingRaw('COUNT(*) > 1'),
+						'dupes',
+						'articles.slug',
+						'=',
+						'dupes.slug'
+					)
+					->where('has_changed', '=', 1)
 					->distinct()
 					->limit(100)
 					->get();
