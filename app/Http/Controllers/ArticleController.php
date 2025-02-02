@@ -50,7 +50,7 @@
 				$query->orderBy('id', 'desc');
 			}
 
-			$articles = $query->paginate(10);
+			$articles = $query->paginate(50);
 
 			foreach ($articles as $article) {
 				$article->title = strip_tags($article->title);
