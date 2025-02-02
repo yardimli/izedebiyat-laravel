@@ -346,7 +346,7 @@
 				
 				// Delete Image
 				$('.delete-upload-image').on('click', function () {
-					if (confirm('Are you sure you want to delete this image?')) {
+					if (confirm('{{__('default.Are you sure you want to delete this image?')}}') {
 						const id = $(this).data('id');
 						
 						$.ajax({
@@ -354,10 +354,10 @@
 							type: 'DELETE',
 							data: {"_token": "{{ csrf_token() }}"},
 							success: function () {
-								showNotification('Image deleted successfully', 'success');
+								showNotification('{{__('default.Image deleted successfully')}}', 'success');
 							},
 							error: function () {
-								showNotification('Error deleting image');
+								showNotification('{{__('default.Error deleting image')}}');
 							}
 						});
 					}
@@ -427,11 +427,11 @@
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
                 <li class="page-item ${pagination.current_page === 1 ? 'disabled' : ''}">
-                    <a class="page-link modal-page-link" href="#" data-page="${pagination.current_page - 1}">Previous</a>
+                    <a class="page-link modal-page-link" href="#" data-page="${pagination.current_page - 1}">Geri</a>
                 </li>
                 ${generateModalPaginationItems(pagination)}
                 <li class="page-item ${pagination.current_page === pagination.last_page ? 'disabled' : ''}">
-                    <a class="page-link modal-page-link" href="#" data-page="${pagination.current_page + 1}">Next</a>
+                    <a class="page-link modal-page-link" href="#" data-page="${pagination.current_page + 1}">İleri</a>
                 </li>
             </ul>
         </nav>
@@ -578,6 +578,8 @@
 							$('#tokensDisplay').text(`Tokens Used: ${result.prompt_tokens}/${result.completion_tokens}`);
 						}
 						$('#generateImageBtn').prop('disabled', false).text('{{__('default.Generate Image')}}');
+						$('#imageModal').modal('show');
+						
 					},
 					error: function () {
 						showNotification('Error generating image');
@@ -623,10 +625,11 @@
 					contentType: false,
 					success: function () {
 						$('#uploadImageModal').modal('hide');
-						showNotification('Image uploaded successfully', 'success');
+						showNotification('{{__('default.Image uploaded successfully')}}', 'success');
+						$('#imageModal').modal('show');
 					},
 					error: function () {
-						showNotification('Error uploading image');
+						showNotification('{{__('default.Error uploading image')}}');
 					}
 				});
 			});

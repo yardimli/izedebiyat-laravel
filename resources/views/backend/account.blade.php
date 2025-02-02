@@ -185,7 +185,7 @@
 				forceSync: true,
 				lineWrapping: true,
 				status: ["lines", "words"],
-				toolbar: ["bold", "italic", "heading", "quote", "horizontal-rule", "|", "unordered-list", "ordered-list", "|", "preview", {
+				toolbar: ["bold", "italic", "heading", "quote",  "link", "horizontal-rule", "|", "unordered-list", "ordered-list", "|", "preview", {
 					name: "upload-image",
 					action: function customFunction(editor) {
 						// Trigger file input click

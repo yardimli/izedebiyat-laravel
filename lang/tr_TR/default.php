@@ -236,5 +236,10 @@
 		'Copy Link' => 'Bağlantıyı Kopyala',
 		'Link copied to clipboard!' => 'Bağlantı panoya kopyalandı!',
 
+		'Image uploaded successfully' => 'Resim başarıyla yüklendi',
+		'Error uploading image' => 'Resim yüklenirken hata oluştu',
+		'Are you sure you want to delete this image?' => 'Bu resmi silmek istediğinizden emin misiniz?',
+		'Image deleted successfully' => 'Resim başarıyla silindi',
+		'Error deleting image' => 'Resim silinirken hata oluştu',
 
 	];
