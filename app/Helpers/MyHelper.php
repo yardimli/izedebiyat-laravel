@@ -1153,6 +1153,49 @@ output in Turkish, output JSON as:
 		public static function updateArticleTable()
 		{
 			do {
+				// First, find articles with duplicate slugs
+				$records = DB::table('articles as a1')
+					->join('articles as a2', function($join) {
+						$join->on('a1.slug', '=', 'a2.slug')
+							->where('a1.id', '>', 'a2.id'); // This ensures we don't get the same pair twice
+					})
+					->where('a1.has_changed', '=', '1')
+					->select('a1.*')
+					->distinct()
+					->limit(100)
+					->get();
+
+				$recordsInBatch = $records->count();
+
+				if ($recordsInBatch > 0) {
+					foreach ($records as $record) {
+						// Generate new slug based on the title
+						$baseArticleSlug = Str::slug($record->article_title);
+						$articleSlugCounter = 0;
+						$tempArticleSlug = $baseArticleSlug;
+
+						// Find a unique slug
+						while (DB::table('articles')
+							->where('slug', $tempArticleSlug)
+							->where('id', '!=', $record->id)
+							->exists()) {
+							$articleSlugCounter++;
+							$tempArticleSlug = $baseArticleSlug . '_' . $articleSlugCounter;
+						}
+
+						// Update the record with the new unique slug
+						DB::table('articles')
+							->where('id', $record->id)
+							->update([
+								'slug' => $tempArticleSlug,
+								'has_changed' => 0,
+								'updated_at' => Carbon::now()
+							]);
+					}
+				}
+			} while ($recordsInBatch > 0);
+
+			do {
 				$records = DB::table('articles as y')
 					->leftJoin('categories as k', 'k.id', '=', 'y.category_id')
 					->leftJoin('categories as uk', 'uk.id', '=', 'y.parent_category_id')
@@ -1206,20 +1249,6 @@ output in Turkish, output JSON as:
 						if ($record->article_slug === 'n-a') {
 							$record->article_slug = Str::slug($record->article_title);
 						}
-
-						// Verify unique article slug
-						$baseArticleSlug = $record->article_slug;
-						$articleSlugCounter = 0;
-						$tempArticleSlug = $baseArticleSlug;
-
-						while (DB::table('articles')
-							->where('slug', $tempArticleSlug)
-							->where('id', '!=', $record->id)
-							->exists()) {
-							$articleSlugCounter++;
-							$tempArticleSlug = $baseArticleSlug . '_' . $articleSlugCounter;
-						}
-						$record->article_slug = $tempArticleSlug;
 
 						try {
 							DB::table('articles')
