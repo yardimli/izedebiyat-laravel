@@ -1170,7 +1170,7 @@ output in Turkish, output JSON as:
 				if ($recordsInBatch > 0) {
 					foreach ($records as $record) {
 						// Generate new slug based on the title
-						$baseArticleSlug = Str::slug($record->article_title);
+						$baseArticleSlug = Str::slug($record->title);
 						$articleSlugCounter = 0;
 						$tempArticleSlug = $baseArticleSlug;
 
