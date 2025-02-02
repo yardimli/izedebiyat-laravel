@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Verify Thank You')
+@section('title', 'İzEdebiyat - Teşekkürler!')
 
 @section('content')
 

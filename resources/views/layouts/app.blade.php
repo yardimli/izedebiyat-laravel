@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>{{__('default.İzEdebiyat')}} - @yield('title', 'Home')</title>
+	<title>@yield('title', 'İzEdebiyat')</title>
 	
 	<!-- Meta Tags -->
 	<meta charset="utf-8">

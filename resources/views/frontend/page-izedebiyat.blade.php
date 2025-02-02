@@ -1,6 +1,6 @@
 @extends('layouts.app-frontend')
 
-@section('title', 'İzEdebiyat Hakkında')
+@section('title', 'İzEdebiyat - Hakkında')
 @section('body-class', 'home')
 
 @section('content')

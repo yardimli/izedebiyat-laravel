@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Terms')
+@section('title', 'İzEdebiyat - Kullanıcılar')
 @section('content')
 	<!-- **************** MAIN CONTENT START **************** -->
 	<main>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Chat')
+@section('title', 'İzEdebiyat - Sohbet')
 
 @section('content')
 	

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Settings')
+@section('title', 'İzEdebiyat - Sahne Arkası')
 
 @section('content')
 	<main>

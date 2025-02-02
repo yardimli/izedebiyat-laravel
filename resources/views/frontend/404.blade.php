@@ -1,7 +1,7 @@
 <?php
 @extends('layouts.app-frontend')
 
-@section('title', 'İzEdebiyat - 404')
+@section('title', 'İzEdebiyat - Hata 404')
 @section('body-class', 'home')
 
 @section('content')
