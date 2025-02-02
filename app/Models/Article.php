@@ -151,4 +151,9 @@
 			return $this->hasMany(Clap::class);
 		}
 
+		public function reads()
+		{
+			return $this->hasMany(ArticleRead::class);
+		}
+
 	}

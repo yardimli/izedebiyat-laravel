@@ -174,6 +174,9 @@
 
 	Route::get('/verify-thank-you-tr_TR', [VerifyThankYouController::class, 'index'])->name('verify-thank-you-tr_TR')->middleware('verified');
 
+	Route::post('/yapit/{article}/read', [ArticleController::class, 'recordRead'])->name('article.read');
+
+
 
 	Route::get('/maintenance/all', function () {
 //		echo "Checking harmful content...<br>\n";
@@ -287,7 +290,7 @@
 		Route::post('/favori/yazar/{user}', [FollowController::class, 'toggleFollow'])->name('follow.user');
 		Route::post('/favori/eser/{article}', [FollowController::class, 'toggleFavorite'])->name('follow.article');
 		Route::get('/favorilerim', [FollowController::class, 'following'])->name('backend.following');
-		Route::post('/article/{article}/clap', [ArticleController::class, 'toggleClap'])->name('article.clap');
+		Route::post('/yapit/{article}/clap', [ArticleController::class, 'toggleClap'])->name('article.clap');
 
 		Route::get('/users', [UserController::class, 'index'])->name('admin-users-index');
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');

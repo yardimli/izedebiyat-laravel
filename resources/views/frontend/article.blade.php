@@ -298,6 +298,25 @@
 @push('scripts')
 	<script src="/js/mo.min.js"></script>
 	<script>
+		let hasRecordedRead = false;
+		
+		function recordRead() {
+			if (!hasRecordedRead) {
+				const articleId = '{{ $article->id }}';
+				$.ajax({
+					url: `/yapit/${articleId}/read`,
+					method: 'POST',
+					headers: {
+						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+					},
+					success: function(response) {
+						if (response.success) {
+							hasRecordedRead = true;
+						}
+					}
+				});
+			}
+		}
 		
 		function toggleFollow(userId) {
 			$.ajax({
@@ -353,6 +372,24 @@
 			alert('{{__('default.Link copied to clipboard!')}}');
 		}
 		
+		function clapArticle(articleId) {
+			$.ajax({
+				url: `/yapit/${articleId}/clap`,
+				method: 'POST',
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				success: function(response) {
+					$('#clap--count-total').text(response.claps);
+				},
+				error: function(xhr) {
+					if (xhr.status === 401) {
+						window.location.href = '{{ route('register') }}';
+					}
+				}
+			});
+		}
+		
 		$(window).scroll(function () {
 			const element = document.querySelector('#main-menu');
 			const computedStyle = window.getComputedStyle(element);
@@ -377,25 +414,23 @@
 			} else {
 				$('.bar-long').css('width', "0px");
 			}
-		});
-		
-		function clapArticle(articleId) {
-			$.ajax({
-				url: `/article/${articleId}/clap`,
-				method: 'POST',
-				headers: {
-					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-				},
-				success: function(response) {
-					$('#clap--count-total').text(response.claps);
-				},
-				error: function(xhr) {
-					if (xhr.status === 401) {
-						window.location.href = '{{ route('register') }}';
-					}
+			
+			const entryContent = $('.entry-main-content');
+			if (entryContent.length) {
+				const contentTop = entryContent.offset().top;
+				const contentHeight = entryContent.height();
+				const scrollPosition = $(window).scrollTop();
+				const windowHeight = $(window).height();
+				
+				// Calculate the middle point of the content
+				const middlePoint = contentTop + (contentHeight / 2);
+				
+				// Check if user has scrolled past the middle point
+				if (scrollPosition + (windowHeight / 2) > middlePoint) {
+					recordRead();
 				}
-			});
-		}
+			}
+		});
 		
 		
 		$(document).ready(function () {

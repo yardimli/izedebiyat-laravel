@@ -2,6 +2,7 @@
 
 	namespace App\Http\Controllers;
 
+	use App\Models\ArticleRead;
 	use App\Models\Clap;
 	use App\Models\Image;
 	use App\Models\Category;
@@ -101,9 +102,9 @@
 
 		public function store(Request $request)
 		{
-		if (!Auth::check()) {
-			return redirect()->route('frontend.join');
-		}
+			if (!Auth::check()) {
+				return redirect()->route('frontend.join');
+			}
 
 			$validated = $request->validate([
 				'title' => 'required|max:255',
@@ -196,8 +197,7 @@
 				$validated['keywords_string'] = $keywords;
 
 				$this->syncKeywords($article, $keywords);
-			} else
-			{
+			} else {
 				$validated['keywords_string'] = '';
 			}
 
@@ -308,24 +308,52 @@
 			return implode(', ', $keywordArray);
 		}
 
-	public function toggleClap(Request $request, Article $article)
-	{
-		if (!Auth::check()) {
-			return redirect()->route('frontend.join');
+		public function toggleClap(Request $request, Article $article)
+		{
+			if (!Auth::check()) {
+				return redirect()->route('frontend.join');
+			}
+
+			$clap = Clap::firstOrNew([
+				'user_id' => Auth::id(),
+				'article_id' => $article->id
+			]);
+
+			if ($clap->count < 50) {
+				$clap->count++;
+				$clap->save();
+			}
+
+			$totalClaps = Clap::where('article_id', $article->id)->sum('count');
+
+			return response()->json(['claps' => $totalClaps]);
 		}
 
-		$clap = Clap::firstOrNew([
-			'user_id' => Auth::id(),
-			'article_id' => $article->id
-		]);
+		public function recordRead(Article $article, Request $request)
+		{
+			$userId = Auth::id() ?? 0;
+			$ipAddress = $request->ip();
 
-		if ($clap->count < 50) {
-			$clap->count++;
-			$clap->save();
+			// Check if this IP has already read this article in the last 24 hours
+			$existingRead = ArticleRead::where('article_id', $article->id)
+				->where('ip_address', $ipAddress)
+				->where('created_at', '>', now()->subHours(24))
+				->exists();
+
+			if (!$existingRead) {
+				// Create new read record
+				ArticleRead::create([
+					'article_id' => $article->id,
+					'user_id' => $userId,
+					'ip_address' => $ipAddress
+				]);
+
+				// Increment the read_count in the articles table
+				$article->increment('read_count');
+
+				return response()->json(['success' => true]);
+			}
+
+			return response()->json(['success' => false, 'message' => 'Already recorded']);
 		}
-
-		$totalClaps = Clap::where('article_id', $article->id)->sum('count');
-
-		return response()->json(['claps' => $totalClaps]);
-	}
 	}
