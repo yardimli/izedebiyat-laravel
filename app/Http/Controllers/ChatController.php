@@ -172,6 +172,9 @@
 		public function generateCategory(Request $request)
 		{
 			$mainText = $request->input('main_text');
+			ıf (strlen($mainText) > 1000) {
+				$mainText = substr($mainText, 0, 1000).'...';
+			}
 
 			$prompt = "Analyze this text and suggest the most appropriate category from the following options:\n\n";
 			$categories = Category::where('parent_category_id', '!=', 0)->get();
@@ -201,6 +204,9 @@
 		public function generateDescription(Request $request)
 		{
 			$mainText = $request->input('main_text');
+			ıf (strlen($mainText) > 1000) {
+				$mainText = substr($mainText, 0, 1000).'...';
+			}
 
 			$prompt = "Create a brief, engaging description (maximum 500 characters) for this text:\n\n{$mainText}\n\nRespond with only the description. Respond in Turkish.";
 
@@ -222,6 +228,10 @@
 		public function generateKeywords(Request $request)
 		{
 			$mainText = $request->input('main_text');
+			$mainText = $request->input('main_text');
+			ıf (strlen($mainText) > 1000) {
+				$mainText = substr($mainText, 0, 1000).'...';
+			}
 
 			$prompt = "Generate 5-10 relevant keywords (maximum 16 characters each) for this text. Separate keywords with commas:\n\n{$mainText}\n\nRespond with only the comma-separated keywords. Respond in Turkish.";
 
