@@ -119,7 +119,7 @@
 		{
 			if ($this->avatar) {
 				// If avatar exists, return its URL
-				return asset('storage/avatars/' . $this->avatar);
+				return asset('storage/' . $this->avatar);
 			}
 
 			// If no avatar, generate initials avatar

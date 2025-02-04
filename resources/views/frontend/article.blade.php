@@ -740,6 +740,22 @@
 				year: 'numeric'
 			});
 			
+			// Handle user avatar and name link
+			let userAvatarSrc;
+			let userNameHTML;
+			
+			if (comment.user_id === 0) {
+				// For guest comments
+				userAvatarSrc = '/assets/images/avatar/placeholder.jpg';
+				userNameHTML = `<div class="comment-author">${comment.sender_name || '{{ __("default.Guest") }}'}</div>`;
+			} else {
+				// For registered users
+				userAvatarSrc = comment.user.avatar
+					? comment.user.profile_photo_url
+					: '/assets/images/avatar/placeholder.jpg';
+				userNameHTML = `<div class="comment-author"><a href="/yazar/${comment.user.slug}">${comment.user.name}</a></div>`;
+			}
+			
 			// Ensure replies exists and is an array
 			const replies = (comment.replies || []).map(reply => createCommentHTML(reply)).join('');
 			
@@ -747,12 +763,10 @@
         <div class="comment" data-comment-id="${comment.id}">
             <div class="comment-header d-flex align-items-start">
                 <div class="comment-avatar">
-                    <img class="small-user-avatar"
-                         src="${comment.user.avatar ? '/storage/' + comment.user.avatar : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(comment.user.name) + '&color=7F9CF5&background=EBF4FF'}"
-                         alt="${comment.user.name}'s avatar">
+                    <img class="small-user-avatar" src="${userAvatarSrc}" alt="${comment.user_id === 0 ? '{{ __("default.Guest") }}' : comment.user.name}'s avatar">
                 </div>
                 <div class="comment-meta ms-2 flex-grow-1">
-                    <div class="comment-author">${comment.user.name}</div>
+                    ${userNameHTML}
                     <div class="comment-date text-muted">${formattedDate}</div>
                 </div>
             </div>
@@ -762,11 +776,11 @@
             <div class="comment-actions">
                 <span class="reply-button-text" onclick="showReplyForm(${comment.id})">
                     {{ __('default.Reply') }}
-			</button>
+			</span>
 ${comment.user_id === {{ Auth::id() ?? 'null' }} ?
-				`<span <span class="delete-comment-button-text" onclick="deleteComment(${comment.id})">
+				`<span class="delete-comment-button-text" onclick="deleteComment(${comment.id})">
                         {{ __('default.Delete') }}
-				</button>` : ''
+				</span>` : ''
 			}
             </div>
             <div id="reply-form-${comment.id}" class="reply-form mt-2" style="display: none;">

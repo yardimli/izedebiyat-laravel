@@ -19,6 +19,15 @@
 				->orderBy('created_at', 'desc')
 				->get();
 
+			//replace comment content \n with <br>
+			foreach ($comments as $comment) {
+				$comment->content = nl2br($comment->content);
+				foreach ($comment->replies as $reply) {
+					$reply->content = nl2br($reply->content);
+				}
+			}
+
+
 			return response()->json($comments);
 		}
 
@@ -97,7 +106,7 @@
 					Comment::create([
 						'user_id' => $userId,
 						'article_id' => $oldComment->yaziID,
-						'content' => $this->cleanContent($oldComment->yorum),
+						'content' => $this->cleanContent($oldComment->ybaslik . "\n" . $oldComment->yorum),
 						'created_at' => $oldComment->ytarih,
 						'updated_at' => $oldComment->ytarih,
 						'is_approved' => $oldComment->onayli == 1,
