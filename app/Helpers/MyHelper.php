@@ -181,7 +181,7 @@
 
 			if ($storage_path !== '' && Storage::disk('public')->exists($storage_path)) {
 
-				$image_src = resize('storage' .$storage_path, $resize_image_size);
+				$image_src = '';// resize('storage' .$storage_path, $resize_image_size);
 
 				return "<div style='position:relative;'>
                     <img src='/{$image_src}' class='{$extraClass}' 
@@ -190,7 +190,7 @@
 
 			if ($articleMainImage !== '' && Storage::disk('public')->exists("yazi_resimler/" . $articleMainImage)) {
 
-				$image_src = resize('storage/yazi_resimler/'.$articleMainImage, $resize_image_size);
+				$image_src = '';// resize('storage/yazi_resimler/'.$articleMainImage, $resize_image_size);
 
 				return "<div style='position:relative;'>
                     <img src='/{$image_src}' class='{$extraClass}' 
@@ -198,7 +198,7 @@
 			}
 
 			if (key_exists($categoryId, self::$categoryImages)) {
-				$image_src = resize('storage/catpicbox/' . self::$categoryImages[$categoryId], $resize_image_size);
+				$image_src = ''; //resize('storage/catpicbox/' . self::$categoryImages[$categoryId], $resize_image_size);
 
 				return "<img src='/{$image_src}' 
                 class='{$extraClass}' style='{$extraStyle}' alt='yazı resim'>";
