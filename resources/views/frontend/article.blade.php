@@ -91,7 +91,20 @@
 					</div>
 				</div>
 				
-				@include('partials.author-box', ['user' => $user])
+				<div class="container-lg" style="text-align: center;">
+					<a href="https://herkesyazar.app">
+						<img src="{{ asset('/images/herkes-yazar.png') }}"
+						     class="desktop-image"
+						     alt="herkes yazar"
+						     style="max-width:100%;">
+						<img src="{{ asset('/images/herkes-yazar-mobile.png') }}"
+						     class="mobile-image"
+						     alt="herkes yazar"
+						     style="max-width:100%;">
+					</a>
+				</div>
+				
+{{--				@include('partials.author-box', ['user' => $user])--}}
 				{{--				@include('partials.subscription-box')--}}
 			</article>
 			
@@ -163,6 +176,21 @@
 
 @push('styles')
 	<style>
+
+      .mobile-image {
+          display: none;
+      }
+
+      @media only screen and (max-width: 768px) {
+          .desktop-image {
+              display: none;
+          }
+
+          .mobile-image {
+              display: block;
+          }
+      }
+      
       .bar-long {
           height: 3px;
           background-color: #CCC;

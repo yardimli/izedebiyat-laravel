@@ -72,6 +72,20 @@
                                             </span>
 											</div>
 										</article>
+										
+										<div class="container-lg mb-2" style="text-align: center;">
+											<a href="https://herkesyazar.app">
+												<img src="{{ asset('/images/herkes-yazar.png') }}"
+												     class="desktop-image"
+												     alt="herkes yazar"
+												     style="max-width:100%;">
+												<img src="{{ asset('/images/herkes-yazar-mobile.png') }}"
+												     class="mobile-image"
+												     alt="herkes yazar"
+												     style="max-width:100%;">
+											</a>
+										</div>
+									
 										<div class="divider"></div>
 									@elseif(($counter >= 4 && $counter <= 7) || ($counter >= 14 && $counter <= 17))
 										@if($counter === 4 || $counter === 14)
@@ -239,5 +253,18 @@
 
 @push('styles')
 	<style>
+      .mobile-image {
+          display: none;
+      }
+
+      @media only screen and (max-width: 768px) {
+          .desktop-image {
+              display: none;
+          }
+
+          .mobile-image {
+              display: block;
+          }
+      }
 	</style>
 @endpush
