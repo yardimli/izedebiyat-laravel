@@ -10,7 +10,7 @@
 					<div class="mb-2 d-flex row">
 						<figure class="col-md-5">
 							<a href="{{ url('/yapit/' . $post->slug) }}">
-								{!! \App\Helpers\MyHelper::getImage($post->featured_image, $post->category_id, '', 'width: 100%') !!}
+								{!! \App\Helpers\MyHelper::getImage($post->featured_image, $post->category_id, '', 'width: 100%', 'small_landscape') !!}
 							</a>
 						</figure>
 						<div class="entry-content col-md-7 pl-md-0">
@@ -48,7 +48,7 @@
 					<div class="mb-2 d-flex row">
 						<figure class="col-md-5">
 							<a href="{{ url('/yapit/' . $post->slug) }}">
-								{!! \App\Helpers\MyHelper::getImage($post->featured_image, $post->category_id, '', 'width: 100%') !!}
+								{!! \App\Helpers\MyHelper::getImage($post->featured_image, $post->category_id, '', 'width: 100%', 'small_landscape') !!}
 							</a>
 						</figure>
 						<div class="entry-content col-md-7 pl-md-0">
@@ -86,7 +86,7 @@
 					<div class="mb-2 d-flex row">
 						<figure class="col-md-5">
 							<a href="{{ url('/yapit/' . $post->slug) }}">
-								{!! \App\Helpers\MyHelper::getImage($post->featured_image, $post->category_id, '', 'width: 100%') !!}
+								{!! \App\Helpers\MyHelper::getImage($post->featured_image, $post->category_id, '', 'width: 100%', 'small_landscape') !!}
 							</a>
 						</figure>
 						<div class="entry-content col-md-7 pl-md-0">

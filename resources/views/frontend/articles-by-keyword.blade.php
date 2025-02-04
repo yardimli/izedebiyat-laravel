@@ -23,7 +23,7 @@
 										<div class="mb-3 d-flex row">
 											<figure class="col-md-5">
 												<a href="{{ url('/yapit/' . $article->slug) }}">
-													{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width:100%;') !!}
+													{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width:100%;', 'medium_landscape') !!}
 												</a>
 											</figure>
 											<div class="entry-content col-md-7 pl-md-0">

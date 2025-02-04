@@ -15,7 +15,7 @@
 							<!--begin featured-->
 							<div class="col-sm-12 col-md-9 col-xl-9">
 								<h2 class="spanborder h4">
-									<span>{!! $category->category_name !!}</span>
+									<span><a href="/kume/{{ $category->slug }}">{{ $category->category_name }}</a></span>
 								</h2>
 								<div class="row">
 									@php
@@ -36,7 +36,7 @@
 													<article class="first mb-4">
 														<figure>
 															<a href="/yapit/{{ $story->slug }}">
-																{!! \App\Helpers\MyHelper::getImage($story->featured_image ?? '', $story->category_id, '', 'width: 100%') !!}
+																{!! \App\Helpers\MyHelper::getImage($story->featured_image ?? '', $story->category_id, '', 'width: 100%','medium_landscape') !!}
 															</a>
 														</figure>
 														<h3 class="entry-title mb-2">
@@ -68,7 +68,7 @@
 															<div class="mb-3 d-flex row">
 																<figure class="col-4 col-md-4">
 																	<a href="/yapit/{{ $story->slug }}">
-																		{!! \App\Helpers\MyHelper::getImage($story->featured_image ?? '',$story->category_id, '', 'width: 100%') !!}
+																		{!! \App\Helpers\MyHelper::getImage($story->featured_image ?? '',$story->category_id, '', 'width: 100%', 'small_landscape') !!}
 																	</a>
 																</figure>
 																<div class="entry-content col-8 col-md-8 pl-md-0">

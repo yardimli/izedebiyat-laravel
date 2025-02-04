@@ -25,7 +25,7 @@
 						@foreach($articles as $article)
 							<article class="col-12 col-xl-3 col-md-4 justify-content-between mb-5 mr-0">
 								<a href="{{ url('/yapit/' . $article->slug) }}">
-									{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, 'mb-2', 'width:100%; max-height:178px; object-fit: cover') !!}
+									{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, 'mb-2', 'width:100%; max-height:178px; object-fit: cover', 'medium_landscape') !!}
 								</a>
 								<div class="align-self-center" style="min-height: 200px;">
 									<h3 class="entry-title mb-3">

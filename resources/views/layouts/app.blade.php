@@ -156,8 +156,8 @@ Header START -->
 		<div class="container">
 			<!-- Logo START -->
 			<a class="navbar-brand" href="{{route('frontend.index')}}">
-				<img class="light-mode-item navbar-brand-item" src="{{ asset('/assets/images/logo/logo-large.png') }}" alt="logo">
-				<img class="dark-mode-item navbar-brand-item" src="{{ asset('/assets/images/logo/logo-large-transparent.png') }}" alt="logo">
+				<img class="light-mode-item navbar-brand-item" src="{{ asset(resize('assets/images/logo/logo-large.png','small_letterbox')) }}" alt="logo">
+				<img class="dark-mode-item navbar-brand-item" src="{{ asset(resize('assets/images/logo/logo-large-transparent.png','small_letterbox')) }}" alt="logo">
 			</a>
 			<!-- Logo END -->
 			

@@ -29,7 +29,7 @@
 					<div class="col-md-4 mb-4">
 						<div class="author-card">
 							<div class="author-image mb-3 position-relative">
-								<a href="{{ url('/yazar/' . $user->slug) }}">{!! \App\Helpers\MyHelper::generateInitialsAvatar($user->avatar, $user->name, 'width: 100px; height: 100px; object-fit: cover;', 'img-fluid rounded-circle', 'ai-image') !!}
+								<a href="{{ url('/yazar/' . $user->slug) }}">{!! \App\Helpers\MyHelper::generateInitialsAvatar($user->avatar, $user->email, 'width: 100px; height: 100px; object-fit: cover;', 'img-fluid rounded-circle') !!}
 								</a>
 							</div>
 							

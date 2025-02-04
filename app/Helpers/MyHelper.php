@@ -5,6 +5,7 @@
 	use App\Models\Article;
 	use App\Models\Keyword;
 	use App\Models\SentencesTable;
+	use App\Models\User;
 	use Carbon\Carbon;
 	use GuzzleHttp\Client;
 	use Illuminate\Http\Request;
@@ -113,70 +114,58 @@
 			}
 		}
 
-		public static function generateInitialsAvatar($pictureFile, $name, $extraCss = 'border-radius: 0px;', $extraClass = 'avatar', $aiClass = 'art-author-picture')
+		public static function generateInitialsAvatar($pictureFile, $email, $extraCss = 'border-radius: 0px;', $extraClass = 'avatar')
 		{
-			$hasPicture = false;
+			// First, check if it's a Gmail account
+			if (strpos(strtolower($email), '@gmail.com') !== false && empty($pictureFile)) {
+				try {
+					$client = new \GuzzleHttp\Client();
+					$response = $client->request('GET', 'https://gmail-checker4.p.rapidapi.com/GmailCheck', [
+						'query' => ['email' => $email],
+						'headers' => [
+							'x-rapidapi-host' => 'gmail-checker4.p.rapidapi.com',
+							'x-rapidapi-key' => env('RAPID_API_KEY')
+						]
+					]);
+
+					$result = json_decode($response->getBody(), true);
+
+					if ($result['code'] === 200 && !empty($result['picture'])) {
+						// Update user's picture in the database
+						$user = User::where('email', $email)->first();
+						if ($user) {
+							// Save the image locally
+							$imageContents = file_get_contents($result['picture']);
+							$filename = 'avatars/' . md5($email) . '.jpg';
+							Storage::disk('public')->put($filename, $imageContents);
+
+							$user->avatar = $filename;
+							$user->picture = $filename;
+							$user->save();
+
+							return "<img alt='yazar' style='{$extraCss}' src='/storage/{$filename}' class='{$extraClass}'>";
+						}
+					}
+				} catch (\Exception $e) {
+					// If there's any error, fall back to default avatar
+					Log::error('Gmail avatar fetch error: ' . $e->getMessage());
+				}
+			}
+
+			// Check for existing picture file
 			if ($pictureFile !== null && $pictureFile !== "") {
 				$pictureFile = str_replace('public/', '', $pictureFile);
 				$pictureFile = str_replace('public\\', '', $pictureFile);
 				if (Storage::disk('public')->exists($pictureFile)) {
-					$hasPicture = true;
-					$html = "<img alt='yazar' style='{$extraCss}' src='/storage/{$pictureFile}' class='{$extraClass}'>";
-
-					if (strpos($pictureFile, 'ai_yazar_resimler') !== false) {
-						$html .= "<span class='" . $aiClass . "' data-toggle='tooltip' data-placement='top' 
-                             title='Yapay zekaya yazarın bilgilerini vererek üretildi'>YZ</span>";
-					}
-					return $html;
+					return "<img alt='yazar' style='{$extraCss}' src='/storage/{$pictureFile}' class='{$extraClass}'>";
 				}
 			}
 
-			// If no picture, generate initials avatar
-			$name = trim($name);
-			$words = explode(' ', $name);
-			$initials = '';
-
-			for ($i = 0; $i < min(2, count($words)); $i++) {
-				if (!empty($words[$i])) {
-					$initials .= mb_strtoupper(mb_substr($words[$i], 0, 1));
-				}
-			}
-
-			$hue = rand(0, 360);
-			$saturation = rand(35, 80);
-			$lightness = rand(35, 65);
-			$bgColor = "hsl($hue, $saturation%, $lightness%)";
-
-			$l = $lightness / 100;
-			$textColor = ($l > 0.5) ? '#000000' : '#FFFFFF';
-			$uniqueId = 'avatar_' . uniqid();
-
-			$css = "
-        <style>
-            #$uniqueId {
-                background-color: $bgColor;
-                color: $textColor;
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-family: Arial, sans-serif;
-                font-weight: bold;
-                font-size: 22px;
-                user-select: none;
-            }
-        </style>
-    ";
-
-			// HTML
-			$html = "<div id='$uniqueId'>$initials</div>";
-
-			return $css . $html;
+			// Fallback to Gravatar
+			return "<img alt='yazar' style='{$extraCss}' src='https://www.gravatar.com/avatar/" . md5($email) . "?s=200&d=mp' class='{$extraClass}'>";
 		}
 
-		public static function getImage($articleMainImage, $categoryId = '', $extraClass = '', $extraStyle = '')
+		public static function getImage($articleMainImage, $categoryId = '', $extraClass = '', $extraStyle = '', $resize = 'small_landscape')
 		{
 			$articleMainImage = str_ireplace('.png', '.jpg', $articleMainImage);
 			$articleMainImage = str_replace('\\', '/', $articleMainImage);
@@ -191,19 +180,27 @@
 			$storage_path = str_replace('storage/', '', $storage_path);
 
 			if ($storage_path !== '' && Storage::disk('public')->exists($storage_path)) {
+
+				$image_src = resize('storage' .$storage_path, $resize);
+
 				return "<div style='position:relative;'>
-                    <img src='/storage{$storage_path}' class='{$extraClass}' 
+                    <img src='/{$image_src}' class='{$extraClass}' 
                     style='{$extraStyle}' alt='yazı resim'></div>";
 			}
 
 			if ($articleMainImage !== '' && Storage::disk('public')->exists("yazi_resimler/" . $articleMainImage)) {
+
+				$image_src = resize('storage/yazi_resimler/'.$articleMainImage, $resize);
+
 				return "<div style='position:relative;'>
-                    <img src='/storage/yazi_resimler/{$articleMainImage}' class='{$extraClass}' 
+                    <img src='/{$image_src}' class='{$extraClass}' 
                     style='{$extraStyle}' alt='yazı resim'>{$aiResim}</div>";
 			}
 
 			if (key_exists($categoryId, self::$categoryImages)) {
-				return "<img src='/storage/catpicbox/" . self::$categoryImages[$categoryId] . "' 
+				$image_src = resize('storage/catpicbox/' . self::$categoryImages[$categoryId], $resize);
+
+				return "<img src='/{$image_src}' 
                 class='{$extraClass}' style='{$extraStyle}' alt='yazı resim'>";
 			} else {
 				echo "Category image not found for category id: " . $categoryId;

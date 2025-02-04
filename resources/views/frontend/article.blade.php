@@ -21,7 +21,7 @@
 					<div class="entry-meta align-items-center divider pb-4" style="margin-top: 10px;
     margin-bottom: 0px;">
 						<a class="user-avatar" href="{{ url('/yazar/' . $user->slug) }}">
-							{!! \App\Helpers\MyHelper::generateInitialsAvatar($user->avatar, $user->name,'width:50px; height:50px; border-radius:50%;','','art-author-picture-3') !!}
+							{!! \App\Helpers\MyHelper::generateInitialsAvatar($user->avatar, $user->email,'width:50px; height:50px; border-radius:50%;','') !!}
 						</a>
 						<a href="{{ url('/yazar/' . $user->slug) }}">{{ $user->name }}</a>
 						<span class="middotDivider"></span>
@@ -76,7 +76,7 @@
 			
 			<article class="entry-wrapper mb-5">
 				<figure class="image zoom mb-5">
-					{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%') !!}
+					{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%', 'large_landscape') !!}
 				</figure>
 				
 				<div class="entry-main-content article-text-color">

@@ -78,7 +78,7 @@
 										</div>
 										<div class="col-md-3">
 											<a href="{{ url('/yapit/' . $article->slug) }}">
-												{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, 'bgcover2', '') !!}
+												{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, 'bgcover2', '', 'medium_landscape') !!}
 											</a>
 										</div>
 									</article>

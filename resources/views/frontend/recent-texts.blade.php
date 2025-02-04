@@ -27,7 +27,7 @@
 									<div class="col-md-3">
 										<figure>
 											<a href="/yapit/{{ $article->slug }}">
-												{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%') !!}
+												{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%', 'small_landscape') !!}
 											</a>
 										</figure>
 									</div>

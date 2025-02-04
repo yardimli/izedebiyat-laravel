@@ -60,7 +60,7 @@
 									</div>
 									<div class="col-md-3">
 										<a href="{{ url('/yapit/' . $article->slug) }}">
-											{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, 'bgcover2', '') !!}
+											{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, 'bgcover2', '', 'small_landscape') !!}
 										</a>
 									</div>
 								</article>
@@ -77,7 +77,7 @@
 							<div>
 								<a href="{!! $user->personal_url_link !!}" target="_blank">{!! $user->personal_url !!}</a>
 							</div>
-							{!! \App\Helpers\MyHelper::generateInitialsAvatar($user->avatar, $user->name, 'border-radius: 10px; width:60%; min-width:150px; min-height:150px;','mt-2 mb-2', 'art-author-picture-2') !!}
+							{!! \App\Helpers\MyHelper::generateInitialsAvatar($user->avatar, $user->email, 'border-radius: 10px; width:60%; min-width:150px; min-height:150px;','mt-2 mb-2') !!}
 						</div>
 						
 						@php

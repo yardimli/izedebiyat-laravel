@@ -44,7 +44,7 @@
 										<article class="first mb-3">
 											<figure>
 												<a href="{{ url('/yapit/' . $article->slug) }}">
-													{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%; max-height:120px; object-fit: cover') !!}
+													{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%; max-height:150px; object-fit: cover', 'large_landscape') !!}
 												</a>
 											</figure>
 											<h3 class="entry-title mb-3">
@@ -78,7 +78,7 @@
 											@php
 												$open_div = true;
 											@endphp
-											<div class="row justify-content-between">
+											<div class="row justify-content-between mb-3">
 												<div class="divider-2"></div>
 												@endif
 												
@@ -86,7 +86,7 @@
 													<div class="mb-3 d-flex row">
 														<figure class="col-md-5">
 															<a href="{{ url('/yapit/' . $article->slug) }}">
-																{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%;') !!}
+																{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%;', 'medium_landscape') !!}
 															</a>
 														</figure>
 														<div class="entry-content col-md-7 pl-md-0">
@@ -116,7 +116,7 @@
 											</div>
 										@endif
 									@elseif ($counter <=20)
-										<article class="row justify-content-between mb-5 mr-0">
+										<article class="row justify-content-between mb-3 mr-0">
 											<div class="col-md-9">
 												<div class="align-self-center" style="min-height: 200px;">
 													<div class="capsSubtle mb-2">
@@ -149,7 +149,7 @@
 											</div>
 											<div class="col-md-3">
 												<a href="{{ url('/yapit/' . $article->slug) }}">
-													{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, 'bgcover2', '') !!}
+													{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, 'bgcover2', '', 'medium_landscape') !!}
 												</a>
 											</div>
 										</article>
