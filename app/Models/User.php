@@ -119,7 +119,9 @@
 		{
 			if ($this->avatar) {
 				// If avatar exists, return its URL
-				return asset('storage/' . $this->avatar);
+				//remove /public from the path
+				$avatar = str_replace('public/', '', $this->avatar);
+				return asset('storage/' . $avatar);
 			}
 
 			// If no avatar, generate initials avatar
