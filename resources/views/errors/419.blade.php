@@ -221,7 +221,7 @@
 					<h1 class="display-1 mt-4">419</h1>
 					<h2 class="mb-2 h1">CSRF Hatası!</h2>
 					<p>Ya bir şeyler ters gitti ya da bu sayfa artık mevcut değil.</p> <!-- Buton --> <a
-						class="btn btn-primary-soft btn-sm" href="{{route('stories.page')}}">Ana sayfaya git</a>
+						class="btn btn-primary-soft btn-sm" href="{{route('frontend.index')}}">Ana sayfaya git</a>
 				</div>
 				<!-- Error 404 START -->
 			</div>

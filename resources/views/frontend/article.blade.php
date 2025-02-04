@@ -37,33 +37,33 @@
 						<span class="middotDivider"></span>
 						<span>{{ \App\Helpers\MyHelper::timeElapsedString($article->created_at) }}</span>
 					</div>
+					
 					<div class="entry-meta align-items-center divider pb-2" style="margin-top: 10px;
     margin-bottom: 10px;">
 						<button id="clap" class="clap" data-article-id="{{ $article->id }}">
-  <span>
-    <!--  SVG Created by Luis Durazo from the Noun Project  -->
-    <svg id="clap--icon" xmlns="http://www.w3.org/2000/svg" viewBox="-549 338 100.1 125">
-  <path
-	  d="M-471.2 366.8c1.2 1.1 1.9 2.6 2.3 4.1.4-.3.8-.5 1.2-.7 1-1.9.7-4.3-1-5.9-2-1.9-5.2-1.9-7.2.1l-.2.2c1.8.1 3.6.9 4.9 2.2zm-28.8 14c.4.9.7 1.9.8 3.1l16.5-16.9c.6-.6 1.4-1.1 2.1-1.5 1-1.9.7-4.4-.9-6-2-1.9-5.2-1.9-7.2.1l-15.5 15.9c2.3 2.2 3.1 3 4.2 5.3zm-38.9 39.7c-.1-8.9 3.2-17.2 9.4-23.6l18.6-19c.7-2 .5-4.1-.1-5.3-.8-1.8-1.3-2.3-3.6-4.5l-20.9 21.4c-10.6 10.8-11.2 27.6-2.3 39.3-.6-2.6-1-5.4-1.1-8.3z"/>
-  <path
-	  d="M-527.2 399.1l20.9-21.4c2.2 2.2 2.7 2.6 3.5 4.5.8 1.8 1 5.4-1.6 8l-11.8 12.2c-.5.5-.4 1.2 0 1.7.5.5 1.2.5 1.7 0l34-35c1.9-2 5.2-2.1 7.2-.1 2 1.9 2 5.2.1 7.2l-24.7 25.3c-.5.5-.4 1.2 0 1.7.5.5 1.2.5 1.7 0l28.5-29.3c2-2 5.2-2 7.1-.1 2 1.9 2 5.1.1 7.1l-28.5 29.3c-.5.5-.4 1.2 0 1.7.5.5 1.2.4 1.7 0l24.7-25.3c1.9-2 5.1-2.1 7.1-.1 2 1.9 2 5.2.1 7.2l-24.7 25.3c-.5.5-.4 1.2 0 1.7.5.5 1.2.5 1.7 0l14.6-15c2-2 5.2-2 7.2-.1 2 2 2.1 5.2.1 7.2l-27.6 28.4c-11.6 11.9-30.6 12.2-42.5.6-12-11.7-12.2-30.8-.6-42.7m18.1-48.4l-.7 4.9-2.2-4.4m7.6.9l-3.7 3.4 1.2-4.8m5.5 4.7l-4.8 1.6 3.1-3.9"/>
-</svg>
-  </span>
+							<i class="bi bi-star fs-5"></i>
 							<span id="clap--count" class="clap--count"></span>
 							<span id="clap--count-total" class="clap--count-total">{{ $article->claps()->sum('count') }}</span>
 						</button>
 						
+						<div class="comment-btn d-inline-block" onclick="toggleCommentPanel()" style="margin-left: 40px;">
+							<i class="bi bi-chat-text fs-5"></i>
+							<span style="margin-left: 4px;">99</span>
+						</div>
+						
 						<div class="share-btn d-inline-block" onclick="showShareOptions()" style="float:right;">
-							<i class="material-icons fs-4">share</i>
+							<i class="bi bi-share fs-5"></i>
 						</div>
 						<div class="favorite-btn d-inline-block" data-article-id="{{ $article->id }}"
 						     onclick="toggleFavorite({{ $article->id }})" style="float:right; margin-right: 10px;">
-							<i class="material-icons fs-4">{{ Auth::check() && $article->favorites->contains('follower_id', Auth::id()) ? 'bookmark' : 'bookmark_border' }}</i>
+							{!! Auth::check() && $article->favorites->contains('follower_id', Auth::id()) ? '<i class="bi bi-bookmark-fill fs-5"></i>' : '<i class="bi bi-bookmark fs-5"></i>'  !!}
 						</div>
 						
 						<div id="share-options" class="share-options" style="display: none;">
-							<a href="https://twitter.com/share?url={{ urlencode(url()->current()) }}" target="_blank">{{__('default.Share on X')}}</a>
-							<a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank">{{__('default.Share on Facebook')}}</a>
+							<a href="https://twitter.com/share?url={{ urlencode(url()->current()) }}"
+							   target="_blank">{{__('default.Share on X')}}</a>
+							<a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}"
+							   target="_blank">{{__('default.Share on Facebook')}}</a>
 							<a href="#" onclick="copyShareLink()">{{__('default.Copy Link')}}</a>
 						</div>
 					
@@ -98,6 +98,67 @@
 			@include('partials.related-posts', ['sameUserAndCategory' => $sameUserAndCategory,'sameUserAndMainCategory' => $sameUserAndMainCategory, 'otherUserArticles' => $otherUserArticles])
 		</div>
 	</main>
+	
+	<!-- Login Required Modal -->
+	<div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel"
+	     aria-hidden="true" style="z-index: 21000;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="loginRequiredModalLabel">{{ __('default.Login Required') }}</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					{{ __('default.You need to login to use this feature.') }}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('default.Close') }}</button>
+					<a href="{{ route('login') }}" class="btn btn-primary">{{ __('default.Login') }}</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- CSRF Error Modal -->
+	<div class="modal fade" id="csrfErrorModal" tabindex="-1" aria-labelledby="csrfErrorModalLabel" aria-hidden="true"
+	     style="z-index: 21000;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="csrfErrorModalLabel">{{ __('default.Session Expired') }}</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					{{ __('default.Your session has expired. Please refresh the page and try again.') }}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('default.Close') }}</button>
+					<button type="button" class="btn btn-primary"
+					        onclick="window.location.reload()">{{ __('default.Refresh Page') }}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Comment Panel -->
+	<div id="comment-panel" class="comment-panel">
+		<div class="comment-panel-header">
+			<h3>{{__('default.Responses')}}</h3>
+			<button class="close-btn" onclick="toggleCommentPanel()">
+				<i class="material-icons">close</i>
+			</button>
+		</div>
+		<div class="comment-panel-content">
+			<div class="comment-form mb-4">
+				<textarea id="comment-content" class="form-control" rows="3"
+				          placeholder="{{ __('default.Write a response...') }}"></textarea>
+				<button class="btn btn-secondary btn-sm mt-2" onclick="submitComment()">{{ __('default.Submit') }}</button>
+			</div>
+			<div id="comments-container"></div>
+		</div>
+	</div>
+	<div id="comment-panel-overlay" class="comment-panel-overlay" onclick="toggleCommentPanel()"></div>
+
 @endsection
 
 @push('styles')
@@ -126,6 +187,7 @@
 
       [data-bs-theme=dark] .clap {
           border: 1px solid #4a4a4a !important;
+          color: #ccc !important;
       }
 
       .clap:after {
@@ -148,6 +210,7 @@
       [data-bs-theme=dark] .clap:hover {
           border: 1px solid #ccc !important;
           background: #2c3e50 !important;
+          color: rgb(209, 205, 199) !important;
       }
 
       .clap:hover:after {
@@ -158,34 +221,12 @@
           animation: shockwave-dark 1s ease-in infinite;
       }
 
-      .clap svg {
-          width: 20px;
-          fill: none;
-          stroke: #333;
-          stroke-width: 2px;
-      }
-
-      [data-bs-theme=dark] .clap svg {
-          stroke: #ccc !important;
-      }
-
-      .clap svg.checked {
-          fill: #27ae60;
-          stroke: #fff;
-          stroke-width: 1px;
-      }
-
-      [data-bs-theme=dark] .clap svg.checked {
-          fill: #333 !important;
-          stroke: #fff;
-      }
-
       .clap .clap--count {
           position: absolute;
           top: -25px;
           left: 0px;
           font-size: 0.8rem;
-          color: white;
+          color: rgb(209, 205, 199);
           background: #27ae60;
           border-radius: 50%;
           height: 30px;
@@ -250,24 +291,24 @@
       [data-bs-theme=dark] .follow-text {
           color: #99FF99 !important;
       }
-      
+
       .share-options {
-		      					display: none;
-					position: absolute;
-					top: 40px;
-					right: 0;
-					background-color: #fff;
-					border: 1px solid #ccc;
-					border-radius: 5px;
-					box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-					padding: 10px;
-					z-index: 1000;
+          display: none;
+          position: absolute;
+          top: 40px;
+          right: 0;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+          padding: 10px;
+          z-index: 1000;
       }
-      
+
       [data-bs-theme=dark] .share-options {
-					background-color: #333 !important;
-					border: 1px solid #ccc !important;
-			}
+          background-color: #333 !important;
+          border: 1px solid #ccc !important;
+      }
 
       .share-options a {
           display: block;
@@ -283,14 +324,247 @@
       .favorite-btn {
           cursor: pointer;
       }
-      
-      
-      
+
       .share-btn {
-					cursor: pointer;
+          cursor: pointer;
+      }
+
+
+      /* Comment Panel Styles */
+      .comment-btn {
+          cursor: pointer;
+      }
+
+      .comment-panel-overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 1000;
+      }
+
+      .comment-panel {
+          display: none;
+          position: fixed;
+          background: var(--bs-body-bg);
+          z-index: 21001;
+          transition: transform 0.3s ease-in-out;
+      }
+
+      .comment-panel-header {
+          padding: 20px;
+          border-bottom: 1px solid var(--bs-border-color);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
+
+      .comment-panel-header h3 {
+          margin: 0;
+          font-size: 1.25rem;
+      }
+
+      .comment-panel-header .close-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 5px;
+      }
+
+      .comment-panel-content {
+          padding: 20px;
+          height: calc(100% - 70px);
+          overflow-y: auto;
+      }
+
+      /* Desktop styles */
+      @media (min-width: 768px) {
+          .comment-panel {
+              top: 0;
+              right: 0;
+              width: 400px;
+              height: 100%;
+              transform: translateX(100%);
+          }
+
+          .comment-panel.active {
+              transform: translateX(0);
+          }
+      }
+
+      /* Mobile styles */
+      @media (max-width: 767px) {
+          .comment-panel {
+              left: 0;
+              right: 0;
+              bottom: 0;
+              height: 80vh;
+              transform: translateY(100%);
+          }
+
+          .comment-panel.active {
+              transform: translateY(0);
+          }
+      }
+
+      [data-bs-theme=dark] .comment-panel {
+          background: #222;
+          color: rgb(209, 205, 199);
+      }
+
+      [data-bs-theme=dark] .comment-panel-header {
+          border-bottom-color: #444;
+      }
+
+      [data-bs-theme=dark] .comment-panel-header .close-btn {
+          color: rgb(209, 205, 199);
+      }
+
+      .comment {
+          border-bottom: 1px solid var(--bs-border-color);
+          padding: 0px;
+          font-size: 14px;
+
+      }
+
+      #comment-content {
+          min-height: 100px;
+          padding: 5px;
+      }
+
+      .comment:last-child {
+          border-bottom: none;
+      }
+
+      .comment-header {
+          display: flex;
+          align-items: flex-start;
+          margin-bottom: 8px;
+      }
+
+      .comment-avatar {
+          flex-shrink: 0;
+      }
+
+      .small-user-avatar {
+          width: 40px;
+		      max-width: 40px;
+          height: 40px;
+		      max-height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+      }
+
+      .comment-meta {
+          display: flex;
+          flex-direction: column;
+      }
+
+      .comment-author {
+          font-weight: 500;
+          line-height: 1.2;
+      }
+
+      .comment-date {
+          font-size: 0.85em;
+      }
+
+      .comment-body {
+          font-size: 14px;
+          margin-bottom: 8px;
+      }
+
+      .comment-body p {
+          margin-bottom: 0;
+          word-break: break-word;
+      }
+
+      .comment-actions {
+          font-size: 0.9em;
+      }
+
+      .replies {
+          margin-left: 15px;
+          border-left: 2px solid var(--bs-border-color);
+          margin-top: 10px;
+      }
+
+      .reply-form {
+          margin: 10px 0;
+      }
+
+      .reply-button-text {
+          cursor: pointer;
+          foht-weight: 400;
+          color: #333;
+          font-size: 13px;
+          text-decoration: underline;
+      }
+
+      [data-bs-theme=dark] .reply-button-text {
+          color: #99FF99 !important;
+      }
+
+      .delete-comment-button-text {
+		      margin-left:8px;
+          cursor: pointer;
+          foht-weight: 400;
+          color: #FF3333;
+          font-size: 13px;
+          text-decoration: underline;
+      }
+      
+      [data-bs-theme=dark] .delete-comment-button-text {
+					color: #FF3333 !important;
 			}
-	
-	
+
+      .comment-form textarea,
+      .reply-form textarea {
+          resize: vertical;
+          min-height: 60px;
+      }
+
+      [data-bs-theme=dark] .replies {
+          border-left-color: #444;
+      }
+
+
+      [data-bs-theme=dark] .modal-content {
+          background-color: #222;
+          color: rgb(209, 205, 199);
+      }
+
+      [data-bs-theme=dark] .modal-header {
+          border-bottom-color: #444;
+      }
+
+      [data-bs-theme=dark] .modal-footer {
+          border-top-color: #444;
+      }
+
+      [data-bs-theme=dark] .btn-close {
+          filter: invert(1) grayscale(100%) brightness(200%);
+      }
+
+      [data-bs-theme=dark] textarea.form-control {
+          background-color: #333;
+          color: rgb(209, 205, 199);
+          border-color: #444;
+      }
+
+      [data-bs-theme=dark] textarea.form-control:focus {
+          background-color: #444;
+          color: rgb(209, 205, 199);
+          border-color: #666;
+          box-shadow: 0 0 0 0.25rem rgba(66, 70, 73, 0.5);
+      }
+
+      [data-bs-theme=dark] textarea.form-control::placeholder {
+          color: #aaa;
+      }
 	</style>
 @endpush
 
@@ -299,6 +573,15 @@
 	<script src="/js/mo.min.js"></script>
 	<script>
 		let hasRecordedRead = false;
+		let currentArticleId = '{{ $article->id }}';
+		let clap;
+		let clapCount;
+		let clapTotalCount;
+		let initialNumberOfClaps = {{ $article->claps()->sum('count') }};
+		let btnDimension = 40;
+		let tlDuration = 300;
+		let numberOfClaps = 0;
+		let clapHold;
 		
 		function recordRead() {
 			if (!hasRecordedRead) {
@@ -309,7 +592,7 @@
 					headers: {
 						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 					},
-					success: function(response) {
+					success: function (response) {
 						if (response.success) {
 							hasRecordedRead = true;
 						}
@@ -332,6 +615,13 @@
 					} else {
 						btn.html('{{__('default.Follow')}}');
 					}
+				},
+				error: function (xhr) {
+					if (xhr.status === 401) {
+						showLoginModal();
+					} else if (xhr.status === 419) {
+						showCsrfErrorModal();
+					}
 				}
 			});
 		}
@@ -346,9 +636,16 @@
 				success: function (response) {
 					const btn = $(`.favorite-btn[data-article-id="${articleId}"]`);
 					if (response.favorited) {
-						btn.html('<i class="material-icons fs-4">bookmark</i>');
+						btn.html('<i class="bi bi-bookmark-fill fs-5"></i>');
 					} else {
-						btn.html('<i class="material-icons fs-4">bookmark_border</i>');
+						btn.html('<i class="bi bi-bookmark fs-5"></i>');
+					}
+				},
+				error: function (xhr) {
+					if (xhr.status === 401) {
+						showLoginModal();
+					} else if (xhr.status === 419) {
+						showCsrfErrorModal();
 					}
 				}
 			});
@@ -379,16 +676,195 @@
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				},
-				success: function(response) {
+				success: function (response) {
 					$('#clap--count-total').text(response.claps);
 				},
-				error: function(xhr) {
+				error: function (xhr) {
 					if (xhr.status === 401) {
-						window.location.href = '{{ route('register') }}';
+						showLoginModal();
+					} else if (xhr.status === 419) {
+						showCsrfErrorModal();
 					}
 				}
 			});
 		}
+		
+		// Add after existing scripts
+		function toggleCommentPanel() {
+			const panel = document.getElementById('comment-panel');
+			const overlay = document.getElementById('comment-panel-overlay');
+			
+			if (panel.style.display === 'none' || !panel.style.display) {
+				panel.style.display = 'block';
+				overlay.style.display = 'block';
+				// Use setTimeout to ensure the display change has taken effect
+				setTimeout(() => {
+					panel.classList.add('active');
+					loadComments();
+				}, 10);
+				// Prevent body scrolling
+				document.body.style.overflow = 'hidden';
+			} else {
+				panel.classList.remove('active');
+				// Wait for animation to complete before hiding
+				setTimeout(() => {
+					panel.style.display = 'none';
+					overlay.style.display = 'none';
+				}, 300);
+				// Restore body scrolling
+				document.body.style.overflow = '';
+			}
+		}
+		
+		function loadComments() {
+			$.get(`/articles/${currentArticleId}/comments`, function (response) {
+				displayComments(response);
+			});
+		}
+		
+		function displayComments(comments) {
+			const container = $('#comments-container');
+			container.empty();
+			
+			comments.forEach(comment => {
+				container.append(createCommentHTML(comment));
+			});
+		}
+		
+		function createCommentHTML(comment) {
+			// Format the date
+			const date = new Date(comment.created_at);
+			const formattedDate = date.toLocaleDateString('tr-TR', {
+				day: 'numeric',
+				month: 'short',
+				year: 'numeric'
+			});
+			
+			// Ensure replies exists and is an array
+			const replies = (comment.replies || []).map(reply => createCommentHTML(reply)).join('');
+			
+			return `
+        <div class="comment" data-comment-id="${comment.id}">
+            <div class="comment-header d-flex align-items-start">
+                <div class="comment-avatar">
+                    <img class="small-user-avatar"
+                         src="${comment.user.avatar ? '/storage/' + comment.user.avatar : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(comment.user.name) + '&color=7F9CF5&background=EBF4FF'}"
+                         alt="${comment.user.name}'s avatar">
+                </div>
+                <div class="comment-meta ms-2 flex-grow-1">
+                    <div class="comment-author">${comment.user.name}</div>
+                    <div class="comment-date text-muted">${formattedDate}</div>
+                </div>
+            </div>
+            <div class="comment-body">
+                <p>${comment.content}</p>
+            </div>
+            <div class="comment-actions">
+                <span class="reply-button-text" onclick="showReplyForm(${comment.id})">
+                    {{ __('default.Reply') }}
+			</button>
+${comment.user_id === {{ Auth::id() ?? 'null' }} ?
+				`<span <span class="delete-comment-button-text" onclick="deleteComment(${comment.id})">
+                        {{ __('default.Delete') }}
+				</button>` : ''
+			}
+            </div>
+            <div id="reply-form-${comment.id}" class="reply-form mt-2" style="display: none;">
+                <textarea class="form-control" style="min-height:100px; padding:5px;" rows="2"></textarea>
+                <button class="btn btn-sm btn-primary mt-2" onclick="submitReply(${comment.id})">
+                    {{ __('default.Submit Reply') }}
+			</button>
+	</div>
+	<div class="replies ml-4">
+${replies}
+            </div>
+        </div>
+    `;
+		}
+		
+		function submitComment(parentId = null) {
+			const content = parentId ?
+				$(`#reply-form-${parentId} textarea`).val() :
+				$('#comment-content').val();
+			
+			if (!content.trim()) {
+				alert('{{ __("default.Please enter a comment") }}');
+				return;
+			}
+			
+			$.ajax({
+				url: `/articles/${currentArticleId}/comments`,
+				method: 'POST',
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				data: {
+					content: content,
+					parent_id: parentId
+				},
+				success: function (response) {
+					// Instead of reloading all comments, just reload if it's a top-level comment
+					if (!parentId) {
+						loadComments();
+					} else {
+						// If it's a reply, just append it to the existing replies
+						const parentComment = $(`.comment[data-comment-id="${parentId}"]`);
+						const repliesContainer = parentComment.find('.replies').first();
+						repliesContainer.append(createCommentHTML(response));
+						
+						// Hide the reply form and clear it
+						$(`#reply-form-${parentId}`).hide();
+						$(`#reply-form-${parentId} textarea`).val('');
+					}
+					
+					// Clear the main comment form if it was a top-level comment
+					if (!parentId) {
+						$('#comment-content').val('');
+					}
+				},
+				error: function (xhr) {
+					if (xhr.status === 401) {
+						showLoginModal();
+					} else if (xhr.status === 419) {
+						showCsrfErrorModal();
+					} else {
+						alert('{{ __("default.Error posting comment") }}');
+					}
+				}
+			});
+		}
+		
+		function showReplyForm(commentId) {
+			$(`#reply-form-${commentId}`).toggle();
+		}
+		
+		function submitReply(commentId) {
+			submitComment(commentId);
+		}
+		
+		function deleteComment(commentId) {
+			if (confirm('{{ __('default.Are you sure you want to delete this comment?') }}')) {
+				$.ajax({
+					url: `/comments/${commentId}`,
+					method: 'DELETE',
+					headers: {
+						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+					},
+					success: function () {
+						loadComments();
+					}
+				});
+			}
+		}
+		
+		function showLoginModal() {
+			$("#loginRequiredModal").modal('show');
+		}
+		
+		function showCsrfErrorModal() {
+			$("#csrfErrorModal").modal('show');
+		}
+		
 		
 		$(window).scroll(function () {
 			const element = document.querySelector('#main-menu');
@@ -434,17 +910,22 @@
 		
 		
 		$(document).ready(function () {
-			//clap
+			//comment panel
 			
-			const clap = document.getElementById('clap')
-			const clapIcon = document.getElementById('clap--icon')
-			const clapCount = document.getElementById('clap--count')
-			const clapTotalCount = document.getElementById('clap--count-total')
-			const initialNumberOfClaps = {{ $article->claps()->sum('count') }};
-			const btnDimension = 40
-			const tlDuration = 300
-			let numberOfClaps = 0
-			let clapHold;
+			// Close panel on escape key
+			document.addEventListener('keydown', function (event) {
+				if (event.key === 'Escape') {
+					const panel = document.getElementById('comment-panel');
+					if (panel.style.display === 'block') {
+						toggleCommentPanel();
+					}
+				}
+			});
+			
+			//clap
+			clap = document.getElementById('clap');
+			clapCount = document.getElementById('clap--count');
+			clapTotalCount = document.getElementById('clap--count-total');
 			
 			const triangleBurst = new mojs.Burst({
 				parent: clap,
@@ -537,7 +1018,6 @@
 			function repeatClapping() {
 				updateNumberOfClaps()
 				animationTimeline.replay()
-				clapIcon.classList.add('checked')
 			}
 			
 			function updateNumberOfClaps() {
@@ -550,7 +1030,7 @@
 				return Math.floor(Math.random() * (max - min + 1) + min);
 			}
 			
-			$('#clap').on('click', function() {
+			$('#clap').on('click', function () {
 				clapArticle($(this).data('article-id'));
 			});
 			

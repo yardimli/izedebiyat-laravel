@@ -115,6 +115,25 @@
 			return $this->hasMany(ArticleFavorite::class);
 		}
 
+		public function getProfilePhotoUrlAttribute()
+		{
+			if ($this->avatar) {
+				// If avatar exists, return its URL
+				return asset('storage/avatars/' . $this->avatar);
+			}
+
+			// If no avatar, generate initials avatar
+			$name = $this->name;
+			$words = explode(' ', $name);
+			$initials = '';
+
+			foreach ($words as $w) {
+				$initials .= mb_substr($w, 0, 1);
+			}
+
+			// Return a URL to generate an avatar with initials
+			return 'https://ui-avatars.com/api/?name=' . urlencode($initials) . '&color=7F9CF5&background=EBF4FF';
+		}
 
 
 	}

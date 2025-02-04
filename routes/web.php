@@ -4,6 +4,7 @@
 	use App\Http\Controllers\ArticleController;
 	use App\Http\Controllers\CategoryController;
 	use App\Http\Controllers\ChatController;
+	use App\Http\Controllers\CommentController;
 	use App\Http\Controllers\FollowController;
 	use App\Http\Controllers\FrontendController;
 	use App\Http\Controllers\ImageController;
@@ -191,6 +192,8 @@
 		MyHelper::returnMarkdown();
 	})->name('maintenance.all');
 
+	Route::get('/articles/{article}/comments', [CommentController::class, 'index'])->name('comments.index');
+
 	//-------------------------------------------------------------------------
 	Route::middleware(['auth'])->group(function () {
 
@@ -268,6 +271,10 @@
 			Route::post('/generate-keywords', [ChatController::class, 'generateKeywords'])->name('articles.generate-keywords');
 
 		});
+
+		Route::post('/articles/{article}/comments', [CommentController::class, 'store'])->name('comments.store');
+		Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+
 
 		Route::get('/chat/sessions', [ChatController::class, 'getChatSessions']);
 		Route::get('/chat/{session_id?}', [ChatController::class, 'index'])->name('chat');

@@ -247,4 +247,16 @@
 		'Image deleted successfully' => 'Resim başarıyla silindi',
 		'Error deleting image' => 'Resim silinirken hata oluştu',
 
+
+		'Responses' => 'Yorumlar',
+		'Reply' => 'Yanıtla',
+		'Write a response...' => 'Yorum yaz...',
+		'Submit Reply' => 'Yanıtla',
+		'Are you sure you want to delete this comment?' => 'Bu yorumu silmek istediğinizden emin misiniz?',
+
+		'Login Required' => 'Giriş Gerekli',
+		'You need to login to use this feature.' => 'Bu özelliği kullanmak için giriş yapmanız gerekiyor.',
+
+		'Session Expired' => 'Oturum Süresi Doldu',
+		'Your session has expired. Please refresh the page and try again.' => 'Oturumunuzun süresi doldu. Lütfen sayfayı yenileyin ve tekrar deneyin.',
 	];

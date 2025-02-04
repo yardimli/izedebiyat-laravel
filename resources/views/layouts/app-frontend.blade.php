@@ -48,7 +48,7 @@
 	
 	<!-- Scripts -->
 	<script src="{{ asset('/frontend/assets/js/jquery.min.js') }}"></script>
-	<script src="{{ asset('/frontend/js/bootstrap.bundle.js') }}"></script>
+	<script src="{{ asset('/frontend/assets/js/bootstrap.bundle.js') }}"></script>
 	
 	<script src="{{ asset('/frontend/assets/js/jquery.lazy.min.js') }}"></script>
 	<script src="{{ asset('/frontend/assets/js/jquery-scrolltofixed-min.js') }}"></script>
