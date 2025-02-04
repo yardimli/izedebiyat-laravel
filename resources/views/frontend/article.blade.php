@@ -48,7 +48,7 @@
 						
 						<div class="comment-btn d-inline-block" onclick="toggleCommentPanel()" style="margin-left: 40px;">
 							<i class="bi bi-chat-text fs-5"></i>
-							<span style="margin-left: 4px;">99</span>
+							<span style="margin-left: 4px;" id="comment-count">{{ $article->comments()->count() }}</span>
 						</div>
 						
 						<div class="share-btn d-inline-block" onclick="showShareOptions()" style="float:right;">

@@ -156,4 +156,9 @@
 			return $this->hasMany(ArticleRead::class);
 		}
 
+		public function comments()
+		{
+			return $this->hasMany(Comment::class);
+		}
+
 	}
