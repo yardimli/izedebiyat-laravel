@@ -11,7 +11,11 @@
 			'article_id',
 			'parent_id',
 			'content',
-			'is_approved'
+			'sender_name',
+			'sender_email',
+			'is_approved',
+			'created_at',
+			'updated_at'
 		];
 
 		public function user()

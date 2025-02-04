@@ -192,6 +192,10 @@
 		MyHelper::returnMarkdown();
 	})->name('maintenance.all');
 
+	Route::get('/migrate-old-comments', [CommentController::class, 'migrateOldComments'])
+		->middleware(['auth'])
+		->name('migrate-old-comments');
+
 	Route::get('/articles/{article}/comments', [CommentController::class, 'index'])->name('comments.index');
 
 	//-------------------------------------------------------------------------
