@@ -213,6 +213,7 @@
 		'Most Read' => 'En Çok Okunan',
 		'Search articles...' => 'Eserlerde ara...',
 		'Filter' => 'Süz',
+		'Comments' => 'Yorum',
 
 		'Please enter some content first.' => 'Lütfen önce biraz içerik girin.',
 		'Category generated successfully.' => 'Küme başarıyla oluşturuldu.',
