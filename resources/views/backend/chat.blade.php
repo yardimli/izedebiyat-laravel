@@ -174,6 +174,8 @@
 						const tokens = message.role === 'assistant' ?
 							`(Tokens: ${message.prompt_tokens}/${message.completion_tokens})` : '';
 						
+						//replace \n with <br> for new lines
+						message.message = message.message.replace(/\n/g, '<br>');
 						$('#chatWindow').append(
 							`<div><strong>${message.role}:</strong> ${message.message}</div>`
 						);
