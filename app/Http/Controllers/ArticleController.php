@@ -19,30 +19,34 @@
 		{
 			$query = Article::where('user_id', Auth::id())
 				->where('approved', 1)
-				->where('deleted', 0);
+				->where('deleted', 0)
+				->withCount('comments');
 
 			// Apply filters
-			if ($request->has('search')) {
-				$query->where('title', 'like', '%' . $request->search . '%');
+			if ($request->has('arabul')) {
+				$query->where('title', 'like', '%' . $request->arabul . '%');
 			}
 
-			if ($request->has('status')) {
-				if ($request->status === 'published') {
+			if ($request->has('durum')) {
+				if ($request->durum === 'yayinda') {
 					$query->where('is_published', 1);
-				} elseif ($request->status === 'draft') {
+				} elseif ($request->durum === 'taslak') {
 					$query->where('is_published', 0);
 				}
 			}
 
-			if ($request->has('sort')) {
-				switch ($request->sort) {
-					case 'read_count':
+			if ($request->has('sirala')) {
+				switch ($request->sirala) {
+					case 'yorum':
+						$query->orderBy('comments_count', 'desc');
+						break;
+					case 'okuma':
 						$query->orderBy('read_count', 'desc');
 						break;
-					case 'newest':
+					case 'yeni':
 						$query->orderBy('created_at', 'desc');
 						break;
-					case 'oldest':
+					case 'eski':
 						$query->orderBy('created_at', 'asc');
 						break;
 				}

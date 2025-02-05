@@ -211,6 +211,7 @@
 		'Newest First' => 'Yeniden Eskiye',
 		'Oldest First' => 'Eskiden Yeniye',
 		'Most Read' => 'En Çok Okunan',
+		'Most Comments' => 'En Çok Yorumlanan',
 		'Search articles...' => 'Eserlerde ara...',
 		'Filter' => 'Süz',
 		'Comments' => 'Yorum',

@@ -23,31 +23,34 @@
 						<div class="card-body">
 							<form method="GET" class="row g-3">
 								<div class="col-md-4">
-									<input type="text" class="form-control" name="search"
+									<input type="text" class="form-control" name="arabul"
 									       placeholder="{{ __('default.Search articles...') }}"
-									       value="{{ request('search') }}">
+									       value="{{ request('arabul') }}">
 								</div>
 								<div class="col-md-3">
-									<select class="form-select" name="status">
+									<select class="form-select" name="durum">
 										<option value="">{{ __('default.All Status') }}</option>
-										<option value="published" {{ request('status') === 'published' ? 'selected' : '' }}>
+										<option value="yayinda" {{ request('status') === 'yayinda' ? 'selected' : '' }}>
 											{{ __('default.Published') }}
 										</option>
-										<option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>
+										<option value="taslak" {{ request('durum') === 'taslak' ? 'selected' : '' }}>
 											{{ __('default.Draft') }}
 										</option>
 									</select>
 								</div>
 								<div class="col-md-3">
-									<select class="form-select" name="sort">
-										<option value="newest" {{ request('sort') === 'newest' ? 'selected' : '' }}>
+									<select class="form-select" name="sirala">
+										<option value="yeni" {{ request('sirala') === 'yeni' ? 'selected' : '' }}>
 											{{ __('default.Newest First') }}
 										</option>
-										<option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>
+										<option value="eski" {{ request('sirala') === 'eski' ? 'selected' : '' }}>
 											{{ __('default.Oldest First') }}
 										</option>
-										<option value="read_count" {{ request('sort') === 'read_count' ? 'selected' : '' }}>
+										<option value="okuma" {{ request('sirala') === 'okuma' ? 'selected' : '' }}>
 											{{ __('default.Most Read') }}
+										</option>
+										<option value="yorum" {{ request('sirala') === 'yorum' ? 'selected' : '' }}>
+											{{ __('default.Most Comments') }}
 										</option>
 									</select>
 								</div>
@@ -93,7 +96,7 @@
                 </span>
 												</td>
 												<td>{{ number_format($article->read_count) }}</td>
-												<td>{{ $article->comments->count() }}</td>
+												<td>{{ number_format($article->comments_count) }}</td>
 												<td>{{ \App\Helpers\MyHelper::timeString($article->created_at)}}</td>
 												<td>
 													<div class="btn-group">
