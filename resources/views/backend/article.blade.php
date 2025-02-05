@@ -190,6 +190,22 @@
 				</div>
 			</div>
 		</div>
+		
+		<!-- Comments Section -->
+		<div class="card mt-4">
+			<div class="card-header">
+				<h5>{{ __('default.Article Comments') }}</h5>
+			</div>
+			<div class="card-body">
+				@if(isset($article))
+					<div id="comments-container">
+						<!-- Comments will be loaded here -->
+					</div>
+				@else
+					<p class="text-muted text-center">{{ __('default.Comments will be available after creating the article') }}</p>
+				@endif
+			</div>
+		</div>
 	</main>
 	
 	<!-- Image Selection Modal -->
@@ -464,7 +480,81 @@
 		
 		//-------------------------------------------------------------------------
 		
+		function loadComments() {
+			$.get('{{ route("comments.index", $article) }}', function(comments) {
+				const container = $('#comments-container');
+				container.empty();
+				
+				if (comments.length === 0) {
+					container.html('<p class="text-center text-muted">{{ __("default.No comments yet") }}</p>');
+					return;
+				}
+				
+				comments.forEach(function(comment) {
+					const commentHtml = createCommentHtml(comment);
+					container.append(commentHtml);
+				});
+			});
+		}
+		
+		function createCommentHtml(comment) {
+			const replies = comment.replies.map(reply => `
+            <div class="ms-4 mt-3 border-start ps-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>${reply.user ? reply.user.name : reply.sender_name}</strong>
+                        <small class="text-muted ms-2">${new Date(reply.created_at).toLocaleDateString()}</small>
+                    </div>
+                    <button class="btn btn-sm btn-danger delete-comment" data-comment-id="${reply.id}">
+                        {{ __('default.Delete') }}
+			</button>
+	</div>
+	<div class="mt-2">${reply.content}</div>
+            </div>
+        `).join('');
+			
+			return `
+            <div class="comment mb-4">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>${comment.user ? comment.user.name : comment.sender_name}</strong>
+                        <small class="text-muted ms-2">${new Date(comment.created_at).toLocaleDateString()}</small>
+                    </div>
+                    <button class="btn btn-sm btn-danger delete-comment" data-comment-id="${comment.id}">
+                        {{ __('default.Delete') }}
+			</button>
+	</div>
+	<div class="mt-2">${comment.content}</div>
+                ${replies}
+            </div>
+        `;
+		}
+		
+		//-------------------------------------------------------------------------
+		
 		$(document).ready(function () {
+			loadComments();
+			
+			$(document).on('click', '.delete-comment', function() {
+				const commentId = $(this).data('comment-id');
+				if (confirm('{{ __("default.Are you sure you want to delete this comment?") }}')) {
+					$.ajax({
+						url: `/comments/${commentId}`,
+						type: 'DELETE',
+						headers: {
+							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+						},
+						success: function() {
+							loadComments(); // Reload comments after deletion
+							showNotification('{{ __("default.Comment deleted successfully") }}', 'success');
+						},
+						error: function() {
+							showNotification('{{ __("default.Error deleting comment") }}', 'error');
+						}
+					});
+				}
+			});
+
 			// Initialize EasyMDE
 			const easyMDE = new EasyMDE({
 				element: document.getElementById('article_alan'),

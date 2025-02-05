@@ -256,6 +256,9 @@
 		'Submit Reply' => 'Yanıtla',
 		'Are you sure you want to delete this comment?' => 'Bu yorumu silmek istediğinizden emin misiniz?',
 
+		'Comment deleted successfully' => 'Yorum başarıyla silindi',
+		'Error deleting comment' => 'Yorum silinirken hata oluştu',
+
 		'Login Required' => 'Giriş Gerekli',
 		'You need to login to use this feature.' => 'Bu özelliği kullanmak için giriş yapmanız gerekiyor.',
 
