@@ -106,7 +106,7 @@
 								<div>
 									@foreach($followingUsers as $follow)
 										
-										<div class="entry-meta align-items-center divider pb-1" style="margin-top: 10px;
+										<div class="entry-meta align-items-center pb-1" style="margin-top: 10px;
     margin-bottom: 0px;">
 											<a class="user-avatar" href="{{ url('/yazar/' . $follow->following->slug) }}">
 												{!! \App\Helpers\MyHelper::generateInitialsAvatar($follow->following->avatar, $follow->following->email,'width:20px; height:20px; border-radius:50%;','') !!}
