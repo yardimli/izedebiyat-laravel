@@ -424,6 +424,7 @@
 						(stripos($llm['name'], 'anthropic') !== false) ||
 						(stripos($llm['name'], 'gemini flash') !== false) ||
 						(stripos($llm['name'], 'deepseek v3') !== false) ||
+						(stripos($llm['name'], 'command r') !== false) ||
 						(stripos($llm['name'], 'midnight rose') !== false)
 					)) {
 					//... do nothing
