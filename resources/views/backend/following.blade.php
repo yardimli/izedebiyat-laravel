@@ -31,7 +31,8 @@
 										</a>
 									</h6>
 									<p
-										class="card-text">{{__('default.Following since:')}} {{ $follow->created_at->format('M d, Y') }}</p>
+										class="card-text">{{__('default.Following since:')}}
+										{{ \App\Helpers\MyHelper::timeElapsedString($follow->created_at) }}</p>
 								</div>
 							</div>
 						@endforeach
@@ -50,7 +51,8 @@
 											</a>
 										</h6>
 										<p
-											class="card-text">{{__('default.Bookmarked on:')}} {{ $favorite->created_at->format('M d, Y') }}</p>
+											class="card-text">{{__('default.Bookmarked on:')}}
+											{{ \App\Helpers\MyHelper::timeElapsedString($favorite->created_at) }}</p>
 									</div>
 								</div>
 							@endif
