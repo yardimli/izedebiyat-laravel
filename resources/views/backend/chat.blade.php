@@ -297,7 +297,9 @@
 					dataType: 'json',
 					success: function (response) {
 						if (response.success) {
-							$('#chatWindow').append(`<div><strong>{{__('default.Assistant')}}:</strong>${response.result.content}</div>`);
+							let new_response = response.result.content.replace(/\n/g, '<br>');
+							
+							$('#chatWindow').append(`<div><strong>{{__('default.Assistant')}}:</strong>${new_response}</div>`);
 						} else {
 							$('#chatWindow').append('<div><strong>{{__('default.Error:')}}</strong> ' + JSON.stringify(response) + '</div>');
 						}
