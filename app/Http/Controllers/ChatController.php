@@ -29,9 +29,10 @@
 			return response()->json($checkLLMs);
 		}
 
-		public function createSession(Request $request) {
+		public function createSession(Request $request)
+		{
 			$chatSession = ChatSession::create([
-				'session_id' => (string) Str::uuid(), // Generate UUID for session_id
+				'session_id' => (string)Str::uuid(), // Generate UUID for session_id
 				'user_id' => Auth::id(),
 				'created_at' => now(),
 				'updated_at' => now(),
@@ -43,10 +44,10 @@
 		public function getChatSessions()
 		{
 			$sessions = ChatSession::where('user_id', Auth::id())
-				->whereHas('messages', function($query) {
+				->whereHas('messages', function ($query) {
 					$query->where('id', '>', 1);  // Or any other condition you might want
 				})
-				->with(['messages' => function($query) {
+				->with(['messages' => function ($query) {
 					$query->orderBy('created_at', 'asc');
 				}])
 				->orderBy('updated_at', 'desc')
@@ -55,7 +56,8 @@
 			return response()->json($sessions);
 		}
 
-		public function getChatMessages($sessionId) {
+		public function getChatMessages($sessionId)
+		{
 
 			$chatSession = ChatSession::where('session_id', $sessionId)
 				->where('user_id', Auth::id())
@@ -173,7 +175,7 @@
 		{
 			$mainText = $request->input('main_text');
 			ıf (strlen($mainText) > 1000) {
-				$mainText = substr($mainText, 0, 1000).'...';
+				$mainText = substr($mainText, 0, 1000) . '...';
 			}
 
 			$prompt = "Analyze this text and suggest the most appropriate category from the following options:\n\n";
@@ -205,7 +207,7 @@
 		{
 			$mainText = $request->input('main_text');
 			ıf (strlen($mainText) > 1000) {
-				$mainText = substr($mainText, 0, 1000).'...';
+				$mainText = substr($mainText, 0, 1000) . '...';
 			}
 
 			$prompt = "Create a brief, engaging description (maximum 500 characters) for this text:\n\n{$mainText}\n\nRespond with only the description. Respond in Turkish.";
@@ -230,7 +232,7 @@
 			$mainText = $request->input('main_text');
 			$mainText = $request->input('main_text');
 			ıf (strlen($mainText) > 1000) {
-				$mainText = substr($mainText, 0, 1000).'...';
+				$mainText = substr($mainText, 0, 1000) . '...';
 			}
 
 			$prompt = "Generate 5-10 relevant keywords (maximum 16 characters each) for this text. Separate keywords with commas:\n\n{$mainText}\n\nRespond with only the comma-separated keywords. Respond in Turkish.";
@@ -243,7 +245,7 @@
 				$result = MyHelper::llm_no_tool_call('anthropic/claude-3.5-sonnet:beta', '', $chat_history, false);
 
 				$keywords = array_map('trim', explode(',', $result['content']));
-				$keywords = array_map(function($keyword) {
+				$keywords = array_map(function ($keyword) {
 					return ['value' => $keyword];
 				}, $keywords);
 
