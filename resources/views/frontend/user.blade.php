@@ -106,7 +106,7 @@
 								<div class="d-flex flex-wrap">
 									@foreach($followingUsers as $follow)
 										<a href="{{ url('/yazar/' . $follow->following->slug) }}"
-										   class="btn btn-light btn-sm m-1"
+										   class="entry-meta d-block"
 										   title="{{ $follow->following->name }}">
 											{{ $follow->following->name }}
 										</a>
@@ -191,15 +191,5 @@
 
 @push('styles')
 	<style>
-      .following-users .btn-light {
-          background-color: #f8f9fa;
-          border: 1px solid #dee2e6;
-          transition: all 0.2s ease;
-      }
-
-      .following-users .btn-light:hover {
-          background-color: #e2e6ea;
-          border-color: #dae0e5;
-      }
 	</style>
 @endpush
