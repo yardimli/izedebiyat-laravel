@@ -761,6 +761,12 @@
 						flush();
 
 					} else {
+						DB::table('articles')
+							->where('id', $article->id)
+							->update([
+								'religious_reason' => 555,
+								'has_religious_moderation' => 1
+							]);
 						echo $counter . " - Error: <br>\n";
 						echo var_dump($llm_result);
 						flush();
