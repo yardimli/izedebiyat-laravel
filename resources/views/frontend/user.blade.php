@@ -99,7 +99,7 @@
 						@endphp
 						
 						@if($followingUsers->count() > 0)
-							<div class="following-users mt-4">
+							<div class="following-users mt-4 mb-4">
 								<h5 class="spanborder" style="margin-bottom: 5px;">
 									<span>{{__('default.Following')}}</span>
 								</h5>
