@@ -478,7 +478,7 @@
 
 		public static function validateJson($str)
 		{
-			Log::info('Starting JSON validation.');
+			Log::debug('Starting JSON validation.');
 
 			$error = json_last_error();
 			json_decode($str);
@@ -1407,8 +1407,8 @@ output in Turkish, output JSON as:
 				unset($data['n']);
 			}
 
-			Log::info('================== FUNCTION CALL DATA =====================');
-			Log::info($data);
+			Log::debug('================== FUNCTION CALL DATA =====================');
+			Log::debug($data);
 
 			$post_json = json_encode($data);
 			$ch = curl_init();
@@ -1438,15 +1438,15 @@ output in Turkish, output JSON as:
 			curl_close($ch);
 //			session_start();
 
-			Log::info('==================Log complete 1 =====================');
+			Log::debug('==================Log complete 1 =====================');
 			$complete = trim($complete, " \n\r\t\v\0");
-			Log::info($complete);
+			Log::debug($complete);
 
 			$validateJson = self::validateJson($complete);
 			if ($validateJson == "Valid JSON") {
-				Log::info('==================Log JSON complete=====================');
+				Log::debug('==================Log JSON complete=====================');
 				$complete_rst = json_decode($complete, true);
-				Log::info($complete_rst);
+				Log::debug($complete_rst);
 				$arguments_rst = [];
 
 				if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
@@ -1461,17 +1461,17 @@ output in Turkish, output JSON as:
 					$arguments = $content['arguments'];
 					$validateJson = self::validateJson($arguments);
 					if ($validateJson == "Valid JSON") {
-						Log::info('==================Log JSON arguments=====================');
+						Log::debug('==================Log JSON arguments=====================');
 						$arguments_rst = json_decode($arguments, true);
-						Log::info($arguments_rst);
+						Log::debug($arguments_rst);
 					}
 				}
 
 
 				return $arguments_rst;
 			} else {
-				Log::info('==================Log JSON error=====================');
-				Log::info($validateJson);
+				Log::debug('==================Log JSON error=====================');
+				Log::debug($validateJson);
 			}
 		}
 
@@ -1556,8 +1556,8 @@ output in Turkish, output JSON as:
 				}
 			}
 
-			Log::info('GPT NO TOOL USE: ' . $llm_base_url . ' (' . $llm . ')');
-			Log::info($data);
+			Log::debug('GPT NO TOOL USE: ' . $llm_base_url . ' (' . $llm . ')');
+			Log::debug($data);
 
 			$post_json = json_encode($data);
 			$ch = curl_init();
@@ -1673,8 +1673,8 @@ output in Turkish, output JSON as:
 				];
 
 				$data['messages'] = $chat_messages;
-				Log::info('======== SECOND CALL TO FINISH JSON =========');
-				Log::info($data);
+				Log::debug('======== SECOND CALL TO FINISH JSON =========');
+				Log::debug($data);
 				$post_json = json_encode($data);
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL, $llm_base_url);
@@ -1725,9 +1725,9 @@ output in Turkish, output JSON as:
 			}
 
 			if ($validate_result == "Valid JSON") {
-				Log::info('================== VALID JSON =====================');
+				Log::debug('================== VALID JSON =====================');
 				$content_rst = json_decode($content_json_string, true);
-				Log::info($content_rst);
+				Log::debug($content_rst);
 				return $content_rst;
 			} else {
 				Log::info('================== INVALID JSON =====================');

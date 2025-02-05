@@ -234,8 +234,8 @@ With the above information, compose a image. Write it as a single paragraph. The
 
 
 			$image_prompt = MyHelper::llm_no_tool_call($llm, '', $chat_history, false);
-			Log::info('Enhanced Cover Image Prompt');
-			Log::info($image_prompt);
+			Log::debug('Enhanced Cover Image Prompt');
+			Log::debug($image_prompt);
 
 			$falApiKey = env('FAL_API_KEY');
 			if (empty($falApiKey)) {
@@ -255,8 +255,8 @@ With the above information, compose a image. Write it as a single paragraph. The
 					'safety_tolerance' => '5',
 				]
 			]);
-			Log::info('FLUX image response');
-			Log::info($response->getBody());
+			Log::debug('FLUX image response');
+			Log::debug($response->getBody());
 
 			$body = $response->getBody();
 			$data = json_decode($body, true);
@@ -274,8 +274,8 @@ With the above information, compose a image. Write it as a single paragraph. The
 							'Content-Type' => 'application/json',
 						]
 					]);
-					Log::info('FLUX image status response');
-					Log::info($response->getBody());
+					Log::debug('FLUX image status response');
+					Log::debug($response->getBody());
 
 					$body = $response->getBody();
 					$data = json_decode($body, true);
@@ -294,8 +294,8 @@ With the above information, compose a image. Write it as a single paragraph. The
 							'Content-Type' => 'application/json',
 						]
 					]);
-					Log::info('FLUX image status response');
-					Log::info($response->getBody());
+					Log::debug('FLUX image status response');
+					Log::debug($response->getBody());
 					$body = $response->getBody();
 					$data = json_decode($body, true);
 				}

@@ -551,39 +551,39 @@
 
 		public function article($slug)
 		{
-			Log::info('Article page accessed: ' . $slug);
+			Log::debug('Article page accessed: ' . $slug);
 			// Get the article
 			$article = Article::where('slug', $slug)
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
 				->firstOrFail();
-			Log::info('Article found: ' . $article->id);
+			Log::debug('Article found: ' . $article->id);
 
 			$converter = new CommonMarkConverter([
 				'html_input' => 'strip',
 				'allow_unsafe_links' => false,
 			]);
 
-			Log::info('Converting article text to HTML...');
+			Log::debug('Converting article text to HTML...');
 			try {
 				$article->main_text = $converter->convertToHtml($article->main_text);
 			} catch (\Exception $e) {
 				Log::error('Error converting article text to HTML: ' . $e->getMessage());
 				$article->main_text = str_replace("\n", '<br>', $article->main_text);
 			}
-			Log::info('Article text converted to HTML');
+			Log::debug('Article text converted to HTML');
 
 			// Get the user
-			Log::info('Finding user... with id: ' . $article->user_id);
+			Log::debug('Finding user... with id: ' . $article->user_id);
 			$user = User::findOrFail($article->user_id);
-			Log::info('User found: ' . $user->id);
+			Log::debug('User found: ' . $user->id);
 
 			// Get keywords for this article
 			$keywords = $article->keywords()
 				->where('count', '>', 1)
 				->get();
-			Log::info('Keywords found: ' . $keywords->count());
+			Log::debug('Keywords found: ' . $keywords->count());
 
 			// Get related posts (you may want to customize this query)
 			$sameUserAndCategory = Article::where('category_id', $article->category_id)
