@@ -66,7 +66,10 @@
 @push('scripts')
 	<!-- Inline JavaScript code -->
 	<script>
-		let savedLlm = localStorage.getItem('chat-llm') || 'anthropic/claude-3-haiku:beta';
+		let savedLlm = localStorage.getItem('chat-llm') || 'anthropic/claude-3.5-haiku:beta';
+		if (savedLlm === 'null') {
+			savedLlm = 'anthropic/claude-3.5-haiku:beta';
+		}
 		let sessionId = null;
 		
 		function getLLMsData() {
@@ -216,7 +219,7 @@
 					
 					llmSelect.append($('<option>', {
 						value: model.id,
-						text: model.name + ' - $' + promptPricePerMillion + ' / $' + completionPricePerMillion,
+						text: model.name,
 						'data-description': model.description,
 						'data-prompt-price': model.pricing.prompt || 0,
 						'data-completion-price': model.pricing.completion || 0,
@@ -244,9 +247,9 @@
 					const promptPricePerMillion = (promptPrice * 1000000).toFixed(2);
 					const completionPricePerMillion = (completionPrice * 1000000).toFixed(2);
 					
-					$('#modelPricing').html(`
-                <strong>Fiyat (600,000 sözcük):</strong> Komut: $${promptPricePerMillion} - Yanıt: $${completionPricePerMillion}
-            `);
+					// $('#modelPricing').html(`
+          //       <strong>Fiyat (600,000 sözcük):</strong> Komut: $${promptPricePerMillion} - Yanıt: $${completionPricePerMillion}
+          //   `);
 				});
 				
 				// Trigger change to show initial description
