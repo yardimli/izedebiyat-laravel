@@ -100,13 +100,13 @@
 						
 						@if($followingUsers->count() > 0)
 							<div class="following-users mt-4">
-								<h5 class="spanborder">
+								<h5 class="spanborder" style="margin-bottom: 5px;">
 									<span>{{__('default.Following')}}</span>
 								</h5>
-								<div class="d-flex flex-wrap">
+								<div>
 									@foreach($followingUsers as $follow)
 										
-										<div class="entry-meta align-items-center divider pb-4" style="margin-top: 10px;
+										<div class="entry-meta align-items-center divider pb-1" style="margin-top: 10px;
     margin-bottom: 0px;">
 											<a class="user-avatar" href="{{ url('/yazar/' . $follow->following->slug) }}">
 												{!! \App\Helpers\MyHelper::generateInitialsAvatar($follow->following->avatar, $follow->following->email,'width:20px; height:20px; border-radius:50%;','') !!}
