@@ -87,6 +87,11 @@
 
 			$article = Article::with('keywords')->findOrFail($id);
 
+			//verify user is the owner of the article
+			if ($article->user_id !== Auth::id()) {
+				abort(403);
+			}
+
 			$categories = Category::where('parent_category_id', 0)
 				->with('subCategories')
 				->get();
@@ -174,6 +179,11 @@
 			}
 
 			$article = Article::findOrFail($id);
+
+			//verify user is the owner of the article
+			if ($article->user_id !== Auth::id()) {
+				abort(403);
+			}
 
 			$validated = $request->validate([
 				'title' => 'required|max:255',
