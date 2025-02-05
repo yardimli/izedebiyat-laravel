@@ -70,10 +70,7 @@
 						<!-- Featured Image -->
 						<div class="mb-3">
 							<div id="selectedImagePreview" class="mt-2">
-								@if(isset($article) && $article->featured_image)
-									<img src="{{ $article->featured_image }}" alt="Featured Image" class="img-fluid"
-									     style="max-width: 600px;">
-								@endif
+								{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%', 'large_landscape') !!}
 							</div>
 						</div>
 						
