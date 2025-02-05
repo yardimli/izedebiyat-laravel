@@ -93,6 +93,30 @@
 
 							echo $about_me;
 						@endphp
+						
+						@if($user->followers()->count() > 0)
+							<div class="followers-section mt-4">
+								<h5 class="spanborder">
+									<span>{{__('default.Followers')}}</span>
+								</h5>
+								<div class="followers-list">
+									<div class="d-flex flex-wrap">
+										@foreach($user->followers()->with('follower')->get() as $follow)
+											@if($follow->follower)
+												<div class="follower-item m-1">
+													<a href="{{ url('/yazar/' . $follow->follower->slug) }}"
+													   class="btn btn-sm btn-outline-secondary"
+													   title="{{ $follow->follower->name }}">
+														{{ \Illuminate\Support\Str::limit($follow->follower->name, 20) }}
+													</a>
+												</div>
+											@endif
+										@endforeach
+									</div>
+								</div>
+							</div>
+						@endif
+						
 						@include('partials.author-sidebar')
 					</div>
 				</div>
@@ -151,7 +175,7 @@
 			<div class="container-lg">
 				<div class="sidebar-widget ads">
 					<a href="https://herkesyazar.app"><img src="{{ asset('/images/herkes-yazar.png') }}" alt="herkes yazar"
-					                 style="max-width:80%;"></a>
+					                                       style="max-width:80%;"></a>
 				</div>
 				<div class="hr"></div>
 			</div>
@@ -169,5 +193,29 @@
 
 @push('styles')
 	<style>
+      .followers-section {
+          background: #f8f9fa;
+          padding: 15px;
+          border-radius: 8px;
+      }
+
+      .followers-list {
+          margin-top: 10px;
+      }
+
+      .follower-item .btn {
+          font-size: 0.875rem;
+          padding: 0.25rem 0.5rem;
+          margin: 0.2rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 150px;
+      }
+
+      .follower-item .btn:hover {
+          background-color: #007bff;
+          color: white;
+      }
 	</style>
 @endpush

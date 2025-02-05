@@ -237,6 +237,7 @@
 
 		'Following' => 'Takip Ediliyor',
 		'Follow' => 'Takip Et',
+		'Followers' => 'Takipçiler',
 
 		'Share on X' => 'X üzerinde paylaş',
 		'Share on Facebook' => 'Facebook\'ta Paylaş',
