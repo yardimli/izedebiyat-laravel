@@ -738,7 +738,7 @@
 						'',
 						[[
 							'role' => 'user',
-							'content' => "take the following Turkish text and analyze it if it is religious and also respectful towards other religions and beliefs. The text is as follows: Title: " . $article->title . " Subtitle: " . $article->subtitle . " Category: " . $article->parent_category_name . " Subcategory: " . $article->category_name . " text: " . $article_text . " output JSON as: ``` { \"religious_reason\": { \"religious\": 0..5, \"respect\": 0..5, \"reason\": \"reasoning for the moderation\" } } ```"
+							'content' => "take the following Turkish text and analyze it if it is religious and also respectful towards other religions and beliefs. The text is as follows: Title: " . $article->title . " Subtitle: " . $article->subtitle . " Category: " . $article->parent_category_name . " Subcategory: " . $article->category_name . " text: " . $article_text . " output JSON as: ``` { \"religious_reason\": { \"religious\": 0-5, \"respect\": 0-5, \"reason\": \"reasoning for the moderation\" } } ```"
 						]],
 						true
 					);
@@ -768,7 +768,8 @@
 							->update([
 								'religious_reason' => $llm_result,
 								'has_religious_moderation' => 1,
-								'religious_moderation_value' => 555
+								'religious_moderation_value' => 555,
+								'respect_moderation_value' => 1
 							]);
 						echo $counter . " - Error: <br>\n";
 						echo var_dump($llm_result);
@@ -1263,6 +1264,10 @@ output in Turkish, output JSON as:
 									intval($religiousData['religious']) : 0;
 								$respectValue = isset($religiousData['respect']) ?
 									intval($religiousData['respect']) : 0;
+							} else
+							{
+								$religiousValue = 666;
+								$respectValue = 1;
 							}
 						}
 
