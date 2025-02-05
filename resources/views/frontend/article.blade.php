@@ -41,7 +41,7 @@
 					<div class="entry-meta align-items-center divider pb-2" style="margin-top: 10px;
     margin-bottom: 10px;">
 						<button id="clap" class="clap" data-article-id="{{ $article->id }}">
-							<i class="bi bi-star fs-5"></i>
+							<i class="bi bi-stars fs-5"></i>
 							<span id="clap--count" class="clap--count"></span>
 							<span id="clap--count-total" class="clap--count-total">{{ $article->claps()->sum('count') }}</span>
 						</button>
