@@ -24,7 +24,7 @@
 		'Blog' => 'Blog',
 		'My Works' => 'Eserlerim',
 		'Help' => 'Yardım',
-		'Settings' => 'Ayarlar',
+		'Settings' => 'Profil Ayarları',
 
 		'AI Engines:' => 'Yapay Zeka Motorları:',
 		'Select an AI Engine' => 'Bir Yapay Zeka Motoru Seçin',
