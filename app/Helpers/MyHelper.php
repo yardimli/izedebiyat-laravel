@@ -716,6 +716,7 @@
 					->where('has_religious_moderation', 0)
 					->where('deleted', 0)
 					->where('approved', 1)
+					->where('id', '>', 110000)
 //					->where('bad_critical', '<', 4)
 					->orderBy('id', 'DESC')
 					->limit(10)
