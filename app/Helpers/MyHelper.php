@@ -744,6 +744,7 @@
 					);
 
 					if (is_array($llm_result)) {
+
 						$moderation = $llm_result['religious_reason'] ?? '';
 						$moderation = json_encode($moderation);
 
@@ -760,12 +761,14 @@
 						echo $moderation . "<br>\n";
 						flush();
 
+
 					} else {
 						DB::table('articles')
 							->where('id', $article->id)
 							->update([
-								'religious_reason' => 555,
-								'has_religious_moderation' => 1
+								'religious_reason' => $llm_result,
+								'has_religious_moderation' => 1,
+								'religious_moderation_value' => 555
 							]);
 						echo $counter . " - Error: <br>\n";
 						echo var_dump($llm_result);
