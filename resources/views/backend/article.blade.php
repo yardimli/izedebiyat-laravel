@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('title', isset($article) ? __('default.Edit Article') : __('default.Create Article'))
 @section('content')
+	{{ \App\Helpers\MyHelper::initializeCategoryImages() }}
+	
 	<!-- Main content START -->
 	<main>
 		<div class="container mb-5" style="min-height: calc(88vh);">
