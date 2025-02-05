@@ -105,11 +105,14 @@
 								</h5>
 								<div class="d-flex flex-wrap">
 									@foreach($followingUsers as $follow)
-										<a href="{{ url('/yazar/' . $follow->following->slug) }}"
-										   class="entry-meta d-block"
-										   title="{{ $follow->following->name }}">
-											{{ $follow->following->name }}
-										</a>
+										
+										<div class="entry-meta align-items-center divider pb-4" style="margin-top: 10px;
+    margin-bottom: 0px;">
+											<a class="user-avatar" href="{{ url('/yazar/' . $follow->following->slug) }}">
+												{!! \App\Helpers\MyHelper::generateInitialsAvatar($follow->following->avatar, $follow->following->email,'width:20px; height:20px; border-radius:50%;','') !!}
+											</a>
+											<a href="{{ url('/yazar/' . $follow->following->slug) }}">{{ $follow->following->name }}</a>
+										</div>
 									@endforeach
 								</div>
 							</div>
