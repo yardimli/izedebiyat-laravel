@@ -70,10 +70,10 @@
 									<table class="table table-hover">
 										<thead>
 										<tr>
-											<th>{{ __('default.Title') }}</th>
-											<th>{{ __('default.Category') }}</th>
+											<th style="width: 30%">{{ __('default.Title') }}</th>
 											<th>{{ __('default.Status') }}</th>
 											<th>{{ __('default.Read Count') }}</th>
+											<th>{{ __('default.Comments') }}</th>
 											<th>{{ __('default.Created At') }}</th>
 											<th>{{ __('default.Actions') }}</th>
 										</tr>
@@ -81,28 +81,29 @@
 										<tbody>
 										@foreach($articles as $article)
 											<tr>
-												<td>{!! $article->title !!}</td>
-												<td>{{ $article->parent_category_name . " - " . $article->category_name }}</td>
 												<td>
-                        <span
-	                        class="badge bg-{{ $article->is_published ? 'success' : 'warning' }}">
-                            {{ $article->is_published ? __('default.Published') : __('default.Draft') }}
-                        </span>
+													<div>{!! $article->title !!}</div>
+													<small class="text-muted">
+														{{ $article->parent_category_name . " - " . $article->category_name }}
+													</small>
+												</td>
+												<td>
+                <span class="badge bg-{{ $article->is_published ? 'success' : 'warning' }}">
+                    {{ $article->is_published ? __('default.Published') : __('default.Draft') }}
+                </span>
 												</td>
 												<td>{{ number_format($article->read_count) }}</td>
+												<td>{{ $article->comments->count() }}</td>
 												<td>{{ \App\Helpers\MyHelper::timeString($article->created_at)}}</td>
 												<td>
 													<div class="btn-group">
 														<a href="{{ route('article', $article->slug) }}" class="btn btn-sm btn-info">
 															{{ __('default.Read') }}
 														</a>
-														<a href="{{ route('articles.edit', \App\Helpers\IdHasher::encode($article->id)) }}"
-														   class="btn btn-sm btn-primary">
+														<a href="{{ route('articles.edit', \App\Helpers\IdHasher::encode($article->id)) }}" class="btn btn-sm btn-primary">
 															{{ __('default.Edit') }}
 														</a>
-														<form action="{{ route('articles.destroy', \App\Helpers\IdHasher::encode($article->id)) }}"
-														      method="POST" class="d-inline"
-														      onsubmit="return confirm('{{ __('default.Are you sure you want to delete this article?') }}')">
+														<form action="{{ route('articles.destroy', \App\Helpers\IdHasher::encode($article->id)) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('default.Are you sure you want to delete this article?') }}')">
 															@csrf
 															@method('DELETE')
 															<button type="submit" class="btn btn-sm btn-danger">

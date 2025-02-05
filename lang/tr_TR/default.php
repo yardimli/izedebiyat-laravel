@@ -206,7 +206,7 @@
 		'Yes, I\'d like to delete my account' => 'Evet, hesabımı silmek istiyorum',
 		'Start Writing' => 'Yazmaya Başla',
 		'My Page' => 'Yazar Sayfam',
-		'Read Count' => 'Okuma Sayısı',
+		'Read Count' => 'Okuma',
 		'All Status' => 'Tüm Durumlar',
 		'Newest First' => 'Yeniden Eskiye',
 		'Oldest First' => 'Eskiden Yeniye',
