@@ -93,7 +93,7 @@
 		
 		function loadChatSessions() {
 			$.ajax({
-				url: '/chat/sessions',
+				url: '/sohbet/oturumlar',
 				type: 'GET',
 				success: function (response) {
 					const sessionsDiv = $('#chatSessions');
@@ -104,7 +104,7 @@
 						sessionsDiv.append(`
                     <div class="list-group-item">
                         <div class="d-flex justify-content-between align-items-center">
-                            <a href="/chat/${session.session_id}" class="chat-session text-decoration-none flex-grow-1" data-session-id="${session.session_id}">
+                            <a href="/sohbet/${session.session_id}" class="chat-session text-decoration-none flex-grow-1" data-session-id="${session.session_id}">
                                 <div class="d-flex justify-content-between">
                                     <h6 class="mb-1">${firstMessage.substring(0, 30)}...</h6>
                                     <small>${date}</small>
@@ -135,7 +135,7 @@
 		
 		function deleteSession(sessionId) {
 			$.ajax({
-				url: `/chat/${sessionId}`,
+				url: `/sohbet/${sessionId}`,
 				type: 'DELETE',
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -145,9 +145,9 @@
 						// Reload the chat sessions
 						loadChatSessions();
 						
-						// If we're currently viewing the deleted session, redirect to /chat
+						// If we're currently viewing the deleted session, redirect to /sohbet
 						if (sessionId === '{{ $current_session_id }}') {
-							window.location.href = '/chat';
+							window.location.href = '/sohbet';
 						}
 					} else {
 						alert('{{__('default.Error deleting session: ')}}' + response.message);
@@ -164,7 +164,7 @@
 			sessionId = sessionId;
 			
 			$.ajax({
-				url: `/chat/messages/${sessionId}`,
+				url: `/sohbet/mesajlar/${sessionId}`,
 				type: 'GET',
 				success: function (response) {
 					response.forEach(message => {

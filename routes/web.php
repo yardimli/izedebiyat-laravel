@@ -261,7 +261,7 @@
 			Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
 			Route::get('/create', [ArticleController::class, 'create'])->name('articles.create');
 			Route::post('/', [ArticleController::class, 'store'])->name('articles.store');
-			Route::get('/{hashedId}/edit', [ArticleController::class, 'edit'])->name('articles.edit');
+			Route::get('/{hashedId}/duzenle', [ArticleController::class, 'edit'])->name('articles.edit');
 			Route::put('/{hashedId}', [ArticleController::class, 'update'])->name('articles.update');
 			Route::delete('/{hashedId}', [ArticleController::class, 'destroy'])->name('articles.destroy');
 			Route::get('/get-images', [ArticleController::class, 'getImages'])->name('articles.get-images');
@@ -280,12 +280,12 @@
 		Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
 
-		Route::get('/chat/sessions', [ChatController::class, 'getChatSessions']);
-		Route::get('/chat/{session_id?}', [ChatController::class, 'index'])->name('chat');
-		Route::post('/create-session', [ChatController::class, 'createSession'])->name('chat.create-session');
-		Route::get('/chat/messages/{sessionId}', [ChatController::class, 'getChatMessages']);
+		Route::get('/sohbet/oturumlar', [ChatController::class, 'getChatSessions']);
+		Route::get('/sohbet/{session_id?}', [ChatController::class, 'index'])->name('chat');
+		Route::post('/sohbet-oturum-ac', [ChatController::class, 'createSession'])->name('chat.create-session');
+		Route::get('/sohbet/mesajlar/{sessionId}', [ChatController::class, 'getChatMessages']);
 		Route::post('/send-llm-prompt', [ChatController::class, 'sendLlmPrompt'])->name('send-llm-prompt');
-		Route::delete('/chat/{sessionId}', [ChatController::class, 'destroy'])->name('chat.destroy');
+		Route::delete('/sohbet/{sessionId}', [ChatController::class, 'destroy'])->name('chat.destroy');
 
 
 
