@@ -187,23 +187,24 @@
 							{{ isset($article) ? __('default.Update Article') : __('default.Create Article') }}
 						</button>
 					</form>
+						
+						<!-- Comments Section -->
+						<div class="card mt-4">
+							<div class="card-header">
+								<h5>{{ __('default.Article Comments') }}</h5>
+							</div>
+							<div class="card-body">
+								@if(isset($article))
+									<div id="comments-container">
+										<!-- Comments will be loaded here -->
+									</div>
+								@else
+									<p class="text-muted text-center">{{ __('default.Comments will be available after creating the article') }}</p>
+								@endif
+							</div>
+						</div>
+					
 				</div>
-			</div>
-		</div>
-		
-		<!-- Comments Section -->
-		<div class="card mt-4">
-			<div class="card-header">
-				<h5>{{ __('default.Article Comments') }}</h5>
-			</div>
-			<div class="card-body">
-				@if(isset($article))
-					<div id="comments-container">
-						<!-- Comments will be loaded here -->
-					</div>
-				@else
-					<p class="text-muted text-center">{{ __('default.Comments will be available after creating the article') }}</p>
-				@endif
 			</div>
 		</div>
 	</main>

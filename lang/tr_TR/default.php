@@ -264,4 +264,6 @@
 
 		'Session Expired' => 'Oturum Süresi Doldu',
 		'Your session has expired. Please refresh the page and try again.' => 'Oturumunuzun süresi doldu. Lütfen sayfayı yenileyin ve tekrar deneyin.',
+
+		'Article Comments' => 'Eser Yorumları',
 	];
