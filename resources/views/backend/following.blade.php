@@ -25,11 +25,13 @@
 							<div class="card mb-3">
 								<div class="card-body">
 									<h6 class="card-title">
-										<a href="{{ $follow->following && $follow->following->slug ? route('user', $follow->following->slug) : '#' }}">
+										<a
+											href="{{ $follow->following && $follow->following->slug ? route('user', $follow->following->slug) : '#' }}">
 											{{ $follow->following ? $follow->following->name : __('default.Deleted User') }}
 										</a>
 									</h6>
-									<p class="card-text">{{__('default.Following since:')}} {{ $follow->created_at->format('M d, Y') }}</p>
+									<p
+										class="card-text">{{__('default.Following since:')}} {{ $follow->created_at->format('M d, Y') }}</p>
 								</div>
 							</div>
 						@endforeach
@@ -39,16 +41,19 @@
 					<div class="col-md-6">
 						<h6>{{__('default.Bookmarked Articles')}}</h6>
 						@foreach($favorites as $favorite)
-							<div class="card mb-3">
-								<div class="card-body">
-									<h6 class="card-title">
-										<a href="{{ $favorite->article && $favorite->article->slug ? route('article', $favorite->article->slug) : '#' }}">
-											{{ $favorite->article->title ? $favorite->article->title : __('default.Deleted Article') }}
-										</a>
-									</h6>
-									<p class="card-text">{{__('default.Bookmarked on:')}} {{ $favorite->created_at->format('M d, Y') }}</p>
+							@if ($favorite->article)
+								<div class="card mb-3">
+									<div class="card-body">
+										<h6 class="card-title">
+											<a href="{{ route('article', $favorite->article->slug) }}">
+												{{ $favorite->article->title }}
+											</a>
+										</h6>
+										<p
+											class="card-text">{{__('default.Bookmarked on:')}} {{ $favorite->created_at->format('M d, Y') }}</p>
+									</div>
 								</div>
-							</div>
+							@endif
 						@endforeach
 						{{ $favorites->links() }}
 					</div>
