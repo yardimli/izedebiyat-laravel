@@ -174,7 +174,7 @@
 		public function generateCategory(Request $request)
 		{
 			$mainText = $request->input('main_text');
-			ıf (strlen($mainText) > 1000) {
+			if (strlen($mainText) > 1000) {
 				$mainText = substr($mainText, 0, 1000) . '...';
 			}
 
