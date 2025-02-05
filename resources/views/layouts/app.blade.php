@@ -188,6 +188,12 @@ Header START -->
 						<li class="nav-item">
 							<a class="nav-link" href="{{route('articles.create')}}">{{__('default.Start Writing')}}</a>
 						</li>
+						
+						<li class="nav-item">
+						<a class="nav-link"
+						   href="{{route('chat')}}">{{__('default.Chat')}}</a>
+						</li>
+					
 					@endif
 					@if (Auth::check())
 						@if (Auth::user()->member_type === 1)
@@ -233,8 +239,8 @@ Header START -->
 										<p class="small m-0">{{ Auth::user()->username }}</p>
 									</div>
 								</div>
-								<a class="dropdown-item btn btn-primary-soft btn-sm my-2 text-center"
-								   href="{{route('chat')}}">{{__('default.Chat')}}</a>
+{{--								<a class="dropdown-item btn btn-primary-soft btn-sm my-2 text-center"--}}
+{{--								   href="{{route('chat')}}">{{__('default.Chat')}}</a>--}}
 							</li>
 							<a class="dropdown-item" href="{{route('backend.account')}}"><i
 									class="bi bi-person  me-2"></i>{{__('default.Settings')}}</a>
