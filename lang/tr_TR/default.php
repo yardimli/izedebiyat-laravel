@@ -268,4 +268,5 @@
 		'Article Comments' => 'Eser Yorumları',
 
 		'Deleted User' => 'Silinmiş Kullanıcı',
+		'Deleted Article' => 'Silinmiş Eser',
 	];

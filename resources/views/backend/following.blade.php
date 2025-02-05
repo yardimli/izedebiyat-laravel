@@ -42,8 +42,8 @@
 							<div class="card mb-3">
 								<div class="card-body">
 									<h6 class="card-title">
-										<a href="{{ route('article', $favorite->article->slug) }}">
-											{{ $favorite->article->title }}
+										<a href="{{ $favorite->article && $favorite->article->slug ? route('article', $favorite->article->slug) : '#' }}">
+											{{ $favorite->article->title ? $favorite->article->title : __('default.Deleted Article') }}
 										</a>
 									</h6>
 									<p class="card-text">{{__('default.Bookmarked on:')}} {{ $favorite->created_at->format('M d, Y') }}</p>
