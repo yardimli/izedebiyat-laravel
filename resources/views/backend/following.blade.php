@@ -25,8 +25,8 @@
 							<div class="card mb-3">
 								<div class="card-body">
 									<h6 class="card-title">
-										<a href="{{ route('user', $follow->following->slug) }}">
-											{{ $follow->following->name }}
+										<a href="{{ $follow->following && $follow->following->slug ? route('user', $follow->following->slug) : '#' }}">
+											{{ $follow->following ? $follow->following->name : __('default.Deleted User') }}
 										</a>
 									</h6>
 									<p class="card-text">{{__('default.Following since:')}} {{ $follow->created_at->format('M d, Y') }}</p>
