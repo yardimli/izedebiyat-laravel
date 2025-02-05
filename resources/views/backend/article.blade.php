@@ -281,6 +281,18 @@
 		      text-decoration: underline;
 			}
 
+      .ai-article-image {
+          position: absolute;
+          bottom: 5px;
+          right: 15px;
+          transform: translateX(50%);
+          background-color: rgba(0, 0, 0, 0.8);
+          color: #aaa;
+          padding: 2px 6px;
+          border-radius: 50%;
+          font-size: 0.7em;
+      }
+
       #notification-container {
           position: fixed;
           top: 20px;
