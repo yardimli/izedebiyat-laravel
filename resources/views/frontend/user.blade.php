@@ -94,25 +94,23 @@
 							echo $about_me;
 						@endphp
 						
-						@if($user->followers()->count() > 0)
-							<div class="followers-section mt-4">
+						@php
+							$followingUsers = $user->following()->with('following')->get();
+						@endphp
+						
+						@if($followingUsers->count() > 0)
+							<div class="following-users mt-4">
 								<h5 class="spanborder">
-									<span>{{__('default.Followers')}}</span>
+									<span>{{__('default.Following')}}</span>
 								</h5>
-								<div class="followers-list">
-									<div class="d-flex flex-wrap">
-										@foreach($user->followers()->with('follower')->get() as $follow)
-											@if($follow->follower)
-												<div class="follower-item m-1">
-													<a href="{{ url('/yazar/' . $follow->follower->slug) }}"
-													   class="btn btn-sm btn-outline-secondary"
-													   title="{{ $follow->follower->name }}">
-														{{ \Illuminate\Support\Str::limit($follow->follower->name, 20) }}
-													</a>
-												</div>
-											@endif
-										@endforeach
-									</div>
+								<div class="d-flex flex-wrap">
+									@foreach($followingUsers as $follow)
+										<a href="{{ url('/yazar/' . $follow->following->slug) }}"
+										   class="btn btn-light btn-sm m-1"
+										   title="{{ $follow->following->name }}">
+											{{ $follow->following->name }}
+										</a>
+									@endforeach
 								</div>
 							</div>
 						@endif
@@ -193,29 +191,15 @@
 
 @push('styles')
 	<style>
-      .followers-section {
-          background: #f8f9fa;
-          padding: 15px;
-          border-radius: 8px;
+      .following-users .btn-light {
+          background-color: #f8f9fa;
+          border: 1px solid #dee2e6;
+          transition: all 0.2s ease;
       }
 
-      .followers-list {
-          margin-top: 10px;
-      }
-
-      .follower-item .btn {
-          font-size: 0.875rem;
-          padding: 0.25rem 0.5rem;
-          margin: 0.2rem;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 150px;
-      }
-
-      .follower-item .btn:hover {
-          background-color: #007bff;
-          color: white;
+      .following-users .btn-light:hover {
+          background-color: #e2e6ea;
+          border-color: #dae0e5;
       }
 	</style>
 @endpush

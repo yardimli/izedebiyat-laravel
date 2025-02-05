@@ -395,7 +395,9 @@
 
 		public function user($slug, $page = 1)
 		{
-			$user = User::where('slug', $slug)->firstOrFail();
+			$user = User::where('slug', $slug)
+				->with('following.following')
+				->firstOrFail();
 
 			$converter = new CommonMarkConverter([
 				'html_input' => 'strip',

@@ -235,9 +235,8 @@
 		'Bookmarked Articles' => 'Beğendiğim Eserler',
 		'Bookmarked on:' => 'Beğenme tarihi:',
 
-		'Following' => 'Takip Ediliyor',
+		'Following' => 'Takip Ediyor',
 		'Follow' => 'Takip Et',
-		'Followers' => 'Takipçiler',
 
 		'Share on X' => 'X üzerinde paylaş',
 		'Share on Facebook' => 'Facebook\'ta Paylaş',
