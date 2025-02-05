@@ -269,4 +269,9 @@
 
 		'Deleted User' => 'Silinmiş Kullanıcı',
 		'Deleted Article' => 'Silinmiş Eser',
+
+		'Unfollow' => 'Takibi Bırak',
+		'Remove' => 'Kaldır',
+		'An error occurred while unfollowing' => 'Takip bırakılırken bir hata oluştu',
+		'An error occurred while removing favorite' => 'Beğeni kaldırılırken bir hata oluştu',
 	];
