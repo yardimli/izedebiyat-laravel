@@ -1129,7 +1129,7 @@ output in Turkish, output JSON as:
 							->update([
 								'bad_critical' => 999,
 								'critical_reason' => $llm_result['content'],
-								'keywords_string' => 'ERROR '.$llm_result['content']
+								'keywords_string' => 'ERROR ' . $llm_result['content']
 							]);
 						echo $counter . " - Error: <br>\n";
 						var_dump($llm_result);
@@ -1155,386 +1155,268 @@ output in Turkish, output JSON as:
 				}
 			}
 		}
-	}
 
-	public
-	static function updateArticleTable()
-	{
-		set_time_limit(0);
-		do {
-			// First, find articles with duplicate slugs
-			$records = DB::table('articles')
-				->select('articles.*')
-				->joinSub(
-					DB::table('articles')
-						->select('slug')
-						->groupBy('slug')
-						->havingRaw('COUNT(*) > 1'),
-					'dupes',
-					'articles.slug',
-					'=',
-					'dupes.slug'
-				)
-				->where('has_changed', '=', 1)
-				->distinct()
-				->limit(100)
-				->get();
 
-			$recordsInBatch = $records->count();
+		public static function updateArticleTable()
+		{
+			set_time_limit(0);
+			do {
+				// First, find articles with duplicate slugs
+				$records = DB::table('articles')
+					->select('articles.*')
+					->joinSub(
+						DB::table('articles')
+							->select('slug')
+							->groupBy('slug')
+							->havingRaw('COUNT(*) > 1'),
+						'dupes',
+						'articles.slug',
+						'=',
+						'dupes.slug'
+					)
+					->where('has_changed', '=', 1)
+					->distinct()
+					->limit(100)
+					->get();
 
-			if ($recordsInBatch > 0) {
-				foreach ($records as $record) {
-					// Generate new slug based on the title
-					$baseArticleSlug = Str::slug($record->title);
-					$articleSlugCounter = 0;
-					$tempArticleSlug = $baseArticleSlug;
+				$recordsInBatch = $records->count();
 
-					// Find a unique slug
-					while (DB::table('articles')
-						->where('slug', $tempArticleSlug)
-						->where('id', '!=', $record->id)
-						->exists()) {
-						$articleSlugCounter++;
-						$tempArticleSlug = $baseArticleSlug . '_' . $articleSlugCounter;
-					}
+				if ($recordsInBatch > 0) {
+					foreach ($records as $record) {
+						// Generate new slug based on the title
+						$baseArticleSlug = Str::slug($record->title);
+						$articleSlugCounter = 0;
+						$tempArticleSlug = $baseArticleSlug;
 
-					// Update the record with the new unique slug
-					DB::table('articles')
-						->where('id', $record->id)
-						->update([
-							'slug' => $tempArticleSlug,
-							'has_changed' => 0,
-							'updated_at' => Carbon::now()
-						]);
-				}
-			}
-		} while ($recordsInBatch > 0);
-
-		do {
-			$records = DB::table('articles as y')
-				->leftJoin('categories as k', 'k.id', '=', 'y.category_id')
-				->leftJoin('categories as uk', 'uk.id', '=', 'y.parent_category_id')
-				->leftJoin('users as usr', 'usr.id', '=', 'y.user_id')
-				->select([
-					'y.id',
-					'y.slug as article_slug',
-					'y.title as article_title',
-					'y.keywords_string as keywords_string',
-					'k.slug as category_slug',
-					'uk.slug as parent_category_slug',
-					'k.category_name',
-					'uk.category_name as parent_category_name',
-					'usr.slug as name_slug',
-					'usr.name',
-					'y.moderation',
-					'y.religious_reason'
-				])
-				->where('y.has_changed', '=', '1')
-				->limit(100)
-				->get();
-
-			$recordsInBatch = $records->count();
-
-			if ($recordsInBatch > 0) {
-				$counter = 0;
-
-				foreach ($records as $record) {
-					// Parse moderation JSON
-					$moderationFlagged = 0;
-					if (!empty($record->moderation)) {
-						$moderationData = json_decode($record->moderation, true);
-						if (is_array($moderationData) && !empty($moderationData)) {
-							$moderationFlagged = !empty($moderationData[0]['flagged']) ? 1 : 0;
+						// Find a unique slug
+						while (DB::table('articles')
+							->where('slug', $tempArticleSlug)
+							->where('id', '!=', $record->id)
+							->exists()) {
+							$articleSlugCounter++;
+							$tempArticleSlug = $baseArticleSlug . '_' . $articleSlugCounter;
 						}
-					}
 
-					// Parse religious_reason JSON
-					$religiousValue = 0;
-					$respectValue = 0;
-					if (!empty($record->religious_reason)) {
-						$religiousData = json_decode($record->religious_reason, true);
-						if (is_array($religiousData)) {
-							$religiousValue = isset($religiousData['religious']) ?
-								intval($religiousData['religious']) : 0;
-							$respectValue = isset($religiousData['respect']) ?
-								intval($religiousData['respect']) : 0;
-						} else {
-							$religiousValue = 666;
-							$respectValue = 1;
-						}
-					}
-
-					if ($record->article_slug === 'n-a') {
-						$record->article_slug = Str::slug($record->article_title);
-					}
-
-					try {
+						// Update the record with the new unique slug
 						DB::table('articles')
 							->where('id', $record->id)
 							->update([
-								'category_slug' => $record->category_slug,
-								'category_name' => $record->category_name,
-								'parent_category_slug' => $record->parent_category_slug,
-								'parent_category_name' => $record->parent_category_name,
-								'name_slug' => $record->name_slug,
-								'name' => $record->name,
-								'slug' => $record->article_slug,
-								'moderation_flagged' => $moderationFlagged,
-								'religious_moderation_value' => $religiousValue,
-								'respect_moderation_value' => $respectValue,
+								'slug' => $tempArticleSlug,
 								'has_changed' => 0,
 								'updated_at' => Carbon::now()
 							]);
-
-
-						$keywordString = $record->keywords_string;
-						$keywordArray = array_map('trim', preg_split('/[,\s]+/', $keywordString));
-						$keywordArray = array_filter($keywordArray); // Remove empty values
-
-						$keywordIds = [];
-						foreach ($keywordArray as $keywordText) {
-							$keywordText = substr($keywordText, 0, 16); // Limit to 16 characters
-							if (empty($keywordText)) continue;
-
-							// Find or create keyword
-							$keyword = Keyword::firstOrCreate(
-								['keyword' => $keywordText],
-								['keyword_slug' => Str::slug($keywordText)]
-							);
-
-							$keywordIds[] = $keyword->id;
-						}
-
-						// Sync keywords with article
-						$article = Article::findOrFail($record->id);
-						$article->keywords()->sync($keywordIds);
-
-						$counter++;
-						if ($counter % 100 == 0) {
-							echo "Processed $counter records...";
-							flush();
-						}
-					} catch (\Exception $e) {
-						echo "Error updating record ID {$record->id}: " . $e->getMessage() . '<br>';
-						flush();
 					}
 				}
+			} while ($recordsInBatch > 0);
 
-				echo "Update completed. Total records updated: $counter<br>";
+			do {
+				$records = DB::table('articles as y')
+					->leftJoin('categories as k', 'k.id', '=', 'y.category_id')
+					->leftJoin('categories as uk', 'uk.id', '=', 'y.parent_category_id')
+					->leftJoin('users as usr', 'usr.id', '=', 'y.user_id')
+					->select([
+						'y.id',
+						'y.slug as article_slug',
+						'y.title as article_title',
+						'y.keywords_string as keywords_string',
+						'k.slug as category_slug',
+						'uk.slug as parent_category_slug',
+						'k.category_name',
+						'uk.category_name as parent_category_name',
+						'usr.slug as name_slug',
+						'usr.name',
+						'y.moderation',
+						'y.religious_reason'
+					])
+					->where('y.has_changed', '=', '1')
+					->limit(100)
+					->get();
+
+				$recordsInBatch = $records->count();
+
+				if ($recordsInBatch > 0) {
+					$counter = 0;
+
+					foreach ($records as $record) {
+						// Parse moderation JSON
+						$moderationFlagged = 0;
+						if (!empty($record->moderation)) {
+							$moderationData = json_decode($record->moderation, true);
+							if (is_array($moderationData) && !empty($moderationData)) {
+								$moderationFlagged = !empty($moderationData[0]['flagged']) ? 1 : 0;
+							}
+						}
+
+						// Parse religious_reason JSON
+						$religiousValue = 0;
+						$respectValue = 0;
+						if (!empty($record->religious_reason)) {
+							$religiousData = json_decode($record->religious_reason, true);
+							if (is_array($religiousData)) {
+								$religiousValue = isset($religiousData['religious']) ?
+									intval($religiousData['religious']) : 0;
+								$respectValue = isset($religiousData['respect']) ?
+									intval($religiousData['respect']) : 0;
+							} else {
+								$religiousValue = 666;
+								$respectValue = 1;
+							}
+						}
+
+						if ($record->article_slug === 'n-a') {
+							$record->article_slug = Str::slug($record->article_title);
+						}
+
+						try {
+							DB::table('articles')
+								->where('id', $record->id)
+								->update([
+									'category_slug' => $record->category_slug,
+									'category_name' => $record->category_name,
+									'parent_category_slug' => $record->parent_category_slug,
+									'parent_category_name' => $record->parent_category_name,
+									'name_slug' => $record->name_slug,
+									'name' => $record->name,
+									'slug' => $record->article_slug,
+									'moderation_flagged' => $moderationFlagged,
+									'religious_moderation_value' => $religiousValue,
+									'respect_moderation_value' => $respectValue,
+									'has_changed' => 0,
+									'updated_at' => Carbon::now()
+								]);
+
+
+							$keywordString = $record->keywords_string;
+							$keywordArray = array_map('trim', preg_split('/[,\s]+/', $keywordString));
+							$keywordArray = array_filter($keywordArray); // Remove empty values
+
+							$keywordIds = [];
+							foreach ($keywordArray as $keywordText) {
+								$keywordText = substr($keywordText, 0, 16); // Limit to 16 characters
+								if (empty($keywordText)) continue;
+
+								// Find or create keyword
+								$keyword = Keyword::firstOrCreate(
+									['keyword' => $keywordText],
+									['keyword_slug' => Str::slug($keywordText)]
+								);
+
+								$keywordIds[] = $keyword->id;
+							}
+
+							// Sync keywords with article
+							$article = Article::findOrFail($record->id);
+							$article->keywords()->sync($keywordIds);
+
+							$counter++;
+							if ($counter % 100 == 0) {
+								echo "Processed $counter records...";
+								flush();
+							}
+						} catch (\Exception $e) {
+							echo "Error updating record ID {$record->id}: " . $e->getMessage() . '<br>';
+							flush();
+						}
+					}
+
+					echo "Update completed. Total records updated: $counter<br>";
+					flush();
+				} else {
+					echo "No records found to update<br>";
+					flush();
+				}
+
+				echo "Processed batch<br>";
 				flush();
+
+			} while ($recordsInBatch > 0);
+		}
+
+		//------------------------------------------------------------
+		public static function llm_no_tool_call($llm, $system_prompt, $chat_messages, $return_json = true)
+		{
+			set_time_limit(300);
+			session_write_close();
+
+			if ($llm === 'anthropic-haiku') {
+				$llm_base_url = env('ANTHROPIC_HAIKU_BASE');
+				$llm_api_key = env('ANTHROPIC_KEY');
+				$llm_model = env('ANTHROPIC_HAIKU_MODEL');
+
+			} else if ($llm === 'anthropic-sonet') {
+				$llm_base_url = env('ANTHROPIC_SONET_BASE');
+				$llm_api_key = env('ANTHROPIC_KEY');
+				$llm_model = env('ANTHROPIC_SONET_MODEL');
+
+			} else if ($llm === 'open-ai-gpt-4o') {
+				$llm_base_url = env('OPEN_AI_GPT4_BASE');
+				$llm_api_key = env('OPEN_AI_API_KEY');
+				$llm_model = env('OPEN_AI_GPT4_MODEL');
+
+			} else if ($llm === 'open-ai-gpt-4o-mini') {
+				$llm_base_url = env('OPEN_AI_GPT4_MINI_BASE');
+				$llm_api_key = env('OPEN_AI_API_KEY');
+				$llm_model = env('OPEN_AI_GPT4_MINI_MODEL');
 			} else {
-				echo "No records found to update<br>";
-				flush();
+				$llm_base_url = env('OPEN_ROUTER_BASE');
+				$llm_api_key = env('OPEN_ROUTER_KEY');
+				$llm_model = $llm;
 			}
 
-			echo "Processed batch<br>";
-			flush();
 
-		} while ($recordsInBatch > 0);
-	}
+			if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
+			} else {
+				$chat_messages = [[
+					'role' => 'system',
+					'content' => $system_prompt],
+					...$chat_messages
+				];
+			}
 
-	//------------------------------------------------------------
-	public
-	static function llm_no_tool_call($llm, $system_prompt, $chat_messages, $return_json = true)
-	{
-		set_time_limit(300);
-		session_write_close();
+			$temperature = 0.8;
+			$max_tokens = 8096;
 
-		if ($llm === 'anthropic-haiku') {
-			$llm_base_url = env('ANTHROPIC_HAIKU_BASE');
-			$llm_api_key = env('ANTHROPIC_KEY');
-			$llm_model = env('ANTHROPIC_HAIKU_MODEL');
+			$data = array(
+				'model' => $llm_model,
+				'messages' => $chat_messages,
+				'temperature' => $temperature,
+				'max_tokens' => $max_tokens,
+				'top_p' => 1,
+				'frequency_penalty' => 0,
+				'presence_penalty' => 0,
+				'n' => 1,
+				'stream' => false
+			);
 
-		} else if ($llm === 'anthropic-sonet') {
-			$llm_base_url = env('ANTHROPIC_SONET_BASE');
-			$llm_api_key = env('ANTHROPIC_KEY');
-			$llm_model = env('ANTHROPIC_SONET_MODEL');
-
-		} else if ($llm === 'open-ai-gpt-4o') {
-			$llm_base_url = env('OPEN_AI_GPT4_BASE');
-			$llm_api_key = env('OPEN_AI_API_KEY');
-			$llm_model = env('OPEN_AI_GPT4_MODEL');
-
-		} else if ($llm === 'open-ai-gpt-4o-mini') {
-			$llm_base_url = env('OPEN_AI_GPT4_MINI_BASE');
-			$llm_api_key = env('OPEN_AI_API_KEY');
-			$llm_model = env('OPEN_AI_GPT4_MINI_MODEL');
-		} else {
-			$llm_base_url = env('OPEN_ROUTER_BASE');
-			$llm_api_key = env('OPEN_ROUTER_KEY');
-			$llm_model = $llm;
-		}
-
-
-		if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
-		} else {
-			$chat_messages = [[
-				'role' => 'system',
-				'content' => $system_prompt],
-				...$chat_messages
-			];
-		}
-
-		$temperature = 0.8;
-		$max_tokens = 8096;
-
-		$data = array(
-			'model' => $llm_model,
-			'messages' => $chat_messages,
-			'temperature' => $temperature,
-			'max_tokens' => $max_tokens,
-			'top_p' => 1,
-			'frequency_penalty' => 0,
-			'presence_penalty' => 0,
-			'n' => 1,
-			'stream' => false
-		);
-
-		if ($llm === 'open-ai-gpt-4o' || $llm === 'open-ai-gpt-4o-mini') {
-			$data['max_tokens'] = 4096;
-			$data['temperature'] = 1;
-		} else if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
-			$data['max_tokens'] = 8096;
-			unset($data['frequency_penalty']);
-			unset($data['presence_penalty']);
-			unset($data['n']);
-			$data['system'] = $system_prompt;
-		} else {
-			$data['max_tokens'] = 8096;
-			if (stripos($llm_model, 'anthropic') !== false) {
-				unset($data['frequency_penalty']);
-				unset($data['presence_penalty']);
-				unset($data['n']);
-			} else if (stripos($llm_model, 'openai') !== false) {
+			if ($llm === 'open-ai-gpt-4o' || $llm === 'open-ai-gpt-4o-mini') {
+				$data['max_tokens'] = 4096;
 				$data['temperature'] = 1;
-			} else if (stripos($llm_model, 'google') !== false) {
-				$data['stop'] = [];
-			} else {
+			} else if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
+				$data['max_tokens'] = 8096;
 				unset($data['frequency_penalty']);
 				unset($data['presence_penalty']);
 				unset($data['n']);
-			}
-		}
-
-		Log::debug('GPT NO TOOL USE: ' . $llm_base_url . ' (' . $llm . ')');
-		Log::debug($data);
-
-		$post_json = json_encode($data);
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $llm_base_url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_json);
-
-		$headers = array();
-		if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
-			$headers[] = "x-api-key: " . $llm_api_key;
-			$headers[] = 'anthropic-version: 2023-06-01';
-			$headers[] = 'content-type: application/json';
-		} else {
-			$headers[] = 'Content-Type: application/json';
-			$headers[] = "Authorization: Bearer " . $llm_api_key;
-			$headers[] = "HTTP-Referer: https://fictionfusion.io";
-			$headers[] = "X-Title: FictionFusion";
-		}
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-		$complete = curl_exec($ch);
-		if (curl_errno($ch)) {
-			Log::info('CURL Error:');
-			Log::info(curl_getinfo($ch));
-		}
-		curl_close($ch);
-
-//			Log::info('==================Log complete 2 =====================');
-		$complete = trim($complete, " \n\r\t\v\0");
-//			Log::info($complete);
-
-		$complete_rst = json_decode($complete, true);
-
-		Log::info("GPT NO STREAM RESPONSE:");
-		Log::info($complete_rst);
-		$prompt_tokens = 0;
-		$completion_tokens = 0;
-
-		if ($llm === 'open-ai-gpt-4o' || $llm === 'open-ai-gpt-4o-mini') {
-			$content = $complete_rst['choices'][0]['message']['content'];
-			$prompt_tokens = $complete_rst['usage']['prompt_tokens'] ?? 0;
-			$completion_tokens = $complete_rst['usage']['completion_tokens'] ?? 0;
-		} else if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
-			$content = $complete_rst['content'][0]['text'];
-			$prompt_tokens = $complete_rst['usage']['prompt_tokens'] ?? 0;
-			$completion_tokens = $complete_rst['usage']['completion_tokens'] ?? 0;
-		} else {
-			if (isset($complete_rst['error'])) {
-				Log::info('================== ERROR =====================');
-				Log::info($complete_rst);
-				Log::info($complete_rst['error']['message']);
-				return array('error' => true, 'content' => $complete_rst['error']['message'], 'prompt_tokens' => 0, 'completion_tokens' => 0);
-			}
-
-			if (isset($complete_rst['choices'][0]['message']['content'])) {
-				$content = $complete_rst['choices'][0]['message']['content'];
-				$prompt_tokens = $complete_rst['usage']['prompt_tokens'] ?? 0;
-				$completion_tokens = $complete_rst['usage']['completion_tokens'] ?? 0;
+				$data['system'] = $system_prompt;
 			} else {
-				$content = '';
+				$data['max_tokens'] = 8096;
+				if (stripos($llm_model, 'anthropic') !== false) {
+					unset($data['frequency_penalty']);
+					unset($data['presence_penalty']);
+					unset($data['n']);
+				} else if (stripos($llm_model, 'openai') !== false) {
+					$data['temperature'] = 1;
+				} else if (stripos($llm_model, 'google') !== false) {
+					$data['stop'] = [];
+				} else {
+					unset($data['frequency_penalty']);
+					unset($data['presence_penalty']);
+					unset($data['n']);
+				}
 			}
-		}
 
-		if (!$return_json) {
-			Log::info('Return is set to NOT JSON. Will return content presuming it is text.');
-			return array('error' => false, 'content' => $content, 'prompt_tokens' => $prompt_tokens, 'completion_tokens' => $completion_tokens);
-		}
-
-		$content = $content ?? '';
-		$content = self::getContentsInBackticksOrOriginal($content);
-
-		//remove all backticks
-		$content = str_replace("`", "", $content);
-
-		//check if content is JSON
-		$content_json_string = self::extractJsonString($content);
-		$content_json_string = self::repaceNewLineWithBRInsideQuotes($content_json_string);
-
-		$validate_result = self::validateJson($content_json_string);
-
-		if ($validate_result !== "Valid JSON") {
-			Log::info('================== VALIDATE JSON ON FIRST PASS FAILED =====================');
-			Log::info('String that failed:: ---- Error:' . $validate_result);
-			Log::info("$content_json_string");
-
-			$content_json_string = (new Fixer)->silent(true)->missingValue('"truncated"')->fix($content_json_string);
-			$validate_result = self::validateJson($content_json_string);
-		}
-
-		if (strlen($content ?? '') < 20) {
-			Log::info('================== CONTENT IS EMPTY =====================');
-			Log::info($complete);
-			return array('error' => true, 'content' => $content, 'prompt_tokens' => $prompt_tokens, 'completion_tokens' => $completion_tokens);
-		}
-
-		//if JSON failed make a second call to get the rest of the JSON
-		if ($validate_result !== "Valid JSON") {
-
-			//------ Check if JSON is complete or not with a prompt to continue ------------
-			//-----------------------------------------------------------------------------
-			$verify_completed_prompt = 'If the JSON is complete output DONE otherwise continue writing the JSON response. Only write the missing part of the JSON response, don\'t repeat the already written story JSON. Continue from exactly where the JSON response left off. Make sure the combined JSON response will be valid JSON.';
-
-			$chat_messages[] = [
-				'role' => 'assistant',
-				'content' => $content
-			];
-			$chat_messages[] = [
-				'role' => 'user',
-				'content' => $verify_completed_prompt
-			];
-
-			$data['messages'] = $chat_messages;
-			Log::debug('======== SECOND CALL TO FINISH JSON =========');
+			Log::debug('GPT NO TOOL USE: ' . $llm_base_url . ' (' . $llm . ')');
 			Log::debug($data);
+
 			$post_json = json_encode($data);
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $llm_base_url);
@@ -1543,58 +1425,174 @@ output in Turkish, output JSON as:
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_json);
+
+			$headers = array();
+			if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
+				$headers[] = "x-api-key: " . $llm_api_key;
+				$headers[] = 'anthropic-version: 2023-06-01';
+				$headers[] = 'content-type: application/json';
+			} else {
+				$headers[] = 'Content-Type: application/json';
+				$headers[] = "Authorization: Bearer " . $llm_api_key;
+				$headers[] = "HTTP-Referer: https://fictionfusion.io";
+				$headers[] = "X-Title: FictionFusion";
+			}
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-			$complete2 = curl_exec($ch);
+			$complete = curl_exec($ch);
 			if (curl_errno($ch)) {
 				Log::info('CURL Error:');
 				Log::info(curl_getinfo($ch));
 			}
 			curl_close($ch);
 
-			$complete2 = trim($complete2, " \n\r\t\v\0");
+//			Log::info('==================Log complete 2 =====================');
+			$complete = trim($complete, " \n\r\t\v\0");
+//			Log::info($complete);
 
-			Log::info("GPT NO STREAM RESPONSE FOR EXTENDED VERSION JSON CHECK:");
-			Log::info($complete2);
+			$complete_rst = json_decode($complete, true);
 
-			$complete2_rst = json_decode($complete2, true);
-			$content2 = $complete2_rst['choices'][0]['message']['content'];
+			Log::info("GPT NO STREAM RESPONSE:");
+			Log::info($complete_rst);
+			$prompt_tokens = 0;
+			$completion_tokens = 0;
 
-			//$content2 = str_replace("\\\"", "\"", $content2);
-			$content2 = self::getContentsInBackticksOrOriginal($content2);
+			if ($llm === 'open-ai-gpt-4o' || $llm === 'open-ai-gpt-4o-mini') {
+				$content = $complete_rst['choices'][0]['message']['content'];
+				$prompt_tokens = $complete_rst['usage']['prompt_tokens'] ?? 0;
+				$completion_tokens = $complete_rst['usage']['completion_tokens'] ?? 0;
+			} else if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
+				$content = $complete_rst['content'][0]['text'];
+				$prompt_tokens = $complete_rst['usage']['prompt_tokens'] ?? 0;
+				$completion_tokens = $complete_rst['usage']['completion_tokens'] ?? 0;
+			} else {
+				if (isset($complete_rst['error'])) {
+					Log::info('================== ERROR =====================');
+					Log::info($complete_rst);
+					Log::info($complete_rst['error']['message']);
+					return array('error' => true, 'content' => $complete_rst['error']['message'], 'prompt_tokens' => 0, 'completion_tokens' => 0);
+				}
 
-			if (!str_contains($content2, 'DONE')) {
-				$content = self::mergeStringsWithoutRepetition($content, $content2, 255);
+				if (isset($complete_rst['choices'][0]['message']['content'])) {
+					$content = $complete_rst['choices'][0]['message']['content'];
+					$prompt_tokens = $complete_rst['usage']['prompt_tokens'] ?? 0;
+					$completion_tokens = $complete_rst['usage']['completion_tokens'] ?? 0;
+				} else {
+					$content = '';
+				}
 			}
 
-			//------------------------------------------------------------
+			if (!$return_json) {
+				Log::info('Return is set to NOT JSON. Will return content presuming it is text.');
+				return array('error' => false, 'content' => $content, 'prompt_tokens' => $prompt_tokens, 'completion_tokens' => $completion_tokens);
+			}
 
+			$content = $content ?? '';
+			$content = self::getContentsInBackticksOrOriginal($content);
+
+			//remove all backticks
+			$content = str_replace("`", "", $content);
+
+			//check if content is JSON
 			$content_json_string = self::extractJsonString($content);
 			$content_json_string = self::repaceNewLineWithBRInsideQuotes($content_json_string);
 
 			$validate_result = self::validateJson($content_json_string);
 
 			if ($validate_result !== "Valid JSON") {
+				Log::info('================== VALIDATE JSON ON FIRST PASS FAILED =====================');
+				Log::info('String that failed:: ---- Error:' . $validate_result);
+				Log::info("$content_json_string");
+
 				$content_json_string = (new Fixer)->silent(true)->missingValue('"truncated"')->fix($content_json_string);
 				$validate_result = self::validateJson($content_json_string);
 			}
 
-		} else {
-			Log::info("GPT NO STREAM RESPONSE:");
-			Log::info($complete_rst);
-		}
+			if (strlen($content ?? '') < 20) {
+				Log::info('================== CONTENT IS EMPTY =====================');
+				Log::info($complete);
+				return array('error' => true, 'content' => $content, 'prompt_tokens' => $prompt_tokens, 'completion_tokens' => $completion_tokens);
+			}
 
-		if ($validate_result == "Valid JSON") {
-			Log::debug('================== VALID JSON =====================');
-			$content_rst = json_decode($content_json_string, true);
-			Log::debug($content_rst);
-			$content_rst['error'] = false;
-			return $content_rst;
-		} else {
-			Log::info('================== INVALID JSON =====================');
-			Log::info('JSON error : ' . $validate_result . ' -- ');
-			Log::info($content);
-			return array('error' => true, 'content' => $content, 'prompt_tokens' => $prompt_tokens, 'completion_tokens' => $completion_tokens);
+			//if JSON failed make a second call to get the rest of the JSON
+			if ($validate_result !== "Valid JSON") {
+
+				//------ Check if JSON is complete or not with a prompt to continue ------------
+				//-----------------------------------------------------------------------------
+				$verify_completed_prompt = 'If the JSON is complete output DONE otherwise continue writing the JSON response. Only write the missing part of the JSON response, don\'t repeat the already written story JSON. Continue from exactly where the JSON response left off. Make sure the combined JSON response will be valid JSON.';
+
+				$chat_messages[] = [
+					'role' => 'assistant',
+					'content' => $content
+				];
+				$chat_messages[] = [
+					'role' => 'user',
+					'content' => $verify_completed_prompt
+				];
+
+				$data['messages'] = $chat_messages;
+				Log::debug('======== SECOND CALL TO FINISH JSON =========');
+				Log::debug($data);
+				$post_json = json_encode($data);
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL, $llm_base_url);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ch, CURLOPT_POST, 1);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $post_json);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+				$complete2 = curl_exec($ch);
+				if (curl_errno($ch)) {
+					Log::info('CURL Error:');
+					Log::info(curl_getinfo($ch));
+				}
+				curl_close($ch);
+
+				$complete2 = trim($complete2, " \n\r\t\v\0");
+
+				Log::info("GPT NO STREAM RESPONSE FOR EXTENDED VERSION JSON CHECK:");
+				Log::info($complete2);
+
+				$complete2_rst = json_decode($complete2, true);
+				$content2 = $complete2_rst['choices'][0]['message']['content'];
+
+				//$content2 = str_replace("\\\"", "\"", $content2);
+				$content2 = self::getContentsInBackticksOrOriginal($content2);
+
+				if (!str_contains($content2, 'DONE')) {
+					$content = self::mergeStringsWithoutRepetition($content, $content2, 255);
+				}
+
+				//------------------------------------------------------------
+
+				$content_json_string = self::extractJsonString($content);
+				$content_json_string = self::repaceNewLineWithBRInsideQuotes($content_json_string);
+
+				$validate_result = self::validateJson($content_json_string);
+
+				if ($validate_result !== "Valid JSON") {
+					$content_json_string = (new Fixer)->silent(true)->missingValue('"truncated"')->fix($content_json_string);
+					$validate_result = self::validateJson($content_json_string);
+				}
+
+			} else {
+				Log::info("GPT NO STREAM RESPONSE:");
+				Log::info($complete_rst);
+			}
+
+			if ($validate_result == "Valid JSON") {
+				Log::debug('================== VALID JSON =====================');
+				$content_rst = json_decode($content_json_string, true);
+				Log::debug($content_rst);
+				$content_rst['error'] = false;
+				return $content_rst;
+			} else {
+				Log::info('================== INVALID JSON =====================');
+				Log::info('JSON error : ' . $validate_result . ' -- ');
+				Log::info($content);
+				return array('error' => true, 'content' => $content, 'prompt_tokens' => $prompt_tokens, 'completion_tokens' => $completion_tokens);
+			}
 		}
-	}
 	}
