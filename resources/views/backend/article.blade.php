@@ -493,7 +493,8 @@
 		//-------------------------------------------------------------------------
 		
 		function loadComments() {
-			$.get('{{ route("comments.index",  isset($article) ? $article : '0') }}', function(comments) {
+			@if(isset($article))
+			$.get('{{ route("comments.index",  $article) }}', function(comments) {
 				const container = $('#comments-container');
 				container.empty();
 				
@@ -507,6 +508,7 @@
 					container.append(commentHtml);
 				});
 			});
+			@endif
 		}
 		
 		function createCommentHtml(comment) {
