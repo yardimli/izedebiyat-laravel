@@ -663,7 +663,8 @@
 							->where('id', $article->id)
 							->update([
 								'bad_critical' => 999,
-								'critical_reason' => $llm_result['content']
+								'critical_reason' => $llm_result['content'],
+								'has_changed' => 1
 							]);
 						echo $counter . " - Error: <br>\n";
 						echo $article->id . " " . $article->title . ", kategori " . $article->parent_category_name . "/" . $article->category_name . "<br>\n";
@@ -679,7 +680,8 @@
 							->where('id', $article->id)
 							->update([
 								'bad_critical' => $harmful,
-								'critical_reason' => $explanation
+								'critical_reason' => $explanation,
+								'has_changed' => 1
 							]);
 
 						echo $counter . " - Moderation: - \n";
@@ -740,7 +742,8 @@
 							->where('id', $article->id)
 							->update([
 								'has_religious_moderation' => 1,
-								'religious_reason' => '{"religious":99,"respect":0,"reason":"' . $llm_result['content'] . '"}'
+								'religious_reason' => '{"religious":99,"respect":0,"reason":"' . $llm_result['content'] . '"}',
+								'has_changed' => 1
 							]);
 						echo $counter . " - Error: <br>\n";
 						var_dump($llm_result);
@@ -754,7 +757,8 @@
 							->where('id', $article->id)
 							->update([
 								'religious_reason' => $moderation,
-								'has_religious_moderation' => 1
+								'has_religious_moderation' => 1,
+								'has_changed' => 1
 							]);
 
 						echo $counter . "- Religious Moderation:<br>\n";
@@ -798,7 +802,8 @@
 						->where('id', $article->id)
 						->update([
 							'moderation' => $moderation,
-							'has_moderation' => 1
+							'has_moderation' => 1,
+							'has_changed' => 1
 						]);
 				}
 			}
@@ -1026,7 +1031,8 @@
 							'title' => $title,
 							'subtitle' => $subtitle,
 							'markdown' => 1,
-							'updated_at' => Carbon::now()
+							'updated_at' => Carbon::now(),
+							'has_changed' => 1
 						]);
 				}
 			}
@@ -1129,7 +1135,8 @@ output in Turkish, output JSON as:
 							->update([
 								'bad_critical' => 999,
 								'critical_reason' => $llm_result['content'],
-								'keywords_string' => 'ERROR ' . $llm_result['content']
+								'keywords_string' => 'ERROR ' . $llm_result['content'],
+								'has_changed' => 1
 							]);
 						echo $counter . " - Error: <br>\n";
 						var_dump($llm_result);
@@ -1144,7 +1151,8 @@ output in Turkish, output JSON as:
 							->where('id', $article->id)
 							->update([
 								'keywords_string' => $keywords,
-								'sentiment' => $sentiment
+								'sentiment' => $sentiment,
+								'has_changed' => 1
 							]);
 
 						echo $counter . "- Keywords:<br>\n";
