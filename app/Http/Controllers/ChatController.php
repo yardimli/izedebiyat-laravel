@@ -109,8 +109,9 @@
 
 				$resultData = MyHelper::llm_no_tool_call($llm, '', $chat_history, false);
 
-				if (isset($resultData->error)) {
-					return response()->json(['success' => false, 'message' => $resultData->error]);
+				if ($resultData['error']) {
+					Log::error('Error in chat LLM call: ' . $resultData['content']);
+					return response()->json(['success' => false, 'message' => $resultData->content], 500);
 				}
 
 				// Save the user's prompt and assistant's response to the database
@@ -192,6 +193,11 @@
 
 				$result = MyHelper::llm_no_tool_call('anthropic/claude-3.5-sonnet:beta', '', $chat_history, false);
 
+				if ($result['error']) {
+					Log::error('Error in generate Category LLM call: ' . $result['content']);
+					return response()->json(['error' => $result['content']], 500);
+				}
+
 				$suggestedCategory = trim($result['content']);
 				$category = Category::where('category_name', 'LIKE', "%{$suggestedCategory}%")->first();
 
@@ -219,6 +225,11 @@
 
 				$result = MyHelper::llm_no_tool_call('anthropic/claude-3.5-sonnet:beta', '', $chat_history, false);
 
+				if ($result['error']) {
+					Log::error('Error in Description call: ' . $result['content']);
+					return response()->json(['success' => false, 'description' => $result->content]);
+				}
+
 				return response()->json([
 					'description' => trim($result['content'])
 				]);
@@ -243,6 +254,11 @@
 				];
 
 				$result = MyHelper::llm_no_tool_call('anthropic/claude-3.5-sonnet:beta', '', $chat_history, false);
+
+				if ($result['error']) {
+					Log::error('Error in Keywords call: ' . $result['content']);
+					return response()->json(['error' => $result['content']], 500);
+				}
 
 				$keywords = array_map('trim', explode(',', $result['content']));
 				$keywords = array_map(function ($keyword) {

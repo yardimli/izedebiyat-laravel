@@ -1,4 +1,5 @@
 <?php
+
 	namespace App\Http\Controllers;
 
 	use App\Helpers\MyHelper;
@@ -234,156 +235,162 @@ With the above information, compose a image. Write it as a single paragraph. The
 
 
 			$image_prompt = MyHelper::llm_no_tool_call($llm, '', $chat_history, false);
-			Log::debug('Enhanced Cover Image Prompt');
-			Log::debug($image_prompt);
 
-			$falApiKey = env('FAL_API_KEY');
-			if (empty($falApiKey)) {
-				echo json_encode(['error' => 'FAL_API_KEY environment variable is not set']);
-			}
+			if ($image_prompt['error']) {
+				Log::info('Error generating image');
+				Log::info($image_prompt['content']);
 
-			$client = new \GuzzleHttp\Client();
+				return json_encode(['success' => false, 'message' => $image_prompt['content'], 'status_code' => 500]);
+			} else {
+				Log::debug('Enhanced Cover Image Prompt');
+				Log::debug($image_prompt['content']);
 
-			$response = $client->post($model, [
-				'headers' => [
-					'Authorization' => 'Key ' . $falApiKey,
-					'Content-Type' => 'application/json',
-				],
-				'json' => [
-					'prompt' => $image_prompt['content'],
-					'image_size' => $size,
-					'safety_tolerance' => '5',
-				]
-			]);
-			Log::debug('FLUX image response');
-			Log::debug($response->getBody());
-
-			$body = $response->getBody();
-			$data = json_decode($body, true);
-
-			if ($response->getStatusCode() == 200) {
-
-				$status_url = $data['status_url'];
-				$check_count = 0;
-				$check_limit = 10;
-				$response_url = '';
-				while ($check_count < $check_limit) {
-					$response = $client->get($status_url, [
-						'headers' => [
-							'Authorization' => 'Key ' . $falApiKey,
-							'Content-Type' => 'application/json',
-						]
-					]);
-					Log::debug('FLUX image status response');
-					Log::debug($response->getBody());
-
-					$body = $response->getBody();
-					$data = json_decode($body, true);
-					if ($data['status'] == 'COMPLETED') {
-						$response_url = $data['response_url'];
-						break;
-					}
-					sleep(1);
-					$check_count++;
+				$falApiKey = env('FAL_API_KEY');
+				if (empty($falApiKey)) {
+					echo json_encode(['error' => 'FAL_API_KEY environment variable is not set']);
 				}
 
-				if ($response_url !== '') {
-					$response = $client->get($response_url, [
-						'headers' => [
-							'Authorization' => 'Key ' . $falApiKey,
-							'Content-Type' => 'application/json',
-						]
-					]);
-					Log::debug('FLUX image status response');
-					Log::debug($response->getBody());
-					$body = $response->getBody();
-					$data = json_decode($body, true);
-				}
+				$client = new \GuzzleHttp\Client();
 
-				if (isset($data['images'][0]['url'])) {
-					$image_url = $data['images'][0]['url'];
-					$image = file_get_contents($image_url);
+				$response = $client->post($model, [
+					'headers' => [
+						'Authorization' => 'Key ' . $falApiKey,
+						'Content-Type' => 'application/json',
+					],
+					'json' => [
+						'prompt' => $image_prompt['content'],
+						'image_size' => $size,
+						'safety_tolerance' => '5',
+					]
+				]);
+				Log::debug('FLUX image response');
+				Log::debug($response->getBody());
 
+				$body = $response->getBody();
+				$data = json_decode($body, true);
 
-					if (!Storage::disk('public')->exists('ai-images')) {
-						Storage::disk('public')->makeDirectory('ai-images');
-					}
+				if ($response->getStatusCode() == 200) {
 
-					// Create directories if they don't exist
-					$directories = ['original', 'large', 'medium', 'small'];
-					foreach ($directories as $dir) {
-						if (!Storage::disk('public')->exists("ai-images/$dir")) {
-							Storage::disk('public')->makeDirectory("ai-images/$dir");
+					$status_url = $data['status_url'];
+					$check_count = 0;
+					$check_limit = 10;
+					$response_url = '';
+					while ($check_count < $check_limit) {
+						$response = $client->get($status_url, [
+							'headers' => [
+								'Authorization' => 'Key ' . $falApiKey,
+								'Content-Type' => 'application/json',
+							]
+						]);
+						Log::debug('FLUX image status response');
+						Log::debug($response->getBody());
+
+						$body = $response->getBody();
+						$data = json_decode($body, true);
+						if ($data['status'] == 'COMPLETED') {
+							$response_url = $data['response_url'];
+							break;
 						}
+						sleep(1);
+						$check_count++;
 					}
 
-					$guid = Str::uuid();
+					if ($response_url !== '') {
+						$response = $client->get($response_url, [
+							'headers' => [
+								'Authorization' => 'Key ' . $falApiKey,
+								'Content-Type' => 'application/json',
+							]
+						]);
+						Log::debug('FLUX image status response');
+						Log::debug($response->getBody());
+						$body = $response->getBody();
+						$data = json_decode($body, true);
+					}
 
-					$extension = 'jpg';
+					if (isset($data['images'][0]['url'])) {
+						$image_url = $data['images'][0]['url'];
+						$image = file_get_contents($image_url);
 
-					// Generate filenames
-					$originalFilename = $guid . '.' . $extension;
-					$largeFilename = $guid . '_large.' . $extension;
-					$mediumFilename = $guid . '_medium.' . $extension;
-					$smallFilename = $guid . '_small.' . $extension;
 
-					$outputFile = Storage::disk('public')->path('ai-images/' . $originalFilename);
-					file_put_contents($outputFile, $image);
+						if (!Storage::disk('public')->exists('ai-images')) {
+							Storage::disk('public')->makeDirectory('ai-images');
+						}
 
-					// Create resized versions
-					$this->resizeImage(
-						$outputFile,
-						storage_path('app/public/ai-images/large/' . $largeFilename),
-						1024,
-					);
-					$this->resizeImage(
-						$outputFile,
-						storage_path('app/public/ai-images/medium/' . $mediumFilename),
-						600
-					);
-					$this->resizeImage(
-						$outputFile,
-						storage_path('app/public/ai-images/small/' . $smallFilename),
-						300
-					);
+						// Create directories if they don't exist
+						$directories = ['original', 'large', 'medium', 'small'];
+						foreach ($directories as $dir) {
+							if (!Storage::disk('public')->exists("ai-images/$dir")) {
+								Storage::disk('public')->makeDirectory("ai-images/$dir");
+							}
+						}
 
-					// Save to database
-					$imageModel = Image::create([
-						'user_id' => Auth::id(),
-						'image_type' => 'generated',
-						'image_guid' => $guid,
-						'image_alt' => '',
-						'user_prompt' => $user_prompt,
-						'llm_prompt' => $prompt_enhancer,
-						'llm' => $llm,
-						'prompt_tokens' => $image_prompt['prompt_tokens'] ?? 0,
-						'completion_tokens' => $image_prompt['completion_tokens'] ?? 0,
-						'image_original_filename' => $originalFilename,
-						'image_large_filename' => $largeFilename,
-						'image_medium_filename' => $mediumFilename,
-						'image_small_filename' => $smallFilename
-					]);
+						$guid = Str::uuid();
 
-					return json_encode([
-						'success' => true,
-						'message' => __('Image generated successfully'),
-						'image_large_filename' => $largeFilename,
-						'image_medium_filename' => $mediumFilename,
-						'image_small_filename' => $smallFilename,
-						'data' => json_encode($data),
-						'seed' => $data['seed'],
-						'status_code' => $response->getStatusCode(),
-						'user_prompt' => $user_prompt,
-						'llm_prompt' => $prompt_enhancer,
-						'image_prompt' => $image_prompt['content'],
-						'prompt_tokens' => $image_prompt['prompt_tokens'] ?? 0,
-						'completion_tokens' => $image_prompt['completion_tokens'] ?? 0
-					]);
+						$extension = 'jpg';
+
+						// Generate filenames
+						$originalFilename = $guid . '.' . $extension;
+						$largeFilename = $guid . '_large.' . $extension;
+						$mediumFilename = $guid . '_medium.' . $extension;
+						$smallFilename = $guid . '_small.' . $extension;
+
+						$outputFile = Storage::disk('public')->path('ai-images/' . $originalFilename);
+						file_put_contents($outputFile, $image);
+
+						// Create resized versions
+						$this->resizeImage(
+							$outputFile,
+							storage_path('app/public/ai-images/large/' . $largeFilename),
+							1024,
+						);
+						$this->resizeImage(
+							$outputFile,
+							storage_path('app/public/ai-images/medium/' . $mediumFilename),
+							600
+						);
+						$this->resizeImage(
+							$outputFile,
+							storage_path('app/public/ai-images/small/' . $smallFilename),
+							300
+						);
+
+						// Save to database
+						$imageModel = Image::create([
+							'user_id' => Auth::id(),
+							'image_type' => 'generated',
+							'image_guid' => $guid,
+							'image_alt' => '',
+							'user_prompt' => $user_prompt,
+							'llm_prompt' => $prompt_enhancer,
+							'llm' => $llm,
+							'prompt_tokens' => $image_prompt['prompt_tokens'] ?? 0,
+							'completion_tokens' => $image_prompt['completion_tokens'] ?? 0,
+							'image_original_filename' => $originalFilename,
+							'image_large_filename' => $largeFilename,
+							'image_medium_filename' => $mediumFilename,
+							'image_small_filename' => $smallFilename
+						]);
+
+						return json_encode([
+							'success' => true,
+							'message' => __('Image generated successfully'),
+							'image_large_filename' => $largeFilename,
+							'image_medium_filename' => $mediumFilename,
+							'image_small_filename' => $smallFilename,
+							'data' => json_encode($data),
+							'seed' => $data['seed'],
+							'status_code' => $response->getStatusCode(),
+							'user_prompt' => $user_prompt,
+							'llm_prompt' => $prompt_enhancer,
+							'image_prompt' => $image_prompt['content'],
+							'prompt_tokens' => $image_prompt['prompt_tokens'] ?? 0,
+							'completion_tokens' => $image_prompt['completion_tokens'] ?? 0
+						]);
+					}
 				} else {
 					return json_encode(['success' => false, 'message' => __('Error (2) generating image'), 'status_code' => $response->getStatusCode()]);
 				}
-			} else {
-				return json_encode(['success' => false, 'message' => __('Error (1) generating image'), 'status_code' => $response->getStatusCode()]);
 			}
 		}
 
