@@ -105,7 +105,7 @@
 								</h5>
 								<div>
 									@foreach($followingUsers as $follow)
-										
+										@if ($follow->following)
 										<div class="entry-meta align-items-center pb-1" style="margin-top: 10px;
     margin-bottom: 0px;">
 											<a class="user-avatar" href="{{ url('/yazar/' . $follow->following->slug) }}">
@@ -113,6 +113,7 @@
 											</a>
 											<a href="{{ url('/yazar/' . $follow->following->slug) }}">{{ $follow->following->name }}</a>
 										</div>
+										@endif
 									@endforeach
 								</div>
 							</div>
