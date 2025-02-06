@@ -652,7 +652,7 @@
 						'',
 						[[
 							'role' => 'user',
-							'content' => "take the following Turkish, and analyze it for being harmful to a subset of people, such as ethnic, religious, sexual orientation, or other minority groups. Rate it from 0 to 5, where 0 is not harmful at all, and 5 is extremely harmful. If harmful provide a brief explanation of why you rated it as such. Return reason in English. If not harmful, leave the explanation empty. The text is as follows: Title: " . $article->title . " Subtitle: " . $article->subtitle . " Category: " . $article->parent_category_name . " Subcategory: " . $article->category_name . " text: " . $article->main_text . " output in Turkish, output JSON as: ``` { \"harmful\": \"0-5\" \"explanation in Turkish\": \"\" } ```"
+							'content' => "take the following Turkish, and analyze it for being harmful to a subset of people, such as ethnic, religious, sexual orientation, or other minority groups. Rate it from 0 to 5, where 0 is not harmful at all, and 5 is extremely harmful. If harmful provide a brief explanation of why you rated it as such. Return reason in English. If not harmful, leave the explanation empty. Write the explanation in Turkish. The text is as follows: Title: " . $article->title . " Subtitle: " . $article->subtitle . " Category: " . $article->parent_category_name . " Subcategory: " . $article->category_name . " text: " . $article->main_text . " output in Turkish, output JSON as: ``` { \"harmful\": \"0-5\" \"explanation in Turkish\": \"\" } ```"
 						]],
 						true
 					);
@@ -732,7 +732,7 @@
 						'',
 						[[
 							'role' => 'user',
-							'content' => "take the following Turkish text and analyze it if it is religious and also respectful towards other religions and beliefs. The text is as follows: Title: " . $article->title . " Subtitle: " . $article->subtitle . " Category: " . $article->parent_category_name . " Subcategory: " . $article->category_name . " text: " . $article_text . " output JSON as: ``` { \"religious_reason\": { \"religious\": 0-5, \"respect\": 0-5, \"reason\": \"reasoning for the moderation in Turkish\" } } ```"
+							'content' => "take the following Turkish text and analyze it if it is religious and also respectful towards other religions and beliefs. The text is as follows: Title: " . $article->title . " Subtitle: " . $article->subtitle . " Category: " . $article->parent_category_name . " Subcategory: " . $article->category_name . " text: " . $article_text . " output explantion in Turkish and in JSON as: ``` { \"religious_reason\": { \"religious\": 0-5, \"respect\": 0-5, \"reason\": \"write in Turkish reasoning for the moderation\" } } ```"
 						]],
 						true
 					);
