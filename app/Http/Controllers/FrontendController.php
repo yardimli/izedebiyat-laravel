@@ -204,6 +204,8 @@
 			// Get total count for pagination
 			$total = $baseQuery->count();
 
+			$page = (int)$page;
+
 			// Get items for current page
 			$items = $baseQuery->orderBy('created_at', 'DESC')
 				->skip(($page - 1) * 20)
@@ -301,6 +303,8 @@
 			// Get total count for pagination
 			$total = $query->count();
 
+			$page = (int)$page;
+
 			// Get the items for current page
 			$items = $query->orderBy('formul_ekim', 'DESC')
 				->skip(($page - 1) * 20)
@@ -357,6 +361,8 @@
 
 			// Get total count for pagination
 			$total = $query->count();
+
+			$page = (int)$page;
 
 			// Get the items for current page
 			$items = $query->orderBy('formul_ekim', 'DESC')
@@ -424,6 +430,9 @@
 
 			// Get total count for pagination
 			$total = $query->count();
+
+			//make $page int
+			$page = (int)$page;
 
 			// Get the items for current page
 			$items = $query->orderBy('created_at', 'DESC')
@@ -493,6 +502,8 @@
 			// Get total count for pagination
 			$total = $query->count();
 
+			$page = (int)$page;
+
 			// Get items for current page
 			$users = $query->skip(($page - 1) * 24)
 				->take(24)
@@ -529,6 +540,8 @@
 
 			// Get total count for pagination
 			$total = $query->count();
+
+			$page = (int)$page;
 
 			// Get items for current page
 			$items = $query->orderBy('formul_ekim', 'DESC')
