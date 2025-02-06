@@ -274,4 +274,6 @@
 		'Remove' => 'Kaldır',
 		'An error occurred while unfollowing' => 'Takip bırakılırken bir hata oluştu',
 		'An error occurred while removing favorite' => 'Beğeni kaldırılırken bir hata oluştu',
+
+		'Comments will be available after creating the article' => 'Yorumlar, eser oluşturulduktan sonra kullanılabilir olacak',
 	];
