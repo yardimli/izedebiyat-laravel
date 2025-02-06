@@ -72,7 +72,7 @@
 						<!-- Featured Image -->
 						<div class="mb-3">
 							<div id="selectedImagePreview" class="mt-2">
-								{!! \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%', 'large_landscape') !!}
+								{!! isset($article) ? \App\Helpers\MyHelper::getImage($article->featured_image ?? '', $article->category_id, '', 'width: 100%', 'large_landscape') : '' !!}
 							</div>
 						</div>
 						
@@ -493,7 +493,7 @@
 		//-------------------------------------------------------------------------
 		
 		function loadComments() {
-			$.get('{{ route("comments.index", $article) }}', function(comments) {
+			$.get('{{ route("comments.index",  isset($article) ? $article : '0') }}', function(comments) {
 				const container = $('#comments-container');
 				container.empty();
 				
@@ -545,7 +545,9 @@
 		//-------------------------------------------------------------------------
 		
 		$(document).ready(function () {
-			loadComments();
+			@if(isset($article))
+				loadComments();
+			@endif
 			
 			$(document).on('click', '.delete-comment', function() {
 				const commentId = $(this).data('comment-id');
