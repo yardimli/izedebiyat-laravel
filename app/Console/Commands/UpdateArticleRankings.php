@@ -22,7 +22,7 @@
 			Article::where('approved', 1)
 				->where('is_published', 1)
 				->where('deleted', 0)
-				->chunk(100, function ($articles) {
+				->chunk(100, function ($articles) use ($chunk_counter) {
 					$chunk_counter++;
 					$this->info('Processing chunk ' . $chunk_counter);
 					foreach ($articles as $article) {
