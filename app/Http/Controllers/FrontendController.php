@@ -306,7 +306,7 @@
 			// Get the items for current page
 			$items = $query->orderBy('formul_ekim', 'DESC')
 				->skip(($page - 1) * 20)
-				->take(100)
+				->take(200)
 				->get();
 
 			// Create custom pagination
@@ -365,7 +365,7 @@
 			// Get the items for current page
 			$items = $query->orderBy('formul_ekim', 'DESC')
 				->skip(($page - 1) * 20)
-				->take(100)
+				->take(150)
 				->get();
 
 			// Create custom pagination
