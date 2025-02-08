@@ -379,7 +379,7 @@
 
 					// Fix common Turkish character issues
 					$input = str_replace('İ̇', 'İ', $input);
-					$input = preg_replace('/(\b[A-Za-zÇĞİIıÖŞÜ])/u', 'mb_strtoupper("$1")', $input);
+//					$input = preg_replace('/(\b[A-Za-zÇĞİIıÖŞÜ])/u', 'mb_strtoupper("$1")', $input);
 				}
 			}
 
