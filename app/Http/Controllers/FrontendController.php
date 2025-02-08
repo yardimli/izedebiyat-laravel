@@ -49,7 +49,6 @@
 							->where('approved', 1)
 							->where('is_published', 1)
 							->where('deleted', 0)
-							->where('religious_moderation_value', '<', 3)
 							->where('moderation_flagged', 0)
 							->count();
 
@@ -61,7 +60,6 @@
 							->where('approved', 1)
 							->where('is_published', 1)
 							->where('deleted', 0)
-							->where('religious_moderation_value', '<', 3)
 							->where('moderation_flagged', 0)
 							->where('created_at', '>=', now()->subDays(30))
 							->count();
@@ -161,7 +159,7 @@
 					->where('approved', 1)
 					->where('deleted', 0)
 					->where('is_published', 1)
-					->where('religious_moderation_value', '<', 3)
+					->where('moderation_flagged', 0)
 					->orderBy('formul_ekim', 'DESC')
 					->limit(50)
 					->get();
@@ -170,7 +168,7 @@
 					->where('approved', 1)
 					->where('deleted', 0)
 					->where('is_published', 1)
-					->where('religious_moderation_value', '<', 3)
+					->where('moderation_flagged', 0)
 					->orderBy('created_at', 'DESC')
 					->limit(100)
 					->get();
@@ -233,7 +231,7 @@
 			$articles = Article::where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('religious_moderation_value', '<', 3)
+				->where('moderation_flagged', 0)
 				->where('created_at', '>=', Carbon::now()->subDays(30))
 				->orderBy('created_at', 'DESC')
 				->limit(100)
@@ -247,7 +245,7 @@
 						->where('approved', 1)
 						->where('deleted', 0)
 						->where('is_published', 1)
-						->where('religious_moderation_value', '<', 3)
+						->where('moderation_flagged', 0)
 						->where('created_at', '>=', Carbon::now()->subDays(30))
 						->count();
 					return $category;
@@ -264,7 +262,7 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('religious_moderation_value', '<', 3)
+				->where('moderation_flagged', 0)
 				->where('created_at', '>=', Carbon::now()->subDays(30))
 				->orderBy('created_at', 'DESC')
 				->limit(100)
@@ -278,7 +276,7 @@
 						->where('approved', 1)
 						->where('deleted', 0)
 						->where('is_published', 1)
-						->where('religious_moderation_value', '<', 3)
+						->where('moderation_flagged', 0)
 						->where('created_at', '>=', Carbon::now()->subDays(30))
 						->count();
 					return $cat;
@@ -298,7 +296,7 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('religious_moderation_value', '<', 3);
+				->where('moderation_flagged', 0);
 
 			// Get total count for pagination
 			$total = $query->count();
@@ -327,7 +325,7 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('religious_moderation_value', '<', 3)
+				->where('moderation_flagged', 0)
 				->orderBy('created_at', 'DESC')
 				->skip(($page - 1) * 10)
 				->limit(100)
@@ -357,7 +355,7 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('religious_moderation_value', '<', 3);
+				->where('moderation_flagged', 0);
 
 			// Get total count for pagination
 			$total = $query->count();
@@ -386,7 +384,7 @@
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
-				->where('religious_moderation_value', '<', 3)
+				->where('moderation_flagged', 0)
 				->orderBy('created_at', 'DESC')
 				->skip(($page - 1) * 10)
 				->limit(100)
