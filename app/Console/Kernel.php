@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
     {
 	    $schedule->command('app:moderate-texts')->hourly();
 	    $schedule->command('articles:update-rankings')
-		    ->hourly()
+		    ->everySixHours()
 		    ->withoutOverlapping()
 		    ->runInBackground();
     }
