@@ -94,7 +94,7 @@
 				'resize' => true,
 				'keepRatio' => true,
 				'width' => 800,
-				'height' => 480,
+				'height' => 400,
 				'inCanvas' => true,
 				'format' => 'webp'
 			],
