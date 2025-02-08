@@ -356,7 +356,7 @@
 
 				// If more than 50% uppercase, convert to Pascal Case
 				if ($uppercasePercentage > 50) {
-					$input = ucwords_tr($input);
+					$input = self::ucwords_tr($input);
 				}
 			}
 
