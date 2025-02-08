@@ -22,7 +22,7 @@
 			Article::where('approved', 1)
 				->where('is_published', 1)
 				->where('deleted', 0)
-				->chunk(100, function ($articles) use ($chunk_counter) {
+				->chunk(500, function ($articles) use ($chunk_counter) {
 					$chunk_counter++;
 					$this->info('Processing chunk ' . $chunk_counter);
 					foreach ($articles as $article) {
@@ -50,6 +50,10 @@
 
 			// Author metrics
 			$author = $article->user;
+			if (!$author) {
+				Log::error('Article ' . $article->id . ' has no author');
+				return 1;
+			}
 			$authorFollowersCount = $author->followers()->count();
 			$authorFollowersFactor = log10(max($authorFollowersCount, 1));
 
@@ -69,7 +73,7 @@
 			);
 
 			// Author's overall article quality
-			$authorQualityScore = $this->getAuthorQualityScore($author);
+			$authorQualityScore = 1; //$this->getAuthorQualityScore($author);
 
 			// Respect moderation boost
 			$moderationBoost = 1;
