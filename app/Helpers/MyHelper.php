@@ -354,9 +354,9 @@
 				$uppercaseChars = mb_strlen(preg_replace('/[^A-ZĞÜŞİÖÇ]/u', '', $input), 'UTF-8');
 				$uppercasePercentage = ($uppercaseChars / $totalChars) * 100;
 
-				// If more than 50% uppercase, convert to Title Case
+				// If more than 50% uppercase, convert to Pascal Case
 				if ($uppercasePercentage > 50) {
-					// Convert to lowercase first
+					// First convert everything to lowercase
 					$input = mb_strtolower($input, 'UTF-8');
 
 					// Split into words
@@ -365,22 +365,21 @@
 
 					foreach ($words as $word) {
 						if (mb_strlen($word, 'UTF-8') > 0) {
-							// Convert first letter to uppercase
-							$firstChar = mb_substr($word, 0, 1, 'UTF-8');
-							$restOfWord = mb_substr($word, 1, null, 'UTF-8');
-
-							// Special handling for Turkish i/İ
-							if ($firstChar === 'i') {
-								$result .= 'İ' . $restOfWord;
-							} else {
+							if (preg_match('/^\w/u', $word)) {
+								$firstChar = mb_substr($word, 0, 1, 'UTF-8');
+								$restOfWord = mb_substr($word, 1, null, 'UTF-8');
 								$result .= mb_strtoupper($firstChar, 'UTF-8') . $restOfWord;
+							} else {
+								$result .= $word;
 							}
-						} else {
-							$result .= $word;
 						}
 					}
 
 					$input = $result;
+
+					// Fix common Turkish character issues
+					$input = str_replace('İ̇', 'İ', $input);
+					$input = preg_replace('/(\b[A-Za-zÇĞİIıÖŞÜ])/u', 'mb_strtoupper("$1")', $input);
 				}
 			}
 
