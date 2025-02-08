@@ -102,17 +102,23 @@
 
 		public function followers()
 		{
-			return $this->hasMany(UserFollow::class, 'following_id')->withDefault([]);
+			return $this->hasMany(UserFollow::class, 'following_id')->orWhere(function($query) {
+				$query->whereRaw('1 = 0'); // This ensures an empty collection is returned instead of null
+			});
 		}
 
 		public function following()
 		{
-			return $this->hasMany(UserFollow::class, 'follower_id')->withDefault([]);
+			return $this->hasMany(UserFollow::class, 'follower_id')->orWhere(function($query) {
+				$query->whereRaw('1 = 0'); // This ensures an empty collection is returned instead of null
+			});
 		}
 
 		public function favorites()
 		{
-			return $this->hasMany(ArticleFavorite::class)->withDefault([]);
+			return $this->hasMany(ArticleFavorite::class)->orWhere(function($query) {
+				$query->whereRaw('1 = 0'); // This ensures an empty collection is returned instead of null
+			});
 		}
 
 		public function getProfilePhotoUrlAttribute()
