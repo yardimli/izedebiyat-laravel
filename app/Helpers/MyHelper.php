@@ -335,14 +335,7 @@
 
 		public static function replaceAscii($input)
 		{
-			// Check if the string is all uppercase (excluding special characters)
-			$isAllUpper = preg_match('/^[^a-z]*$/', $input) && preg_match('/[A-Z]/', $input);
-
-			// Convert to Pascal Case if all uppercase
-			if ($isAllUpper) {
-				$input = ucwords(strtolower($input));
-			}
-			
+			// First, perform the original ASCII replacements
 			$input = preg_replace("/\r\n|\r|\n/", '<br/>', $input);
 			$input = str_replace("", "...", $input);
 			$input = str_replace("", "-", $input);
@@ -351,8 +344,22 @@
 			$input = str_replace("", " ", $input);
 			$input = str_replace("  ", " ", $input);
 
+			// Remove leading and trailing line breaks
 			$input = preg_replace('/^(\s*<br\s*\/?>\s*)*/', '', $input);
 			$input = preg_replace('/(\s*<br\s*\/?>\s*)*$/', '', $input);
+
+			// Calculate the percentage of uppercase characters
+			$totalChars = strlen(preg_replace('/[^a-zA-Z]/', '', $input));
+			if ($totalChars > 0) {
+				$upperChars = strlen(preg_replace('/[^A-Z]/', '', $input));
+				$upperPercentage = ($upperChars / $totalChars) * 100;
+
+				// If more than 50% is uppercase, convert to Pascal Case
+				if ($upperPercentage > 50) {
+					// Convert to lowercase first, then use ucwords
+					$input = ucwords(strtolower($input));
+				}
+			}
 
 			return $input;
 		}
