@@ -20,21 +20,25 @@
             SET formul_ekim = LEAST(
                 GREATEST(
                     (
-                        (8 * (1 / (1 + SQRT(DATEDIFF(NOW(), created_at) / 365)))) +
-                        (2.5 * LOG10(GREATEST(read_count, 1))) +
-                        (1.5 * LOG10(GREATEST(author_followers_count, 1))) +
-                        (2.5 * LOG10(GREATEST(
-                            (favorites_count * 2) +
-                            (clap_count * 0.5) +
-                            (comment_count * 3),
-                            1
-                        ))) +
-                        (1.5 * author_quality_score)
-                    ) * 
-                    CASE 
-                        WHEN religious_moderation_value < 3 THEN 1.5 
-                        ELSE 1 
-                    END,
+                        (
+                            (8 * (1 / (1 + SQRT(DATEDIFF(NOW(), created_at) / 365)))) +
+                            (2.5 * LOG10(GREATEST(read_count, 1))) +
+                            (1.5 * LOG10(GREATEST(author_followers_count, 1))) +
+                            (2.5 * LOG10(GREATEST(
+                                (favorites_count * 2) +
+                                (clap_count * 0.5) +
+                                (comment_count * 3),
+                                1
+                            ))) +
+                            (1.5 * author_quality_score)
+                        ) * 
+                        CASE 
+                            WHEN religious_moderation_value < 3 THEN 1.5 
+                            ELSE 1 
+                        END *
+                        -- Age multiplier: starts at 1 and decreases to 0.2 over 25 years
+                        GREATEST(0.2, (1 - (LEAST(DATEDIFF(NOW(), created_at) / 365, 25) * 0.032)))
+                    ),
                     0
                 ),
                 1000
