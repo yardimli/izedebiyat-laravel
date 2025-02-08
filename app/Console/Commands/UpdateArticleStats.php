@@ -15,65 +15,71 @@
 		{
 			$this->info('Starting to update article statistics...');
 
-			// Update all articles with a single query for better performance
-			$articles = Article::select('id', 'user_id')
-				->where('deleted', 0)
+			// Get all required counts in single queries
+			$commentCounts = DB::table('comments')
+				->where('is_approved', 1)
+				->select('article_id', DB::raw('COUNT(*) as count'))
+				->groupBy('article_id');
+
+			$favoriteCounts = DB::table('article_favorites')
+				->select('article_id', DB::raw('COUNT(*) as count'))
+				->groupBy('article_id');
+
+			$clapCounts = DB::table('claps')
+				->select('article_id', DB::raw('SUM(count) as count'))
+				->groupBy('article_id');
+
+			// Get author stats in a single query
+			$authorStats = DB::table('articles')
 				->where('approved', 1)
+				->where('is_published', 1)
+				->where('deleted', 0)
+				->select(
+					'user_id',
+					DB::raw('AVG(read_count) as avg_reads'),
+					DB::raw('COUNT(*) as total_articles')
+				)
+				->groupBy('user_id');
+
+			// Get follower counts for all authors at once
+			$followerCounts = DB::table('user_follows')
+				->select('following_id', DB::raw('COUNT(*) as count'))
+				->groupBy('following_id');
+
+			// Update articles in chunks
+			Article::where('deleted', 0)
+				->where('approved', 1)
+				->select('id', 'user_id')
 				->orderBy('created_at', 'desc')
-				->chunk(500, function ($articles) {
-					$this->info('Updating ' . count($articles) . ' articles...');
-					foreach ($articles as $article) {
-						// Get counts
-						$commentCount = DB::table('comments')
-							->where('article_id', $article->id)
-							->where('is_approved', 1)
-							->count();
+				->chunk(1000, function ($articles) use ($commentCounts, $favoriteCounts, $clapCounts, $authorStats, $followerCounts) {
+					$this->info('Processing ' . count($articles) . ' articles...');
 
-						$favoritesCount = DB::table('article_favorites')
-							->where('article_id', $article->id)
-							->count();
-
-						$authorFollowersCount = DB::table('user_follows')
-							->where('following_id', $article->user_id)
-							->count();
-
-						$clapCount = DB::table('claps')
-							->where('article_id', $article->id)
-							->sum('count');
-
-						$authorStats = Article::where('user_id', $article->user_id)
-							->where('approved', 1)
-							->where('is_published', 1)
-							->where('deleted', 0)
-							->select(
-								DB::raw('AVG(read_count) as avg_reads'),
-								DB::raw('COUNT(*) as total_articles')
-							)
-							->first();
-
-						if (!$authorStats->total_articles) {
-							$qualityScore = 1;
-						} else
-						{
-							// Calculate author quality score based on average reads and total articles
-							$qualityScore = log10(max($authorStats->avg_reads, 1)) *
-								log10(max($authorStats->total_articles, 1));
-
-							$qualityScore = min($qualityScore, 10); // Cap at 10
-						}
-
-						// Update article
-						DB::table('articles')
-							->where('id', $article->id)
-							->update([
-								'comment_count' => $commentCount,
-								'favorites_count' => $favoritesCount,
-								'author_followers_count' => $authorFollowersCount,
-								'clap_count' => $clapCount,
-								'author_quality_score' => $qualityScore,
-								'updated_at' => now(),
-							]);
-					}
+					// Convert to subqueries
+					$updates = DB::table('articles')
+						->joinSub($commentCounts, 'comment_counts', function ($join) {
+							$join->on('articles.id', '=', 'comment_counts.article_id');
+						})
+						->joinSub($favoriteCounts, 'favorite_counts', function ($join) {
+							$join->on('articles.id', '=', 'favorite_counts.article_id');
+						})
+						->joinSub($clapCounts, 'clap_counts', function ($join) {
+							$join->on('articles.id', '=', 'clap_counts.article_id');
+						})
+						->joinSub($authorStats, 'author_stats', function ($join) {
+							$join->on('articles.user_id', '=', 'author_stats.user_id');
+						})
+						->joinSub($followerCounts, 'follower_counts', function ($join) {
+							$join->on('articles.user_id', '=', 'follower_counts.following_id');
+						})
+						->whereIn('articles.id', $articles->pluck('id'))
+						->update([
+							'comment_count' => DB::raw('COALESCE(comment_counts.count, 0)'),
+							'favorites_count' => DB::raw('COALESCE(favorite_counts.count, 0)'),
+							'author_followers_count' => DB::raw('COALESCE(follower_counts.count, 0)'),
+							'clap_count' => DB::raw('COALESCE(clap_counts.count, 0)'),
+							'author_quality_score' => DB::raw('LEAST(LOG10(GREATEST(author_stats.avg_reads, 1)) * LOG10(GREATEST(author_stats.total_articles, 1)), 10)'),
+							'updated_at' => now(),
+						]);
 				});
 
 			$this->info('Article statistics update completed!');
