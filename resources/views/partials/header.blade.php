@@ -80,8 +80,8 @@
 		<div class="container-lg">
 			<div class="w-100 d-flex align-items-center">
 				<a class="navbar-brand me-auto " href="{{route('frontend.index')}}">
-					<img class="light-mode-item navbar-brand-item" src="{{ asset(resize('assets/images/logo/logo-large.png','small_letterbox')) }}" alt="logo">
-					<img class="dark-mode-item navbar-brand-item" src="{{ asset(resize('assets/images/logo/logo-large-transparent.png','small_letterbox')) }}" alt="logo">
+					<img class="light-mode-item navbar-brand-item" src="{{ asset('assets/images/logo/logo-large.png') }}" alt="logo">
+					<img class="dark-mode-item navbar-brand-item" src="{{ asset('assets/images/logo/logo-large-transparent.png') }}" alt="logo">
 				</a>
 				<div class="header-right w-50 float-end">
 					<div class="d-inline-flex float-end text-end align-items-center">
