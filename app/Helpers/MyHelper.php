@@ -190,7 +190,12 @@
 
 			if ($articleMainImage !== '' && Storage::disk('public')->exists("yazi_resimler/" . $articleMainImage)) {
 
-				$image_src = resize('storage/yazi_resimler/' . $articleMainImage, $resize_image_size);
+				if ($resize_image_size==='large_landscape') {
+					$image_src = 'storage/yazi_resimler/' . $articleMainImage;
+				} else
+				{
+					$image_src = resize('storage/yazi_resimler/' . $articleMainImage, $resize_image_size);
+				}
 
 				return "<div style='position:relative;'>
                     <img src='/{$image_src}' class='{$extraClass}' 
