@@ -354,33 +354,37 @@
 				$uppercaseChars = mb_strlen(preg_replace('/[^A-ZĞÜŞİÖÇ]/u', '', $input), 'UTF-8');
 				$uppercasePercentage = ($uppercaseChars / $totalChars) * 100;
 
-				// If more than 50% uppercase, convert to Pascal Case
+				// If more than 50% uppercase, convert to Title Case
 				if ($uppercasePercentage > 50) {
-					// First convert everything to lowercase
+					// Convert to lowercase first
 					$input = mb_strtolower($input, 'UTF-8');
 
-					// Custom ucwords implementation for Turkish
-					$input = preg_replace_callback(
-						'/\b(\w)/u',
-						function($matches) {
-							return self::mbUcfirst($matches[0]);
-						},
-						$input
-					);
+					// Split into words
+					$words = preg_split('/\b/u', $input);
+					$result = '';
+
+					foreach ($words as $word) {
+						if (mb_strlen($word, 'UTF-8') > 0) {
+							// Convert first letter to uppercase
+							$firstChar = mb_substr($word, 0, 1, 'UTF-8');
+							$restOfWord = mb_substr($word, 1, null, 'UTF-8');
+
+							// Special handling for Turkish i/İ
+							if ($firstChar === 'i') {
+								$result .= 'İ' . $restOfWord;
+							} else {
+								$result .= mb_strtoupper($firstChar, 'UTF-8') . $restOfWord;
+							}
+						} else {
+							$result .= $word;
+						}
+					}
+
+					$input = $result;
 				}
 			}
 
 			return $input;
-		}
-
-// Helper function for proper Turkish character case conversion
-		private static function mbUcfirst($string) {
-			$string = mb_strtoupper(mb_substr($string, 0, 1, 'UTF-8'), 'UTF-8') .
-				mb_substr($string, 1, null, 'UTF-8');
-
-			// Special handling for Turkish 'i' and 'I'
-			$string = str_replace('i̇', 'İ', $string); // Handle dotted I
-			return $string;
 		}
 
 		//------------------------------------------------------------
