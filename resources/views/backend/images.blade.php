@@ -207,12 +207,12 @@ Write a prompt to create an image using the above text.: Write in English even i
 			let image_alt = '';
 			
 			if (image.image_type==='upload') {
-				image_url = '/storage/upload-images/small/' + image.image_small_filename;
+				image_url = '/storage/upload-images/medium/' + image.image_medium_filename;
 				image_original_url = '/storage/upload-images/original/' + image.image_filename;
 				image_alt = image.image_alt;
 			} else
 			{
-				image_url = '/storage/ai-images/small/' + image.image_small_filename;
+				image_url = '/storage/ai-images/medium/' + image.image_medium_filename;
 				image_original_url = '/storage/ai-images/original/' + image.image_filename;
 				image_alt = image.user_prompt;
 			}
