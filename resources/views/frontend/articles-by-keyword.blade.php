@@ -15,7 +15,7 @@
 					     class="desktop-image"
 					     alt="herkes yazar"
 					     style="max-width:100%;">
-					<img src="{{ asset('/images/herkesyazar-dar.jpg') }}"
+					<img src="{{ asset('/images/herkesyazar_dar.jpg') }}"
 					     class="mobile-image"
 					     alt="herkes yazar"
 					     style="max-width:100%;">
