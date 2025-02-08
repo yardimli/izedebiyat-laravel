@@ -22,6 +22,7 @@
 			Article::where('approved', 1)
 				->where('is_published', 1)
 				->where('deleted', 0)
+				->orderBy('created_at', 'desc')
 				->chunk(500, function ($articles) use ($chunk_counter) {
 					$chunk_counter++;
 					$this->info('Processing chunk ' . $chunk_counter);
