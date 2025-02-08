@@ -12,7 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-	    $schedule->command('app:moderate-texts')->everyTenMinutes();
+	    $schedule->command('app:moderate-texts')->hourly();
+	    $schedule->command('articles:update-rankings')
+		    ->hourly()
+		    ->withoutOverlapping()
+		    ->runInBackground();
     }
 
     /**
