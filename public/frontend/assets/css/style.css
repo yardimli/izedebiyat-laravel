@@ -182,22 +182,22 @@ html, body {
 }
 
 .navbar-brand {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .navbar-brand .navbar-brand-item {
-    height: 36px;
+    height: 46px;
     display: block;
     width: auto;
 }
 
 @media (max-width: 991.98px) {
     .navbar-brand {
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding-top: 5px;
+        padding-bottom: 5px;
     }
     .navbar-brand .navbar-brand-item {
-        height: 36px;
+        height: 46px;
     }
 }
 
