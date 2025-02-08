@@ -335,6 +335,14 @@
 
 		public static function replaceAscii($input)
 		{
+			// Check if the string is all uppercase (excluding special characters)
+			$isAllUpper = preg_match('/^[^a-z]*$/', $input) && preg_match('/[A-Z]/', $input);
+
+			// Convert to Pascal Case if all uppercase
+			if ($isAllUpper) {
+				$input = ucwords(strtolower($input));
+			}
+			
 			$input = preg_replace("/\r\n|\r|\n/", '<br/>', $input);
 			$input = str_replace("", "...", $input);
 			$input = str_replace("", "-", $input);
