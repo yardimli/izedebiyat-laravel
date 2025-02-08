@@ -356,34 +356,44 @@
 
 				// If more than 50% uppercase, convert to Pascal Case
 				if ($uppercasePercentage > 50) {
-					// First convert everything to lowercase
-					$input = mb_strtolower($input, 'UTF-8');
-
-					// Split into words
-					$words = preg_split('/\b/u', $input);
-					$result = '';
-
-					foreach ($words as $word) {
-						if (mb_strlen($word, 'UTF-8') > 0) {
-							if (preg_match('/^\w/u', $word)) {
-								$firstChar = mb_substr($word, 0, 1, 'UTF-8');
-								$restOfWord = mb_substr($word, 1, null, 'UTF-8');
-								$result .= mb_strtoupper($firstChar, 'UTF-8') . $restOfWord;
-							} else {
-								$result .= $word;
-							}
-						}
-					}
-
-					$input = $result;
-
-					// Fix common Turkish character issues
-					$input = str_replace('İ̇', 'İ', $input);
-//					$input = preg_replace('/(\b[A-Za-zÇĞİIıÖŞÜ])/u', 'mb_strtoupper("$1")', $input);
+					$input = ucwords_tr($input);
 				}
 			}
 
 			return $input;
+		}
+
+		public static function ucwords_tr($string) {
+			// Define the encoding
+			$encoding = 'UTF-8';
+
+			// First, convert the whole string to lowercase
+			$string = mb_convert_case($string, MB_CASE_LOWER, $encoding);
+
+			// Split the string into words
+			$words = explode(' ', $string);
+
+			// Function to capitalize the first letter of a word taking Turkish locale into consideration
+			$capitalize = function($word) use ($encoding) {
+				if (empty($word)) {
+					return $word;
+				}
+				// Separate the first character and the rest of the word
+				$firstChar = mb_substr($word, 0, 1, $encoding);
+				$rest = mb_substr($word, 1, null, $encoding);
+
+				// Convert the first character to uppercase, using Turkish locale
+				$firstCharUpper = mb_convert_case($firstChar, MB_CASE_UPPER, $encoding);
+
+				// Return the combined result
+				return $firstCharUpper . $rest;
+			};
+
+			// Apply the capitalize function to each word
+			$capitalizedWords = array_map($capitalize, $words);
+
+			// Join the array back into a single string and return it
+			return implode(' ', $capitalizedWords);
 		}
 
 		//------------------------------------------------------------
