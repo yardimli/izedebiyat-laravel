@@ -175,35 +175,83 @@
 		public function generateCategory(Request $request)
 		{
 			$mainText = $request->input('main_text');
+
+			// Limit text length for the prompt
 			if (strlen($mainText) > 1000) {
 				$mainText = substr($mainText, 0, 1000) . '...';
 			}
 
-			$prompt = "Analyze this text and suggest the most appropriate category from the following options:\n\n";
-			$categories = Category::where('parent_category_id', '!=', 0)->get();
-			foreach ($categories as $category) {
-				$prompt .= "- {$category->category_name}\n";
+			// Get all main categories with their subcategories
+			$categories = Category::where('parent_category_id', 0)
+				->with('subCategories')
+				->get();
+
+			// Build the prompt with hierarchical category structure
+			$prompt = "Analyze this text and suggest the most appropriate category. Respond in this format:\n";
+			$prompt .= "Main Category: [main category name]\n";
+			$prompt .= "Sub Category: [sub category name]\n\n";
+			$prompt .= "Available categories:\n\n";
+
+			foreach ($categories as $mainCategory) {
+				$prompt .= "* {$mainCategory->category_name}\n";
+				foreach ($mainCategory->subCategories as $subCategory) {
+					$prompt .= "  - {$subCategory->category_name}\n";
+				}
 			}
-			$prompt .= "\nText to analyze:\n{$mainText}\n\nRespond with only the category name.";
+
+			$prompt .= "\nText to analyze:\n{$mainText}\n\n";
+			$prompt .= "Remember to respond only with the category names in the specified format.";
 
 			try {
 				$chat_history = [
 					['role' => 'user', 'content' => $prompt]
 				];
 
-				$result = MyHelper::llm_no_tool_call('anthropic/claude-3.5-sonnet:beta', '', $chat_history, false);
+				$result = MyHelper::llm_no_tool_call(
+					'anthropic/claude-3.5-sonnet:beta',
+					'',
+					$chat_history,
+					false
+				);
 
 				if ($result['error']) {
 					Log::error('Error in generate Category LLM call: ' . $result['content']);
 					return response()->json(['error' => $result['content']], 500);
 				}
 
-				$suggestedCategory = trim($result['content']);
-				$category = Category::where('category_name', 'LIKE', "%{$suggestedCategory}%")->first();
+				// Parse the response to extract main and sub category
+				$response = $result['content'];
+				preg_match('/Main Category: (.*?)\nSub Category: (.*?)(?:\n|$)/s', $response, $matches);
+
+				if (count($matches) >= 3) {
+					$mainCategoryName = trim($matches[1]);
+					$subCategoryName = trim($matches[2]);
+
+					// Find the matching categories in the database
+					$mainCategory = Category::where('category_name', 'LIKE', "%{$mainCategoryName}%")
+						->where('parent_category_id', 0)
+						->first();
+
+					if ($mainCategory) {
+						$subCategory = Category::where('category_name', 'LIKE', "%{$subCategoryName}%")
+							->where('parent_category_id', $mainCategory->id)
+							->first();
+
+						if ($subCategory) {
+							return response()->json([
+								'category_id' => $subCategory->id,
+								'main_category_id' => $mainCategory->id,
+								'main_category_name' => $mainCategory->category_name,
+								'sub_category_name' => $subCategory->category_name
+							]);
+						}
+					}
+				}
 
 				return response()->json([
-					'category_id' => $category ? $category->id : null
-				]);
+					'error' => 'Could not determine appropriate category'
+				], 422);
+
 			} catch (\Exception $e) {
 				return response()->json(['error' => $e->getMessage()], 500);
 			}

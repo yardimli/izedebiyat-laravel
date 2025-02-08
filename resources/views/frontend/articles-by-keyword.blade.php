@@ -11,11 +11,11 @@
 		<main id="content">
 			<div class="container-lg mb-2" style="text-align: center;">
 				<a href="https://herkesyazar.app">
-					<img src="{{ asset('/images/herkes-yazar.png') }}"
+					<img src="{{ asset('/images/herkesyazar.jpg') }}"
 					     class="desktop-image"
 					     alt="herkes yazar"
 					     style="max-width:100%;">
-					<img src="{{ asset('/images/herkes-yazar-mobile.png') }}"
+					<img src="{{ asset('/images/herkesyazar-dar.jpg') }}"
 					     class="mobile-image"
 					     alt="herkes yazar"
 					     style="max-width:100%;">
