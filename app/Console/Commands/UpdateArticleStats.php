@@ -19,6 +19,7 @@
 			$articles = Article::select('id', 'user_id')
 				->where('deleted', 0)
 				->where('approved', 1)
+				->orderBy('created_at', 'desc')
 				->chunk(500, function ($articles) {
 					$this->info('Updating ' . count($articles) . ' articles...');
 					foreach ($articles as $article) {
