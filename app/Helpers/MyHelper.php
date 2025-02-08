@@ -182,7 +182,7 @@
 			if ($storage_path !== '' && Storage::disk('public')->exists($storage_path)) {
 
 				if ($resize_image_size==='large_landscape') {
-					$image_src = 'storage/' . $storage_path;
+					$image_src = 'storage' . $storage_path;
 				} else
 				{
 					$image_src = resize('storage' . $storage_path, $resize_image_size);
