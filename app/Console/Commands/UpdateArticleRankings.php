@@ -41,28 +41,20 @@
 			// Base score starts at 1
 			$score = 1;
 
-			// Age decay factor (newer articles rank higher)
+			// Modified age decay factor
 			$ageInDays = Carbon::now()->diffInDays($article->created_at);
-			$ageFactor = 1 / (1 + ($ageInDays / 30)); // Decay over months
+			// Slower decay curve using square root and larger denominator
+			$ageFactor = 1 / (1 + sqrt($ageInDays / 365)); // Decay over years more gradually
 
-			// Read count factor (logarithmic scaling to prevent dominance of very popular articles)
 			$readFactor = log10(max($article->read_count, 1));
 
-			// Author metrics
-			$author = $article->user;
-			if (!$author) {
-				Log::error('Article ' . $article->id . ' has no author');
-				return 1;
-			}
-			$authorFollowersCount = $author->followers()->count();
+			$authorFollowersCount = $article->author_followers_count;
 			$authorFollowersFactor = log10(max($authorFollowersCount, 1));
 
-			// Article engagement metrics
-			$favoritesCount = $article->favorites()->count();
-			$clapsCount = $article->claps()->sum('count');
-			$commentsCount = $article->comments()->count();
+			$favoritesCount = $article->favorites_count;
+			$clapsCount = $article->clap_count;
+			$commentsCount = $article->comment_count;
 
-			// Calculate engagement factor
 			$engagementFactor = log10(
 				max(
 					($favoritesCount * 2) +
@@ -72,51 +64,25 @@
 				)
 			);
 
-			// Author's overall article quality
-			$authorQualityScore = 1; //$this->getAuthorQualityScore($author);
+			$authorQualityScore = $article->author_quality_score;
 
-			// Respect moderation boost
 			$moderationBoost = 1;
 			if ($article->religious_moderation_value < 3) {
 				$moderationBoost = 1.5;
 			}
 
-			// Combine all factors
+			// Adjusted weights to balance age impact
 			$score = (
-					$ageFactor * 10 +
-					$readFactor * 2 +
+					$ageFactor * 8 +                  // Reduced from 10 to 8
+					$readFactor * 2.5 +               // Increased slightly
 					$authorFollowersFactor * 1.5 +
-					$engagementFactor * 2 +
-					$authorQualityScore * 1.2
+					$engagementFactor * 2.5 +         // Increased slightly
+					$authorQualityScore * 1.5         // Increased slightly
 				) * $moderationBoost;
 
 			// Normalize the score (0-1000 range)
 			$score = min(max($score, 0), 1000);
 
 			return $score;
-		}
-
-		private function getAuthorQualityScore($author)
-		{
-			// Get average metrics for author's other articles
-			$authorStats = Article::where('user_id', $author->id)
-				->where('approved', 1)
-				->where('is_published', 1)
-				->where('deleted', 0)
-				->select(
-					DB::raw('AVG(read_count) as avg_reads'),
-					DB::raw('COUNT(*) as total_articles')
-				)
-				->first();
-
-			if (!$authorStats->total_articles) {
-				return 1;
-			}
-
-			// Calculate author quality score based on average reads and total articles
-			$qualityScore = log10(max($authorStats->avg_reads, 1)) *
-				log10(max($authorStats->total_articles, 1));
-
-			return min($qualityScore, 10); // Cap at 10
 		}
 	}
