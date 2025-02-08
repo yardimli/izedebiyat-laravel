@@ -102,17 +102,17 @@
 
 		public function followers()
 		{
-			return $this->hasMany(UserFollow::class, 'following_id');
+			return $this->hasMany(UserFollow::class, 'following_id')->withDefault([]);
 		}
 
 		public function following()
 		{
-			return $this->hasMany(UserFollow::class, 'follower_id');
+			return $this->hasMany(UserFollow::class, 'follower_id')->withDefault([]);
 		}
 
 		public function favorites()
 		{
-			return $this->hasMany(ArticleFavorite::class);
+			return $this->hasMany(ArticleFavorite::class)->withDefault([]);
 		}
 
 		public function getProfilePhotoUrlAttribute()

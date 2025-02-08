@@ -7,6 +7,7 @@
 	use Carbon\Carbon;
 	use Illuminate\Console\Command;
 	use Illuminate\Support\Facades\DB;
+	use Illuminate\Support\Facades\Log;
 
 	class UpdateArticleRankings extends Command
 	{
@@ -16,12 +17,14 @@
 		public function handle()
 		{
 			$this->info('Starting article ranking updates...');
-
+			$chunk_counter = 0;
 			// Get all published and approved articles
 			Article::where('approved', 1)
 				->where('is_published', 1)
 				->where('deleted', 0)
 				->chunk(100, function ($articles) {
+					$chunk_counter++;
+					$this->info('Processing chunk ' . $chunk_counter);
 					foreach ($articles as $article) {
 						$ranking = $this->calculateRanking($article);
 
