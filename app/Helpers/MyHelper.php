@@ -335,7 +335,7 @@
 
 		public static function replaceAscii($input)
 		{
-			// First, perform the original ASCII replacements
+			// First, handle line breaks and special characters
 			$input = preg_replace("/\r\n|\r|\n/", '<br/>', $input);
 			$input = str_replace("", "...", $input);
 			$input = str_replace("", "-", $input);
@@ -344,24 +344,43 @@
 			$input = str_replace("", " ", $input);
 			$input = str_replace("  ", " ", $input);
 
-			// Remove leading and trailing line breaks
+			// Remove leading and trailing <br/> tags
 			$input = preg_replace('/^(\s*<br\s*\/?>\s*)*/', '', $input);
 			$input = preg_replace('/(\s*<br\s*\/?>\s*)*$/', '', $input);
 
-			// Calculate the percentage of uppercase characters
-			$totalChars = strlen(preg_replace('/[^a-zA-Z]/', '', $input));
+			// Calculate uppercase percentage
+			$totalChars = mb_strlen($input, 'UTF-8');
 			if ($totalChars > 0) {
-				$upperChars = strlen(preg_replace('/[^A-Z]/', '', $input));
-				$upperPercentage = ($upperChars / $totalChars) * 100;
+				$uppercaseChars = mb_strlen(preg_replace('/[^A-ZĞÜŞİÖÇ]/u', '', $input), 'UTF-8');
+				$uppercasePercentage = ($uppercaseChars / $totalChars) * 100;
 
-				// If more than 50% is uppercase, convert to Pascal Case
-				if ($upperPercentage > 50) {
-					// Convert to lowercase first, then use ucwords
-					$input = ucwords(strtolower($input));
+				// If more than 50% uppercase, convert to Pascal Case
+				if ($uppercasePercentage > 50) {
+					// First convert everything to lowercase
+					$input = mb_strtolower($input, 'UTF-8');
+
+					// Custom ucwords implementation for Turkish
+					$input = preg_replace_callback(
+						'/\b(\w)/u',
+						function($matches) {
+							return self::mbUcfirst($matches[0]);
+						},
+						$input
+					);
 				}
 			}
 
 			return $input;
+		}
+
+// Helper function for proper Turkish character case conversion
+		private static function mbUcfirst($string) {
+			$string = mb_strtoupper(mb_substr($string, 0, 1, 'UTF-8'), 'UTF-8') .
+				mb_substr($string, 1, null, 'UTF-8');
+
+			// Special handling for Turkish 'i' and 'I'
+			$string = str_replace('i̇', 'İ', $string); // Handle dotted I
+			return $string;
 		}
 
 		//------------------------------------------------------------
