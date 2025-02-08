@@ -161,7 +161,7 @@
 					->where('is_published', 1)
 					->where('moderation_flagged', 0)
 					->orderBy('formul_ekim', 'DESC')
-					->limit(50)
+					->limit(250)
 					->get();
 
 				$category->yeni_articles = Article::where('parent_category_id', $category->id)
@@ -170,7 +170,7 @@
 					->where('is_published', 1)
 					->where('moderation_flagged', 0)
 					->orderBy('created_at', 'DESC')
-					->limit(100)
+					->limit(250)
 					->get();
 			}
 
