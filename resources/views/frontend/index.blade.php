@@ -119,7 +119,7 @@
 										@foreach($category->yeni_articles as $story)
 											
 											@php
-												if ($counter<=5) {
+												if ($counter<=3) {
 													$counter++;
 												} else {
 													break;
