@@ -131,12 +131,13 @@
 			return view('frontend.page-about');
 		}
 
-		public function index() {
+		public function index()
+		{
 			$categories = Category::where('parent_category_id', 0)
 				->orderBy('category_name')
 				->get();
 
-			$category_order_slug_array = ['oyku', 'elestiri', 'bilimsel', 'siir', 'inceleme', 'roman', 'deneme'];
+			$category_order_slug_array = ['oyku', 'elestiri', 'siir', 'roman', 'deneme', 'bilimsel', 'inceleme'];
 
 			// Sort categories
 			$categories = $categories->sort(function ($a, $b) use ($category_order_slug_array) {
@@ -158,9 +159,13 @@
 
 			foreach ($categories as $category) {
 				if ($category->slug === 'deneme') {
-					$limit_formul_ekim = 800;
-					$limit_yeni = 200;
+					$seenUserIds = [];
+					$userArticleCount = []; // Track count of articles per user
+
+					$seenUserIdsInNew = [];
+					$userNewArticleCount = []; // Track count of new articles per user
 				}
+
 				// Get articles and remove duplicates by user_id
 				$articles = Article::where('parent_category_id', $category->id)
 					->where('approved', 1)
