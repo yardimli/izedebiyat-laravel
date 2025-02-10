@@ -119,7 +119,11 @@
 										@foreach($category->yeni_articles as $story)
 											
 											@php
-												$counter++;
+												if ($counter<=5) {
+													$counter++;
+												} else {
+													break;
+												}
 											@endphp
 											<li class="d-flex">
 												<div class="post-count">{{ str_pad($counter, 2, "0", STR_PAD_LEFT) }}</div>
