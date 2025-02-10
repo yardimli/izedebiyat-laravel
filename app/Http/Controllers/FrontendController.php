@@ -137,7 +137,7 @@
 				->orderBy('category_name')
 				->get();
 
-			$category_order_slug_array = ['oyku', 'elestiri', 'siir',  'deneme', 'bilimsel', 'roman', 'inceleme'];
+			$category_order_slug_array = ['oyku', 'elestiri', 'siir', 'deneme', 'bilimsel', 'roman', 'inceleme'];
 
 			// Sort categories
 			$categories = $categories->sort(function ($a, $b) use ($category_order_slug_array) {
@@ -185,8 +185,8 @@
 						$userArticleCount[$article->user_id] = 0;
 					}
 
-					if ((!in_array($article->user_id, $seenUserIds) || $category->slug === 'bilimsel') &&
-						$userArticleCount[$article->user_id] < 2) { // Limit to 2 articles per user
+					if ((!in_array($article->user_id, $seenUserIds) &&
+							$userArticleCount[$article->user_id] < 2) || $category->slug === 'bilimsel') { // Limit to 2 articles per user
 						$seenUserIds[] = $article->user_id;
 						$userArticleCount[$article->user_id]++;
 						$uniqueArticles->push($article);
@@ -216,8 +216,8 @@
 						$userNewArticleCount[$article->user_id] = 0;
 					}
 
-					if ((!in_array($article->user_id, $seenUserIdsInNew) || $category->slug === 'bilimsel') &&
-						$userNewArticleCount[$article->user_id] < 2) { // Limit to 2 articles per user
+					if ((!in_array($article->user_id, $seenUserIdsInNew) &&
+							$userNewArticleCount[$article->user_id] < 2) || $category->slug === 'bilimsel') { // Limit to 2 articles per user
 						$seenUserIdsInNew[] = $article->user_id;
 						$userNewArticleCount[$article->user_id]++;
 						$uniqueYeniArticles->push($article);
