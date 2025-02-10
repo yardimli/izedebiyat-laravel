@@ -27,82 +27,78 @@
 								<div class="row">
 									@php
 										$counter = 0;
-										$users = [];
 									@endphp
 									
 									@foreach($category->articles as $story)
 										
-										@if(!in_array($story->user_id, $users))
-											@php
-												$counter++;
-												$users[] = $story->user_id;
-											@endphp
-											
-											@if($counter === 1)
-												<div class="col-sm-12 col-md-6">
-													<article class="first mb-4">
-														<figure>
-															<a href="/yapit/{{ $story->slug }}">
-																{!! \App\Helpers\MyHelper::getImage($story->featured_image ?? '', $story->category_id, '', 'width: 100%','medium_landscape') !!}
-															</a>
-														</figure>
-														<h3 class="entry-title mb-2">
-															<a
-																href="/yapit/{{ $story->slug }}">{{ \App\Helpers\MyHelper::replaceAscii($story->title) }}</a>
-														</h3>
-														<div class="entry-excerpt">
-															<p class="mb-1">
-																@if($story->parent_category_slug === "siir")
-																	{!! \App\Helpers\MyHelper::getWords(\App\Helpers\MyHelper::replaceAscii($story->main_text), 16, false) !!}
-																@else
-																	{!! \App\Helpers\MyHelper::getWords(\App\Helpers\MyHelper::replaceAscii($story->subheading), 16) !!}
-																@endif
-															</p>
-														</div>
-														<div class="entry-meta align-items-center">
-															<a href="/yazar/{{ $story->name_slug }}">{{ $story->name }}</a> -
-															<a
-																href="/kume/{{ $story->parent_category_slug }}/{{ $story->category_slug }}">{!! $story->category_name !!}</a><br>
-															<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->created_at) }}</span>
-															<span class="middotDivider"></span>
-															<span class="readingTime"
-															      title="{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}">{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}</span>
-														</div>
-													</article>
-												</div>
-												<div class="col-sm-12 col-md-6">
-													@endif
-													
-													@if($counter > 1 && $counter <= 5)
-														<article>
-															<div class="mb-3 d-flex row">
-																<figure class="col-4 col-md-4">
-																	<a href="/yapit/{{ $story->slug }}">
-																		{!! \App\Helpers\MyHelper::getImage($story->featured_image ?? '',$story->category_id, '', 'width: 100%', 'small_landscape') !!}
-																	</a>
-																</figure>
-																<div class="entry-content col-8 col-md-8 pl-md-0">
-																	<h5 class="entry-title mb-2">
-																		<a
-																			href="/yapit/{{ $story->slug }}">{{ \App\Helpers\MyHelper::replaceAscii($story->title) }}</a>
-																	</h5>
-																	<div class="entry-meta align-items-center">
-																		<a href="/yazar/{{ $story->name_slug }}">{{ $story->name }}</a> -
-																		<a
-																			href="/kume/{{ $story->parent_category_slug }}/{{ $story->category_slug }}">{!! $story->category_name !!}</a><br>
-																		<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->created_at) }}</span>
-																		<span class="middotDivider"></span>
-																		<span class="readingTime"
-																		      title="{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}">{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}</span>
-																	</div>
+										@php
+											$counter++;
+										@endphp
+										
+										@if($counter === 1)
+											<div class="col-sm-12 col-md-6">
+												<article class="first mb-4">
+													<figure>
+														<a href="/yapit/{{ $story->slug }}">
+															{!! \App\Helpers\MyHelper::getImage($story->featured_image ?? '', $story->category_id, '', 'width: 100%','medium_landscape') !!}
+														</a>
+													</figure>
+													<h3 class="entry-title mb-2">
+														<a
+															href="/yapit/{{ $story->slug }}">{{ \App\Helpers\MyHelper::replaceAscii($story->title) }}</a>
+													</h3>
+													<div class="entry-excerpt">
+														<p class="mb-1">
+															@if($story->parent_category_slug === "siir")
+																{!! \App\Helpers\MyHelper::getWords(\App\Helpers\MyHelper::replaceAscii($story->main_text), 16, false) !!}
+															@else
+																{!! \App\Helpers\MyHelper::getWords(\App\Helpers\MyHelper::replaceAscii($story->subheading), 16) !!}
+															@endif
+														</p>
+													</div>
+													<div class="entry-meta align-items-center">
+														<a href="/yazar/{{ $story->name_slug }}">{{ $story->name }}</a> -
+														<a
+															href="/kume/{{ $story->parent_category_slug }}/{{ $story->category_slug }}">{!! $story->category_name !!}</a><br>
+														<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->created_at) }}</span>
+														<span class="middotDivider"></span>
+														<span class="readingTime"
+														      title="{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}">{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}</span>
+													</div>
+												</article>
+											</div>
+											<div class="col-sm-12 col-md-6">
+												@endif
+												
+												@if($counter > 1 && $counter <= 5)
+													<article>
+														<div class="mb-3 d-flex row">
+															<figure class="col-4 col-md-4">
+																<a href="/yapit/{{ $story->slug }}">
+																	{!! \App\Helpers\MyHelper::getImage($story->featured_image ?? '',$story->category_id, '', 'width: 100%', 'small_landscape') !!}
+																</a>
+															</figure>
+															<div class="entry-content col-8 col-md-8 pl-md-0">
+																<h5 class="entry-title mb-2">
+																	<a
+																		href="/yapit/{{ $story->slug }}">{{ \App\Helpers\MyHelper::replaceAscii($story->title) }}</a>
+																</h5>
+																<div class="entry-meta align-items-center">
+																	<a href="/yazar/{{ $story->name_slug }}">{{ $story->name }}</a> -
+																	<a
+																		href="/kume/{{ $story->parent_category_slug }}/{{ $story->category_slug }}">{!! $story->category_name !!}</a><br>
+																	<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->created_at) }}</span>
+																	<span class="middotDivider"></span>
+																	<span class="readingTime"
+																	      title="{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}">{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}</span>
 																</div>
 															</div>
-														</article>
-													@endif
-													
-													@if($counter === 5)
-												</div>
-											@endif
+														</div>
+													</article>
+												@endif
+												
+												@if($counter === 5)
+											</div>
 										@endif
 									@endforeach
 								</div>
@@ -118,35 +114,31 @@
 									<ol>
 										@php
 											$counter = 0;
-											$users = [];
 										@endphp
 										
 										@foreach($category->yeni_articles as $story)
 											
-											@if(!in_array($story->user_id, $users) && $counter < 5)
-												@php
-													$counter++;
-													$users[] = $story->user_id;
-												@endphp
-												<li class="d-flex">
-													<div class="post-count">{{ str_pad($counter, 2, "0", STR_PAD_LEFT) }}</div>
-													<div class="post-content">
-														<h5 class="entry-title mb-2">
-															<a
-																href="/yapit/{{ $story->slug }}">{{ \App\Helpers\MyHelper::replaceAscii($story->title) }}</a>
-														</h5>
-														<div class="entry-meta align-items-center">
-															<a href="/yazar/{{ $story->name_slug }}">{{ $story->name }}</a> -
-															<a
-																href="/kume/{{ $story->parent_category_slug }}/{{ $story->category_slug }}">{!! $story->category_name !!}</a><br>
-															<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->created_at) }}</span>
-															<span class="middotDivider"></span>
-															<span class="readingTime"
-															      title="{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}">{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}</span>
-														</div>
+											@php
+												$counter++;
+											@endphp
+											<li class="d-flex">
+												<div class="post-count">{{ str_pad($counter, 2, "0", STR_PAD_LEFT) }}</div>
+												<div class="post-content">
+													<h5 class="entry-title mb-2">
+														<a
+															href="/yapit/{{ $story->slug }}">{{ \App\Helpers\MyHelper::replaceAscii($story->title) }}</a>
+													</h5>
+													<div class="entry-meta align-items-center">
+														<a href="/yazar/{{ $story->name_slug }}">{{ $story->name }}</a> -
+														<a
+															href="/kume/{{ $story->parent_category_slug }}/{{ $story->category_slug }}">{!! $story->category_name !!}</a><br>
+														<span>{{ \App\Helpers\MyHelper::timeElapsedString($story->created_at) }}</span>
+														<span class="middotDivider"></span>
+														<span class="readingTime"
+														      title="{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}">{{ \App\Helpers\MyHelper::estimatedReadingTime($story->main_text) }}</span>
 													</div>
-												</li>
-											@endif
+												</div>
+											</li>
 										@endforeach
 									</ol>
 								</div>
@@ -157,16 +149,16 @@
 					
 					@if ($counter_section === 1 || $counter_section === 3)
 						<div class="container-lg" style="text-align: center;">
-								<a href="https://herkesyazar.app">
-									<img src="{{ asset('/images/herkesyazar.jpg') }}"
-									     class="desktop-image"
-									     alt="herkes yazar"
-									     style="max-width:100%;">
-									<img src="{{ asset('/images/herkesyazar_dar.jpg') }}"
-									     class="mobile-image"
-									     alt="herkes yazar"
-									     style="max-width:100%;">
-								</a>
+							<a href="https://herkesyazar.app">
+								<img src="{{ asset('/images/herkesyazar.jpg') }}"
+								     class="desktop-image"
+								     alt="herkes yazar"
+								     style="max-width:100%;">
+								<img src="{{ asset('/images/herkesyazar_dar.jpg') }}"
+								     class="mobile-image"
+								     alt="herkes yazar"
+								     style="max-width:100%;">
+							</a>
 						</div>
 					@endif
 				
