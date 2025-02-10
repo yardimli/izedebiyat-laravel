@@ -183,9 +183,9 @@
 					->select('*')
 					->distinct('user_id')
 					->orderBy('created_at', 'DESC')
-					->limit(100)
+					->limit(50)
 					->get();
-				
+
 				// Remove duplicate user_ids keeping first occurrence
 				$uniqueYeniArticles = collect();
 
