@@ -158,7 +158,7 @@
 			$limit_yeni = 50;
 
 			foreach ($categories as $category) {
-				if ($category->slug === 'deneme') {
+				if ($category->slug === 'deneme' || $category->slug === 'bilimsel') {
 					$seenUserIds = [];
 					$userArticleCount = []; // Track count of articles per user
 
@@ -186,7 +186,7 @@
 					}
 
 					if ((!in_array($article->user_id, $seenUserIds) &&
-							$userArticleCount[$article->user_id] < 2) || ($category->slug === 'bilimsel' && $userArticleCount[$article->user_id] < 4)) { // Limit to 2 articles per user
+						$userArticleCount[$article->user_id] < 2)) { // Limit to 2 articles per user
 						$seenUserIds[] = $article->user_id;
 						$userArticleCount[$article->user_id]++;
 						$uniqueArticles->push($article);
@@ -215,7 +215,7 @@
 					}
 
 					if ((!in_array($article->user_id, $seenUserIdsInNew) &&
-							$userNewArticleCount[$article->user_id] < 2) || ($category->slug === 'bilimsel' && $userArticleCount[$article->user_id] < 4)) { // Limit to 2 articles per user
+						$userNewArticleCount[$article->user_id] < 2)) { // Limit to 2 articles per user
 						$seenUserIdsInNew[] = $article->user_id;
 						$userNewArticleCount[$article->user_id]++;
 						$uniqueYeniArticles->push($article);
