@@ -93,7 +93,7 @@
 				// Fetch previous messages from the session
 				$chatHistory = ChatMessage::where('session_id', $session_id)
 					->orderBy('created_at', 'desc')
-					->limit(10)
+					->limit(20)
 					->get();
 				$chat_history = [];
 				foreach ($chatHistory as $msg) {
