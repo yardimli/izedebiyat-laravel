@@ -153,7 +153,12 @@
 			$seenUserIdsInNew = [];
 			$userNewArticleCount = []; // Track count of new articles per user
 
+			$limit_formul_ekim = 300;
+			$limit_yeni = 0;
+
 			foreach ($categories as $category) {
+				$limit_formul_ekim += 50;
+				$limit_yeni += 50;
 				// Get articles and remove duplicates by user_id
 				$articles = Article::where('parent_category_id', $category->id)
 					->where('approved', 1)
@@ -161,7 +166,7 @@
 					->where('is_published', 1)
 					->where('moderation_flagged', 0)
 					->orderBy('formul_ekim', 'DESC')
-					->limit(350)
+					->limit($limit_formul_ekim)
 					->get();
 
 				// Remove duplicate user_ids keeping first occurrence
@@ -192,7 +197,7 @@
 					->select('*')
 					->distinct('user_id')
 					->orderBy('created_at', 'DESC')
-					->limit(50)
+					->limit($limit_yeni)
 					->get();
 
 				// Remove duplicate user_ids keeping first occurrence
