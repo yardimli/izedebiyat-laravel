@@ -131,31 +131,29 @@
 			return view('frontend.page-about');
 		}
 
-		public function index()
-		{
+		public function index() {
 			$categories = Category::where('parent_category_id', 0)
 				->orderBy('category_name')
 				->get();
 
 			$category_order_slug_array = ['oyku', 'elestiri', 'bilimsel', 'siir', 'inceleme', 'roman', 'deneme'];
-			// Use the sort method directly to handle non-found slugs.
+
+			// Sort categories
 			$categories = $categories->sort(function ($a, $b) use ($category_order_slug_array) {
 				$posA = array_search($a->slug, $category_order_slug_array);
 				$posB = array_search($b->slug, $category_order_slug_array);
-
-				// Handle case where position is not found, push to end of sorted list
 				$posA = $posA !== false ? $posA : count($category_order_slug_array);
 				$posB = $posB !== false ? $posB : count($category_order_slug_array);
-
 				return $posA - $posB;
-			});
+			})->values();
 
-			// If needed, re-index the collection
-			$categories = $categories->values();
+			$seenUserIds = [];
 
+			$seenUserIdsInNew = [];
 
 			foreach ($categories as $category) {
-				$category->articles = Article::where('parent_category_id', $category->id)
+				// Get articles and remove duplicates by user_id
+				$articles = Article::where('parent_category_id', $category->id)
 					->where('approved', 1)
 					->where('deleted', 0)
 					->where('is_published', 1)
@@ -164,7 +162,20 @@
 					->limit(350)
 					->get();
 
-				$category->yeni_articles = Article::where('parent_category_id', $category->id)
+				// Remove duplicate user_ids keeping first occurrence
+				$uniqueArticles = collect();
+
+				foreach ($articles as $article) {
+					if (!in_array($article->user_id, $seenUserIds)) {
+						$seenUserIds[] = $article->user_id;
+						$uniqueArticles->push($article);
+					}
+				}
+
+				$category->articles = $uniqueArticles;
+
+				// Do the same for yeni_articles
+				$yeniArticles = Article::where('parent_category_id', $category->id)
 					->where('approved', 1)
 					->where('deleted', 0)
 					->where('is_published', 1)
@@ -172,9 +183,19 @@
 					->orderBy('created_at', 'DESC')
 					->limit(100)
 					->get();
-			}
 
-			//dd($categories);
+				// Remove duplicate user_ids keeping first occurrence
+				$uniqueYeniArticles = collect();
+
+				foreach ($yeniArticles as $article) {
+					if (!in_array($article->user_id, $seenUserIdsInNew)) {
+						$seenUserIdsInNew[] = $article->user_id;
+						$uniqueYeniArticles->push($article);
+					}
+				}
+
+				$category->yeni_articles = $uniqueYeniArticles;
+			}
 
 			return view('frontend.index', compact('categories'));
 		}
