@@ -159,7 +159,7 @@
 					->where('is_published', 1)
 					->where('moderation_flagged', 0)
 					->orderBy('formul_ekim', 'DESC')
-					->limit(350)
+					->limit(600)
 					->get();
 
 				// Remove duplicate user_ids keeping first occurrence
