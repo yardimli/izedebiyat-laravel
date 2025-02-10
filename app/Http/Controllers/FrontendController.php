@@ -164,6 +164,10 @@
 
 					$seenUserIdsInNew = [];
 					$userNewArticleCount = []; // Track count of new articles per user
+					$limit_yeni = 150;
+				} else
+				{
+					$limit_yeni = 50;
 				}
 
 				// Get articles and remove duplicates by user_id
