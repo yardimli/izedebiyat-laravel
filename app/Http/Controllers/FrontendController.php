@@ -180,10 +180,12 @@
 					->where('deleted', 0)
 					->where('is_published', 1)
 					->where('moderation_flagged', 0)
+					->select('*')
+					->distinct('user_id')
 					->orderBy('created_at', 'DESC')
 					->limit(100)
 					->get();
-
+				
 				// Remove duplicate user_ids keeping first occurrence
 				$uniqueYeniArticles = collect();
 
