@@ -153,12 +153,14 @@
 			$seenUserIdsInNew = [];
 			$userNewArticleCount = []; // Track count of new articles per user
 
-			$limit_formul_ekim = 300;
-			$limit_yeni = 0;
+			$limit_formul_ekim = 350;
+			$limit_yeni = 50;
 
 			foreach ($categories as $category) {
-				$limit_formul_ekim += 50;
-				$limit_yeni += 50;
+				if ($category->slug === 'deneme') {
+					$limit_formul_ekim = 800;
+					$limit_yeni = 200;
+				}
 				// Get articles and remove duplicates by user_id
 				$articles = Article::where('parent_category_id', $category->id)
 					->where('approved', 1)
