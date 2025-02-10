@@ -186,7 +186,7 @@
 					}
 
 					if ((!in_array($article->user_id, $seenUserIds) &&
-							$userArticleCount[$article->user_id] < 2) || $category->slug === 'bilimsel') { // Limit to 2 articles per user
+							$userArticleCount[$article->user_id] < 2) || ($category->slug === 'bilimsel' && $userArticleCount[$article->user_id] < 4)) { // Limit to 2 articles per user
 						$seenUserIds[] = $article->user_id;
 						$userArticleCount[$article->user_id]++;
 						$uniqueArticles->push($article);
@@ -201,8 +201,6 @@
 					->where('deleted', 0)
 					->where('is_published', 1)
 					->where('moderation_flagged', 0)
-					->select('*')
-					->distinct('user_id')
 					->orderBy('created_at', 'DESC')
 					->limit($limit_yeni)
 					->get();
@@ -217,7 +215,7 @@
 					}
 
 					if ((!in_array($article->user_id, $seenUserIdsInNew) &&
-							$userNewArticleCount[$article->user_id] < 2) || $category->slug === 'bilimsel') { // Limit to 2 articles per user
+							$userNewArticleCount[$article->user_id] < 2) || ($category->slug === 'bilimsel' && $userArticleCount[$article->user_id] < 4)) { // Limit to 2 articles per user
 						$seenUserIdsInNew[] = $article->user_id;
 						$userNewArticleCount[$article->user_id]++;
 						$uniqueYeniArticles->push($article);
