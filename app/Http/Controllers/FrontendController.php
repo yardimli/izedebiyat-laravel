@@ -148,8 +148,10 @@
 			})->values();
 
 			$seenUserIds = [];
+			$userArticleCount = []; // Track count of articles per user
 
 			$seenUserIdsInNew = [];
+			$userNewArticleCount = []; // Track count of new articles per user
 
 			foreach ($categories as $category) {
 				// Get articles and remove duplicates by user_id
@@ -166,8 +168,15 @@
 				$uniqueArticles = collect();
 
 				foreach ($articles as $article) {
-					if (!in_array($article->user_id, $seenUserIds) || $category->slug === 'bilimsel') {
+					// Initialize count if not exists
+					if (!isset($userArticleCount[$article->user_id])) {
+						$userArticleCount[$article->user_id] = 0;
+					}
+
+					if ((!in_array($article->user_id, $seenUserIds) || $category->slug === 'bilimsel') &&
+						$userArticleCount[$article->user_id] < 2) { // Limit to 2 articles per user
 						$seenUserIds[] = $article->user_id;
+						$userArticleCount[$article->user_id]++;
 						$uniqueArticles->push($article);
 					}
 				}
@@ -190,8 +199,15 @@
 				$uniqueYeniArticles = collect();
 
 				foreach ($yeniArticles as $article) {
-					if (!in_array($article->user_id, $seenUserIdsInNew) || $category->slug === 'bilimsel') {
+					// Initialize count if not exists
+					if (!isset($userNewArticleCount[$article->user_id])) {
+						$userNewArticleCount[$article->user_id] = 0;
+					}
+
+					if ((!in_array($article->user_id, $seenUserIdsInNew) || $category->slug === 'bilimsel') &&
+						$userNewArticleCount[$article->user_id] < 2) { // Limit to 2 articles per user
 						$seenUserIdsInNew[] = $article->user_id;
+						$userNewArticleCount[$article->user_id]++;
 						$uniqueYeniArticles->push($article);
 					}
 				}
