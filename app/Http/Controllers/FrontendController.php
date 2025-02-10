@@ -159,14 +159,14 @@
 					->where('is_published', 1)
 					->where('moderation_flagged', 0)
 					->orderBy('formul_ekim', 'DESC')
-					->limit(1000)
+					->limit(500)
 					->get();
 
 				// Remove duplicate user_ids keeping first occurrence
 				$uniqueArticles = collect();
 
 				foreach ($articles as $article) {
-					if (!in_array($article->user_id, $seenUserIds)) {
+					if (!in_array($article->user_id, $seenUserIds) || $category->slug === 'bilimsel') {
 						$seenUserIds[] = $article->user_id;
 						$uniqueArticles->push($article);
 					}
