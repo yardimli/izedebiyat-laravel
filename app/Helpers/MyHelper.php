@@ -1504,8 +1504,8 @@ output in Turkish, output JSON as:
 			} else {
 				$headers[] = 'Content-Type: application/json';
 				$headers[] = "Authorization: Bearer " . $llm_api_key;
-				$headers[] = "HTTP-Referer: https://fictionfusion.io";
-				$headers[] = "X-Title: FictionFusion";
+				$headers[] = "HTTP-Referer: https://izedebiyat.com";
+				$headers[] = "X-Title: IzEdebiyat";
 			}
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
