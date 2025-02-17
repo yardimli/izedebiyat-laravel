@@ -141,7 +141,7 @@
 										<div class="register-page-txt color--white">
 
 											<!-- Logo -->
-											<img class="img-fluid" src="{{ asset('/assets/images/logo/logo-large.png') }}" id="site_logo" alt="logo-image">
+											<img class="img-fluid" src="{{ asset('/assets/images/logo/logo-large.png') }}" id="site_logo" alt="logo-image" style="max-width: 100px;">
 											
 											<!-- Text -->
 											<p class="p-md mt-25">{{__('default.Boilerplate Site Tagline')}}
@@ -159,7 +159,7 @@
 									<!-- LOGIN FORM -->
 									<div class="col-md-6">
 										<div class="text-center mt-2">
-											<a href="/" class="logo-black"><img src="{{ asset('/assets/images/logo/logo-large.png') }}" id="site_logo" alt="logo" style="width:75%;"></a>
+											<a href="/" class="logo-black"><img src="{{ asset('/assets/images/logo/logo-large.png') }}" id="site_logo" alt="logo" style="max-width:100px;"></a>
 										</div>
 										
 										<div class="register-page-form" style="margin-top: 5px; padding-top: 5px;">
