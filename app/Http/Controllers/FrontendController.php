@@ -154,11 +154,11 @@
 			$seenUserIdsInNew = [];
 			$userNewArticleCount = []; // Track count of new articles per user
 
-			$limit_formul_ekim = 350;
+			$limit_formul_ekim = 400;
 			$limit_yeni = 50;
 
 			foreach ($categories as $category) {
-				if ($category->slug === 'deneme' || $category->slug === 'bilimsel') {
+				if ($category->slug === 'deneme' || $category->slug === 'bilimsel'  || $category->slug === 'elestiri') {
 					$seenUserIds = [];
 					$userArticleCount = []; // Track count of articles per user
 
