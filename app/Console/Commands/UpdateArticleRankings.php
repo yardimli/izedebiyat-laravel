@@ -37,7 +37,12 @@
                             ELSE 1 
                         END *
                         -- Age multiplier: starts at 1 and decreases to 0.2 over 25 years
-                        GREATEST(0.2, (1 - (LEAST(DATEDIFF(NOW(), created_at) / 365, 25) * 0.032)))
+                        GREATEST(0.2, (1 - (LEAST(DATEDIFF(NOW(), created_at) / 365, 25) * 0.032))) *
+                        -- Recent articles boost (last 30 days)
+                        CASE 
+                            WHEN DATEDIFF(NOW(), created_at) <= 60 THEN 2.5 
+                            ELSE 1 
+                        END
                     ),
                     0
                 ),
