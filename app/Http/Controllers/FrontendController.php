@@ -137,7 +137,7 @@
 				->orderBy('category_name')
 				->get();
 
-			$category_order_slug_array = ['oyku', 'elestiri', 'siir', 'deneme', 'bilimsel', 'roman', 'inceleme'];
+			$category_order_slug_array = ['siir', 'deneme', 'oyku', 'elestiri',  'bilimsel', 'roman', 'inceleme'];
 
 			// Sort categories
 			$categories = $categories->sort(function ($a, $b) use ($category_order_slug_array) {
