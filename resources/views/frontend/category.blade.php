@@ -40,7 +40,7 @@
 										$counter++;
 									@endphp
 									
-									@if($counter === 1)
+									@if($counter === 3)
 										<article class="first mb-3">
 											<figure>
 												<a href="{{ url('/yapit/' . $article->slug) }}">
