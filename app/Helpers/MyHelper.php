@@ -1408,13 +1408,23 @@ output in Turkish, output JSON as:
 				$defaultQuote = 'Kelimelerin gücüyle dünyaları değiştirin.'; // Default Turkish quote
 
 				try {
+					// Get current date and time in Turkish format
+					$now = Carbon::now('Europe/Istanbul'); // Use your server's or app's timezone
+					// Set locale to Turkish for month names etc.
+					$now->locale('tr_TR');
+					// Format: e.g., "14 Temmuz 2024, saat 15:30"
+					$dateTimeString = $now->translatedFormat('j F Y, \s\a\a\t H:i');
+
+					// Construct the prompt
+					$prompt = "Bugün {$dateTimeString}. Mümkünse, bu özel günle ilişkili önemli tarihi olayları, tanınmış kişilerin (yazar, sanatçı, düşünür vb.) doğum/ölüm yıldönümlerini veya günün bu vaktinin (sabah, öğle, akşam, gece) genel atmosferini dikkate alarak; edebiyat, yazma, yaratıcılık veya hayatın anlamı üzerine kısa ve ilham verici bir Türkçe söz oluştur. Eğer bugüne özel belirgin bir olay/kişi yoksa veya zaman dilimi özel bir anlam katmıyorsa, genel geçer, motive edici bir söz de olabilir. Yanıt olarak *sadece* sözün kendisini, tırnak işaretleri veya ek açıklamalar olmadan ver.";
+
+
 					$llm_result = self::llm_no_tool_call(
 						'openai/gpt-4o-mini',
 						'', // System prompt (optional)
 						[[
 							'role' => 'user',
-							// Prompt asking for a short inspirational quote in Turkish
-							'content' => "Edebiyat, yazma veya hayat üzerine kısa, ilham verici bir söz söyle. Sadece sözün kendisini yaz, tırnak işareti veya ek açıklama olmadan."
+							'content' => $prompt
 						]],
 						false // We want plain text, not JSON
 					);
