@@ -226,7 +226,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 			}
 			$gpt_prompt = str_replace('##UserPrompt##', $user_prompt, $prompt_enhancer);
 			//$llm = $request->input('llm');
-			$llm = 'anthropic/claude-3.5-sonnet:beta';
+			$llm = 'anthropic/claude-3.7-sonnet:beta';
 
 			$chat_history[] = [
 				'role' => 'user',

@@ -181,10 +181,9 @@
 
 			if ($storage_path !== '' && Storage::disk('public')->exists($storage_path)) {
 
-				if ($resize_image_size==='large_landscape') {
+				if ($resize_image_size === 'large_landscape') {
 					$image_src = 'storage' . $storage_path;
-				} else
-				{
+				} else {
 					$image_src = resize('storage' . $storage_path, $resize_image_size);
 				}
 
@@ -195,10 +194,9 @@
 
 			if ($articleMainImage !== '' && Storage::disk('public')->exists("yazi_resimler/" . $articleMainImage)) {
 
-				if ($resize_image_size==='large_landscape') {
+				if ($resize_image_size === 'large_landscape') {
 					$image_src = 'storage/yazi_resimler/' . $articleMainImage;
-				} else
-				{
+				} else {
 					$image_src = resize('storage/yazi_resimler/' . $articleMainImage, $resize_image_size);
 				}
 
@@ -208,10 +206,9 @@
 			}
 
 			if (key_exists($categoryId, self::$categoryImages)) {
-				if ($resize_image_size==='large_landscape') {
+				if ($resize_image_size === 'large_landscape') {
 					$image_src = 'storage/catpicbox/' . self::$categoryImages[$categoryId];
-				} else
-				{
+				} else {
 					$image_src = resize('storage/catpicbox/' . self::$categoryImages[$categoryId], $resize_image_size);
 				}
 
@@ -363,7 +360,8 @@
 			return $input;
 		}
 
-		public static function ucwords_tr($string) {
+		public static function ucwords_tr($string)
+		{
 			// Define the encoding
 			$encoding = 'UTF-8';
 
@@ -374,7 +372,7 @@
 			$words = explode(' ', $string);
 
 			// Function to capitalize the first letter of a word taking Turkish locale into consideration
-			$capitalize = function($word) use ($encoding) {
+			$capitalize = function ($word) use ($encoding) {
 				if (empty($word)) {
 					return $word;
 				}
@@ -710,7 +708,7 @@
 					$counter++;
 
 					$llm_result = self::llm_no_tool_call(
-						'openai/gpt-4o-mini',
+						'openai/gpt-4.1-mini',
 						'',
 						[[
 							'role' => 'user',
@@ -790,7 +788,7 @@
 					$article_text = implode(' ', array_slice($article_words, 0, 1000));
 
 					$llm_result = self::llm_no_tool_call(
-						'openai/gpt-4o-mini', //google/gemini-flash-1.5-8b
+						'openai/gpt-4.1-mini', //google/gemini-flash-1.5-8b
 						'',
 						[[
 							'role' => 'user',
@@ -1173,7 +1171,7 @@
 					}
 
 					$llm_result = self::llm_no_tool_call(
-						'openai/gpt-4o-mini', //google/gemini-flash-1.5-8b
+						'openai/gpt-4.1-mini', //google/gemini-flash-1.5-8b
 						'',
 						[['role' => 'user', 'content' => "
 	take the following Turkish text and output the most meaningful 5 keywords that describe the text then do sentiment analysis on the text. the sentiment analysis should choose one of the following:
@@ -1400,6 +1398,51 @@ output in Turkish, output JSON as:
 				flush();
 
 			} while ($recordsInBatch > 0);
+		}
+
+		public static function generateInspirationalQuote()
+		{
+			// Cache the quote for 6 hours (21600 seconds) to avoid excessive API calls
+			return Cache::remember('inspirational_quote', 21600, function () {
+				$defaultQuote = 'Kelimelerin gücüyle dünyaları değiştirin.'; // Default Turkish quote
+
+				try {
+					$llm_result = self::llm_no_tool_call(
+						'openai/gpt-4o-mini',
+						'', // System prompt (optional)
+						[[
+							'role' => 'user',
+							// Prompt asking for a short inspirational quote in Turkish
+							'content' => "Edebiyat, yazma veya hayat üzerine kısa, ilham verici bir söz söyle. Sadece sözün kendisini yaz, tırnak işareti veya ek açıklama olmadan."
+						]],
+						false // We want plain text, not JSON
+					);
+
+					if (!$llm_result['error'] && !empty(trim($llm_result['content']))) {
+						// Basic cleanup: remove potential quotes or markdown
+						$quote = trim($llm_result['content'], " \n\r\t\v\0\"'`");
+						// Ensure it's not overly long (adjust max length if needed)
+						if (mb_strlen($quote) < 200 && mb_strlen($quote) > 10) {
+							// Check if it looks like a reasonable quote (basic check)
+							if (!preg_match('/\{.*\}/', $quote) && !preg_match('/\[.*\]/', $quote)) {
+								return $quote;
+							}
+						}
+					}
+
+					// Log if there was an issue but return default
+					if ($llm_result['error']) {
+						Log::warning('Inspirational quote generation failed: ' . $llm_result['content']);
+					} else {
+						Log::warning('Inspirational quote generation returned empty or invalid content: ' . ($llm_result['content'] ?? 'N/A'));
+					}
+					return $defaultQuote;
+
+				} catch (\Exception $e) {
+					Log::error('Exception during inspirational quote generation: ' . $e->getMessage());
+					return $defaultQuote; // Return default on exception
+				}
+			});
 		}
 
 		//------------------------------------------------------------

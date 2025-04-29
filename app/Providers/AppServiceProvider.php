@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\View\Composers\QuoteComposer;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
 
@@ -23,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
         //
 	    Paginator::useBootstrap();
 	    \Carbon\Carbon::setLocale('tr');
+	    View::composer('layouts.app-frontend', QuoteComposer::class);
+
 
     }
 }

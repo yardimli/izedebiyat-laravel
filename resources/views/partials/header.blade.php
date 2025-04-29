@@ -117,6 +117,11 @@
 				</div>
 			</div>
 		</div>
+		@isset($inspirationalQuote)
+			<div class="container-lg text-center pt-2 pb-1 d-none d-lg-block border-top border-bottom border-dashed">
+				<p class="fst-italic inspirational-quote mb-0 small text-muted">"{{ $inspirationalQuote }}"</p>
+			</div>
+		@endisset
 		
 		@include('partials.main-menu')
 	</header>
