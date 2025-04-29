@@ -127,6 +127,12 @@
 	</header>
 </div>
 
+@isset($inspirationalQuote)
+	<div class="container-fluid text-center pt-2 pb-1 d-lg-none border-bottom border-dashed" style="margin-top: 60px;">
+		<p class="fst-italic inspirational-quote-mobile mb-0 small text-muted">"{{ $inspirationalQuote }}"</p>
+	</div>
+@endisset
+
 @push('scripts')
 	<script>
 		
