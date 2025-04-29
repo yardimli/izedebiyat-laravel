@@ -1403,7 +1403,7 @@ output in Turkish, output JSON as:
 		public static function generateInspirationalQuote()
 		{
 			// Cache the quote for 6 hours (21600 seconds) to avoid excessive API calls
-//			return Cache::remember('inspirational_quote', 21600, function () {
+			return Cache::remember('inspirational_quote', 60, function () {
 				$defaultQuote = 'Kelimelerin gücüyle dünyaları değiştirin.'; // Default Turkish quote
 
 				try {
@@ -1442,7 +1442,7 @@ output in Turkish, output JSON as:
 					Log::error('Exception during inspirational quote generation: ' . $e->getMessage());
 					return $defaultQuote; // Return default on exception
 				}
-//			});
+			});
 		}
 
 		//------------------------------------------------------------
