@@ -1459,6 +1459,7 @@ output in Turkish, output JSON as:
 							$nowDateTime = Carbon::now($timezone);
 							$nowDateTime->locale('tr_TR');
 							$dateTimeString = $nowDateTime->translatedFormat('j F Y, \s\a\a\t H:i');
+							Log::info("Current date and time string: {$dateTimeString}");
 
 							// Construct the prompt
 							$prompt = "Bugün {$dateTimeString}. Mümkünse, bu gün, veya bu hafta ile ilişkili önemli tarihi olayları, tanınmış kişilerin (yazar, sanatçı, düşünür vb.) doğum/ölüm yıldönümlerini veya günün bu vaktinin (sabah, öğle, akşam, gece) genel atmosferini dikkate alarak; edebiyat, yazma, yaratıcılık veya hayatın anlamı üzerine kısa ve ilham verici bir Türkçe söz oluştur. Eğer bugüne özel belirgin bir olay/kişi yoksa veya zaman dilimi özel bir anlam katmıyorsa, genel geçer, motive edici bir söz de olabilir. Yanıt olarak *sadece* sözün kendisini, tırnak işaretleri veya ek açıklamalar olmadan ver.";
