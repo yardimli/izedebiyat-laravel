@@ -9,6 +9,7 @@
 	use Carbon\Carbon;
 	use GuzzleHttp\Client;
 	use Illuminate\Http\Request;
+	use Illuminate\Support\Arr;
 	use Illuminate\Support\Facades\Auth;
 	use Illuminate\Support\Facades\Cache;
 	use Illuminate\Support\Facades\DB;
@@ -1401,60 +1402,157 @@ output in Turkish, output JSON as:
 			} while ($recordsInBatch > 0);
 		}
 
-		public static function generateInspirationalQuote()
+		public static function generateInspirationalQuote(): string
 		{
-			// Cache the quote for 6 hours (21600 seconds) to avoid excessive API calls
-			return Cache::remember('inspirational_quote', 60, function () {
-				$defaultQuote = 'Kelimelerin gücüyle dünyaları değiştirin.'; // Default Turkish quote
+			$cacheKey = 'inspirational_quotes_daily_list_v2'; // Use a distinct key
+			$lockKey = 'lock:' . $cacheKey;
+			$lockDuration = 5; // Max seconds to hold the lock (adjust if LLM call is slow)
+			$defaultQuote = 'Kelimelerin gücüyle dünyaları değiştirin.';
+			$maxQuotes = 30;
+			$fastIntervalSeconds = 15; // 1 minute
+			$slowIntervalSeconds = 600; // 10 minutes
+			$timezone = 'Europe/Istanbul'; // Centralize timezone
 
-				try {
-					// Get current date and time in Turkish format
-					$now = Carbon::now('Europe/Istanbul'); // Use your server's or app's timezone
-					// Set locale to Turkish for month names etc.
-					$now->locale('tr_TR');
-					// Format: e.g., "14 Temmuz 2024, saat 15:30"
-					$dateTimeString = $now->translatedFormat('j F Y, \s\a\a\t H:i');
+			// --- Fast path: Try reading from cache without locking ---
+			// This avoids acquiring a lock for most requests if a quote just needs to be read.
+			$cachedData = Cache::get($cacheKey);
+			if (!empty($cachedData['quotes'])) {
+				$lastAddedTimestamp = $cachedData['last_added_at'] ?? 0;
+				$quoteCount = count($cachedData['quotes']);
+				$currentInterval = ($quoteCount < $maxQuotes) ? $fastIntervalSeconds : $slowIntervalSeconds;
+				$nowTimestamp = Carbon::now()->timestamp;
 
-					// Construct the prompt
-					$prompt = "Bugün {$dateTimeString}. Mümkünse, bu özel günle ilişkili önemli tarihi olayları, tanınmış kişilerin (yazar, sanatçı, düşünür vb.) doğum/ölüm yıldönümlerini veya günün bu vaktinin (sabah, öğle, akşam, gece) genel atmosferini dikkate alarak; edebiyat, yazma, yaratıcılık veya hayatın anlamı üzerine kısa ve ilham verici bir Türkçe söz oluştur. Eğer bugüne özel belirgin bir olay/kişi yoksa veya zaman dilimi özel bir anlam katmıyorsa, genel geçer, motive edici bir söz de olabilir. Yanıt olarak *sadece* sözün kendisini, tırnak işaretleri veya ek açıklamalar olmadan ver.";
-
-
-					$llm_result = self::llm_no_tool_call(
-						'openai/gpt-4o-mini',
-						'', // System prompt (optional)
-						[[
-							'role' => 'user',
-							'content' => $prompt
-						]],
-						false // We want plain text, not JSON
-					);
-
-					if (!$llm_result['error'] && !empty(trim($llm_result['content']))) {
-						// Basic cleanup: remove potential quotes or markdown
-						$quote = trim($llm_result['content'], " \n\r\t\v\0\"'`");
-						// Ensure it's not overly long (adjust max length if needed)
-						if (mb_strlen($quote) < 200 && mb_strlen($quote) > 10) {
-							// Check if it looks like a reasonable quote (basic check)
-							if (!preg_match('/\{.*\}/', $quote) && !preg_match('/\[.*\]/', $quote)) {
-								return $quote;
-							}
-						}
-					}
-
-					// Log if there was an issue but return default
-					if ($llm_result['error']) {
-						Log::warning('Inspirational quote generation failed: ' . $llm_result['content']);
-					} else {
-						Log::warning('Inspirational quote generation returned empty or invalid content: ' . ($llm_result['content'] ?? 'N/A'));
-					}
-					return $defaultQuote;
-
-				} catch (\Exception $e) {
-					Log::error('Exception during inspirational quote generation: ' . $e->getMessage());
-					return $defaultQuote; // Return default on exception
+				// If it's NOT time to potentially add a new quote, return random existing one
+				if ($nowTimestamp < ($lastAddedTimestamp + $currentInterval)) {
+					return Arr::random($cachedData['quotes']);
 				}
-			});
+				// If it might be time to add, proceed to acquire lock below
+			}
+			// --- End fast path ---
+
+			// --- Acquire Lock for potential generation/update ---
+			$lock = Cache::lock($lockKey, $lockDuration);
+
+			if ($lock->get()) {
+				try {
+					// Re-fetch data inside the lock to get the absolute latest state
+					$cachedData = Cache::get($cacheKey);
+					$quotes = $cachedData['quotes'] ?? [];
+					$lastAddedTimestamp = $cachedData['last_added_at'] ?? 0;
+					$now = Carbon::now(); // Use consistent 'now' within the locked section
+					$nowTimestamp = $now->timestamp;
+
+					// Calculate TTL: seconds remaining until the end of the current day in the specified timezone
+					$endOfDay = Carbon::now($timezone)->endOfDay();
+					$ttl = max(1, $endOfDay->diffInSeconds($now)); // Ensure positive TTL
+
+					$quoteCount = count($quotes);
+					$currentInterval = ($quoteCount < $maxQuotes) ? $fastIntervalSeconds : $slowIntervalSeconds;
+					$needsCacheUpdate = false;
+
+					// Check if it's time to generate and add a new quote
+					if ($nowTimestamp >= ($lastAddedTimestamp + $currentInterval)) {
+						Log::info("Attempting to generate new quote. Count: {$quoteCount}, Interval: {$currentInterval}s");
+						$newQuote = null;
+						try {
+							// Get current date and time in Turkish format
+							$nowDateTime = Carbon::now($timezone);
+							$nowDateTime->locale('tr_TR');
+							$dateTimeString = $nowDateTime->translatedFormat('j F Y, \s\a\a\t H:i');
+
+							// Construct the prompt
+							$prompt = "Bugün {$dateTimeString}. Mümkünse, bu gün, veya bu hafta ile ilişkili önemli tarihi olayları, tanınmış kişilerin (yazar, sanatçı, düşünür vb.) doğum/ölüm yıldönümlerini veya günün bu vaktinin (sabah, öğle, akşam, gece) genel atmosferini dikkate alarak; edebiyat, yazma, yaratıcılık veya hayatın anlamı üzerine kısa ve ilham verici bir Türkçe söz oluştur. Eğer bugüne özel belirgin bir olay/kişi yoksa veya zaman dilimi özel bir anlam katmıyorsa, genel geçer, motive edici bir söz de olabilir. Yanıt olarak *sadece* sözün kendisini, tırnak işaretleri veya ek açıklamalar olmadan ver.";
+
+							$llm_result = self::llm_no_tool_call(
+								'openai/gpt-4.1-mini', // Or your chosen model
+								'', // System prompt (optional)
+								[['role' => 'user', 'content' => $prompt]],
+								false // We want plain text
+							);
+
+							if (!$llm_result['error'] && !empty(trim($llm_result['content']))) {
+								$potentialQuote = trim($llm_result['content'], " \n\r\t\v\0\"'`");
+								// Basic validation
+								if (mb_strlen($potentialQuote) < 120 && mb_strlen($potentialQuote) > 10 &&
+									!preg_match('/\{.*\}/', $potentialQuote) && !preg_match('/\[.*\]/', $potentialQuote)) {
+									// Check for uniqueness within the current list
+									if (!in_array($potentialQuote, $quotes, true)) {
+										$newQuote = $potentialQuote;
+									} else {
+										Log::info("Generated duplicate quote, skipping add: " . $potentialQuote);
+										// Even if duplicate, update timestamp to prevent rapid retries
+										$lastAddedTimestamp = $nowTimestamp;
+										$needsCacheUpdate = true; // Need to save the updated timestamp
+									}
+								} else {
+									Log::warning('Inspirational quote generation returned invalid content: ' . ($llm_result['content'] ?? 'N/A'));
+									// Update timestamp even on invalid content to prevent rapid retries
+									$lastAddedTimestamp = $nowTimestamp;
+									$needsCacheUpdate = true;
+								}
+							} else {
+								if ($llm_result['error']) {
+									Log::warning('Inspirational quote generation failed: ' . $llm_result['content']);
+								} else {
+									Log::warning('Inspirational quote generation returned empty content.');
+								}
+								// Update timestamp even on failure to prevent rapid retries
+								$lastAddedTimestamp = $nowTimestamp;
+								$needsCacheUpdate = true;
+							}
+
+							// Add the new unique quote if one was successfully generated
+							if ($newQuote) {
+								$quotes[] = $newQuote;
+								$lastAddedTimestamp = $nowTimestamp; // Ensure timestamp reflects successful add
+								$needsCacheUpdate = true;
+								Log::info("Added new unique inspirational quote. Count: " . count($quotes));
+							}
+
+						} catch (\Exception $e) {
+							Log::error('Exception during inspirational quote generation: ' . $e->getMessage());
+							// Do not update cache on exception, allow retry sooner? Or update timestamp?
+							// Let's update timestamp to avoid hammering on persistent errors.
+							$lastAddedTimestamp = $nowTimestamp;
+							$needsCacheUpdate = true;
+						}
+					} // End check if time to add
+
+					// Update the cache if a new quote was added OR if the timestamp needs updating
+					if ($needsCacheUpdate) {
+						Cache::put($cacheKey, [
+							'quotes' => $quotes,
+							'last_added_at' => $lastAddedTimestamp
+						], $ttl);
+						Log::debug("Cache updated for key {$cacheKey} with TTL {$ttl}s. Last added: {$lastAddedTimestamp}");
+					}
+
+					// Return a random quote from the (potentially updated) list
+					if (!empty($quotes)) {
+						return Arr::random($quotes);
+					} else {
+						// List is empty (e.g., first run of the day + LLM failed)
+						Log::warning("Quote list is empty after generation attempt, returning default.");
+						return $defaultQuote;
+					}
+
+				} finally {
+					// Release the lock
+					$lock->release();
+				}
+			} else {
+				// Could not obtain lock, another process is likely generating/updating.
+				// Log this situation and return a quote from the potentially slightly stale cache or default.
+				Log::info('Could not obtain lock for quote generation, returning potentially stale data or default.');
+				$cachedData = Cache::get($cacheKey); // Re-read cache outside lock
+				if (!empty($cachedData['quotes'])) {
+					return Arr::random($cachedData['quotes']);
+				} else {
+					return $defaultQuote;
+				}
+			}
 		}
+
 
 		//------------------------------------------------------------
 		public static function llm_no_tool_call($llm, $system_prompt, $chat_messages, $return_json = true)
