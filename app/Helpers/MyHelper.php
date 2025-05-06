@@ -1404,7 +1404,7 @@ output in Turkish, output JSON as:
 
 		public static function generateInspirationalQuote(): string
 		{
-			$cacheKey = 'inspirational_quotes_daily_list_v2'; // Use a distinct key
+			$cacheKey = 'inspirational_quotes_daily_list_v3'; // Use a distinct key
 			$lockKey = 'lock:' . $cacheKey;
 			$lockDuration = 5; // Max seconds to hold the lock (adjust if LLM call is slow)
 			$defaultQuote = 'Kelimelerin gücüyle dünyaları değiştirin.';
