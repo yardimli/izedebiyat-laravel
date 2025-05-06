@@ -1462,7 +1462,7 @@ output in Turkish, output JSON as:
 							Log::info("Current date and time string: {$dateTimeString}");
 
 							// Construct the prompt
-							$prompt = "Bugün {$dateTimeString}. Mümkünse, bu gün, veya bu hafta ile ilişkili önemli tarihi olayları, tanınmış kişilerin (yazar, sanatçı, düşünür vb.) doğum/ölüm yıldönümlerini veya günün bu vaktinin (sabah, öğle, akşam, gece) genel atmosferini dikkate alarak; edebiyat, yazma, yaratıcılık veya hayatın anlamı üzerine kısa ve ilham verici bir Türkçe söz oluştur. Eğer bugüne özel belirgin bir olay/kişi yoksa veya zaman dilimi özel bir anlam katmıyorsa, genel geçer, motive edici bir söz de olabilir. Yanıt olarak *sadece* sözün kendisini, tırnak işaretleri veya ek açıklamalar olmadan ver.";
+							$prompt = "Bugün {$dateTimeString}. Bu tarihe veya güne özel olarak, edebiyat, felsefe, sanat ya da bilim dünyasından bir kişinin söylemiş olduğu çarpıcı, düşündürücü veya ilham verici bir söz paylaş. Eğer mümkünse, bu sözü mizahi, nükteli, alaycı veya hiciv içeren bir tarzda seç - yazarlara ve okurlara hitap edecek türden olsun. Söz gerçek bir alıntı olabileceği gibi, o kişinin söylemiş olabileceği kurgusal bir söz de olabilir. Yanıt olarak sadece sözü ve kime ait olduğunu belirt, fazladan açıklama yapma.";
 
 							$llm_result = self::llm_no_tool_call(
 								'openai/gpt-4.1-mini', // Or your chosen model
