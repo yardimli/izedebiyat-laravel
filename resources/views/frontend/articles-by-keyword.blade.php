@@ -9,18 +9,18 @@
 	
 	<section class="archive">
 		<main id="content">
-			<div class="container-lg mb-2" style="text-align: center;">
-				<a href="https://herkesyazar.app">
-					<img src="{{ asset('/images/herkesyazar.jpg') }}"
-					     class="desktop-image"
-					     alt="herkes yazar"
-					     style="max-width:100%;">
-					<img src="{{ asset('/images/herkesyazar_dar.jpg') }}"
-					     class="mobile-image"
-					     alt="herkes yazar"
-					     style="max-width:100%;">
-				</a>
-			</div>
+{{--			<div class="container-lg mb-2" style="text-align: center;">--}}
+{{--				<a href="https://herkesyazar.app">--}}
+{{--					<img src="{{ asset('/images/herkesyazar.jpg') }}"--}}
+{{--					     class="desktop-image"--}}
+{{--					     alt="herkes yazar"--}}
+{{--					     style="max-width:100%;">--}}
+{{--					<img src="{{ asset('/images/herkesyazar_dar.jpg') }}"--}}
+{{--					     class="mobile-image"--}}
+{{--					     alt="herkes yazar"--}}
+{{--					     style="max-width:100%;">--}}
+{{--				</a>--}}
+{{--			</div>--}}
 			
 			<div class="content-widget">
 				<div class="container-lg">
