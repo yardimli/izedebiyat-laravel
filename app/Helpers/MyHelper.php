@@ -525,7 +525,7 @@
 
 		public static function validateJson($str)
 		{
-			Log::debug('Starting JSON validation.');
+			Log::info('Starting JSON validation.');
 
 			$error = json_last_error();
 			json_decode($str);
@@ -1525,7 +1525,7 @@ output in Turkish, output JSON as:
 							'quotes' => $quotes,
 							'last_added_at' => $lastAddedTimestamp
 						], $ttl);
-						Log::debug("Cache updated for key {$cacheKey} with TTL {$ttl}s. Last added: {$lastAddedTimestamp}");
+						Log::info("Cache updated for key {$cacheKey} with TTL {$ttl}s. Last added: {$lastAddedTimestamp}");
 					}
 
 					// Return a random quote from the (potentially updated) list
@@ -1637,8 +1637,8 @@ output in Turkish, output JSON as:
 				}
 			}
 
-			Log::debug('GPT NO TOOL USE: ' . $llm_base_url . ' (' . $llm . ')');
-			Log::debug($data);
+			Log::info('GPT NO TOOL USE: ' . $llm_base_url . ' (' . $llm . ')');
+			Log::info($data);
 
 			$post_json = json_encode($data);
 			$ch = curl_init();
@@ -1754,8 +1754,8 @@ output in Turkish, output JSON as:
 				];
 
 				$data['messages'] = $chat_messages;
-				Log::debug('======== SECOND CALL TO FINISH JSON =========');
-				Log::debug($data);
+				Log::info('======== SECOND CALL TO FINISH JSON =========');
+				Log::info($data);
 				$post_json = json_encode($data);
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL, $llm_base_url);
@@ -1806,9 +1806,9 @@ output in Turkish, output JSON as:
 			}
 
 			if ($validate_result == "Valid JSON") {
-				Log::debug('================== VALID JSON =====================');
+				Log::info('================== VALID JSON =====================');
 				$content_rst = json_decode($content_json_string, true);
-				Log::debug($content_rst);
+				Log::info($content_rst);
 				$content_rst['error'] = false;
 				return $content_rst;
 			} else {

@@ -206,7 +206,7 @@
 				return [];
 			}
 
-			$model = 'https://queue.fal.run/fal-ai/wan/v2.2-a14b/text-to-image';
+			$model = 'https://queue.fal.run/fal-ai/qwen-image';
 			$size = 'landscape_4_3';
 
 			//square_hd,square,portrait_4_3,portrait_16_9,landscape_4_3,landscape_16_9
@@ -242,8 +242,8 @@ With the above information, compose a image. Write it as a single paragraph. The
 
 				return json_encode(['success' => false, 'message' => $image_prompt['content'], 'status_code' => 500]);
 			} else {
-				Log::debug('Enhanced Cover Image Prompt');
-				Log::debug($image_prompt['content']);
+				Log::info('Enhanced Cover Image Prompt');
+				Log::info($image_prompt['content']);
 
 				$falApiKey = env('FAL_API_KEY');
 				if (empty($falApiKey)) {
@@ -263,8 +263,8 @@ With the above information, compose a image. Write it as a single paragraph. The
 						'safety_tolerance' => '5',
 					]
 				]);
-				Log::debug('FLUX image response');
-				Log::debug($response->getBody());
+				Log::info('FLUX image response');
+				Log::info($response->getBody());
 
 				$body = $response->getBody();
 				$data = json_decode($body, true);
@@ -282,8 +282,8 @@ With the above information, compose a image. Write it as a single paragraph. The
 								'Content-Type' => 'application/json',
 							]
 						]);
-						Log::debug('FLUX image status response');
-						Log::debug($response->getBody());
+						Log::info('FLUX image status response');
+						Log::info($response->getBody());
 
 						$body = $response->getBody();
 						$data = json_decode($body, true);
@@ -302,8 +302,8 @@ With the above information, compose a image. Write it as a single paragraph. The
 								'Content-Type' => 'application/json',
 							]
 						]);
-						Log::debug('FLUX image status response');
-						Log::debug($response->getBody());
+						Log::info('FLUX image status response');
+						Log::info($response->getBody());
 						$body = $response->getBody();
 						$data = json_decode($body, true);
 					}
