@@ -1465,7 +1465,7 @@ output in Turkish, output JSON as:
 							$prompt = "Bugün {$dateTimeString}. Bu tarihe veya güne özel olarak, edebiyat, felsefe, sanat ya da bilim dünyasından bir kişinin söylemiş olduğu çarpıcı, düşündürücü veya ilham verici bir söz paylaş. Eğer mümkünse, bu sözü mizahi, nükteli, alaycı veya hiciv içeren bir tarzda seç - yazarlara ve okurlara hitap edecek türden olsun. Söz gerçek bir alıntı olabileceği gibi, o kişinin söylemiş olabileceği kurgusal bir söz de olabilir. Yanıt olarak sadece sözü ve kime ait olduğunu belirt, fazladan açıklama yapma.";
 
 							$llm_result = self::llm_no_tool_call(
-								'google/gemini-2.5-flash-preview-05-20', // Or your chosen model
+								'google/gemini-2.5-flash', // Or your chosen model
 								'', // System prompt (optional)
 								[['role' => 'user', 'content' => $prompt]],
 								false // We want plain text
