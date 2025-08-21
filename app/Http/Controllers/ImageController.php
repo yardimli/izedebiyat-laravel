@@ -206,7 +206,7 @@
 				return [];
 			}
 
-			$model = 'https://queue.fal.run/fal-ai/flux/schnell';
+			$model = 'https://queue.fal.run/fal-ai/wan/v2.2-a14b/text-to-image';
 			$size = 'landscape_4_3';
 
 			//square_hd,square,portrait_4_3,portrait_16_9,landscape_4_3,landscape_16_9
