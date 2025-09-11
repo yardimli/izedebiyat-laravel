@@ -276,6 +276,8 @@
 										<div class="col-md-12">
 											<p class="create-account text-center">
 												{!! __('default.Already Have Account Sign In', ['login_url' => route('login')]) !!}
+												<br>
+												<a href="{{route('account-recovery.create')}}" class="btn btn-link text-decoration-none ms-2 text-nowrap">Hesabıma Erişemiyorum</a>
 											</p>
 										</div>
 									
