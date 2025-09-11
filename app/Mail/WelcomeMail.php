@@ -30,7 +30,7 @@
 			$email_view = 'emails.welcome-tr_TR';
 
 
-			return $this->from(env('MAIL_FROM_ADDRESS','ekim@izedebiyat.com'), env('MAIL_FROM_NAME', 'İzEdebiyat Yazışma'))
+			return $this->from(env('MAIL_FROM_ADDRESS','yazisma@izedebiyat.com'), env('MAIL_FROM_NAME', 'İzEdebiyat Yazışma'))
 				->subject($subject)
 				->view($email_view)
 				->with(['name' => $this->name, 'email' => $this->email]);

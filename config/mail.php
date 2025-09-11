@@ -101,7 +101,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'ekim@izedebiyat.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'yazisma@izedebiyat.com'),
         'name' => env('MAIL_FROM_NAME', 'İzEdebiyat Support'),
     ],
 

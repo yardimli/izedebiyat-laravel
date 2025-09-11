@@ -30,7 +30,7 @@
 			$subject = 'İzEdebiyat- Şifre Sıfırlama İsteği';
 			$email_view = 'emails.reset-password-tr_TR';
 
-			return $this->from(env('MAIL_FROM_ADDRESS','ekim@izedebiyat.com'), env('MAIL_FROM_NAME', 'İzEdebiyat Yazışma'))
+			return $this->from(env('MAIL_FROM_ADDRESS','yazisma@izedebiyat.com'), env('MAIL_FROM_NAME', 'İzEdebiyat Yazışma'))
 				->subject($subject)
 				->view($email_view)
 				->with(['token' => $this->token, 'email' => $this->email]);
