@@ -100,10 +100,10 @@
 								     alt="avatar">
 							</a>
 						@else
-							<div class="d-flex align-items-center ms-2">
-								<a href="{{route('register')}}" class="btn">ÜYE OL</a>
-								<a href="{{route('account-recovery.create')}}" class="btn btn-link text-decoration-none ms-2 text-nowrap">Hesabıma Erişemiyorum</a>
-							</div>
+							<ul class="top-menu navbar-nav w-100 d-lg-flex align-items-center ms-2">
+								<li><a href="{{route('register')}}" class="btn">ÜYE OL</a></li>
+							</ul>
+							<a href="{{route('account-recovery.create')}}" class="btn btn-link text-decoration-none">Hesabıma Erişemiyorum</a>
 							<a href="{{route('login')}}" class="user-avatar" id="UserMenu" style="cursor: pointer;">
 								<img src="{{ asset('/assets/images/avatar/placeholder.jpg') }}" alt="">
 							</a>
