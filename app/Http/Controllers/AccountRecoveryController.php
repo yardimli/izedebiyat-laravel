@@ -2,11 +2,16 @@
 
 	namespace App\Http\Controllers;
 
+	// ADDED: Necessary imports for the constructor logic
+	use App\Models\Article;
+	use App\Models\Category;
 	use App\Models\AccountRecoveryRequest;
 	use App\Models\User;
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Auth;
+	use Illuminate\Support\Facades\Cache;
 	use Illuminate\Support\Facades\Hash;
+	use Illuminate\Support\Facades\Log;
 	use Illuminate\Support\Facades\Mail;
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Str;
@@ -14,6 +19,76 @@
 
 	class AccountRecoveryController extends Controller
 	{
+		// ADDED: Constructor to provide $mainMenuCategories to the view layout
+		public function __construct()
+		{
+			if (Cache::lock('updating_category_stats', 3600)->get()) {
+				// Get main menu categories with their last update time
+				$firstCategory = Category::orderBy('updated_at')->first();
+
+				// Check if first category exists and if it was updated more than 60 minutes ago
+				if ($firstCategory && $firstCategory->updated_at->diffInMinutes(now()) > 60) {
+					Log::info('Updating category statistics...');
+
+					// Get all categories (including main and sub categories)
+					$allCategories = Category::all();
+
+					foreach ($allCategories as $category) {
+						// Count total approved texts
+						$totalTexts = Article::where(function ($query) use ($category) {
+							$query->where('category_id', $category->id)
+								->orWhere('parent_category_id', $category->id);
+						})
+							->where('approved', 1)
+							->where('is_published', 1)
+							->where('deleted', 0)
+							->where('moderation_flagged', 0)
+							->count();
+
+						// Count new texts (last 30 days)
+						$newTexts = Article::where(function ($query) use ($category) {
+							$query->where('category_id', $category->id)
+								->orWhere('parent_category_id', $category->id);
+						})
+							->where('approved', 1)
+							->where('is_published', 1)
+							->where('deleted', 0)
+							->where('moderation_flagged', 0)
+							->where('created_at', '>=', now()->subDays(30))
+							->count();
+
+						// Get total views/reads
+						$totalReads = Article::where(function ($query) use ($category) {
+							$query->where('category_id', $category->id)
+								->orWhere('parent_category_id', $category->id);
+						})
+							->where('approved', 1)
+							->where('is_published', 1)
+							->where('deleted', 0)
+							->sum('read_count');
+
+						// Update category
+						$category->update([
+							'total_articles' => $totalTexts,
+							'new_articles' => $newTexts,
+							'read_count' => $totalReads,
+							'updated_at' => now()
+						]);
+					}
+				}
+				Cache::lock('updating_category_stats')->release();
+			}
+
+			// Get main menu categories for the view
+			$mainMenuCategories = Category::where('parent_category_id', 0)
+				->orderBy('slug')
+				->with('subCategories')
+				->get();
+
+			// Share with all views
+			view()->share('mainMenuCategories', $mainMenuCategories);
+		}
+
 		/**
 		 * Show the form for creating a new account recovery request.
 		 */
