@@ -5,13 +5,20 @@
 	<main>
 		<!-- Container START -->
 		<div class="container mt-5">
-			<div class="row">
-				<form action="/users" method="GET" class="col-9">
+			<div class="row align-items-center">
+				{{-- Search Form --}}
+				<form action="/users" method="GET" class="col-md-8 col-lg-9">
 					<div class="input-group mb-3">
 						<input name="search" type="text" class="form-control" placeholder="Search users" value="{{ request('search') }}">
 						<button class="btn btn-primary" type="submit">Search</button>
 					</div>
 				</form>
+				{{-- New Button Added --}}
+				@if (Auth::user()->member_type === 1)
+					<div class="col-md-4 col-lg-3 text-md-end mb-3">
+						<a href="{{ route('admin.account-recovery.index') }}" class="btn btn-warning">Hesap Kurtarma Talepleri</a>
+					</div>
+				@endif
 			</div>
 			
 			<table class="table table-bordered">

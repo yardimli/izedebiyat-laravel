@@ -1,6 +1,7 @@
 <?php
 
 	use App\Helpers\MyHelper;
+	use App\Http\Controllers\AccountRecoveryController;
 	use App\Http\Controllers\ArticleController;
 	use App\Http\Controllers\CategoryController;
 	use App\Http\Controllers\ChatController;
@@ -130,6 +131,8 @@
 	Route::get('sorular', [FrontendController::class, 'page_faq'])->name('frontend.faq');
 	Route::get('kunye', [FrontendController::class, 'page_about'])->name('frontend.who-we-are');
 
+	Route::get('/hesap-kurtarma', [AccountRecoveryController::class, 'create'])->name('account-recovery.create');
+	Route::post('/hesap-kurtarma', [AccountRecoveryController::class, 'store'])->name('account-recovery.store');
 
 	Route::get('/', [FrontendController::class, 'index'])->name('frontend.index');
 	Route::get('/ana-sayfa', [FrontendController::class, 'index'])->name('frontend.home-page');
@@ -306,6 +309,11 @@
 		Route::get('/users', [UserController::class, 'index'])->name('admin-users-index');
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');
 
+		// New Admin Account Recovery Routes
+		Route::get('/admin/hesap-kurtarma', [AccountRecoveryController::class, 'index'])->name('admin.account-recovery.index');
+		Route::get('/admin/hesap-kurtarma/{id}', [AccountRecoveryController::class, 'show'])->name('admin.account-recovery.show');
+		Route::post('/admin/hesap-kurtarma/{id}/approve', [AccountRecoveryController::class, 'approve'])->name('admin.account-recovery.approve');
+		Route::post('/admin/hesap-kurtarma/{id}/reject', [AccountRecoveryController::class, 'reject'])->name('admin.account-recovery.reject');
 
 	});
 

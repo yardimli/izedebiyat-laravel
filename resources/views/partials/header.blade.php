@@ -13,14 +13,17 @@
 			</button>
 			
 			@if (Auth::user())
-				<a href="{{route('backend.account')}}">
-					<img class="small-user-avatar"
-					     src="{{ !empty(Auth::user()->avatar) ? Storage::url(Auth::user()->avatar) : '/assets/images/avatar/placeholder.jpg' }}"
+				<a href="{{route('backend.account')}}" class="user-avatar" id="UserMenu" style="cursor: pointer;">
+					<img src="{{ !empty(Auth::user()->avatar) ? Storage::url(Auth::user()->avatar) : '/assets/images/avatar/placeholder.jpg' }}"
 					     alt="avatar">
 				</a>
 			@else
-				<a class="user-avatar" href="{{route('login')}}" style="cursor: pointer;">
-					<img src="/assets/images/avatar/placeholder.jpg" alt="">
+				<ul class="top-menu navbar-nav w-100 d-lg-flex align-items-center ms-2">
+					<li><a href="{{route('register')}}" class="btn">ÜYE OL</a></li>
+					<li><a href="{{route('account-recovery.create')}}" class="btn btn-link text-decoration-none">Hesabıma Erişemiyorum</a></li>
+				</ul>
+				<a href="{{route('login')}}" class="user-avatar" id="UserMenu" style="cursor: pointer;">
+					<img src="{{ asset('/assets/images/avatar/placeholder.jpg') }}" alt="">
 				</a>
 			@endif
 			<a href="javascript:void(0)" class="menu-toggle-icon">

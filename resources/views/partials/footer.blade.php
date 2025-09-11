@@ -7,6 +7,7 @@
 				<li class="list-inline-item entry-excerpt"><a href="{{ url('/yazarlar') }}">Yazarlar</a></li>
 				<li class="list-inline-item entry-excerpt"><a href="{{ url('/katilim') }}">Katılım</a></li>
 				<li class="list-inline-item entry-excerpt"><a href="mailto:iletisim@izedebiyat.com">İletişim</a></li>
+				<li class="list-inline-item entry-excerpt"><a href="{{ route('account-recovery.create') }}">Hesabıma Erişemiyorum</a></li>
 				<li class="list-inline-item entry-excerpt"><a href="{{ url('/yasallik') }}">Yasallık</a></li>
 				<li class="list-inline-item entry-excerpt"><a href="{{ url('/gizlilik') }}">Saklılık & Gizlilik</a></li>
 				<li class="list-inline-item entry-excerpt"><a href="{{ url('/yayin-ilkeleri') }}">Yayın İlkeleri</a></li>
