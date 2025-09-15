@@ -138,24 +138,22 @@
 		/**
 		 * Display the specified account recovery request for admins.
 		 */
-		public function show($id, Request $request) // MODIFIED: Added Request object to handle search
+		public function show($id, Request $request)
 		{
 			if (Auth::user()->member_type !== 1) {
 				abort(403, 'Unauthorized action.');
 			}
 
 			$recoveryRequest = AccountRecoveryRequest::findOrFail($id);
-			$searchQuery = $request->input('search'); // ADDED: Get search query from request
-			$possible_users = collect(); // ADDED: Initialize an empty collection for users
+			$searchQuery = $request->input('search');
+			$possible_users = collect();
 
-			// ADDED: If a search query is present, search for users by name or email
 			if ($searchQuery) {
 				$possible_users = User::where('name', 'like', '%' . $searchQuery . '%')
 					->orWhere('email', 'like', '%' . $searchQuery . '%')
 					->get();
 			}
 
-			// MODIFIED: Pass recovery request, search results, and query to the view
 			return view('backend.account_recovery_show', [
 				'request' => $recoveryRequest,
 				'possible_users' => $possible_users,
@@ -181,18 +179,17 @@
 
 			$newPassword = Str::random(12);
 			$user->password = Hash::make($newPassword);
-			$user->email = $recoveryRequest->contact_email; // MODIFIED: Update user's email to the contact email from the request
+			$user->email = $recoveryRequest->contact_email;
 			$user->save();
 
-			// Send email with the new password
-			Mail::to($recoveryRequest->contact_email)->send(new NewPasswordMail($newPassword));
+			// MODIFIED: Pass the new email address to the NewPasswordMail mailable
+			Mail::to($recoveryRequest->contact_email)->send(new NewPasswordMail($newPassword, $recoveryRequest->contact_email));
 
 			$recoveryRequest->status = 'approved';
 			$recoveryRequest->user_id = $user->id;
 			$recoveryRequest->notes = $request->input('notes');
 			$recoveryRequest->save();
 
-			// MODIFIED: Updated success message to be more descriptive
 			return redirect()->route('admin.account-recovery.index')->with('success', 'İstek onaylandı, kullanıcının e-postası güncellendi ve yeni şifre gönderildi.');
 		}
 

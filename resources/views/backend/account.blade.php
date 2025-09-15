@@ -46,7 +46,7 @@
 						<input type="text"
 						       name="page_title"
 						       class="form-control"
-						       placeholder="Enter your Page Title"
+						       placeholder="{{__('default.Enter your Page Title')}}"
 							       value="{{ old('page_title', $user->page_title) }}">
 					</div>
 					
@@ -67,7 +67,7 @@
 						<textarea name="about_me" id="about_me"
 						          class="form-control"
 						          rows="3"
-						          placeholder="About Me">{{ old('about_me', $user->about_me) }}</textarea>
+						          placeholder="{{__('default.About Me Placeholder')}}">{{ old('about_me', $user->about_me) }}</textarea>
 						<span class="form-text text-muted"> Kendinizi okurlarınıza, uygun gördüğünüz yolla tanıtın. Örnek: Yazınızın Özellikleri, Edebi Etkileriniz, Özgeçmişiniz, Bulunduğunuz Yer, vb.</span></span>
 					</div>
 					

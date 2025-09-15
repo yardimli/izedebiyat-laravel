@@ -141,7 +141,7 @@
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 				<tr>
 					<td align="left" bgcolor="#ffffff" style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-top: 3px solid #d4dadf;">
-						<h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">Yeni Şifreniz</h1>
+						<h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">Yeni Giriş Bilgileriniz</h1>
 					</td>
 				</tr>
 			</table>
@@ -168,8 +168,15 @@
 				<tr>
 					<td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
 						<p style="margin: 0;">Merhaba,</p>
-						<p style="margin: 0;">İzEdebiyat hesabınıza erişim talebiniz onaylanmıştır. Hesabınıza giriş yapmak için kullanabileceğiniz yeni, geçici şifreniz aşağıdadır:</p>
-						<p style="margin: 20px 0; font-size: 20px; font-weight: bold; text-align: center; background-color: #f0f0f0; padding: 10px; border-radius: 5px;"><code>{{ $newPassword }}</code></p>
+						<p style="margin: 0;">İzEdebiyat hesabınıza erişim talebiniz onaylanmıştır. Hesabınıza giriş yapmak için kullanabileceğiniz yeni bilgileriniz aşağıdadır:</p>
+						
+						<!-- ADDED: Display the new login email -->
+						<p style="margin: 20px 0 5px 0;"><strong>Giriş E-postanız:</strong></p>
+						<p style="margin: 0 0 20px 0; font-size: 18px; font-weight: bold; text-align: center; background-color: #f0f0f0; padding: 10px; border-radius: 5px;"><code>{{ $newEmail }}</code></p>
+						
+						<p style="margin: 20px 0 5px 0;"><strong>Yeni Geçici Şifreniz:</strong></p>
+						<p style="margin: 0 0 20px 0; font-size: 18px; font-weight: bold; text-align: center; background-color: #f0f0f0; padding: 10px; border-radius: 5px;"><code>{{ $newPassword }}</code></p>
+						
 						<p style="margin: 0;">Giriş yaptıktan sonra güvenlik nedeniyle şifrenizi değiştirmenizi önemle tavsiye ederiz.</p>
 					</td>
 				</tr>

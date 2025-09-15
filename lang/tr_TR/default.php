@@ -276,4 +276,7 @@
 		'An error occurred while removing favorite' => 'Beğeni kaldırılırken bir hata oluştu',
 
 		'Comments will be available after creating the article' => 'Yorumlar, eser oluşturulduktan sonra kullanılabilir olacak',
+
+		'Enter your Page Title' => 'Sayfanızın Başlığını Girin',
+		'About Me Placeholder' => 'Ben kimim, ne yaparım, nereden gelirim, nereye giderim, ne okurum, ne yazarım, neden yazarım, neyi severim, neyi sevmem, hobilerim nelerdir, hayattaki amacım nedir... gibi şeyleri yazabilirsiniz.'
 	];
