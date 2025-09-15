@@ -105,6 +105,7 @@
 			$request->validate([
 				'real_name' => 'required|string|max:255',
 				'remembered_emails' => 'required|string',
+				'profile_url' => 'nullable|url|max:255', // MODIFIED: Added validation for profile_url
 				'contact_email' => 'required|email|max:255',
 				'id_document' => 'required|image|mimes:jpeg,png,jpg|max:2048',
 			]);
@@ -114,6 +115,7 @@
 			AccountRecoveryRequest::create([
 				'real_name' => $request->real_name,
 				'remembered_emails' => $request->remembered_emails,
+				'profile_url' => $request->profile_url, // MODIFIED: Save profile_url
 				'contact_email' => $request->contact_email,
 				'id_document_path' => $path,
 			]);

@@ -19,6 +19,10 @@
 							<p><strong>İletişim E-posta:</strong> {{ $request->contact_email }}</p>
 							<p><strong>Hatırlanan E-postalar:</strong></p>
 							<pre>{{ $request->remembered_emails }}</pre>
+							{{-- ADDED: Display the profile URL if it exists --}}
+							@if($request->profile_url)
+								<p><strong>Belirtilen Profil Adresi:</strong> <a href="{{ $request->profile_url }}" target="_blank">{{ $request->profile_url }}</a></p>
+							@endif
 							<p><strong>Durum:</strong> <span class="badge bg-{{ $request->status === 'pending' ? 'warning' : ($request->status === 'approved' ? 'success' : 'danger') }}">{{ ucfirst($request->status) }}</span></p>
 							<p><strong>Talep Tarihi:</strong> {{ $request->created_at->format('d M Y H:i') }}</p>
 						</div>

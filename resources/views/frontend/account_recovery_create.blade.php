@@ -41,6 +41,13 @@
 								<div class="form-text">Hesabınızla ilişkili olabileceğini düşündüğünüz tüm e-posta adreslerini (erişiminiz olmasa bile) virgülle ayırarak yazın.</div>
 							</div>
 							
+							{{-- ADDED: Profile URL input field --}}
+							<div class="mb-3">
+								<label for="profile_url" class="form-label">İzEdebiyat Profil Sayfanızın Adresi (İsteğe Bağlı)</label>
+								<input type="url" class="form-control" id="profile_url" name="profile_url" value="{{ old('profile_url') }}" placeholder="https://www.izedebiyat.com/yazar/kullanici-adiniz">
+								<div class="form-text">Erişmeye çalıştığınız profil sayfanızın tam adresini biliyorsanız buraya yapıştırın.</div>
+							</div>
+							
 							<div class="mb-3">
 								<label for="contact_email" class="form-label">İletişim Kurulacak E-posta Adresi</label>
 								<input type="email" class="form-control" id="contact_email" name="contact_email" value="{{ old('contact_email') }}" required>

@@ -17,6 +17,7 @@
 		protected $fillable = [
 			'real_name',
 			'remembered_emails',
+			'profile_url', // ADDED: Added profile_url to fillable attributes.
 			'contact_email',
 			'id_document_path',
 			'status',
