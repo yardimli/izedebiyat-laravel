@@ -37,34 +37,43 @@
 						<div class="card">
 							<div class="card-header">İşlemler</div>
 							<div class="card-body">
-								<h6>Eşleşen Kullanıcıyı Seçin ve Onaylayın</h6>
-								@php
-									$remembered_emails = array_map('trim', explode(',', $request->remembered_emails));
-									$possible_users = \App\Models\User::where('name', 'like', '%' . $request->real_name . '%')
-											->orWhereIn('email', $remembered_emails)
-											->get();
-								@endphp
+								<h6>Kullanıcı Ara ve Onayla</h6>
 								
-								@if($possible_users->isEmpty())
-									<div class="alert alert-warning">Bu bilgilere uyan kullanıcı bulunamadı.</div>
+								<!-- MODIFIED: Replaced automatic user list with a search form -->
+								<form action="{{ route('admin.account-recovery.show', $request->id) }}" method="GET" class="mb-3">
+									<div class="input-group">
+										<input type="text" name="search" class="form-control" placeholder="İsim veya e-posta ile ara..." value="{{ $searchQuery ?? '' }}">
+										<button class="btn btn-outline-secondary" type="submit">Ara</button>
+									</div>
+								</form>
+								
+								<!-- MODIFIED: Display search results and approval form -->
+								@if(isset($searchQuery))
+									@if($possible_users->isEmpty())
+										<div class="alert alert-warning">Bu bilgilere uyan kullanıcı bulunamadı.</div>
+									@else
+										<form action="{{ route('admin.account-recovery.approve', $request->id) }}" method="POST">
+											@csrf
+											<div class="mb-3">
+												<label class="form-label">Onaylanacak Kullanıcıyı Seçin</label>
+												<div class="list-group">
+													@foreach($possible_users as $user)
+														<label class="list-group-item">
+															<input class="form-check-input me-1" type="radio" name="user_id" value="{{ $user->id }}" required>
+															<a href="{{ route('user', $user->slug) }}" target="_blank">{{ $user->name }}</a> ({{ $user->email }})
+														</label>
+													@endforeach
+												</div>
+											</div>
+											<div class="mb-3">
+												<label for="notes_approve" class="form-label">Notlar (İsteğe Bağlı)</label>
+												<textarea name="notes" id="notes_approve" class="form-control" rows="3"></textarea>
+											</div>
+											<button type="submit" class="btn btn-success">Talebi Onayla, E-postayı Güncelle ve Şifre Gönder</button>
+										</form>
+									@endif
 								@else
-									<form action="{{ route('admin.account-recovery.approve', $request->id) }}" method="POST">
-										@csrf
-										<div class="mb-3">
-											<label for="user_id" class="form-label">Onaylanacak Kullanıcı</label>
-											<select name="user_id" id="user_id" class="form-select" required>
-												<option value="">Kullanıcı Seçin...</option>
-												@foreach($possible_users as $user)
-													<option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-												@endforeach
-											</select>
-										</div>
-										<div class="mb-3">
-											<label for="notes_approve" class="form-label">Notlar (İsteğe Bağlı)</label>
-											<textarea name="notes" id="notes_approve" class="form-control" rows="3"></textarea>
-										</div>
-										<button type="submit" class="btn btn-success">Talebi Onayla ve Şifre Gönder</button>
-									</form>
+									<p class="text-muted">Lütfen onaylamak için bir kullanıcı arayın.</p>
 								@endif
 								
 								<hr>

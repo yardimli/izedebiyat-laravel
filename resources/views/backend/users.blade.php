@@ -13,7 +13,7 @@
 						<button class="btn btn-primary" type="submit">Search</button>
 					</div>
 				</form>
-				{{-- New Button Added --}}
+				{{-- MODIFIED: New Button Added for Account Recovery --}}
 				@if (Auth::user()->member_type === 1)
 					<div class="col-md-4 col-lg-3 text-md-end mb-3">
 						<a href="{{ route('admin.account-recovery.index') }}" class="btn btn-warning">Hesap Kurtarma Talepleri</a>

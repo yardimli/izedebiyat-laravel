@@ -138,14 +138,29 @@
 		/**
 		 * Display the specified account recovery request for admins.
 		 */
-		public function show($id)
+		public function show($id, Request $request) // MODIFIED: Added Request object to handle search
 		{
 			if (Auth::user()->member_type !== 1) {
 				abort(403, 'Unauthorized action.');
 			}
 
-			$request = AccountRecoveryRequest::findOrFail($id);
-			return view('backend.account_recovery_show', compact('request'));
+			$recoveryRequest = AccountRecoveryRequest::findOrFail($id);
+			$searchQuery = $request->input('search'); // ADDED: Get search query from request
+			$possible_users = collect(); // ADDED: Initialize an empty collection for users
+
+			// ADDED: If a search query is present, search for users by name or email
+			if ($searchQuery) {
+				$possible_users = User::where('name', 'like', '%' . $searchQuery . '%')
+					->orWhere('email', 'like', '%' . $searchQuery . '%')
+					->get();
+			}
+
+			// MODIFIED: Pass recovery request, search results, and query to the view
+			return view('backend.account_recovery_show', [
+				'request' => $recoveryRequest,
+				'possible_users' => $possible_users,
+				'searchQuery' => $searchQuery,
+			]);
 		}
 
 		/**
@@ -166,6 +181,7 @@
 
 			$newPassword = Str::random(12);
 			$user->password = Hash::make($newPassword);
+			$user->email = $recoveryRequest->contact_email; // MODIFIED: Update user's email to the contact email from the request
 			$user->save();
 
 			// Send email with the new password
@@ -176,7 +192,8 @@
 			$recoveryRequest->notes = $request->input('notes');
 			$recoveryRequest->save();
 
-			return redirect()->route('admin.account-recovery.index')->with('success', 'İstek onaylandı ve yeni şifre kullanıcıya gönderildi.');
+			// MODIFIED: Updated success message to be more descriptive
+			return redirect()->route('admin.account-recovery.index')->with('success', 'İstek onaylandı, kullanıcının e-postası güncellendi ve yeni şifre gönderildi.');
 		}
 
 		/**
