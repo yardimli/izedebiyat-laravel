@@ -119,7 +119,7 @@
 		public static function generateInitialsAvatar($pictureFile, $email, $extraCss = 'border-radius: 0px;', $extraClass = 'avatar')
 		{
 			// First, check if it's a Gmail account
-			if (strpos(strtolower($email), '@gmail.com') !== false && empty($pictureFile)) {
+			if (strpos(strtolower($email), '@gmail.com') !== false && empty($pictureFile) && (1==2)) {
 				try {
 					$client = new \GuzzleHttp\Client();
 					$response = $client->request('GET', 'https://gmail-checker4.p.rapidapi.com/GmailCheck', [
