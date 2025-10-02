@@ -19,7 +19,7 @@
 		 * @var string
 		 */
 		// MODIFIED: This is kept for reference but will be overridden by our custom response logic.
-		protected $redirectTo = '/sahne-arkasi';
+		protected $redirectTo = '/login';
 
 		/**
 		 * Reset the given user's password.
