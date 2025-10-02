@@ -119,7 +119,7 @@
 				<tr>
 					<td align="center" valign="top" style="padding: 12px 24px;">
 						<a href="https://www.izedebiyat.com" target="_blank" style="display: inline-block;">
-							<img src="https://www.izedebiyat.com/assets/images/logo-large.png" id="site_logo" alt="Logo" border="0" width="200" style="display: block; width: 200px; max-width: 200px; min-width: 200px;">
+							<img src="https://www.izedebiyat.com/assets/images/logo/logo-large.png" id="site_logo" alt="Logo" border="0" width="200" style="display: block; width: 200px; max-width: 200px; min-width: 200px;">
 						</a>
 					</td>
 				</tr>

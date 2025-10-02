@@ -118,7 +118,7 @@
 				<tr>
 					<td align="center" valign="top" style="padding: 12px 24px;">
 						<a href="https://www.izedebiyat.com" target="_blank" style="display: inline-block;">
-							<img id="site_logo" src="https://www.izedebiyat.com/assets/images/logo-large.png" alt="{{__('default.İzEdebiyat')}}" border="0" width="200" style="display: block; width: 200px; max-width: 200px; min-width: 200px;">
+							<img id="site_logo" src="https://www.izedebiyat.com/assets/images/logo/logo-large.png" alt="{{__('default.İzEdebiyat')}}" border="0" width="200" style="display: block; width: 200px; max-width: 200px; min-width: 200px;">
 						</a>
 					</td>
 				</tr>
