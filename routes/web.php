@@ -114,7 +114,7 @@
 	})->where('id', '[0-9]+');
 
 	Route::get('arsiv.asp', function (Request $request) {
-			return redirect()->route('frontend.recent-articles', [], 301);
+		return redirect()->route('frontend.recent-articles', [], 301);
 	});
 
 	Route::get('yazarlar.asp', function (Request $request) {
@@ -308,6 +308,7 @@
 
 		Route::get('/users', [UserController::class, 'index'])->name('admin-users-index');
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');
+		Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy'); // ADDED: Route for deleting a user
 
 		// New Admin Account Recovery Routes
 		Route::get('/admin/hesap-kurtarma', [AccountRecoveryController::class, 'index'])->name('admin.account-recovery.index');

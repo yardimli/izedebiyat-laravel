@@ -105,9 +105,10 @@
 			$request->validate([
 				'real_name' => 'required|string|max:255',
 				'remembered_emails' => 'required|string',
-				'profile_url' => 'nullable|url|max:255', // MODIFIED: Added validation for profile_url
+				'profile_url' => 'nullable|url|max:255',
 				'contact_email' => 'required|email|max:255',
 				'id_document' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+				'delete_account' => 'nullable|boolean', // ADDED: Validation for delete_account checkbox
 			]);
 
 			$path = $request->file('id_document')->store('id_documents', 'public');
@@ -115,9 +116,10 @@
 			AccountRecoveryRequest::create([
 				'real_name' => $request->real_name,
 				'remembered_emails' => $request->remembered_emails,
-				'profile_url' => $request->profile_url, // MODIFIED: Save profile_url
+				'profile_url' => $request->profile_url,
 				'contact_email' => $request->contact_email,
 				'id_document_path' => $path,
+				'delete_account' => $request->boolean('delete_account'), // ADDED: Save delete_account status
 			]);
 
 			return redirect()->route('account-recovery.create')
@@ -179,20 +181,37 @@
 				return back()->with('error', 'Kullanıcı bulunamadı. Lütfen geçerli bir kullanıcı seçin.');
 			}
 
-			$newPassword = Str::random(12);
-			$user->password = Hash::make($newPassword);
-			$user->email = $recoveryRequest->contact_email;
-			$user->save();
+			// MODIFIED: Logic to handle both account deletion and recovery
+			if ($recoveryRequest->delete_account) {
+				// Permanently delete user and their articles
+				Article::where('user_id', $user->id)->delete();
+				$user->delete();
 
-			// MODIFIED: Pass the new email address to the NewPasswordMail mailable
-			Mail::to($recoveryRequest->contact_email)->send(new NewPasswordMail($newPassword, $recoveryRequest->contact_email));
+				$recoveryRequest->status = 'approved_deleted'; // A new status for clarity
+				$recoveryRequest->user_id = $user->id;
+				$recoveryRequest->notes = $request->input('notes');
+				$recoveryRequest->save();
 
-			$recoveryRequest->status = 'approved';
-			$recoveryRequest->user_id = $user->id;
-			$recoveryRequest->notes = $request->input('notes');
-			$recoveryRequest->save();
+				// Optionally, send a confirmation email about deletion
+				// Mail::to($recoveryRequest->contact_email)->send(new AccountDeletedMail());
 
-			return redirect()->route('admin.account-recovery.index')->with('success', 'İstek onaylandı, kullanıcının e-postası güncellendi ve yeni şifre gönderildi.');
+				return redirect()->route('admin.account-recovery.index')->with('success', 'İstek onaylandı ve kullanıcı hesabı tüm yazılarıyla birlikte kalıcı olarak silindi.');
+			} else {
+				// Original logic for password recovery
+				$newPassword = Str::random(12);
+				$user->password = Hash::make($newPassword);
+				$user->email = $recoveryRequest->contact_email;
+				$user->save();
+
+				Mail::to($recoveryRequest->contact_email)->send(new NewPasswordMail($newPassword, $recoveryRequest->contact_email));
+
+				$recoveryRequest->status = 'approved';
+				$recoveryRequest->user_id = $user->id;
+				$recoveryRequest->notes = $request->input('notes');
+				$recoveryRequest->save();
+
+				return redirect()->route('admin.account-recovery.index')->with('success', 'İstek onaylandı, kullanıcının e-postası güncellendi ve yeni şifre gönderildi.');
+			}
 		}
 
 		/**

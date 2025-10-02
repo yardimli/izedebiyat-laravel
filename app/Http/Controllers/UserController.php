@@ -5,6 +5,7 @@
 	use App\Helpers\MyHelper;
 	use App\Models\ChatBody;
 	use App\Models\ChatHeader;
+	use App\Models\Article; // ADDED: Import Article model
 	use Illuminate\Http\Request;
 	use App\Models\User;
 	use Illuminate\Pagination\LengthAwarePaginator;
@@ -62,4 +63,18 @@
 
 
 
+		public function destroy(User $user)
+		{
+			if (Auth::user()->member_type !== 1) {
+				abort(403, 'Unauthorized action.');
+			}
+
+			// Delete all articles by the user
+			Article::where('user_id', $user->id)->delete();
+
+			// Delete the user
+			$user->delete();
+
+			return redirect()->route('admin-users-index')->with('success', 'User and all their articles have been deleted successfully.');
+		}
 	}

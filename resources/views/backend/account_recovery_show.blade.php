@@ -19,11 +19,16 @@
 							<p><strong>İletişim E-posta:</strong> {{ $request->contact_email }}</p>
 							<p><strong>Hatırlanan E-postalar:</strong></p>
 							<pre>{{ $request->remembered_emails }}</pre>
-							{{-- ADDED: Display the profile URL if it exists --}}
 							@if($request->profile_url)
 								<p><strong>Belirtilen Profil Adresi:</strong> <a href="{{ $request->profile_url }}" target="_blank">{{ $request->profile_url }}</a></p>
 							@endif
-							<p><strong>Durum:</strong> <span class="badge bg-{{ $request->status === 'pending' ? 'warning' : ($request->status === 'approved' ? 'success' : 'danger') }}">{{ ucfirst($request->status) }}</span></p>
+							{{-- ADDED: Display request type --}}
+							@if($request->delete_account)
+								<p class="text-danger"><strong>Talep Tipi:</strong> Hesap Silme</p>
+							@else
+								<p><strong>Talep Tipi:</strong> Hesap Kurtarma</p>
+							@endif
+							<p><strong>Durum:</strong> <span class="badge bg-{{ $request->status === 'pending' ? 'warning' : ($request->status === 'approved' ? 'success' : ($request->status === 'approved_deleted' ? 'dark' : 'danger')) }}">{{ ucfirst($request->status) }}</span></p>
 							<p><strong>Talep Tarihi:</strong> {{ $request->created_at->format('d M Y H:i') }}</p>
 						</div>
 					</div>
@@ -43,7 +48,6 @@
 							<div class="card-body">
 								<h6>Kullanıcı Ara ve Onayla</h6>
 								
-								<!-- MODIFIED: Replaced automatic user list with a search form -->
 								<form action="{{ route('admin.account-recovery.show', $request->id) }}" method="GET" class="mb-3">
 									<div class="input-group">
 										<input type="text" name="search" class="form-control" placeholder="İsim veya e-posta ile ara..." value="{{ $searchQuery ?? '' }}">
@@ -51,7 +55,6 @@
 									</div>
 								</form>
 								
-								<!-- MODIFIED: Display search results and approval form -->
 								@if(isset($searchQuery))
 									@if($possible_users->isEmpty())
 										<div class="alert alert-warning">Bu bilgilere uyan kullanıcı bulunamadı.</div>
@@ -73,7 +76,14 @@
 												<label for="notes_approve" class="form-label">Notlar (İsteğe Bağlı)</label>
 												<textarea name="notes" id="notes_approve" class="form-control" rows="3"></textarea>
 											</div>
-											<button type="submit" class="btn btn-success">Talebi Onayla, E-postayı Güncelle ve Şifre Gönder</button>
+											{{-- MODIFIED: Dynamic button text and color based on request type --}}
+											<button type="submit" class="btn btn-{{ $request->delete_account ? 'danger' : 'success' }}">
+												@if($request->delete_account)
+													Talebi Onayla ve Hesabı Kalıcı Olarak Sil
+												@else
+													Talebi Onayla, E-postayı Güncelle ve Şifre Gönder
+												@endif
+											</button>
 										</form>
 									@endif
 								@else

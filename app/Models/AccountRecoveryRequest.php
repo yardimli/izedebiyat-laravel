@@ -17,12 +17,13 @@
 		protected $fillable = [
 			'real_name',
 			'remembered_emails',
-			'profile_url', // ADDED: Added profile_url to fillable attributes.
+			'profile_url',
 			'contact_email',
 			'id_document_path',
 			'status',
 			'user_id',
 			'notes',
+			'delete_account', // ADDED: Added delete_account to fillable attributes.
 		];
 
 		/**

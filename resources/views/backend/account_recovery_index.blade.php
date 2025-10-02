@@ -31,7 +31,8 @@
 										<td>{{ $request->real_name }}</td>
 										<td>{{ $request->contact_email }}</td>
 										<td>
-                                            <span class="badge bg-{{ $request->status === 'pending' ? 'warning' : ($request->status === 'approved' ? 'success' : 'danger') }}">
+											{{-- MODIFIED: Added handling for approved_deleted status --}}
+											<span class="badge bg-{{ $request->status === 'pending' ? 'warning' : ($request->status === 'approved' ? 'success' : ($request->status === 'approved_deleted' ? 'dark' : 'danger')) }}">
                                                 {{ ucfirst($request->status) }}
                                             </span>
 										</td>

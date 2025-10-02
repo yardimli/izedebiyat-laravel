@@ -7,6 +7,7 @@
 				<li class="list-inline-item entry-excerpt"><a href="{{ url('/yazarlar') }}">Yazarlar</a></li>
 				<li class="list-inline-item entry-excerpt"><a href="{{ url('/katilim') }}">Katılım</a></li>
 				<li class="list-inline-item entry-excerpt"><a href="mailto:iletisim@izedebiyat.com">İletişim</a></li>
+				{{-- MODIFIED: Link to the account recovery page --}}
 				<li class="list-inline-item entry-excerpt"><a href="{{ route('account-recovery.create') }}">Hesabıma Erişemiyorum</a></li>
 				<li class="list-inline-item entry-excerpt"><a href="{{ url('/yasallik') }}">Yasallık</a></li>
 				<li class="list-inline-item entry-excerpt"><a href="{{ url('/gizlilik') }}">Saklılık & Gizlilik</a></li>
@@ -21,10 +22,10 @@
 				Copyright (c) {{ date('Y') }} İzEdebiyat
 			</div>
 			<div class="col-md-6">
-{{--				<ul class="social-network inline text-md-right text-sm-center">--}}
-{{--					<li class="list-inline-item"><a href="#"><i class="icon-facebook"></i></a></li>--}}
-{{--					<li class="list-inline-item"><a href="#"><i class="icon-twitter"></i></a></li>--}}
-{{--				</ul>--}}
+				{{--				<ul class="social-network inline text-md-right text-sm-center">--}}
+				{{--					<li class="list-inline-item"><a href="#"><i class="icon-facebook"></i></a></li>--}}
+				{{--					<li class="list-inline-item"><a href="#"><i class="icon-twitter"></i></a></li>--}}
+				{{--				</ul>--}}
 			</div>
 			<div class="col-md-12 mt-2 mb-1">
 				<div class="text-center">

@@ -41,7 +41,6 @@
 								<div class="form-text">Hesabınızla ilişkili olabileceğini düşündüğünüz tüm e-posta adreslerini (erişiminiz olmasa bile) virgülle ayırarak yazın.</div>
 							</div>
 							
-							{{-- ADDED: Profile URL input field --}}
 							<div class="mb-3">
 								<label for="profile_url" class="form-label">İzEdebiyat Profil Sayfanızın Adresi (İsteğe Bağlı)</label>
 								<input type="url" class="form-control" id="profile_url" name="profile_url" value="{{ old('profile_url') }}" placeholder="https://www.izedebiyat.com/yazar/kullanici-adiniz">
@@ -61,6 +60,14 @@
 									Hesabın size ait olduğunu doğrulamak için kimlik belgenizin bir fotoğrafını yükleyin.
 									<strong>Önemli:</strong> Güvenliğiniz için, fotoğrafınız dahil olmak üzere adınız ve doğum yılınız dışındaki tüm bilgileri karalayarak gizleyebilirsiniz.
 								</div>
+							</div>
+							
+							{{-- ADDED: Checkbox for account deletion request --}}
+							<div class="form-check mb-3">
+								<input class="form-check-input" type="checkbox" name="delete_account" id="delete_account" value="1" {{ old('delete_account') ? 'checked' : '' }}>
+								<label class="form-check-label" for="delete_account">
+									Hesabımı ve tüm içeriğini kalıcı olarak silmek istiyorum. Bu işlemin geri alınamayacağını anlıyorum.
+								</label>
 							</div>
 							
 							<button type="submit" class="btn btn-primary">Kurtarma Talebi Gönder</button>

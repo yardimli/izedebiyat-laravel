@@ -13,7 +13,6 @@
 						<button class="btn btn-primary" type="submit">Search</button>
 					</div>
 				</form>
-				{{-- MODIFIED: New Button Added for Account Recovery --}}
 				@if (Auth::user()->member_type === 1)
 					<div class="col-md-4 col-lg-3 text-md-end mb-3">
 						<a href="{{ route('admin.account-recovery.index') }}" class="btn btn-warning">Hesap Kurtarma Talepleri</a>
@@ -58,13 +57,43 @@
 						</td>
 						<td>{{ $user->created_at->format('d M Y') }}</td>
 						<td>
-							<form action="{{ route('users-login-as') }}" method="POST">
-								@csrf
-								<input type="hidden" name="user_id" value="{{ $user->id }}"/>
-								<button type="submit" class="btn btn-primary btn-sm">Login As</button>
-							</form>
+							{{-- MODIFIED: Actions now in a flex container --}}
+							<div class="d-flex gap-2">
+								<form action="{{ route('users-login-as') }}" method="POST">
+									@csrf
+									<input type="hidden" name="user_id" value="{{ $user->id }}"/>
+									<button type="submit" class="btn btn-primary btn-sm">Login As</button>
+								</form>
+								{{-- ADDED: Delete button and modal trigger --}}
+								<button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteUserModal-{{ $user->id }}">
+									Delete
+								</button>
+							</div>
 						</td>
 					</tr>
+					
+					{{-- ADDED: Deletion confirmation modal for each user --}}
+					<div class="modal fade" id="deleteUserModal-{{ $user->id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel-{{ $user->id }}" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="deleteUserModalLabel-{{ $user->id }}">Kullanıcıyı Silmeyi Onayla</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<strong>{{ $user->name }}</strong> adlı kullanıcıyı ve tüm yazılarını kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+									<form action="{{ route('admin.users.destroy', $user) }}" method="POST">
+										@csrf
+										@method('DELETE')
+										<button type="submit" class="btn btn-danger">Evet, Kullanıcıyı Sil</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
 				@endforeach
 				</tbody>
 			</table>
