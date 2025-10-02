@@ -291,7 +291,7 @@
 		Route::delete('/sohbet/{sessionId}', [ChatController::class, 'destroy'])->name('chat.destroy');
 
 
-
+		Route::get('/sahne-arkasi',  [UserSettingsController::class, 'account'])->name('backend.account');
 		Route::post('/sahne-arkasi', [UserSettingsController::class, 'updateSettings'])->name('backend.update');
 		Route::get('/sahne-arkasi/hesap', [UserSettingsController::class, 'account'])->name('backend.account');
 
