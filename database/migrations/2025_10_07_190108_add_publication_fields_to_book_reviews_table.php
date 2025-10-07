@@ -19,7 +19,7 @@
 				// We place them after 'review_content' for logical grouping in the database schema.
 				$table->string('publisher')->nullable()->after('review_content');
 				$table->date('publication_date')->nullable()->after('publisher');
-				$table->string('publication_place')->nullable()->after('publication_place');
+				$table->string('publication_place')->nullable()->after('publication_date');
 				$table->string('buy_url')->nullable()->after('publication_place');
 			});
 		}
