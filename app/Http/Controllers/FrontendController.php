@@ -7,6 +7,7 @@
 	use App\Models\Keyword;
 	use App\Models\User;
 	use App\Models\Article;
+	use App\Models\BookReview; // ADDED: Import BookReview model
 	use Carbon\Carbon;
 	use GuzzleHttp\Client;
 	use Illuminate\Http\Request;
@@ -686,4 +687,28 @@
 
 			return view('frontend.article', compact('article', 'user', 'keywords', 'sameUserAndCategory', 'sameUserAndMainCategory', 'otherUserArticles'));
 		}
+
+		// ADDED: Methods for Book Reviews
+		/**
+		 * Display a listing of book reviews.
+		 */
+		public function bookReviews()
+		{
+			$bookReviews = BookReview::where('is_published', true)
+				->latest('published_at')
+				->paginate(16);
+			return view('frontend.book_reviews.index', compact('bookReviews'));
+		}
+
+		/**
+		 * Display a single book review.
+		 */
+		public function showBookReview($slug)
+		{
+			$bookReview = BookReview::where('slug', $slug)
+				->where('is_published', true)
+				->firstOrFail();
+			return view('frontend.book_reviews.show', compact('bookReview'));
+		}
+		// END ADDED
 	}

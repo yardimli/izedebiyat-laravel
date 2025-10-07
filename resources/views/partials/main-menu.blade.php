@@ -24,6 +24,9 @@
 						</a>
 					</li>
 				@endforeach
+				<li class="nav-item">
+					<a class="nav-link" href="{{ route('frontend.book-reviews.index') }}">Kitap İzleri</a>
+				</li>
 			</ul>
 			<span></span>
 		</div>

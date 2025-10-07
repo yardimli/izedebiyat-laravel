@@ -322,4 +322,46 @@
 			}
 		}
 
+		public function generateBookCategory(Request $request)
+		{
+			$mainText = $request->input('main_text');
+			$prompt = "Analyze the following book review text and suggest up to 3 relevant categories for it. The text is in Turkish. Categories should be concise and common for book genres (e.g., Roman, Bilim Kurgu, Polisiye, Felsefe, Tarih).
+        Text: \"{$mainText}\"
+        Output JSON as: ``` { \"categories\": [\"category1\", \"category2\"] } ```";
+
+			$llm_result = MyHelper::llm_no_tool_call(
+				'openai/gpt-4.1-mini',
+				'',
+				[['role' => 'user', 'content' => $prompt]],
+				true
+			);
+
+			if ($llm_result['error']) {
+				return response()->json(['error' => $llm_result['content']], 500);
+			}
+
+			return response()->json(['categories' => $llm_result['categories'] ?? []]);
+		}
+
+		public function generateBookKeywords(Request $request)
+		{
+			$mainText = $request->input('main_text');
+			$prompt = "Analyze the following book review text and suggest 5-7 relevant keywords (tags). The text is in Turkish. Keywords should be single words or short phrases that capture the main themes, concepts, or style of the book.
+        Text: \"{$mainText}\"
+        Output JSON as: ``` { \"keywords\": [\"keyword1\", \"keyword2\", \"keyword3\"] } ```";
+
+			$llm_result = MyHelper::llm_no_tool_call(
+				'openai/gpt-4.1-mini',
+				'',
+				[['role' => 'user', 'content' => $prompt]],
+				true
+			);
+
+			if ($llm_result['error']) {
+				return response()->json(['error' => $llm_result['content']], 500);
+			}
+
+			return response()->json(['keywords' => $llm_result['keywords'] ?? []]);
+		}
+
 	}

@@ -100,6 +100,13 @@
 			return $this->hasMany(Article::class, 'user_id');
 		}
 
+		// ADDED: Relationship to BookReview model
+		public function bookReviews()
+		{
+			return $this->hasMany(BookReview::class, 'user_id');
+		}
+		// END ADDED
+
 		public function followers()
 		{
 			return $this->hasMany(UserFollow::class, 'following_id')->orWhere(function($query) {

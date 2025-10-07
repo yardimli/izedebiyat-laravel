@@ -200,6 +200,9 @@ Header START -->
 							<li class="nav-item">
 								<a class="nav-link" href="{{route('admin-users-index')}}">Kullanicilar</a>
 							</li>
+							<li class="nav-item">
+								<a class="nav-link {{ request()->routeIs('book-reviews.*') ? 'active' : '' }}" href="{{ route('book-reviews.index') }}"><i class="bi bi-book fa-fw me-2"></i>{{ __('default.Book Reviews') }}</a>
+							</li>
 						@endif
 					@endif
 				

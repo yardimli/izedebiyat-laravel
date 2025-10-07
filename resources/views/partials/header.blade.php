@@ -61,6 +61,11 @@
 				</div>
 			@endforeach
 			
+			{{-- ADDED: Kitap İzleri menu item for mobile --}}
+			<div>
+				<a href="{{ route('frontend.book-reviews.index') }}" style="text-transform: uppercase;">Kitap İzleri</a>
+			</div>
+			
 			<form action="{{ route('search') }}" method="get" class="search-form mt-2" style="border: 1px solid #ccc;">
 				<a href="javascript:void(0)" class="search-toggle" style="padding-left:10px; padding-right:10px;">
 					<i class="bi bi-search"></i>

@@ -14,6 +14,7 @@
 	use App\Http\Controllers\UserController;
 	use App\Http\Controllers\UserSettingsController;
 	use App\Http\Controllers\VerifyThankYouController;
+	use App\Http\Controllers\BookReviewController; // ADDED: Import BookReviewController
 	use App\Mail\WelcomeMail;
 	use App\Models\Article;
 	use App\Models\Category;
@@ -136,6 +137,11 @@
 
 	Route::get('/', [FrontendController::class, 'index'])->name('frontend.index');
 	Route::get('/ana-sayfa', [FrontendController::class, 'index'])->name('frontend.home-page');
+
+	// ADDED: Book Review Frontend Routes
+	Route::get('/kitap-izleri', [FrontendController::class, 'bookReviews'])->name('frontend.book-reviews.index');
+	Route::get('/kitap-izleri/{slug}', [FrontendController::class, 'showBookReview'])->name('frontend.book-review.show');
+	// END ADDED
 
 // Replace the old search route
 	Route::get('/arabul', [FrontendController::class, 'search'])->name('search');
@@ -316,6 +322,11 @@
 		Route::post('/admin/hesap-kurtarma/{id}/approve', [AccountRecoveryController::class, 'approve'])->name('admin.account-recovery.approve');
 		Route::post('/admin/hesap-kurtarma/{id}/reject', [AccountRecoveryController::class, 'reject'])->name('admin.account-recovery.reject');
 
+		// ADDED: Admin routes for Book Reviews
+		Route::resource('admin/book-reviews', BookReviewController::class);
+		Route::post('/book-reviews/generate-category', [ChatController::class, 'generateBookCategory'])->name('book-reviews.generate-category');
+		Route::post('/book-reviews/generate-keywords', [ChatController::class, 'generateBookKeywords'])->name('book-reviews.generate-keywords');
+		// END ADDED
 	});
 
 	//-------------------------------------------------------------------------

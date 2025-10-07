@@ -177,6 +177,7 @@
 		'Published' => 'Yayında',
 		'Draft' => 'Taslak',
 		'Are you sure you want to delete this article?' => 'Bu eseri silmek istediğinizden emin misiniz?',
+		'Are you sure?' => 'Emin misiniz?', // ADDED
 		'Edit Article' => 'Eseri Düzenle',
 		'Create Article' => 'Sakla',
 		'Subtitle' => 'Alt Başlık',
@@ -278,5 +279,27 @@
 		'Comments will be available after creating the article' => 'Yorumlar, eser oluşturulduktan sonra kullanılabilir olacak',
 
 		'Enter your Page Title' => 'Sayfanızın Başlığını Girin',
-		'About Me Placeholder' => 'Ben kimim, ne yaparım, nereden gelirim, nereye giderim, ne okurum, ne yazarım, neden yazarım, neyi severim, neyi sevmem, hobilerim nelerdir, hayattaki amacım nedir... gibi şeyleri yazabilirsiniz.'
+		'About Me Placeholder' => 'Ben kimim, ne yaparım, nereden gelirim, nereye giderim, ne okurum, ne yazarım, neden yazarım, neyi severim, neyi sevmem, hobilerim nelerdir, hayattaki amacım nedir... gibi şeyleri yazabilirsiniz.',
+
+		// ADDED: Book Review translations
+		'Book Reviews' => 'Kitap İzleri',
+		'Create New Book Review' => 'Yeni Kitap İzi Oluştur',
+		'No book reviews found' => 'Kitap izi bulunamadı.',
+		'Book Title' => 'Kitap Adı',
+		'Book Author' => 'Kitap Yazarı',
+		'Reviewer' => 'İnceleyen',
+		'Create Book Review' => 'Kitap İzi Oluştur',
+		'Edit Book Review' => 'Kitap İzini Düzenle',
+		'Update Book Review' => 'Kitap İzini Güncelle',
+		'Review Content' => 'İnceleme Yazısı',
+		'Select Cover Image' => 'Kapak Görseli Seç',
+		'Tags' => 'Etiketler',
+		'Publish Review' => 'İncelemeyi Yayınla',
+		'View' => 'Görüntüle',
+		'Book review created successfully.' => 'Kitap izi başarıyla oluşturuldu.',
+		'Book review updated successfully.' => 'Kitap izi başarıyla güncellendi.',
+		'Book review deleted successfully.' => 'Kitap izi başarıyla silindi.',
+		'Read Review' => 'İncelemeyi Oku',
+		'Review by' => 'İnceleyen',
+		// END ADDED
 	];
