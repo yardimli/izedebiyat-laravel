@@ -282,6 +282,7 @@
 		'About Me Placeholder' => 'Ben kimim, ne yaparım, nereden gelirim, nereye giderim, ne okurum, ne yazarım, neden yazarım, neyi severim, neyi sevmem, hobilerim nelerdir, hayattaki amacım nedir... gibi şeyleri yazabilirsiniz.',
 
 		// ADDED: Book Review translations
+		'No book reviews found.' => 'Kitap izi bulunamadı.',
 		'Book Reviews' => 'Kitap İzleri',
 		'Create New Book Review' => 'Yeni Kitap İzi Oluştur',
 		'No book reviews found' => 'Kitap izi bulunamadı.',
