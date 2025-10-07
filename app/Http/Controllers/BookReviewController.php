@@ -7,6 +7,7 @@
 	use App\Models\BookTag;
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Auth;
+	use Illuminate\Support\Facades\Storage; // ADDED: For file handling
 	use Illuminate\Support\Str;
 
 	class BookReviewController extends Controller
@@ -51,7 +52,7 @@
 		/**
 		 * Store a newly created resource in storage.
 		 *
-		 * @param  \Illuminate\Http\Request  $request
+		 * @param \Illuminate\Http\Request $request
 		 * @return \Illuminate\Http\Response
 		 */
 		public function store(Request $request)
@@ -59,6 +60,12 @@
 			$validated = $this->validateRequest($request);
 			$validated['user_id'] = Auth::id();
 			$validated['slug'] = Str::slug($validated['title']);
+
+			// MODIFIED: Handle file upload for cover image
+			if ($request->hasFile('cover_image')) {
+				$path = $request->file('cover_image')->store('public/book_covers');
+				$validated['cover_image'] = Storage::url($path); // Store the public URL
+			}
 
 			$bookReview = BookReview::create($validated);
 			$this->syncCategoriesAndTags($bookReview, $request);
@@ -69,7 +76,7 @@
 		/**
 		 * Show the form for editing the specified resource.
 		 *
-		 * @param  \App\Models\BookReview  $bookReview
+		 * @param \App\Models\BookReview $bookReview
 		 * @return \Illuminate\Http\Response
 		 */
 		public function edit(BookReview $bookReview)
@@ -80,14 +87,26 @@
 		/**
 		 * Update the specified resource in storage.
 		 *
-		 * @param  \Illuminate\Http\Request  $request
-		 * @param  \App\Models\BookReview  $bookReview
+		 * @param \Illuminate\Http\Request $request
+		 * @param \App\Models\BookReview $bookReview
 		 * @return \Illuminate\Http\Response
 		 */
 		public function update(Request $request, BookReview $bookReview)
 		{
 			$validated = $this->validateRequest($request);
 			$validated['slug'] = Str::slug($validated['title']);
+
+			// MODIFIED: Handle file upload for update
+			if ($request->hasFile('cover_image')) {
+				// Delete old image if it exists
+				if ($bookReview->cover_image) {
+					$oldPath = str_replace('/storage', 'public', $bookReview->cover_image);
+					Storage::delete($oldPath);
+				}
+				// Store new image
+				$path = $request->file('cover_image')->store('public/book_covers');
+				$validated['cover_image'] = Storage::url($path);
+			}
 
 			$bookReview->update($validated);
 			$this->syncCategoriesAndTags($bookReview, $request);
@@ -98,11 +117,18 @@
 		/**
 		 * Remove the specified resource from storage.
 		 *
-		 * @param  \App\Models\BookReview  $bookReview
+		 * @param \App\Models\BookReview $bookReview
 		 * @return \Illuminate\Http\Response
 		 */
 		public function destroy(BookReview $bookReview)
 		{
+			// ADDED: Delete cover image from storage
+			if ($bookReview->cover_image) {
+				// Convert public URL back to storage path
+				$imagePath = str_replace('/storage', 'public', $bookReview->cover_image);
+				Storage::delete($imagePath);
+			}
+
 			$bookReview->delete();
 			return redirect()->route('book-reviews.index')->with('success', __('default.Book review deleted successfully.'));
 		}
@@ -115,14 +141,19 @@
 		 */
 		private function validateRequest(Request $request)
 		{
+			// MODIFIED: Updated validation rules for file upload and new fields
 			return $request->validate([
 				'title' => 'required|string|max:255',
 				'author' => 'required|string|max:255',
-				'cover_image' => 'nullable|string',
+				'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 				'review_content' => 'required|string',
 				'is_published' => 'boolean',
 				'categories' => 'nullable|string',
 				'tags' => 'nullable|string',
+				'publisher' => 'nullable|string|max:255',
+				'publication_date' => 'nullable|date',
+				'publication_place' => 'nullable|string|max:255',
+				'buy_url' => 'nullable|url|max:255',
 			]);
 		}
 

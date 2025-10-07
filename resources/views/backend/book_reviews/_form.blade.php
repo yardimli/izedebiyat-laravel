@@ -1,8 +1,4 @@
 @csrf
-{{-- Hidden input to store the selected image URL --}}
-<input type="hidden" id="cover_image" name="cover_image"
-       value="{{ old('cover_image', $bookReview->cover_image ?? '') }}">
-
 {{-- Book Title --}}
 <div class="mb-3">
 	<label for="title" class="form-label">{{ __('default.Book Title') }}</label>
@@ -17,6 +13,34 @@
 	       value="{{ old('author', $bookReview->author ?? '') }}" required>
 </div>
 
+{{-- MODIFIED: New optional fields START --}}
+<div class="row">
+	<div class="col-md-6 mb-3">
+		<label for="publisher" class="form-label">Yayınevi</label>
+		<input type="text" class="form-control" id="publisher" name="publisher"
+		       value="{{ old('publisher', $bookReview->publisher ?? '') }}">
+	</div>
+	<div class="col-md-6 mb-3">
+		<label for="publication_date" class="form-label">Yayın Tarihi</label>
+		<input type="date" class="form-control" id="publication_date" name="publication_date"
+		       value="{{ old('publication_date', $bookReview->publication_date ?? '') }}">
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6 mb-3">
+		<label for="publication_place" class="form-label">Yayın Yeri</label>
+		<input type="text" class="form-control" id="publication_place" name="publication_place"
+		       value="{{ old('publication_place', $bookReview->publication_place ?? '') }}">
+	</div>
+	<div class="col-md-6 mb-3">
+		<label for="buy_url" class="form-label">Satın Alma URL</label>
+		<input type="url" class="form-control" id="buy_url" name="buy_url"
+		       value="{{ old('buy_url', $bookReview->buy_url ?? '') }}" placeholder="https://...">
+	</div>
+</div>
+{{-- MODIFIED: New optional fields END --}}
+
+
 {{-- Review Content with EasyMDE --}}
 <div class="mb-3">
 	<label for="review_content_textarea" class="form-label">{{ __('default.Review Content') }}</label>
@@ -24,21 +48,18 @@
 	          rows="15">{{ old('review_content', $bookReview->review_content ?? '') }}</textarea>
 </div>
 
-{{-- Cover Image Selection --}}
+{{-- MODIFIED: Cover Image Selection changed to simple file upload --}}
 <div class="mb-3">
-	<label class="form-label">{{ __('default.Cover Image') }}</label>
-	{{-- This div will show a preview of the selected image --}}
-	<div id="selectedImagePreview" class="mt-2 mb-2">
-		@if(isset($bookReview) && $bookReview->cover_image)
-			<img src="{{ $bookReview->cover_image }}" alt="Cover Image" class="img-fluid" style="max-width: 200px; border-radius: 5px;">
-		@endif
-	</div>
-	{{-- This button opens the modal to select an image --}}
-	<button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-	        data-bs-target="#imageModal">
-		{{ __('default.Select Cover Image') }}
-	</button>
+	<label for="cover_image" class="form-label">{{ __('default.Cover Image') }}</label>
+	<input type="file" class="form-control" id="cover_image" name="cover_image" accept="image/*">
+	@if(isset($bookReview) && $bookReview->cover_image)
+		<div class="mt-2">
+			<small>Mevcut Kapak:</small><br>
+			<img src="{{ $bookReview->cover_image }}" alt="Cover Image" class="img-fluid mt-1" style="max-width: 150px; border-radius: 5px;">
+		</div>
+	@endif
 </div>
+
 
 {{-- Categories with AI Suggestion --}}
 <div class="mb-3">
@@ -173,13 +194,8 @@
 				});
 			});
 			
-			// Handle image selection from the existing modal
-			$(document).on('click', '.select-modal-image', function () {
-				const imageUrl = $(this).data('image-url');
-				$('#cover_image').val(imageUrl); // Set the hidden input value
-				$('#selectedImagePreview').html(`<img src="${imageUrl}" alt="Selected Image" class="img-fluid" style="max-width: 200px; border-radius: 5px;">`);
-				$('#imageModal').modal('hide'); // Close the modal
-			});
+			// MODIFIED: Removed the modal image selection click handler.
+			// The simple file input handles the upload automatically on form submission.
 		});
 	</script>
 @endpush

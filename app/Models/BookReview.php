@@ -19,6 +19,11 @@
 			'user_id',
 			'is_published',
 			'published_at',
+			// MODIFIED: Added new optional fields
+			'publisher',
+			'publication_date',
+			'publication_place',
+			'buy_url',
 		];
 
 		protected $casts = [

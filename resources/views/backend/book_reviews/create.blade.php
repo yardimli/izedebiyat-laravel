@@ -22,7 +22,8 @@
 					<h5 class="mb-4">{{ __('default.Create New Book Review') }}</h5>
 					
 					{{-- The Form --}}
-					<form method="POST" action="{{ route('book-reviews.store') }}">
+					<form method="POST" action="{{ route('book-reviews.store') }}" enctype="multipart/form-data">
+						{{-- MODIFIED: Added enctype for file uploads --}}
 						{{--
 								Include the reusable form partial.
 								Pass the text for the submit button.

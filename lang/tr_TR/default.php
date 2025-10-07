@@ -7,7 +7,7 @@
 		'Log in with Google' => 'Google ile Giriş Yap',
 		'Remember me?' => 'Beni hatırla?',
 		'Forgot password?' => 'Şifreni mi unuttun?',
-		'Please enter your email address. If the account exists, we will send a password reset link to your email address.' => 'Lütfen e-posta adresinizi girin. Hesap varsa, şifre sıfırlama bağlantısını e-posta adresinize göndereceğiz.',
+		'Please enter your email address. If the account exists, we will send a password reset link to your email address.' => 'Lütfen e-posta adresinizi girin. Hesap varsa, şifre sıırlama bağlantısını e-posta adresinize göndereceğiz.',
 		'It\'s okay, I found my password!' => 'Sorun değil, şifremi buldum!',
 		'Login' => 'Giriş Yap',
 		'Not a member yet?' => 'Henüz üye değil misin?',
@@ -285,7 +285,6 @@
 		'No book reviews found.' => 'Kitap izi bulunamadı.',
 		'Book Reviews' => 'Kitap İzleri',
 		'Create New Book Review' => 'Yeni Kitap İzi Oluştur',
-		'No book reviews found' => 'Kitap izi bulunamadı.',
 		'Book Title' => 'Kitap Adı',
 		'Book Author' => 'Kitap Yazarı',
 		'Reviewer' => 'İnceleyen',
@@ -302,5 +301,9 @@
 		'Book review deleted successfully.' => 'Kitap izi başarıyla silindi.',
 		'Read Review' => 'İncelemeyi Oku',
 		'Review by' => 'İnceleyen',
+		'Publisher' => 'Yayınevi',
+		'Publication Place' => 'Yayın Yeri',
+		'Buy Now URL' => 'Satın Alma URL',
+		'Buy Now' => 'Şimdi Satın Al',
 		// END ADDED
 	];
