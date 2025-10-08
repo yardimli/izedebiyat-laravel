@@ -20,7 +20,7 @@
 					<div class="row g-0">
 						@forelse($bookReviews as $review)
 							{{-- MODIFIED: Updated column classes and removed bottom margin (mb-4). --}}
-							<div class="col-lg-3 col-md-4 col-sm-4 col-6">
+							<div class="col-lg-2 col-md-3 col-sm-4 col-6">
 								<div class="book-grid-item">
 									<a href="{{ route('frontend.book-review.show', $review->slug) }}">
 										<img src="{{ $review->cover_image ?? asset('images/no-image.png') }}" class="img-fluid book-cover"
