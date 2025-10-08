@@ -104,8 +104,8 @@
       }
 
       /* MODIFIED: Added dark mode styles */
-      [data-bs-theme="dark"] .book-details strong {
-          color: var(--bs-light);
+      [data-bs-theme="dark"] .book-details {
+          color: var(--bs-light) !important;
       }
 	</style>
 @endpush
