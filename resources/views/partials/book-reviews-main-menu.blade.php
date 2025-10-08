@@ -8,16 +8,16 @@
 					<a class="nav-link" href="{{ url('/') }}" style="text-transform: uppercase;">ANA SAYFAYA DÖN</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="{{ route('frontend.book-reviews.index') }}">KİTAP İZLERİ</a>
+					<a class="nav-link" href="{{ route('frontend.book-reviews.index') }}" style="text-transform: uppercase;">KİTAP İZLERİ</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="{{ route('frontend.book-reviews.authors') }}">Yazarlar</a>
+					<a class="nav-link" href="{{ route('frontend.book-reviews.authors') }}" style="text-transform: uppercase;">Yazarlar</a>
 				</li>
 				<li>
-					<a class="nav-link" href="{{ route('frontend.book-reviews.categories') }}">Kümeler</a>
+					<a class="nav-link" href="{{ route('frontend.book-reviews.categories') }}" style="text-transform: uppercase;">Kümeler</a>
 				</li>
 				<li>
-					<a class="nav-link" href="{{ route('frontend.book-reviews.tags') }}">Etiketler</a>
+					<a class="nav-link" href="{{ route('frontend.book-reviews.tags') }}" style="text-transform: uppercase;">Etiketler</a>
 				</li>
 			</ul>
 			<span></span>
