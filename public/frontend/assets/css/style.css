@@ -44,6 +44,10 @@ html, body {
     min-height: 100%;
 }
 
+.home {
+    background-color: #fdf0d5;
+}
+
 [data-bs-theme=dark] .home {
     background-color: rgba(20, 20, 20);
 }
