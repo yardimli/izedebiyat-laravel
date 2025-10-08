@@ -1,7 +1,4 @@
-<?php
-// resources/views/partials/header.blade.php:
-
-	<!--Mobile navigation-->
+<!--Mobile navigation-->
 <div class="sticky-header fixed d-lg-none d-md-block">
 	<div class="text-right">
 		<div class="container-lg mobile-menu-fixed pr-5">
