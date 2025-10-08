@@ -128,7 +128,12 @@
 			</div>
 		@endisset
 		
-		@include('partials.main-menu')
+		{{-- MODIFIED: Conditionally display the main menu or the book reviews menu based on the current route. --}}
+		@if(request()->routeIs('frontend.book-review.*') || request()->routeIs('frontend.book-reviews.*'))
+			@include('partials.book-reviews-main-menu')
+		@else
+			@include('partials.main-menu')
+		@endif
 	</header>
 </div>
 
@@ -142,58 +147,58 @@
 	<script>
 		
 		// <!-- Dark mode -->
-		const storedTheme = localStorage.getItem('theme')
+		const storedTheme = localStorage.getItem('theme');
 		
 		const getPreferredTheme = () => {
 			if (storedTheme) {
-				return storedTheme
+				return storedTheme;
 			}
-			return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-		}
+			return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+		};
 		
 		const setTheme = function (theme) {
 			if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-				document.documentElement.setAttribute('data-bs-theme', 'dark')
+				document.documentElement.setAttribute('data-bs-theme', 'dark');
 			} else {
-				document.documentElement.setAttribute('data-bs-theme', theme)
+				document.documentElement.setAttribute('data-bs-theme', theme);
 			}
-		}
+		};
 		
-		setTheme(getPreferredTheme())
+		setTheme(getPreferredTheme());
 		
 		window.addEventListener('DOMContentLoaded', () => {
 			var el = document.querySelector('.theme-icon-active');
 			if (el != 'undefined' && el != null) {
 				const showActiveTheme = theme => {
-					const activeThemeIcon = document.querySelector('.theme-icon-active use')
-					const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
-					const svgOfActiveBtn = btnToActive.querySelector('.mode-switch use').getAttribute('href')
+					const activeThemeIcon = document.querySelector('.theme-icon-active use');
+					const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`);
+					const svgOfActiveBtn = btnToActive.querySelector('.mode-switch use').getAttribute('href');
 					
 					document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
-						element.classList.remove('active')
-					})
+						element.classList.remove('active');
+					});
 					
-					btnToActive.classList.add('active')
-					activeThemeIcon.setAttribute('href', svgOfActiveBtn)
-				}
+					btnToActive.classList.add('active');
+					activeThemeIcon.setAttribute('href', svgOfActiveBtn);
+				};
 				
 				window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
 					if (storedTheme !== 'light' || storedTheme !== 'dark') {
-						setTheme(getPreferredTheme())
+						setTheme(getPreferredTheme());
 					}
-				})
+				});
 				
-				showActiveTheme(getPreferredTheme())
+				showActiveTheme(getPreferredTheme());
 				
 				document.querySelectorAll('[data-bs-theme-value]')
 					.forEach(toggle => {
 						toggle.addEventListener('click', () => {
-							const theme = toggle.getAttribute('data-bs-theme-value')
-							localStorage.setItem('theme', theme)
-							setTheme(theme)
-							showActiveTheme(theme)
-						})
-					})
+							const theme = toggle.getAttribute('data-bs-theme-value');
+							localStorage.setItem('theme', theme);
+							setTheme(theme);
+							showActiveTheme(theme);
+						});
+					});
 				
 			}
 			

@@ -14,11 +14,7 @@
 								<span>Kitap İzleri Etiketleri</span>
 							</h4>
 							
-							<div class="text-center mb-4 book-review-submenu">
-								<a href="{{ route('frontend.book-reviews.authors') }}" class="btn btn-sm btn-outline-secondary">Yazarlar</a>
-								<a href="{{ route('frontend.book-reviews.categories') }}" class="btn btn-sm btn-outline-secondary">Kümeler</a>
-								<a href="{{ route('frontend.book-reviews.tags') }}" class="btn btn-sm btn-secondary">Etiketler</a>
-							</div>
+							{{-- MODIFIED: Removed the submenu as it's now in the main header for this section --}}
 							
 							<div class="tag-cloud">
 								@forelse($tags as $tag)

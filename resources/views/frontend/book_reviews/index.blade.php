@@ -14,13 +14,7 @@
 								<span>{{ __('default.Book Reviews') }}</span>
 							</h4>
 							
-							{{-- ADDED: Submenu for filtering --}}
-							<div class="text-center mb-4 book-review-submenu">
-								<a href="{{ route('frontend.book-reviews.authors') }}" class="btn btn-sm btn-outline-secondary">Yazarlar</a>
-								<a href="{{ route('frontend.book-reviews.categories') }}" class="btn btn-sm btn-outline-secondary">Kümeler</a>
-								<a href="{{ route('frontend.book-reviews.tags') }}" class="btn btn-sm btn-outline-secondary">Etiketler</a>
-							</div>
-							{{-- END ADDED --}}
+							{{-- MODIFIED: Removed the submenu as it's now in the main header for this section --}}
 							
 							<div class="row">
 								@forelse($bookReviews as $review)
@@ -98,10 +92,6 @@
           font-size: 0.9rem;
           margin-bottom: 10px;
           font-style: italic;
-      }
-      /* ADDED: Styles for the new submenu */
-      .book-review-submenu a {
-          margin: 0 5px;
       }
 	</style>
 @endpush

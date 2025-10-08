@@ -14,12 +14,7 @@
 								<span>Kitap Yazarları</span>
 							</h4>
 							
-							{{-- Submenu for filtering --}}
-							<div class="text-center mb-4 book-review-submenu">
-								<a href="{{ route('frontend.book-reviews.authors') }}" class="btn btn-sm btn-secondary">Yazarlar</a>
-								<a href="{{ route('frontend.book-reviews.categories') }}" class="btn btn-sm btn-outline-secondary">Kümeler</a>
-								<a href="{{ route('frontend.book-reviews.tags') }}" class="btn btn-sm btn-outline-secondary">Etiketler</a>
-							</div>
+							{{-- MODIFIED: Removed the submenu as it's now in the main header for this section --}}
 							
 							<div class="row">
 								@forelse($authors as $author)
