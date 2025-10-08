@@ -1,6 +1,3 @@
-<?php
-// resources/views/frontend/book_reviews/create_submission.blade.php:
-
 @extends('layouts.app-frontend')
 
 @section('title', __('default.Submit Your Book for Review'))
