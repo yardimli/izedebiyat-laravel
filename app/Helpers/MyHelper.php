@@ -1409,7 +1409,7 @@ output in Turkish, output JSON as:
 			$lockDuration = 5; // Max seconds to hold the lock (adjust if LLM call is slow)
 			$defaultQuote = 'Kelimelerin gücüyle dünyaları değiştirin.';
 			$maxQuotes = 30;
-			$fastIntervalSeconds = 600; // 10 minute
+			$fastIntervalSeconds = 3600; // 1 hour
 			$slowIntervalSeconds = 7200; // 2 hours
 			$timezone = 'Europe/Istanbul'; // Centralize timezone
 
