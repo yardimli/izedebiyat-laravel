@@ -25,7 +25,7 @@
 			
 			{{-- Author Details & Reviews --}}
 			<div class="row">
-				<div class="col-lg-8">
+				<div class="col-lg-4">
 					<h4 class="spanborder">
 						<span>{{ $author->name }} Kitap İzleri</span>
 					</h4>
