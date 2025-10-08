@@ -771,7 +771,7 @@
 				$query->where('is_published', true);
 			})->withCount(['bookReviews' => function ($query) {
 				$query->where('is_published', true);
-			}])->orderBy('name')->paginate(30);
+			}])->orderBy('name')->paginate(250);
 			return view('frontend.book_reviews.tags', compact('tags'));
 		}
 
