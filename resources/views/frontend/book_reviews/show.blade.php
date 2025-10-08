@@ -26,7 +26,7 @@
 			<article class="entry-wrapper mb-5">
 				<div class="row">
 					{{-- Cover Image and Book Details Column --}}
-					<div class="col-md-4">
+					<div class="col-md-4 col-xl-4">
 						<figure class="image zoom mb-4 text-center">
 							<img src="{{ $bookReview->cover_image ? asset($bookReview->cover_image) : asset('images/no-image.png') }}" style="max-width: 300px; width: 100%;" alt="Cover Image">
 						</figure>
@@ -53,7 +53,7 @@
 					</div>
 					
 					{{-- Review Content Column --}}
-					<div class="col-md-8">
+					<div class="col-md-8 col-xl-8">
 						<div class="entry-main-content article-text-color">
 							{!! (new \League\CommonMark\CommonMarkConverter())->convertToHtml(e($bookReview->review_content)) !!}
 						</div>
