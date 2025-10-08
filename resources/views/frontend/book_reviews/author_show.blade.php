@@ -31,7 +31,7 @@
 					</h4>
 					<div class="row">
 						@forelse($bookReviews as $review)
-							<div class="col-lg-4 col-md-6 mb-4">
+							<div class="col-12 mb-4">
 								<div class="book-grid-item">
 									<a href="{{ route('frontend.book-review.show', $review->slug) }}">
 										<img src="{{ $review->cover_image ?? asset('images/no-image.png') }}" class="img-fluid book-cover" alt="{{ $review->title }}">
