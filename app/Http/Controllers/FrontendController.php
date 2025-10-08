@@ -699,7 +699,7 @@
 		{
 			$bookReviews = BookReview::where('is_published', true)
 				->latest('published_at')
-				->paginate(16);
+				->paginate(72);
 			return view('frontend.book_reviews.index', compact('bookReviews'));
 		}
 
