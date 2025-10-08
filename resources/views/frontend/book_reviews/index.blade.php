@@ -4,49 +4,45 @@
 @section('body-class', 'home')
 
 @section('content')
-	<section class="archive">
-		<main id="content">
-			<div class="content-widget">
-				<div class="container-lg">
-					<div class="row">
-						<div class="col-12">
-							<h4 class="spanborder">
-								<span>{{ __('default.Book Reviews') }}</span>
-							</h4>
-						</div>
-					</div>
-					
-					{{-- MODIFIED: Added g-0 to the row and updated column classes for a seamless grid. --}}
-					<div class="row g-0">
-						@forelse($bookReviews as $review)
-							{{-- MODIFIED: Updated column classes and removed bottom margin (mb-4). --}}
-							<div class="col-lg-2 col-md-3 col-sm-4 col-6">
-								<div class="book-grid-item">
-									<a href="{{ route('frontend.book-review.show', $review->slug) }}">
-										<img src="{{ $review->cover_image ?? asset('images/no-image.png') }}" class="img-fluid book-cover"
-										     alt="{{ $review->title }}">
-										<div class="book-info-overlay">
-											<h5 class="book-title">{{ $review->title }}</h5>
-											<p class="book-author">{{ $review->display_author }}</p>
-											<span class="btn btn-sm btn-outline-light">{{ __('default.Read Review') }}</span>
-										</div>
-									</a>
-								</div>
-							</div>
-						@empty
-							<p class="text-center">{{ __('default.No book reviews found.') }}</p>
-						@endforelse
-					</div>
-					
-					@if($bookReviews->lastPage() > 1)
-						<div class="d-flex justify-content-center mt-4">
-							{{ $bookReviews->links() }}
-						</div>
-					@endif
+	<main id="content">
+		<div class="container-lg">
+			<div class="row">
+				<div class="col-12">
+					<h4 class="spanborder">
+						<span>{{ __('default.Book Reviews') }}</span>
+					</h4>
 				</div>
 			</div>
-		</main>
-	</section>
+			
+			{{-- MODIFIED: Added g-0 to the row and updated column classes for a seamless grid. --}}
+			<div class="row g-0">
+				@forelse($bookReviews as $review)
+					{{-- MODIFIED: Updated column classes and removed bottom margin (mb-4). --}}
+					<div class="col-lg-2 col-md-3 col-sm-4 col-6">
+						<div class="book-grid-item">
+							<a href="{{ route('frontend.book-review.show', $review->slug) }}">
+								<img src="{{ $review->cover_image ?? asset('images/no-image.png') }}" class="img-fluid book-cover"
+								     alt="{{ $review->title }}">
+								<div class="book-info-overlay">
+									<h5 class="book-title">{{ $review->title }}</h5>
+									<p class="book-author">{{ $review->display_author }}</p>
+									<span class="btn btn-sm btn-outline-light">{{ __('default.Read Review') }}</span>
+								</div>
+							</a>
+						</div>
+					</div>
+				@empty
+					<p class="text-center">{{ __('default.No book reviews found.') }}</p>
+				@endforelse
+			</div>
+			
+			@if($bookReviews->lastPage() > 1)
+				<div class="d-flex justify-content-center mt-4">
+					{{ $bookReviews->links() }}
+				</div>
+			@endif
+		</div>
+	</main>
 @endsection
 
 @push('styles')
