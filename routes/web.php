@@ -346,8 +346,8 @@
 		// END ADDED
 
 		// ADDED: User book submission routes
-		Route::get('/kitap-izleri/kitap-gonder', [FrontendController::class, 'createBookSubmission'])->name('frontend.book-reviews.create-submission');
-		Route::post('/kitap-izleri/kitap-gonder', [FrontendController::class, 'storeBookSubmission'])->name('frontend.book-reviews.store-submission');
+		Route::get('/kitap-gonder', [FrontendController::class, 'createBookSubmission'])->name('frontend.book-reviews.create-submission');
+		Route::post('/kitap-gonder', [FrontendController::class, 'storeBookSubmission'])->name('frontend.book-reviews.store-submission');
 		// END ADDED
 	});
 
