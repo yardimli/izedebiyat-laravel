@@ -63,7 +63,7 @@
 			
 			{{-- ADDED: Kitap İzleri menu item for mobile --}}
 			<div>
-				<a href="{{ route('frontend.book-reviews.index') }}" style="text-transform: uppercase;">Kitap İzleri</a>
+				<a href="{{ route('frontend.book-reviews.index') }}" style="text-transform: uppercase;">KİTAP İZLERİ</a>
 			</div>
 			
 			<form action="{{ route('search') }}" method="get" class="search-form mt-2" style="border: 1px solid #ccc;">
