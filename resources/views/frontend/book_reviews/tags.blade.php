@@ -11,22 +11,17 @@
 					<div class="row">
 						<div class="col-12">
 							<h4 class="spanborder">
-								<span>{{ __('default.Book Reviews') }}</span>
+								<span>{{ __('default.Book Reviews') }} - Etiketler</span>
 							</h4>
 						</div>
 					</div>
 					
 					<div class="row">
 						<div class="col-12">
-							<h4 class="spanborder">
-								<span>Kitap İzleri Etiketleri</span>
-							</h4>
-							
-							{{-- MODIFIED: Removed the submenu as it's now in the main header for this section --}}
-							
 							<div class="tag-cloud">
 								@forelse($tags as $tag)
-									<a href="{{ route('frontend.book-reviews.show-by-tag', $tag->slug) }}" class="btn btn-outline-info m-1">
+									<a href="{{ route('frontend.book-reviews.show-by-tag', $tag->slug) }}"
+									   class="btn btn-outline-info m-1">
 										{{ $tag->name }} <span class="badge bg-secondary">{{ $tag->book_reviews_count }}</span>
 									</a>
 								@empty

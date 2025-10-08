@@ -14,7 +14,7 @@
 				</div>
 			</div>
 			
-			<div class="entry-header">
+			<div class="col-12">
 				<div class="mb-5">
 					<h1 class="entry-title mb-2">{{ $bookReview->title }}</h1>
 					<h2 class="entry-subtitle mb-3 fst-italic">
@@ -31,7 +31,7 @@
 				</div>
 			</div>
 			
-			<article class="entry-wrapper mb-5">
+			<article class="col-12 mb-5">
 				<div class="row">
 					{{-- Cover Image and Book Details Column --}}
 					<div class="col-md-4 col-xl-4">

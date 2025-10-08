@@ -11,22 +11,18 @@
 					<div class="row">
 						<div class="col-12">
 							<h4 class="spanborder">
-								<span>{{ __('default.Book Reviews') }}</span>
+								<span>{{ __('default.Book Reviews') }} - Kümeler</span>
 							</h4>
 						</div>
 					</div>
 					
 					<div class="row">
 						<div class="col-12">
-							<h4 class="spanborder">
-								<span>Kitap İzleri Kümeleri</span>
-							</h4>
-							
-							{{-- MODIFIED: Removed the submenu as it's now in the main header for this section --}}
 							
 							<div class="list-group">
 								@forelse($categories as $category)
-									<a href="{{ route('frontend.book-reviews.show-by-category', $category->slug) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+									<a href="{{ route('frontend.book-reviews.show-by-category', $category->slug) }}"
+									   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
 										{{ $category->name }}
 										<span class="badge bg-primary rounded-pill">{{ $category->book_reviews_count }}</span>
 									</a>
@@ -56,6 +52,7 @@
           border-color: var(--bs-gray-700);
           color: var(--bs-light);
       }
+
       [data-bs-theme="dark"] .list-group-item-action:hover,
       [data-bs-theme="dark"] .list-group-item-action:focus {
           background-color: var(--bs-gray-700);
