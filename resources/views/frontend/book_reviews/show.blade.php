@@ -6,6 +6,14 @@
 @section('content')
 	<main id="content">
 		<div class="container-lg">
+			<div class="row">
+				<div class="col-12">
+					<h4 class="spanborder">
+						<span>{{ __('default.Book Reviews') }}</span>
+					</h4>
+				</div>
+			</div>
+			
 			<div class="entry-header">
 				<div class="mb-5">
 					<h1 class="entry-title mb-2">{{ $bookReview->title }}</h1>

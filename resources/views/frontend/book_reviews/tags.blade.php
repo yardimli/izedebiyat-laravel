@@ -11,6 +11,14 @@
 					<div class="row">
 						<div class="col-12">
 							<h4 class="spanborder">
+								<span>{{ __('default.Book Reviews') }}</span>
+							</h4>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-12">
+							<h4 class="spanborder">
 								<span>Kitap İzleri Etiketleri</span>
 							</h4>
 							

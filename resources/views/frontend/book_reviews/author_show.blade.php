@@ -6,6 +6,14 @@
 @section('content')
 	<main id="content">
 		<div class="container-lg">
+			<div class="row">
+				<div class="col-12">
+					<h4 class="spanborder">
+						<span>{{ __('default.Book Reviews') }}</span>
+					</h4>
+				</div>
+			</div>
+			
 			{{-- Author Header --}}
 			<div class="author-header-container my-4 p-4 rounded">
 				<div class="row align-items-center">
