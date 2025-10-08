@@ -12,11 +12,6 @@
 					<h2 class="entry-subtitle mb-3 fst-italic">{{ $bookReview->author }}</h2>
 					
 					<div class="entry-meta align-items-center divider pb-4">
-						<a class="user-avatar" href="{{ url('/yazar/' . $bookReview->user->slug) }}">
-							{!! \App\Helpers\MyHelper::generateInitialsAvatar($bookReview->user->avatar, $bookReview->user->email,'width:50px; height:50px; border-radius:50%;','') !!}
-						</a>
-						<span>{{ __('default.Review by') }}: <a href="{{ url('/yazar/' . $bookReview->user->slug) }}">{{ $bookReview->user->name }}</a></span>
-						<span class="middotDivider"></span>
 						<span>{{ \App\Helpers\MyHelper::timeElapsedString($bookReview->published_at ?? $bookReview->created_at) }}</span>
 					</div>
 				</div>
