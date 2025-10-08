@@ -122,7 +122,7 @@
 
       [data-bs-theme="dark"] .alert-info {
           background-color: rgba(var(--bs-info-rgb), 0.1);
-          color: var(--bs-info-text-emphasis);
+          color: var(--bs-light);
           border-color: rgba(var(--bs-info-rgb), 0.2);
       }
 
