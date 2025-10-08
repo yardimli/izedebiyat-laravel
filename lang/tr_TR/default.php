@@ -305,5 +305,8 @@
 		'Publication Place' => 'Yayın Yeri',
 		'Buy Now URL' => 'Satın Alma URL',
 		'Buy Now' => 'Şimdi Satın Al',
+		'Submit Your Book for Review' => 'Kitabını İncelemeye Gönder',
+		'Submit Book' => 'Kitabı Gönder',
+		'Your book has been submitted successfully.' => 'Kitabınız başarıyla gönderildi. Sizinle en kısa zamanda e-posta yoluyla iletişime geçeceğiz.',
 		// END ADDED
 	];

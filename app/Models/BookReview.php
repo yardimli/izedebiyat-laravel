@@ -25,6 +25,8 @@
 			'publication_place',
 			'buy_url',
 			'book_author_id', // ADDED: Foreign key for BookAuthor
+			'is_user_submitted', // ADDED: Flag for user submissions
+			'submitted_by_user_id', // ADDED: Foreign key for submitting user
 		];
 
 		protected $casts = [

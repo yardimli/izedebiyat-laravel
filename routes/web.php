@@ -344,6 +344,11 @@
 		// ADDED: Admin routes for Book Authors
 		Route::resource('admin/book-authors', BookAuthorController::class);
 		// END ADDED
+
+		// ADDED: User book submission routes
+		Route::get('/kitap-izleri/kitap-gonder', [FrontendController::class, 'createBookSubmission'])->name('frontend.book-reviews.create-submission');
+		Route::post('/kitap-izleri/kitap-gonder', [FrontendController::class, 'storeBookSubmission'])->name('frontend.book-reviews.store-submission');
+		// END ADDED
 	});
 
 	//-------------------------------------------------------------------------

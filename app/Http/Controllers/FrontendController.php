@@ -786,4 +786,69 @@
 			return view('frontend.book_reviews.list_by', compact('bookReviews', 'listTitle'));
 		}
 		// END ADDED
+
+		// ADDED: Methods for user book submission
+		/**
+		 * Show the form for a user to submit their book.
+		 */
+		public function createBookSubmission()
+		{
+			return view('frontend.book_reviews.create_submission');
+		}
+
+		/**
+		 * Store a new book submission from a user.
+		 */
+		public function storeBookSubmission(Request $request)
+		{
+			$validated = $request->validate([
+				'book_title' => 'required|string|max:255',
+				'book_cover_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+				'book_description' => 'required|string|max:5000',
+				'author_name' => 'required|string|max:255',
+				'author_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+				'author_biography' => 'required|string|max:2000',
+				'author_bibliography' => 'nullable|string|max:2000',
+			]);
+
+			// Find or create the author
+			$author = BookAuthor::firstOrCreate(
+				['name' => $validated['author_name']],
+				[
+					'slug' => Str::slug($validated['author_name']),
+					'biography' => $validated['author_biography'],
+					'bibliography' => $validated['author_bibliography'] ?? null,
+				]
+			);
+
+			// Handle author picture upload
+			if ($request->hasFile('author_picture')) {
+				if ($author->picture) {
+					Storage::delete(str_replace('/storage', 'public', $author->picture));
+				}
+				$path = $request->file('author_picture')->store('public/book_authors');
+				$author->picture = Storage::url($path);
+				$author->save();
+			}
+
+			// Handle book cover upload
+			$coverPath = $request->file('book_cover_image')->store('public/book_covers');
+
+			// Create the book review
+			BookReview::create([
+				'title' => $validated['book_title'],
+				'slug' => Str::slug($validated['book_title']),
+				'review_content' => $validated['book_description'],
+				'cover_image' => Storage::url($coverPath),
+				'book_author_id' => $author->id,
+				'author' => $author->name, // also store manually for consistency
+				'user_id' => 1, // Submissions are reviews by admin, so assign to admin
+				'is_published' => false, // Not published by default
+				'is_user_submitted' => true,
+				'submitted_by_user_id' => Auth::id(),
+			]);
+
+			return redirect()->route('frontend.book-reviews.index')->with('success', __('default.Your book has been submitted successfully.'));
+		}
+		// END ADDED
 	}

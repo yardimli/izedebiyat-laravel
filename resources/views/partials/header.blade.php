@@ -1,4 +1,7 @@
-<!--Mobile navigation-->
+<?php
+// resources/views/partials/header.blade.php:
+
+	<!--Mobile navigation-->
 <div class="sticky-header fixed d-lg-none d-md-block">
 	<div class="text-right">
 		<div class="container-lg mobile-menu-fixed pr-5">
@@ -11,72 +14,84 @@
 				<i class="bi bi-sun fs-6 d-none" id="lightModeIcon-mobile"></i>
 				<i class="bi bi-moon-stars fs-6" id="darkModeIcon-mobile"></i>
 			</button>
-			
-			@if (Auth::user())
-				<a href="{{route('backend.account')}}">
-					<img class="small-user-avatar"
-					     src="{{ !empty(Auth::user()->avatar) ? Storage::url(Auth::user()->avatar) : '/assets/images/avatar/placeholder.jpg' }}"
-					     alt="avatar">
-				</a>
-			@else
-				<a class="user-avatar" href="{{route('login')}}" style="cursor: pointer;">
-					<img src="/assets/images/avatar/placeholder.jpg" alt="">
-				</a>
-			@endif
-			<a href="javascript:void(0)" class="menu-toggle-icon">
-				<span class="lines"></span>
-			</a>
+
+@if (Auth::user())
+	<a href="{{route('backend.account')}}">
+		<img class="small-user-avatar"
+		     src="{{ !empty(Auth::user()->avatar) ? Storage::url(Auth::user()->avatar) : '/assets/images/avatar/placeholder.jpg' }}"
+		     alt="avatar">
+	</a>
+@else
+	<a class="user-avatar" href="{{route('login')}}" style="cursor: pointer;">
+		<img src="/assets/images/avatar/placeholder.jpg" alt="">
+	</a>
+@endif
+<a href="javascript:void(0)" class="menu-toggle-icon">
+	<span class="lines"></span>
+</a>
+</div>
+</div>
+<div class="mobi-menu" style="overflow: auto;">
+	<nav style="text-align: left; padding:10px;">
+		<div class="current-menu-item"><a href="{{ url('/') }}" style="text-transform: uppercase;">Ana Sayfa</a></div>
+		<div class="pl-4 pb-3">
+			<a href="{{ url('/son-eklenenler') }}">Son Eklenenler</a>
+			<br>
+			<a href="{{ url('/yazarlar') }}">Yazarlar</a>
+			<br>
+			<a href="{{ url('/katilim') }}">Katılım</a>
+			<br>
+			<a href="mailto:iletisim@izedebiyat.com">İletişim</a>
+			<br>
+			<a href="{{ url('/yasallik') }}">Yasallık</a>
+			<br>
+			<a href="{{ url('/gizlilik') }}">Saklılık & Gizlilik</a>
+			<br>
+			<a href="{{ url('/yayin-ilkeleri') }}">Yayın İlkeleri</a>
+			<br>
+			<a href="{{ url('/izedebiyat') }}">İzEdebiyat?</a>
+			<br>
+			<a href="{{ url('/sorular') }}">Sıkça Sorulanlar</a>
+			<br>
+			<a href="{{ url('/kunye') }}">Künye</a>
 		</div>
-	</div>
-	<div class="mobi-menu" style="overflow: auto;">
-		<nav style="text-align: left; padding:10px;">
-			<div class="current-menu-item"><a href="{{ url('/') }}" style="text-transform: uppercase;">Ana Sayfa</a></div>
-			<div class="pl-4 pb-3">
-				<a href="{{ url('/son-eklenenler') }}">Son Eklenenler</a>
-				<br>
-				<a href="{{ url('/yazarlar') }}">Yazarlar</a>
-				<br>
-				<a href="{{ url('/katilim') }}">Katılım</a>
-				<br>
-				<a href="mailto:iletisim@izedebiyat.com">İletişim</a>
-				<br>
-				<a href="{{ url('/yasallik') }}">Yasallık</a>
-				<br>
-				<a href="{{ url('/gizlilik') }}">Saklılık & Gizlilik</a>
-				<br>
-				<a href="{{ url('/yayin-ilkeleri') }}">Yayın İlkeleri</a>
-				<br>
-				<a href="{{ url('/izedebiyat') }}">İzEdebiyat?</a>
-				<br>
-				<a href="{{ url('/sorular') }}">Sıkça Sorulanlar</a>
-				<br>
-				<a href="{{ url('/kunye') }}">Künye</a>
-			</div>
-			
-			@foreach($mainMenuCategories as $category)
-				<div>
-					<a href="{{ url('/kume/' . $category->slug) }}" style="text-transform: uppercase;">
-						{!! $category->category_name !!}
-					</a>
-				</div>
-			@endforeach
-			
-			{{-- ADDED: Kitap İzleri menu item for mobile --}}
+		
+		@foreach($mainMenuCategories as $category)
 			<div>
-				<a href="{{ route('frontend.book-reviews.index') }}" style="text-transform: uppercase;">KİTAP İZLERİ</a>
-			</div>
-			
-			<form action="{{ route('search') }}" method="get" class="search-form mt-2" style="border: 1px solid #ccc;">
-				<a href="javascript:void(0)" class="search-toggle" style="padding-left:10px; padding-right:10px;">
-					<i class="bi bi-search"></i>
+				<a href="{{ url('/kume/' . $category->slug) }}" style="text-transform: uppercase;">
+					{!! $category->category_name !!}
 				</a>
-				<input type="text" class="search_field" name="q" value="{{ request('q') }}" placeholder="Ara...">
-				<button type="submit" class="btn-info" style="border-radius: 5px; width: 50px;">
-					Bul
-				</button>
-			</form>
-		</nav>
-	</div>
+			</div>
+		@endforeach
+		
+		{{-- MODIFIED: Kitap İzleri menu item and submenu for mobile --}}
+		<div>
+			<a href="{{ route('frontend.book-reviews.index') }}" style="text-transform: uppercase;">KİTAP İZLERİ</a>
+		</div>
+		<div class="pl-4 pb-3">
+			<a href="{{ route('frontend.book-reviews.authors') }}">Yazarlar</a>
+			<br>
+			<a href="{{ route('frontend.book-reviews.categories') }}">Kümeler</a>
+			<br>
+			<a href="{{ route('frontend.book-reviews.tags') }}">Etiketler</a>
+			<br>
+			@auth
+				<a href="{{ route('frontend.book-reviews.create-submission') }}">Kitabını Gönder</a>
+				<br>
+			@endauth
+		</div>
+		
+		<form action="{{ route('search') }}" method="get" class="search-form mt-2" style="border: 1px solid #ccc;">
+			<a href="javascript:void(0)" class="search-toggle" style="padding-left:10px; padding-right:10px;">
+				<i class="bi bi-search"></i>
+			</a>
+			<input type="text" class="search_field" name="q" value="{{ request('q') }}" placeholder="Ara...">
+			<button type="submit" class="btn-info" style="border-radius: 5px; width: 50px;">
+				Bul
+			</button>
+		</form>
+	</nav>
+</div>
 </div>
 
 <!--Desktop Header-->
