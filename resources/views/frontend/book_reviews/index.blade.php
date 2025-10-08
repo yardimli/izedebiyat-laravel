@@ -16,9 +16,11 @@
 						</div>
 					</div>
 					
-					<div class="row">
+					{{-- MODIFIED: Added g-0 to the row and updated column classes for a seamless grid. --}}
+					<div class="row g-0">
 						@forelse($bookReviews as $review)
-							<div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+							{{-- MODIFIED: Updated column classes and removed bottom margin (mb-4). --}}
+							<div class="col-lg-2 col-md-3 col-sm-4 col-6">
 								<div class="book-grid-item">
 									<a href="{{ route('frontend.book-review.show', $review->slug) }}">
 										<img src="{{ $review->cover_image ?? asset('images/no-image.png') }}" class="img-fluid book-cover"
@@ -52,8 +54,7 @@
       .book-grid-item {
           position: relative;
           overflow: hidden;
-          border-radius: 5px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          /* MODIFIED: Removed border-radius and box-shadow for a flat, seamless grid. */
       }
 
       .book-grid-item .book-cover {
