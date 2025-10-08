@@ -16,7 +16,7 @@
 					<div class="alert alert-info d-flex align-items-center" role="alert">
 						<i class="bi bi-info-circle-fill me-3 fs-4"></i>
 						<div>
-							Bu form aracılığıyla kitabınızın sitemizde tanıtımını talep edebilirsiniz. Formu doldurduktan sonra, el yazmanızı gönderme ve diğer adımlar hakkında bilgi vermek için sizinle iletişime geçeceğiz. Bu hizmet ücretlidir; maliyet ve ödeme detayları size e-posta ile bildirilecektir.
+							Bu form aracılığıyla kitabınızın sitemizde incelenmesini talep edebilirsiniz. Başvurunuzu aldıktan sonra, <span style="font-weight:bold;">değerlendirmemizi yapabilmemiz için kitabınızın tam metnini .docx formatında talep edeceğiz.</span> Diğer adımlar ve hizmet bedeliyle ilgili detaylar da e-posta yoluyla size iletilecektir.
 						</div>
 					</div>
 					
@@ -96,6 +96,38 @@
       form {
           margin-top: 2rem;
           margin-bottom: 2rem;
+      }
+
+      /* MODIFIED: Added dark mode styles for form elements */
+      [data-bs-theme="dark"] .form-control {
+          background-color: var(--bs-gray-800);
+          color: var(--bs-light);
+          border-color: var(--bs-gray-700);
+      }
+
+      [data-bs-theme="dark"] .form-control:focus {
+          background-color: var(--bs-gray-800);
+          color: var(--bs-light);
+          border-color: var(--bs-primary);
+      }
+
+      [data-bs-theme="dark"] .form-label,
+      [data-bs-theme="dark"] h5 {
+          color: var(--bs-light);
+      }
+
+      [data-bs-theme="dark"] hr {
+          border-top-color: var(--bs-gray-700);
+      }
+
+      [data-bs-theme="dark"] .alert-info {
+          background-color: rgba(var(--bs-info-rgb), 0.1);
+          color: var(--bs-info-text-emphasis);
+          border-color: rgba(var(--bs-info-rgb), 0.2);
+      }
+
+      [data-bs-theme="dark"] .form-text.text-muted {
+          color: var(--bs-gray-500) !important;
       }
 	</style>
 @endpush
