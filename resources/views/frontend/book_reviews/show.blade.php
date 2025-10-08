@@ -110,5 +110,9 @@
       [data-bs-theme="dark"] .book-details {
           color: var(--bs-light) !important;
       }
+      
+      [data-bs-theme="dark"] .tags-wrap {
+					color: var(--bs-light) !important;
+			}
 	</style>
 @endpush
