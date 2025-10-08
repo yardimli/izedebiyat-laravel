@@ -17,12 +17,9 @@
 				<li class="{{ request()->routeIs('frontend.book-reviews.tags') ? 'current-menu-item' : '' }}">
 					<a href="{{ route('frontend.book-reviews.tags') }}">ETİKETLER</a>
 				</li>
-				{{-- ADDED: Link for user to submit their book --}}
-				@auth
-					<li class="{{ request()->routeIs('frontend.book-reviews.create-submission') ? 'current-menu-item' : '' }}">
-						<a href="{{ route('frontend.book-reviews.create-submission') }}">KİTABINI GÖNDER</a>
-					</li>
-				@endauth
+				<li class="{{ request()->routeIs('frontend.book-reviews.create-submission') ? 'current-menu-item' : '' }}">
+					<a href="{{ route('frontend.book-reviews.create-submission') }}">İnceleme için Kitap Gönder</a>
+				</li>
 			</ul>
 			<span></span>
 		</div>

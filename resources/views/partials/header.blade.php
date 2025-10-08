@@ -72,10 +72,8 @@
 			<br>
 			<a href="{{ route('frontend.book-reviews.tags') }}">Etiketler</a>
 			<br>
-			@auth
-				<a href="{{ route('frontend.book-reviews.create-submission') }}">Kitabını Gönder</a>
-				<br>
-			@endauth
+			<a href="{{ route('frontend.book-reviews.create-submission') }}">İnceleme için Kitap Gönder</a>
+			<br>
 		</div>
 		
 		<form action="{{ route('search') }}" method="get" class="search-form mt-2" style="border: 1px solid #ccc;">
