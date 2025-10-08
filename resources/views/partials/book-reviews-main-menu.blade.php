@@ -5,9 +5,6 @@
 			<ul>
 				{{-- Link to return to the main homepage --}}
 				<li class="nav-item">
-					<a class="nav-link" href="{{ url('/') }}" style="text-transform: uppercase;">ANA SAYFAYA DÖN</a>
-				</li>
-				<li class="nav-item">
 					<a class="nav-link" href="{{ route('frontend.book-reviews.index') }}" style="text-transform: uppercase;">KİTAP İZLERİ</a>
 				</li>
 				<li class="nav-item">
@@ -18,6 +15,9 @@
 				</li>
 				<li>
 					<a class="nav-link" href="{{ route('frontend.book-reviews.tags') }}" style="text-transform: uppercase;">Etiketler</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{{ url('/') }}" style="text-transform: uppercase;">ANA SAYFAYA DÖN</a>
 				</li>
 			</ul>
 			<span></span>
