@@ -4,18 +4,20 @@
 		<div class="menu-primary">
 			<ul>
 				{{-- Link to return to the main homepage --}}
-				<li>
-					<a href="{{ url('/') }}" style="text-transform: uppercase;">ANA SAYFAYA DÖN</a>
+				<li class="nav-item">
+					<a class="nav-link" href="{{ url('/') }}" style="text-transform: uppercase;">ANA SAYFAYA DÖN</a>
 				</li>
-				{{-- MODIFIED: Changed the Book Reviews link to a dropdown menu --}}
-				<li class="menu-item-has-children current-menu-item">
-					<a href="{{ route('frontend.book-reviews.index') }}">KİTAP İZLERİ</a>
-					{{-- ADDED: Sub-menu for book review navigation --}}
-					<ul class="sub-menu dropdown-menu">
-						<li><a href="{{ route('frontend.book-reviews.authors') }}">Yazarlar</a></li>
-						<li><a href="{{ route('frontend.book-reviews.categories') }}">Kümeler</a></li>
-						<li><a href="{{ route('frontend.book-reviews.tags') }}">Etiketler</a></li>
-					</ul>
+				<li class="nav-item">
+					<a class="nav-link" href="{{ route('frontend.book-reviews.index') }}">KİTAP İZLERİ</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{{ route('frontend.book-reviews.authors') }}">Yazarlar</a>
+				</li>
+				<li>
+					<a class="nav-link" href="{{ route('frontend.book-reviews.categories') }}">Kümeler</a>
+				</li>
+				<li>
+					<a class="nav-link" href="{{ route('frontend.book-reviews.tags') }}">Etiketler</a>
 				</li>
 			</ul>
 			<span></span>
