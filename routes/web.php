@@ -208,6 +208,11 @@
 	Route::get('/articles/{article}/comments', [CommentController::class, 'index'])->name('comments.index');
 
 	//-------------------------------------------------------------------------
+	// ADDED: New API endpoint for ingesting books from the Python script.
+	// Note: In a production environment, this should be in routes/api.php and protected by a proper authentication guard like Sanctum.
+	Route::post('/api/book-reviews/ingest', [BookReviewController::class, 'ingest'])->name('book-reviews.ingest');
+	// END ADDED
+
 	Route::middleware(['auth'])->group(function () {
 
 		// New maintenance routes
@@ -323,7 +328,7 @@
 		Route::post('/admin/hesap-kurtarma/{id}/reject', [AccountRecoveryController::class, 'reject'])->name('admin.account-recovery.reject');
 
 		// ADDED: Admin routes for Book Reviews
-		Route::resource('admin/book-reviews', BookReviewController::class);
+		Route::resource('admin/book-reviews', BookReviewController::class, ['except' => ['show']]); // MODIFIED: excluded show route as it's not used
 		Route::post('/book-reviews/generate-category', [ChatController::class, 'generateBookCategory'])->name('book-reviews.generate-category');
 		Route::post('/book-reviews/generate-keywords', [ChatController::class, 'generateBookKeywords'])->name('book-reviews.generate-keywords');
 		// END ADDED

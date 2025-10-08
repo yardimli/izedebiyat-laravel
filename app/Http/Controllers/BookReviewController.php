@@ -5,9 +5,11 @@
 	use App\Models\BookReview;
 	use App\Models\BookCategory;
 	use App\Models\BookTag;
+	use Carbon\Carbon; // ADDED: Import Carbon for date parsing
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Auth;
 	use Illuminate\Support\Facades\Storage; // ADDED: For file handling
+	use Illuminate\Support\Facades\Validator; // ADDED: For custom validation
 	use Illuminate\Support\Str;
 
 	class BookReviewController extends Controller
@@ -21,6 +23,10 @@
 		{
 			// Middleware to ensure only admins can access these methods
 			$this->middleware(function ($request, $next) {
+				// MODIFIED: Allow ingest method to bypass auth middleware
+				if ($request->route()->getName() === 'book-reviews.ingest') {
+					return $next($request);
+				}
 				if (Auth::check() && Auth::user()->isAdmin()) {
 					return $next($request);
 				}
@@ -194,5 +200,102 @@
 				}
 			}
 			$bookReview->tags()->sync($tagIds);
+		}
+
+		// ADDED: New method to handle book ingestion from a script.
+		/**
+		 * Store a new book review from an automated script.
+		 *
+		 * @param \Illuminate\Http\Request $request
+		 * @return \Illuminate\Http\JsonResponse
+		 */
+		public function ingest(Request $request)
+		{
+			// 1. Validate incoming data
+			$validator = Validator::make($request->all(), [
+				'title' => 'required|string|max:255',
+				'author' => 'required|string|max:255',
+				'description' => 'required|string',
+				'publication_info' => 'nullable|string',
+				'cover_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+			]);
+
+			if ($validator->fails()) {
+				return response()->json(['status' => 'error', 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+			}
+
+			// 2. Check if the book already exists
+			$existingBook = BookReview::where('title', $request->input('title'))
+				->where('author', $request->input('author'))
+				->exists();
+
+			if ($existingBook) {
+				return response()->json(['status' => 'skipped', 'message' => 'Book already exists'], 200);
+			}
+
+			// 3. Process and store the new book
+			try {
+				$data = [
+					'title' => $request->input('title'),
+					'author' => $request->input('author'),
+					'slug' => Str::slug($request->input('title')),
+					'review_content' => $request->input('description'),
+					'is_published' => false, // Set as not published by default
+					'user_id' => 1, // Assign to a default admin user (ID 1)
+				];
+
+				// 3a. Parse publication info
+				if ($request->has('publication_info')) {
+					$parsedInfo = $this->parsePublicationInfo($request->input('publication_info'));
+					$data['publisher'] = $parsedInfo['publisher'];
+					$data['publication_date'] = $parsedInfo['date'];
+				}
+
+				// 3b. Handle file upload
+				if ($request->hasFile('cover_image')) {
+					$path = $request->file('cover_image')->store('public/book_covers');
+					$data['cover_image'] = Storage::url($path);
+				}
+
+				BookReview::create($data);
+
+				return response()->json(['status' => 'success', 'message' => 'Book review created successfully'], 201);
+			} catch (\Exception $e) {
+				// Log the error for debugging
+				\Illuminate\Support\Facades\Log::error('Book ingestion failed: ' . $e->getMessage());
+				return response()->json(['status' => 'error', 'message' => 'An internal error occurred.'], 500);
+			}
+		}
+
+		// ADDED: Helper function to parse publication string.
+		/**
+		 * Parses the publication info string from Goodreads.
+		 * E.g., "October 1, 2003 by Yapı Kredi Yayınları"
+		 *
+		 * @param string $info
+		 * @return array
+		 */
+		private function parsePublicationInfo(string $info): array
+		{
+			$publisher = null;
+			$date = null;
+
+			// Split the string by " by " to separate date and publisher
+			$parts = explode(' by ', $info);
+
+			if (count($parts) === 2) {
+				$publisher = trim($parts[1]);
+				try {
+					// Carbon can parse many date formats
+					$date = Carbon::parse(trim($parts[0]))->toDateString();
+				} catch (\Exception $e) {
+					$date = null; // Set to null if parsing fails
+				}
+			}
+
+			return [
+				'publisher' => $publisher,
+				'date' => $date
+			];
 		}
 	}
