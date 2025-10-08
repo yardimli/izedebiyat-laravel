@@ -9,7 +9,15 @@
 			<div class="entry-header">
 				<div class="mb-5">
 					<h1 class="entry-title mb-2">{{ $bookReview->title }}</h1>
-					<h2 class="entry-subtitle mb-3 fst-italic">{{ $bookReview->author }}</h2>
+					{{-- MODIFIED: Use display_author attribute and link to author page if available --}}
+					<h2 class="entry-subtitle mb-3 fst-italic">
+						@if($bookReview->bookAuthor)
+							<a href="{{ route('frontend.book-reviews.author', $bookReview->bookAuthor->slug) }}">{{ $bookReview->display_author }}</a>
+						@else
+							{{ $bookReview->display_author }}
+						@endif
+					</h2>
+					{{-- END MODIFIED --}}
 					
 					<div class="entry-meta align-items-center divider pb-4">
 						<span>{{ \App\Helpers\MyHelper::timeElapsedString($bookReview->published_at ?? $bookReview->created_at) }}</span>

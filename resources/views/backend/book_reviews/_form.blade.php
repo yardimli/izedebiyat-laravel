@@ -6,12 +6,30 @@
 	       value="{{ old('title', $bookReview->title ?? '') }}" required>
 </div>
 
-{{-- Book Author --}}
+{{-- MODIFIED: Author selection --}}
 <div class="mb-3">
-	<label for="author" class="form-label">{{ __('default.Book Author') }}</label>
-	<input type="text" class="form-control" id="author" name="author"
-	       value="{{ old('author', $bookReview->author ?? '') }}" required>
+	<label for="book_author_id" class="form-label">Kitap Yazarı (Veritabanından)</label>
+	<select class="form-select" id="book_author_id" name="book_author_id">
+		<option value="">Yazar Seçin veya Aşağıya Manuel Girin</option>
+		@isset($authors)
+			@foreach($authors as $author)
+				<option value="{{ $author->id }}" {{ (old('book_author_id', $bookReview->book_author_id ?? '') == $author->id) ? 'selected' : '' }}>
+					{{ $author->name }}
+				</option>
+			@endforeach
+		@endisset
+	</select>
+	<small class="form-text text-muted">Eğer yazar listede yoksa, aşağıdaki alana manuel olarak yazabilirsiniz. Yeni yazarları <a href="{{ route('book-authors.index') }}" target="_blank">Yazar Yönetimi</a> sayfasından ekleyebilirsiniz.</small>
 </div>
+
+<div class="mb-3">
+	<label for="author" class="form-label">{{ __('default.Book Author') }} (Manuel)</label>
+	<input type="text" class="form-control" id="author" name="author"
+	       value="{{ old('author', $bookReview->author ?? '') }}">
+	<small class="form-text text-muted">Veritabanından bir yazar seçilmediyse bu alan zorunludur.</small>
+</div>
+{{-- END MODIFIED --}}
+
 
 {{-- MODIFIED: New optional fields START --}}
 <div class="row">

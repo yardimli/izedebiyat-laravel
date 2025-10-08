@@ -28,8 +28,10 @@
 								Include the reusable form partial.
 								Pass the text for the submit button.
 						--}}
+						{{-- MODIFIED: Pass authors to the form --}}
 						@include('backend.book_reviews._form', [
 								'bookReview' => new \App\Models\BookReview(), // Pass an empty model
+								'authors' => $authors,
 								'submitButtonText' => __('default.Create Book Review')
 						])
 					</form>

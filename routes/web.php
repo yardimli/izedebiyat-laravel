@@ -3,6 +3,7 @@
 	use App\Helpers\MyHelper;
 	use App\Http\Controllers\AccountRecoveryController;
 	use App\Http\Controllers\ArticleController;
+	use App\Http\Controllers\BookAuthorController; // ADDED: Import BookAuthorController
 	use App\Http\Controllers\CategoryController;
 	use App\Http\Controllers\ChatController;
 	use App\Http\Controllers\CommentController;
@@ -140,6 +141,14 @@
 
 	// ADDED: Book Review Frontend Routes
 	Route::get('/kitap-izleri', [FrontendController::class, 'bookReviews'])->name('frontend.book-reviews.index');
+	// MODIFIED: Added new routes for authors, categories, and tags
+	Route::get('/kitap-izleri/yazarlar', [FrontendController::class, 'listBookAuthors'])->name('frontend.book-reviews.authors');
+	Route::get('/kitap-izleri/yazar/{slug}', [FrontendController::class, 'showBookAuthor'])->name('frontend.book-reviews.author');
+	Route::get('/kitap-izleri/kumeler', [FrontendController::class, 'listBookCategories'])->name('frontend.book-reviews.categories');
+	Route::get('/kitap-izleri/kume/{slug}', [FrontendController::class, 'showBookReviewsByCategory'])->name('frontend.book-reviews.show-by-category');
+	Route::get('/kitap-izleri/etiketler', [FrontendController::class, 'listBookTags'])->name('frontend.book-reviews.tags');
+	Route::get('/kitap-izleri/etiket/{slug}', [FrontendController::class, 'showBookReviewsByTag'])->name('frontend.book-reviews.show-by-tag');
+	// END MODIFIED
 	Route::get('/kitap-izleri/{slug}', [FrontendController::class, 'showBookReview'])->name('frontend.book-review.show');
 	// END ADDED
 
@@ -331,6 +340,9 @@
 		Route::resource('admin/book-reviews', BookReviewController::class, ['except' => ['show']]); // MODIFIED: excluded show route as it's not used
 		Route::post('/book-reviews/generate-category', [ChatController::class, 'generateBookCategory'])->name('book-reviews.generate-category');
 		Route::post('/book-reviews/generate-keywords', [ChatController::class, 'generateBookKeywords'])->name('book-reviews.generate-keywords');
+		// END ADDED
+		// ADDED: Admin routes for Book Authors
+		Route::resource('admin/book-authors', BookAuthorController::class);
 		// END ADDED
 	});
 

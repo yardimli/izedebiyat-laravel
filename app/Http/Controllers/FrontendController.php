@@ -3,6 +3,9 @@
 	namespace App\Http\Controllers;
 
 	use App\Helpers\MyHelper;
+	use App\Models\BookAuthor; // ADDED: Import BookAuthor model
+	use App\Models\BookCategory; // ADDED: Import BookCategory model
+	use App\Models\BookTag; // ADDED: Import BookTag model
 	use App\Models\Category;
 	use App\Models\Keyword;
 	use App\Models\User;
@@ -709,6 +712,78 @@
 				->where('is_published', true)
 				->firstOrFail();
 			return view('frontend.book_reviews.show', compact('bookReview'));
+		}
+
+		/**
+		 * Display a listing of all book authors.
+		 */
+		public function listBookAuthors()
+		{
+			$authors = BookAuthor::whereHas('bookReviews', function ($query) {
+				$query->where('is_published', true);
+			})->withCount(['bookReviews' => function ($query) {
+				$query->where('is_published', true);
+			}])->orderBy('name')->paginate(30);
+
+			return view('frontend.book_reviews.authors', compact('authors'));
+		}
+
+		/**
+		 * Display a single book author and their reviews.
+		 */
+		public function showBookAuthor($slug)
+		{
+			$author = BookAuthor::where('slug', $slug)->firstOrFail();
+			$bookReviews = $author->bookReviews()->where('is_published', true)->latest('published_at')->paginate(16);
+			return view('frontend.book_reviews.author_show', compact('author', 'bookReviews'));
+		}
+
+		/**
+		 * Display a listing of all book categories.
+		 */
+		public function listBookCategories()
+		{
+			$categories = BookCategory::whereHas('bookReviews', function ($query) {
+				$query->where('is_published', true);
+			})->withCount(['bookReviews' => function ($query) {
+				$query->where('is_published', true);
+			}])->orderBy('name')->paginate(30);
+			return view('frontend.book_reviews.categories', compact('categories'));
+		}
+
+		/**
+		 * Display reviews for a specific category.
+		 */
+		public function showBookReviewsByCategory($slug)
+		{
+			$category = BookCategory::where('slug', $slug)->firstOrFail();
+			$bookReviews = $category->bookReviews()->where('is_published', true)->latest('published_at')->paginate(16);
+			$listTitle = $category->name . ' Kategorisindeki Kitap İzleri';
+			return view('frontend.book_reviews.list_by', compact('bookReviews', 'listTitle'));
+		}
+
+		/**
+		 * Display a listing of all book tags.
+		 */
+		public function listBookTags()
+		{
+			$tags = BookTag::whereHas('bookReviews', function ($query) {
+				$query->where('is_published', true);
+			})->withCount(['bookReviews' => function ($query) {
+				$query->where('is_published', true);
+			}])->orderBy('name')->paginate(30);
+			return view('frontend.book_reviews.tags', compact('tags'));
+		}
+
+		/**
+		 * Display reviews for a specific tag.
+		 */
+		public function showBookReviewsByTag($slug)
+		{
+			$tag = BookTag::where('slug', $slug)->firstOrFail();
+			$bookReviews = $tag->bookReviews()->where('is_published', true)->latest('published_at')->paginate(16);
+			$listTitle = '#' . $tag->name . ' Etiketli Kitap İzleri';
+			return view('frontend.book_reviews.list_by', compact('bookReviews', 'listTitle'));
 		}
 		// END ADDED
 	}

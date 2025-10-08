@@ -2,6 +2,7 @@
 
 	namespace App\Http\Controllers;
 
+	use App\Models\BookAuthor; // ADDED: Import BookAuthor model
 	use App\Models\BookReview;
 	use App\Models\BookCategory;
 	use App\Models\BookTag;
@@ -41,7 +42,7 @@
 		 */
 		public function index()
 		{
-			$bookReviews = BookReview::with('user')->latest()->paginate(20);
+			$bookReviews = BookReview::with('user', 'bookAuthor')->latest()->paginate(20); // MODIFIED: Eager load bookAuthor
 			return view('backend.book_reviews.index', compact('bookReviews'));
 		}
 
@@ -52,7 +53,9 @@
 		 */
 		public function create()
 		{
-			return view('backend.book_reviews.create');
+			// ADDED: Fetch authors for the dropdown
+			$authors = BookAuthor::orderBy('name')->get();
+			return view('backend.book_reviews.create', compact('authors'));
 		}
 
 		/**
@@ -87,7 +90,9 @@
 		 */
 		public function edit(BookReview $bookReview)
 		{
-			return view('backend.book_reviews.edit', compact('bookReview'));
+			// ADDED: Fetch authors for the dropdown
+			$authors = BookAuthor::orderBy('name')->get();
+			return view('backend.book_reviews.edit', compact('bookReview', 'authors'));
 		}
 
 		/**
@@ -150,7 +155,8 @@
 			// MODIFIED: Updated validation rules for file upload and new fields
 			return $request->validate([
 				'title' => 'required|string|max:255',
-				'author' => 'required|string|max:255',
+				'author' => 'required_without:book_author_id|nullable|string|max:255', // MODIFIED: Manual author is only required if no author is selected from DB
+				'book_author_id' => 'nullable|exists:book_authors,id', // ADDED: Validate the selected author
 				'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 				'review_content' => 'required|string',
 				'is_published' => 'boolean',

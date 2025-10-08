@@ -24,6 +24,7 @@
 			'publication_date',
 			'publication_place',
 			'buy_url',
+			'book_author_id', // ADDED: Foreign key for BookAuthor
 		];
 
 		protected $casts = [
@@ -65,5 +66,23 @@
 		public function tags()
 		{
 			return $this->belongsToMany(BookTag::class, 'book_review_tag');
+		}
+
+		/**
+		 * Get the author of the book.
+		 * ADDED: Relationship to BookAuthor
+		 */
+		public function bookAuthor()
+		{
+			return $this->belongsTo(BookAuthor::class);
+		}
+
+		/**
+		 * Get the display author name, prioritizing the relationship.
+		 * ADDED: Accessor for author name
+		 */
+		public function getDisplayAuthorAttribute()
+		{
+			return $this->bookAuthor->name ?? $this->author;
 		}
 	}

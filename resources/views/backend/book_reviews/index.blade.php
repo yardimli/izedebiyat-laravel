@@ -40,7 +40,8 @@
 										@foreach($bookReviews as $review)
 											<tr>
 												<td>{{ $review->title }}</td>
-												<td>{{ $review->author }}</td>
+												{{-- MODIFIED: Use the display_author accessor to get the correct author name --}}
+												<td>{{ $review->display_author }}</td>
 												<td>{{ $review->user->name }}</td>
 												<td>
                                                 <span class="badge bg-{{ $review->is_published ? 'success' : 'warning' }}">
