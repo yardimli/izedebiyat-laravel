@@ -128,5 +128,18 @@
       .author-content ul {
           padding-left: 20px;
       }
+
+      /* MODIFIED: Added dark mode styles */
+      [data-bs-theme="dark"] .author-header-container {
+          background-color: var(--bs-gray-800);
+          border: 1px solid var(--bs-gray-700);
+      }
+      [data-bs-theme="dark"] .author-bio-short,
+      [data-bs-theme="dark"] .author-content {
+          color: var(--bs-gray-400);
+      }
+      [data-bs-theme="dark"] .author-content a {
+          color: var(--bs-primary);
+      }
 	</style>
 @endpush

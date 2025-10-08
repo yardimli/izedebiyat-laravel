@@ -65,5 +65,17 @@
           transform: translateY(-5px);
           box-shadow: 0 8px 16px rgba(0,0,0,0.1);
       }
+
+      /* MODIFIED: Added dark mode styles for author cards */
+      [data-bs-theme="dark"] .author-card {
+          background-color: var(--bs-gray-800);
+          border-color: var(--bs-gray-700);
+      }
+      [data-bs-theme="dark"] .author-card .card-title a {
+          color: var(--bs-light);
+      }
+      [data-bs-theme="dark"] .author-card .card-text {
+          color: var(--bs-gray-500) !important;
+      }
 	</style>
 @endpush

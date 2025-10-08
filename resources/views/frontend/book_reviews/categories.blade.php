@@ -43,3 +43,18 @@
 		</main>
 	</section>
 @endsection
+
+{{-- ADDED: Styles for dark mode --}}
+@push('styles')
+	<style>
+      [data-bs-theme="dark"] .list-group-item {
+          background-color: var(--bs-gray-800);
+          border-color: var(--bs-gray-700);
+          color: var(--bs-light);
+      }
+      [data-bs-theme="dark"] .list-group-item-action:hover,
+      [data-bs-theme="dark"] .list-group-item-action:focus {
+          background-color: var(--bs-gray-700);
+      }
+	</style>
+@endpush
