@@ -9,7 +9,6 @@
 			<div class="entry-header">
 				<div class="mb-5">
 					<h1 class="entry-title mb-2">{{ $bookReview->title }}</h1>
-					{{-- MODIFIED: Use display_author attribute and link to author page if available --}}
 					<h2 class="entry-subtitle mb-3 fst-italic">
 						@if($bookReview->bookAuthor)
 							<a href="{{ route('frontend.book-reviews.author', $bookReview->bookAuthor->slug) }}">{{ $bookReview->display_author }}</a>
@@ -17,7 +16,6 @@
 							{{ $bookReview->display_author }}
 						@endif
 					</h2>
-					{{-- END MODIFIED --}}
 					
 					<div class="entry-meta align-items-center divider pb-4">
 						<span>{{ \App\Helpers\MyHelper::timeElapsedString($bookReview->published_at ?? $bookReview->created_at) }}</span>
@@ -33,7 +31,6 @@
 							<img src="{{ $bookReview->cover_image ? asset($bookReview->cover_image) : asset('images/no-image.png') }}" style="max-width: 300px; width: 100%;" alt="Cover Image">
 						</figure>
 						
-						{{-- ADDED: Book details section --}}
 						<div class="book-details mb-4">
 							@if($bookReview->publisher)
 								<p><strong>Yayınevi:</strong> {{ $bookReview->publisher }}</p>
@@ -46,7 +43,6 @@
 							@endif
 						</div>
 						
-						{{-- ADDED: Buy Now button --}}
 						@if($bookReview->buy_url)
 							<div class="text-center">
 								<a href="{{ $bookReview->buy_url }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
@@ -59,7 +55,6 @@
 					{{-- Review Content Column --}}
 					<div class="col-md-8">
 						<div class="entry-main-content article-text-color">
-							{{-- MODIFIED: Use Markdown parser for review content --}}
 							{!! (new \League\CommonMark\CommonMarkConverter())->convertToHtml(e($bookReview->review_content)) !!}
 						</div>
 						
@@ -67,16 +62,18 @@
 							@if($bookReview->categories->isNotEmpty())
 								<div class="tags-wrap heading mb-2">
 									<strong>{{ __('default.Categories') }}:</strong>
+									{{-- MODIFIED: Updated category links to be functional --}}
 									@foreach($bookReview->categories as $category)
-										<a href="#">{{ $category->name }}</a>
+										<a href="{{ route('frontend.book-reviews.show-by-category', $category->slug) }}">{{ $category->name }}</a>
 									@endforeach
 								</div>
 							@endif
 							@if($bookReview->tags->isNotEmpty())
 								<div class="tags-wrap heading">
 									<strong>{{ __('default.Tags') }}:</strong>
+									{{-- MODIFIED: Updated tag links to be functional --}}
 									@foreach($bookReview->tags as $tag)
-										<a href="#">{{ $tag->name }}</a>
+										<a href="{{ route('frontend.book-reviews.show-by-tag', $tag->slug) }}">{{ $tag->name }}</a>
 									@endforeach
 								</div>
 							@endif
