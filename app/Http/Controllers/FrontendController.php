@@ -757,7 +757,7 @@
 		public function showBookReviewsByCategory($slug)
 		{
 			$category = BookCategory::where('slug', $slug)->firstOrFail();
-			$bookReviews = $category->bookReviews()->where('is_published', true)->latest('published_at')->paginate(16);
+			$bookReviews = $category->bookReviews()->where('is_published', true)->latest('published_at')->paginate(32);
 			$listTitle = $category->name . ' Kategorisindeki Kitap İzleri';
 			return view('frontend.book_reviews.list_by', compact('bookReviews', 'listTitle'));
 		}
@@ -781,7 +781,7 @@
 		public function showBookReviewsByTag($slug)
 		{
 			$tag = BookTag::where('slug', $slug)->firstOrFail();
-			$bookReviews = $tag->bookReviews()->where('is_published', true)->latest('published_at')->paginate(16);
+			$bookReviews = $tag->bookReviews()->where('is_published', true)->latest('published_at')->paginate(200);
 			$listTitle = '#' . $tag->name . ' Etiketli Kitap İzleri';
 			return view('frontend.book_reviews.list_by', compact('bookReviews', 'listTitle'));
 		}
