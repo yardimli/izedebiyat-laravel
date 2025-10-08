@@ -46,15 +46,9 @@
 							<p>Bu yazara ait kitap izi bulunamadı.</p>
 						@endforelse
 					</div>
-					
-					@if($bookReviews->lastPage() > 1)
-						<div class="d-flex justify-content-center mt-4">
-							{{ $bookReviews->links() }}
-						</div>
-					@endif
 				</div>
 				
-				<div class="col-lg-4">
+				<div class="col-lg-8">
 					@if($author->biography)
 						<div class="sidebar-widget">
 							<h4 class="spanborder widget-title">
@@ -78,6 +72,12 @@
 					@endif
 				</div>
 			</div>
+			@if($bookReviews->lastPage() > 1)
+				<div class="d-flex justify-content-center mt-4">
+					{{ $bookReviews->links() }}
+				</div>
+			@endif
+		
 		</div>
 	</main>
 @endsection
