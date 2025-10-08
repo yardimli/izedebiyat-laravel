@@ -12,17 +12,6 @@
 		 * @var array<int, string>
 		 */
 		protected $except = [
-			'/jobs',
-			'/jobs-set-status',
-			'/jobs-options',
-			'/jobs-set-status-options',
-			'/jobs-set-results',
-			'/jobs-set-results-options',
-			'/meditations-admin/update-aws-from-local',
-			'/meditations-admin/echo-local-requests',
-			'/meditations-admin/post-render-queue',
-			'/meditations-admin/check-render-queue',
-			'/meditations-admin/post-delete-image',
-			'/meditations-admin/select-single-image'
+			'api/book-reviews/ingest'
 		];
 	}
