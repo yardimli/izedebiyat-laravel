@@ -7,6 +7,14 @@
 	<main id="content">
 		<div class="container-lg">
 			<div class="row">
+				<div class="col-12">
+					<h4 class="spanborder">
+						<span>{{ __('default.Book Reviews') }}</span>
+					</h4>
+				</div>
+			</div>
+			
+			<div class="row">
 				<div class="col-12 col-xl-8 col-lg-8 mx-auto">
 					<h4 class="spanborder">
 						<span>{{ __('default.Submit Your Book for Review') }}</span>
@@ -16,7 +24,9 @@
 					<div class="alert alert-info d-flex align-items-center" role="alert">
 						<i class="bi bi-info-circle-fill me-3 fs-4"></i>
 						<div>
-							Bu form aracılığıyla kitabınızın sitemizde incelenmesini talep edebilirsiniz. Başvurunuzu aldıktan sonra, <span style="font-weight:bold;">değerlendirmemizi yapabilmemiz için kitabınızın tam metnini .docx formatında talep edeceğiz.</span> Diğer adımlar ve hizmet bedeliyle ilgili detaylar da e-posta yoluyla size iletilecektir.
+							Bu form aracılığıyla kitabınızın sitemizde incelenmesini talep edebilirsiniz. Başvurunuzu aldıktan sonra,
+							<span style="font-weight:bold;">değerlendirmemizi yapabilmemiz için kitabınızın tam metnini .docx formatında talep edeceğiz.</span>
+							Diğer adımlar ve hizmet bedeliyle ilgili detaylar da e-posta yoluyla size iletilecektir.
 						</div>
 					</div>
 					
@@ -31,7 +41,8 @@
 						</div>
 					@endif
 					
-					<form method="POST" action="{{ route('frontend.book-reviews.store-submission') }}" enctype="multipart/form-data">
+					<form method="POST" action="{{ route('frontend.book-reviews.store-submission') }}"
+					      enctype="multipart/form-data">
 						@csrf
 						
 						<h5 class="mt-4">Kitap Bilgileri</h5>
@@ -39,19 +50,22 @@
 						{{-- Book Title --}}
 						<div class="mb-3">
 							<label for="book_title" class="form-label">Kitap Adı</label>
-							<input type="text" class="form-control" id="book_title" name="book_title" value="{{ old('book_title') }}" required>
+							<input type="text" class="form-control" id="book_title" name="book_title" value="{{ old('book_title') }}"
+							       required>
 						</div>
 						
 						{{-- Book Cover Image --}}
 						<div class="mb-3">
 							<label for="book_cover_image" class="form-label">Kapak Görseli</label>
-							<input type="file" class="form-control" id="book_cover_image" name="book_cover_image" accept="image/*" required>
+							<input type="file" class="form-control" id="book_cover_image" name="book_cover_image" accept="image/*"
+							       required>
 						</div>
 						
 						{{-- Book Description --}}
 						<div class="mb-3">
 							<label for="book_description" class="form-label">Kitap Açıklaması / Tanıtım Yazısı</label>
-							<textarea class="form-control" id="book_description" name="book_description" rows="10" required>{{ old('book_description') }}</textarea>
+							<textarea class="form-control" id="book_description" name="book_description" rows="10"
+							          required>{{ old('book_description') }}</textarea>
 						</div>
 						
 						<h5 class="mt-5">Yazar Bilgileri</h5>
@@ -59,8 +73,10 @@
 						{{-- Author Name --}}
 						<div class="mb-3">
 							<label for="author_name" class="form-label">Yazar Adı</label>
-							<input type="text" class="form-control" id="author_name" name="author_name" value="{{ old('author_name') }}" required>
-							<small class="form-text text-muted">Eğer yazar sistemde mevcutsa, bilgilerini yine de giriniz. Mevcut yazar bilgileri kullanılacaktır.</small>
+							<input type="text" class="form-control" id="author_name" name="author_name"
+							       value="{{ old('author_name') }}" required>
+							<small class="form-text text-muted">Eğer yazar sistemde mevcutsa, bilgilerini yine de giriniz. Mevcut
+								yazar bilgileri kullanılacaktır.</small>
 						</div>
 						
 						{{-- Author Picture --}}
@@ -72,13 +88,16 @@
 						{{-- Author Biography --}}
 						<div class="mb-3">
 							<label for="author_biography" class="form-label">Yazar Biyografisi</label>
-							<textarea class="form-control" id="author_biography" name="author_biography" rows="5" required>{{ old('author_biography') }}</textarea>
+							<textarea class="form-control" id="author_biography" name="author_biography" rows="5"
+							          required>{{ old('author_biography') }}</textarea>
 						</div>
 						
 						{{-- Author Bibliography --}}
 						<div class="mb-3">
-							<label for="author_bibliography" class="form-label">Yazarın Diğer Eserleri (Bibliyografya - İsteğe Bağlı)</label>
-							<textarea class="form-control" id="author_bibliography" name="author_bibliography" rows="5">{{ old('author_bibliography') }}</textarea>
+							<label for="author_bibliography" class="form-label">Yazarın Diğer Eserleri (Bibliyografya - İsteğe
+								Bağlı)</label>
+							<textarea class="form-control" id="author_bibliography" name="author_bibliography"
+							          rows="5">{{ old('author_bibliography') }}</textarea>
 						</div>
 						
 						{{-- Submit Button --}}
