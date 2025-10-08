@@ -1,7 +1,7 @@
 @extends('layouts.app-frontend')
 
 @section('title', $author->name . ' - Kitap İzleri')
-@section('body-class', 'home single')
+@section('body-class', 'home')
 
 @section('content')
 	<main id="content">

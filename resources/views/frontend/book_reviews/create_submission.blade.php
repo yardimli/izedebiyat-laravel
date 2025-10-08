@@ -1,7 +1,7 @@
 @extends('layouts.app-frontend')
 
 @section('title', __('default.Submit Your Book for Review'))
-@section('body-class', 'home single')
+@section('body-class', 'home')
 
 @section('content')
 	<main id="content">

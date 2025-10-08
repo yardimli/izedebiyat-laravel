@@ -1,7 +1,7 @@
 @extends('layouts.app-frontend')
 
 @section('title', $bookReview->title . ' - ' . __('default.Book Review'))
-@section('body-class', 'home single')
+@section('body-class', 'home')
 
 @section('content')
 	<main id="content">
