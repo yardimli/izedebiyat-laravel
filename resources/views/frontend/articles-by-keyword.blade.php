@@ -9,18 +9,7 @@
 	
 	<section class="archive">
 		<main id="content">
-{{--			<div class="container-lg mb-2" style="text-align: center;">--}}
-{{--				<a href="https://herkesyazar.app">--}}
-{{--					<img src="{{ asset('/images/herkesyazar.jpg') }}"--}}
-{{--					     class="desktop-image"--}}
-{{--					     alt="herkes yazar"--}}
-{{--					     style="max-width:100%;">--}}
-{{--					<img src="{{ asset('/images/herkesyazar_dar.jpg') }}"--}}
-{{--					     class="mobile-image"--}}
-{{--					     alt="herkes yazar"--}}
-{{--					     style="max-width:100%;">--}}
-{{--				</a>--}}
-{{--			</div>--}}
+			@include('partials.ads.content-ad')
 			
 			<div class="content-widget">
 				<div class="container-lg">
@@ -48,7 +37,8 @@
 												<div class="entry-meta align-items-center">
 													<a href="{{ url('/yazar/' . $article->name_slug) }}">{{ $article->name }}</a>
 													<br>
-													<a href="{{ url('/kume/' . $article->parent_category_slug . '/' . $article->category_slug) }}">
+													<a
+														href="{{ url('/kume/' . $article->parent_category_slug . '/' . $article->category_slug) }}">
 														{{ $article->parent_category_name }}
 														<span class="middotDivider"></span>
 														{{ $article->category_name }}
@@ -56,7 +46,8 @@
 													<br>
 													<span>{{ \App\Helpers\MyHelper::timeElapsedString($article->created_at) }}</span>
 													<span class="middotDivider"></span>
-													<span class="readingTime" title="{{ \App\Helpers\MyHelper::estimatedReadingTime($article->main_text) }}">
+													<span class="readingTime"
+													      title="{{ \App\Helpers\MyHelper::estimatedReadingTime($article->main_text) }}">
                                                     {{ \App\Helpers\MyHelper::estimatedReadingTime($article->main_text) }}
                                                 </span>
 												</div>
@@ -80,7 +71,8 @@
 										<ul class="page-numbers">
 											@if($articles->currentPage() > 1)
 												<li>
-													<a class="prev page-numbers" href="{{ url('/etiket/' . $keyword->keyword_slug . '/sayfa/' . ($articles->currentPage() - 1)) }}">
+													<a class="prev page-numbers"
+													   href="{{ url('/etiket/' . $keyword->keyword_slug . '/sayfa/' . ($articles->currentPage() - 1)) }}">
 														<i class="icon-left-open-big"></i>
 													</a>
 												</li>
@@ -97,7 +89,8 @@
 											
 											@if($articles->currentPage() < $articles->lastPage())
 												<li>
-													<a class="next page-numbers" href="{{ url('/etiket/' . $keyword->keyword_slug . '/sayfa/' . ($articles->currentPage() + 1)) }}">
+													<a class="next page-numbers"
+													   href="{{ url('/etiket/' . $keyword->keyword_slug . '/sayfa/' . ($articles->currentPage() + 1)) }}">
 														<i class="icon-right-open-big"></i>
 													</a>
 												</li>

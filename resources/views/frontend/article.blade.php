@@ -41,7 +41,7 @@
 					<div class="entry-meta align-items-center divider pb-2" style="margin-top: 10px;
     margin-bottom: 10px;">
 						<button id="clap" class="clap" data-article-id="{{ $article->id }}">
-{{--							<i class="bi bi-hearts fs-5"></i>--}}
+							{{--							<i class="bi bi-hearts fs-5"></i>--}}
 							<img src="{{ asset('images/clap.png') }}" alt="clap" style="width: 24px; height: 24px;">
 							<span id="clap--count" class="clap--count"></span>
 							<span id="clap--count-total" class="clap--count-total">{{ $article->claps()->sum('count') }}</span>
@@ -92,20 +92,9 @@
 					</div>
 				</div>
 				
-{{--				<div class="container-lg" style="text-align: center;">--}}
-{{--					<a href="https://herkesyazar.app">--}}
-{{--						<img src="{{ asset('/images/herkesyazar.jpg') }}"--}}
-{{--						     class="desktop-image"--}}
-{{--						     alt="herkes yazar"--}}
-{{--						     style="max-width:100%;">--}}
-{{--						<img src="{{ asset('/images/herkesyazar_dar.jpg') }}"--}}
-{{--						     class="mobile-image"--}}
-{{--						     alt="herkes yazar"--}}
-{{--						     style="max-width:100%;">--}}
-{{--					</a>--}}
-{{--				</div>--}}
-
-{{--				@include('partials.author-box', ['user' => $user])--}}
+				@include('partials.ads.content-ad')
+				
+				{{--				@include('partials.author-box', ['user' => $user])--}}
 				{{--				@include('partials.subscription-box')--}}
 			</article>
 			
@@ -177,7 +166,6 @@
 
 @push('styles')
 	<style>
-
       .mobile-image {
           display: none;
       }
@@ -191,11 +179,11 @@
               display: block;
           }
       }
-      
+
       .bar-long {
           height: 3px;
           background-color: #CCC;
-          width: 0px;
+          width: 0;
           z-index: 1000;
           position: fixed;
           top: 100px;
@@ -253,7 +241,7 @@
       .clap .clap--count {
           position: absolute;
           top: -25px;
-          left: 0px;
+          left: 0;
           font-size: 0.8rem;
           color: rgb(209, 205, 199);
           background: #27ae60;
@@ -309,7 +297,7 @@
 
       .follow-text {
           cursor: pointer;
-          foht-weight: 600;
+          font-weight: 600;
           color: #333;
       }
 
@@ -454,7 +442,7 @@
 
       .comment {
           border-bottom: 1px solid var(--bs-border-color);
-          padding: 0px;
+          padding: 0;
           font-size: 14px;
 
       }
@@ -480,9 +468,9 @@
 
       .small-user-avatar {
           width: 40px;
-		      max-width: 40px;
+          max-width: 40px;
           height: 40px;
-		      max-height: 40px;
+          max-height: 40px;
           border-radius: 50%;
           object-fit: cover;
       }
@@ -527,7 +515,7 @@
 
       .reply-button-text {
           cursor: pointer;
-          foht-weight: 400;
+          font-weight: 400;
           color: #333;
           font-size: 13px;
           text-decoration: underline;
@@ -538,17 +526,17 @@
       }
 
       .delete-comment-button-text {
-		      margin-left:8px;
+          margin-left: 8px;
           cursor: pointer;
-          foht-weight: 400;
+          font-weight: 400;
           color: #FF3333;
           font-size: 13px;
           text-decoration: underline;
       }
-      
+
       [data-bs-theme=dark] .delete-comment-button-text {
-					color: #FF3333 !important;
-			}
+          color: #FF3333 !important;
+      }
 
       .comment-form textarea,
       .reply-form textarea {
@@ -808,7 +796,7 @@
 			</span>
 ${comment.user_id === {{ Auth::id() ?? 'null' }} ?
 				`<span class="delete-comment-button-text" onclick="deleteComment(${comment.id})">
-                        {{ __('default.Delete') }}
+					{{ __('default.Delete') }}
 				</span>` : ''
 			}
             </div>
@@ -817,8 +805,8 @@ ${comment.user_id === {{ Auth::id() ?? 'null' }} ?
                 <button class="btn btn-sm btn-primary mt-2" onclick="submitReply(${comment.id})">
                     {{ __('default.Submit Reply') }}
 			</button>
-	</div>
-	<div class="replies ml-4">
+		</div>
+		<div class="replies ml-4">
 ${replies}
             </div>
         </div>
@@ -987,7 +975,7 @@ ${replies}
 					easing: mojs.easing.bezier(0.1, 1, 0.3, 1),
 					duration: tlDuration
 				}
-			})
+			});
 			const circleBurst = new mojs.Burst({
 				parent: clap,
 				radius: {25: 37},
@@ -1001,7 +989,7 @@ ${replies}
 					radius: {3: 0},
 					easing: mojs.easing.bezier(0.1, 1, 0.3, 1),
 				}
-			})
+			});
 			const countAnimation = new mojs.Html({
 				el: '#clap--count',
 				isShowStart: false,
@@ -1013,7 +1001,7 @@ ${replies}
 				opacity: {1: 0},
 				y: -40,
 				delay: tlDuration / 2
-			})
+			});
 			const countTotalAnimation = new mojs.Html({
 				el: '#clap--count-total',
 				isShowStart: false,
@@ -1022,51 +1010,51 @@ ${replies}
 				delay: 3 * (tlDuration) / 2,
 				duration: tlDuration,
 				y: {0: -3}
-			})
+			});
 			const scaleButton = new mojs.Html({
 				el: '#clap',
 				duration: tlDuration,
 				scale: {1.3: 1},
 				easing: mojs.easing.out
-			})
-			clap.style.transform = "scale(1, 1)" /*Bug1 fix*/
+			});
+			clap.style.transform = "scale(1, 1)"; /*Bug1 fix*/
 			
-			const animationTimeline = new mojs.Timeline()
+			const animationTimeline = new mojs.Timeline();
 			animationTimeline.add([
 				triangleBurst,
 				circleBurst,
 				countAnimation,
 				countTotalAnimation,
 				scaleButton
-			])
+			]);
 			
 			$("#clap--count-total").css({"opacity": 1, "transform": "scale(1, 1)"});
 			
 			
 			clap.addEventListener('click', function () {
 				repeatClapping();
-			})
+			});
 			
 			clap.addEventListener('mousedown', function () {
 				clapHold = setInterval(function () {
 					repeatClapping();
-				}, 400)
-			})
+				}, 400);
+			});
 			
 			clap.addEventListener('mouseup', function () {
 				clearInterval(clapHold);
-			})
+			});
 			
 			
 			function repeatClapping() {
-				updateNumberOfClaps()
-				animationTimeline.replay()
+				updateNumberOfClaps();
+				animationTimeline.replay();
 			}
 			
 			function updateNumberOfClaps() {
-				numberOfClaps < 50 ? numberOfClaps++ : null
-				clapCount.innerHTML = "+" + numberOfClaps
-				clapTotalCount.innerHTML = initialNumberOfClaps + numberOfClaps
+				numberOfClaps < 50 ? numberOfClaps++ : null;
+				clapCount.innerHTML = "+" + numberOfClaps;
+				clapTotalCount.innerHTML = initialNumberOfClaps + numberOfClaps;
 			}
 			
 			function generateRandomNumber(min, max) {

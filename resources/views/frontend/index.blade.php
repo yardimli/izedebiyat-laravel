@@ -152,35 +152,15 @@
 					</div>
 					
 					@if ($counter_section === 1 || $counter_section === 3)
-{{--						<div class="container-lg" style="text-align: center;">--}}
-{{--							<a href="https://herkesyazar.app">--}}
-{{--								<img src="{{ asset('/images/herkesyazar.jpg') }}"--}}
-{{--								     class="desktop-image"--}}
-{{--								     alt="herkes yazar"--}}
-{{--								     style="max-width:100%;">--}}
-{{--								<img src="{{ asset('/images/herkesyazar_dar.jpg') }}"--}}
-{{--								     class="mobile-image"--}}
-{{--								     alt="herkes yazar"--}}
-{{--								     style="max-width:100%;">--}}
-{{--							</a>--}}
-{{--						</div>--}}
+						{{-- MODIFIED: Replaced ad block with partial --}}
+						@include('partials.ads.content-ad')
 					@endif
 				
 				</div>
 			@endforeach
 			
-{{--			<div class="container-lg" style="text-align: center;">--}}
-{{--				<a href="https://herkesyazar.app">--}}
-{{--					<img src="{{ asset('/images/herkesyazar.jpg') }}"--}}
-{{--					     class="desktop-image"--}}
-{{--					     alt="herkes yazar"--}}
-{{--					     style="max-width:100%;">--}}
-{{--					<img src="{{ asset('/images/herkesyazar_dar.jpg') }}"--}}
-{{--					     class="mobile-image"--}}
-{{--					     alt="herkes yazar"--}}
-{{--					     style="max-width:100%;">--}}
-{{--				</a>--}}
-{{--			</div>--}}
+			{{-- MODIFIED: Replaced ad block with partial --}}
+			@include('partials.ads.content-ad')
 		</main>
 	</section>
 @endsection

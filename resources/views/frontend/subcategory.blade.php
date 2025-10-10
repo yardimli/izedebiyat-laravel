@@ -141,13 +141,7 @@
 			</div>
 			
 			<div class="content-widget">
-				<div class="container-lg">
-					<div class="sidebar-widget ads">
-{{--						<a href="https://herkesyazar.app"><img src="{{ asset('/images/herkesyazar.jpg') }}" alt="herkes yazar"--}}
-{{--						                                       style="max-width:80%;"></a>--}}
-					</div>
-					<div class="hr"></div>
-				</div>
+				@include('partials.ads.sidebar-ad')
 			</div>
 		</main>
 	</section>

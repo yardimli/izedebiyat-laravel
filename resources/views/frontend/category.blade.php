@@ -1,4 +1,4 @@
-@extends('layouts.app-frontend')
+extends('layouts.app-frontend')
 
 @section('title', 'İzEdebiyat - ' . $category->category_name)
 
@@ -73,19 +73,9 @@
 											</div>
 										</article>
 										
-{{--										<div class="container-lg mb-2" style="text-align: center;">--}}
-{{--											<a href="https://herkesyazar.app">--}}
-{{--												<img src="{{ asset('/images/herkesyazar.jpg') }}"--}}
-{{--												     class="desktop-image"--}}
-{{--												     alt="herkes yazar"--}}
-{{--												     style="max-width:100%;">--}}
-{{--												<img src="{{ asset('/images/herkesyazar_dar.jpg') }}"--}}
-{{--												     class="mobile-image"--}}
-{{--												     alt="herkes yazar"--}}
-{{--												     style="max-width:100%;">--}}
-{{--											</a>--}}
-{{--										</div>--}}
-									
+										{{-- MODIFIED: Replaced ad block with partial --}}
+										@include('partials.ads.content-ad')
+										
 										<div class="divider"></div>
 									@elseif(($counter >= 4 && $counter <= 7) || ($counter >= 14 && $counter <= 17))
 										@if($counter === 4 || $counter === 14)
@@ -231,13 +221,7 @@
 			
 			
 			<div class="content-widget">
-				<div class="container-lg">
-					<div class="sidebar-widget ads">
-{{--						<a href="https://herkesyazar.app"><img src="{{ asset('/images/herkesyazar.jpg') }}" alt="herkes yazar"--}}
-{{--						                                       style="max-width:80%;"></a>--}}
-					</div>
-					<div class="hr"></div>
-				</div>
+				@include('partials.ads.sidebar-ad')
 			</div>
 		</main>
 	</section>
