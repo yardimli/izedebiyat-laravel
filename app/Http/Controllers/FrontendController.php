@@ -99,16 +99,18 @@
 			// Share with all views
 			view()->share('mainMenuCategories', $this->mainMenuCategories);
 
-			// MODIFIED: Fetch a random book review for the ad partials
-			// Cache for 10 minutes to avoid DB hit on every page load
-			$randomBookReview = Cache::remember('random_book_review_ad', 600, function () {
+			// MODIFIED: Fetch a collection of random book reviews for the ad partials.
+			// This allows multiple, different ads to be shown on the same page.
+			// Cache for 10 minutes to avoid DB hit on every page load.
+			$randomBookReviewsForAd = Cache::remember('random_book_reviews_ad', 600, function () {
 				return BookReview::where('is_published', true)
 					->inRandomOrder()
-					->first();
+					->take(5) // Fetch up to 5 random reviews
+					->get();
 			});
 
 			// Share with all views that might use the ad partials
-			view()->share('randomBookReviewForAd', $randomBookReview);
+			view()->share('randomBookReviewsForAd', $randomBookReviewsForAd);
 		}
 
 		public function page_legal()
