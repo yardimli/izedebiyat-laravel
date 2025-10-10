@@ -264,3 +264,11 @@ ul {
 .pagination i {
   font-size: 14px;
 }
+
+[data-bs-theme=dark] .book-ad-card-content {
+  background-color: #212529; /* Dark background color */
+  background-clip: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.125); /* Lighter border color for contrast */
+  border-radius: 0.25rem;
+  color: #fff; /* White text color for readability */
+}

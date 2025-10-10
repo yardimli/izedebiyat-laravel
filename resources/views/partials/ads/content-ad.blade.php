@@ -21,7 +21,7 @@
 										{{-- MODIFIED: Added inline style for max-height --}}
 										<img src="{{ $randomBookReviewForAd->cover_image ?? asset('images/no-image.png') }}"
 										     class="img-fluid rounded"
-										     style="max-height: 100px; width: auto;"
+										     style="max-height: 150px; width: auto;"
 										     alt="{{ $randomBookReviewForAd->title }}">
 									</a>
 								</div>
