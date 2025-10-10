@@ -19,14 +19,13 @@
 			'user_id',
 			'is_published',
 			'published_at',
-			// MODIFIED: Added new optional fields
 			'publisher',
 			'publication_date',
 			'publication_place',
 			'buy_url',
-			'book_author_id', // ADDED: Foreign key for BookAuthor
-			'is_user_submitted', // ADDED: Flag for user submissions
-			'submitted_by_user_id', // ADDED: Foreign key for submitting user
+			'book_author_id',
+			'is_user_submitted',
+			'submitted_by_user_id',
 		];
 
 		protected $casts = [

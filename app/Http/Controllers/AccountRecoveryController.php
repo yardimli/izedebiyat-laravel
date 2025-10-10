@@ -2,7 +2,6 @@
 
 	namespace App\Http\Controllers;
 
-	// ADDED: Necessary imports for the constructor logic
 	use App\Models\Article;
 	use App\Models\Category;
 	use App\Models\AccountRecoveryRequest;
@@ -19,7 +18,6 @@
 
 	class AccountRecoveryController extends Controller
 	{
-		// ADDED: Constructor to provide $mainMenuCategories to the view layout
 		public function __construct()
 		{
 			if (Cache::lock('updating_category_stats', 3600)->get()) {
@@ -108,7 +106,7 @@
 				'profile_url' => 'nullable|url|max:255',
 				'contact_email' => 'required|email|max:255',
 				'id_document' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-				'delete_account' => 'nullable|boolean', // ADDED: Validation for delete_account checkbox
+				'delete_account' => 'nullable|boolean',
 			]);
 
 			$path = $request->file('id_document')->store('id_documents', 'public');
@@ -119,7 +117,7 @@
 				'profile_url' => $request->profile_url,
 				'contact_email' => $request->contact_email,
 				'id_document_path' => $path,
-				'delete_account' => $request->boolean('delete_account'), // ADDED: Save delete_account status
+				'delete_account' => $request->boolean('delete_account'),
 			]);
 
 			return redirect()->route('account-recovery.create')
@@ -181,7 +179,6 @@
 				return back()->with('error', 'Kullanıcı bulunamadı. Lütfen geçerli bir kullanıcı seçin.');
 			}
 
-			// MODIFIED: Logic to handle both account deletion and recovery
 			if ($recoveryRequest->delete_account) {
 				// Permanently delete user and their articles
 				Article::where('user_id', $user->id)->delete();

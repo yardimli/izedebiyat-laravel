@@ -23,7 +23,7 @@
 			'status',
 			'user_id',
 			'notes',
-			'delete_account', // ADDED: Added delete_account to fillable attributes.
+			'delete_account',
 		];
 
 		/**

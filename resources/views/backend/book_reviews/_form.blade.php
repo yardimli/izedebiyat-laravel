@@ -211,9 +211,6 @@
 					}
 				});
 			});
-			
-			// MODIFIED: Removed the modal image selection click handler.
-			// The simple file input handles the upload automatically on form submission.
 		});
 	</script>
 @endpush

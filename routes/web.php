@@ -3,7 +3,7 @@
 	use App\Helpers\MyHelper;
 	use App\Http\Controllers\AccountRecoveryController;
 	use App\Http\Controllers\ArticleController;
-	use App\Http\Controllers\BookAuthorController; // ADDED: Import BookAuthorController
+	use App\Http\Controllers\BookAuthorController;
 	use App\Http\Controllers\CategoryController;
 	use App\Http\Controllers\ChatController;
 	use App\Http\Controllers\CommentController;
@@ -15,7 +15,7 @@
 	use App\Http\Controllers\UserController;
 	use App\Http\Controllers\UserSettingsController;
 	use App\Http\Controllers\VerifyThankYouController;
-	use App\Http\Controllers\BookReviewController; // ADDED: Import BookReviewController
+	use App\Http\Controllers\BookReviewController;
 	use App\Mail\WelcomeMail;
 	use App\Models\Article;
 	use App\Models\Category;
@@ -139,18 +139,15 @@
 	Route::get('/', [FrontendController::class, 'index'])->name('frontend.index');
 	Route::get('/ana-sayfa', [FrontendController::class, 'index'])->name('frontend.home-page');
 
-	// ADDED: Book Review Frontend Routes
+	// Book Review Frontend Routes
 	Route::get('/kitap-izleri', [FrontendController::class, 'bookReviews'])->name('frontend.book-reviews.index');
-	// MODIFIED: Added new routes for authors, categories, and tags
 	Route::get('/kitap-izleri/yazarlar', [FrontendController::class, 'listBookAuthors'])->name('frontend.book-reviews.authors');
 	Route::get('/kitap-izleri/yazar/{slug}', [FrontendController::class, 'showBookAuthor'])->name('frontend.book-reviews.author');
 	Route::get('/kitap-izleri/kumeler', [FrontendController::class, 'listBookCategories'])->name('frontend.book-reviews.categories');
 	Route::get('/kitap-izleri/kume/{slug}', [FrontendController::class, 'showBookReviewsByCategory'])->name('frontend.book-reviews.show-by-category');
 	Route::get('/kitap-izleri/etiketler', [FrontendController::class, 'listBookTags'])->name('frontend.book-reviews.tags');
 	Route::get('/kitap-izleri/etiket/{slug}', [FrontendController::class, 'showBookReviewsByTag'])->name('frontend.book-reviews.show-by-tag');
-	// END MODIFIED
 	Route::get('/kitap-izleri/{slug}', [FrontendController::class, 'showBookReview'])->name('frontend.book-review.show');
-	// END ADDED
 
 // Replace the old search route
 	Route::get('/arabul', [FrontendController::class, 'search'])->name('search');
@@ -217,10 +214,7 @@
 	Route::get('/articles/{article}/comments', [CommentController::class, 'index'])->name('comments.index');
 
 	//-------------------------------------------------------------------------
-	// ADDED: New API endpoint for ingesting books from the Python script.
-	// Note: In a production environment, this should be in routes/api.php and protected by a proper authentication guard like Sanctum.
 	Route::post('/api/book-reviews/ingest', [BookReviewController::class, 'ingest'])->name('book-reviews.ingest');
-	// END ADDED
 
 	Route::middleware(['auth'])->group(function () {
 
@@ -328,27 +322,23 @@
 
 		Route::get('/users', [UserController::class, 'index'])->name('admin-users-index');
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');
-		Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy'); // ADDED: Route for deleting a user
+		Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 
-		// New Admin Account Recovery Routes
+		// Admin Account Recovery Routes
 		Route::get('/admin/hesap-kurtarma', [AccountRecoveryController::class, 'index'])->name('admin.account-recovery.index');
 		Route::get('/admin/hesap-kurtarma/{id}', [AccountRecoveryController::class, 'show'])->name('admin.account-recovery.show');
 		Route::post('/admin/hesap-kurtarma/{id}/approve', [AccountRecoveryController::class, 'approve'])->name('admin.account-recovery.approve');
 		Route::post('/admin/hesap-kurtarma/{id}/reject', [AccountRecoveryController::class, 'reject'])->name('admin.account-recovery.reject');
 
-		// ADDED: Admin routes for Book Reviews
-		Route::resource('admin/book-reviews', BookReviewController::class, ['except' => ['show']]); // MODIFIED: excluded show route as it's not used
+		// Admin routes for Book Reviews
+		Route::resource('admin/book-reviews', BookReviewController::class, ['except' => ['show']]);
 		Route::post('/book-reviews/generate-category', [ChatController::class, 'generateBookCategory'])->name('book-reviews.generate-category');
 		Route::post('/book-reviews/generate-keywords', [ChatController::class, 'generateBookKeywords'])->name('book-reviews.generate-keywords');
-		// END ADDED
-		// ADDED: Admin routes for Book Authors
 		Route::resource('admin/book-authors', BookAuthorController::class);
-		// END ADDED
 
-		// ADDED: User book submission routes
+		// User book submission routes
 		Route::get('/kitap-gonder', [FrontendController::class, 'createBookSubmission'])->name('frontend.book-reviews.create-submission');
 		Route::post('/kitap-gonder', [FrontendController::class, 'storeBookSubmission'])->name('frontend.book-reviews.store-submission');
-		// END ADDED
 	});
 
 	//-------------------------------------------------------------------------

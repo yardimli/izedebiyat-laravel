@@ -3,14 +3,14 @@
 	namespace App\Http\Controllers;
 
 	use App\Helpers\MyHelper;
-	use App\Models\BookAuthor; // ADDED: Import BookAuthor model
-	use App\Models\BookCategory; // ADDED: Import BookCategory model
-	use App\Models\BookTag; // ADDED: Import BookTag model
+	use App\Models\BookAuthor;
+	use App\Models\BookCategory;
+	use App\Models\BookTag;
 	use App\Models\Category;
 	use App\Models\Keyword;
 	use App\Models\User;
 	use App\Models\Article;
-	use App\Models\BookReview; // ADDED: Import BookReview model
+	use App\Models\BookReview;
 	use Carbon\Carbon;
 	use GuzzleHttp\Client;
 	use Illuminate\Http\Request;
@@ -666,7 +666,7 @@
 				->limit(3)
 				->get();
 
-			$sameUserAndMainCategory = \App\Models\Article::where('parent_category_id', $article->parent_category_id)
+			$sameUserAndMainCategory = Article::where('parent_category_id', $article->parent_category_id)
 				->where('user_id', $article->user_id)
 				->where('id', '!=', $article->id)
 				->whereNotIn('id', $sameUserAndCategory->pluck('id'))
@@ -677,7 +677,7 @@
 				->limit(3)
 				->get();
 
-			$otherUserArticles = \App\Models\Article::where('user_id', $article->user_id)
+			$otherUserArticles = Article::where('user_id', $article->user_id)
 				->where('id', '!=', $article->id)
 				->whereNotIn('id', $sameUserAndCategory->pluck('id'))
 				->whereNotIn('id', $sameUserAndMainCategory->pluck('id'))
@@ -691,14 +691,13 @@
 			return view('frontend.article', compact('article', 'user', 'keywords', 'sameUserAndCategory', 'sameUserAndMainCategory', 'otherUserArticles'));
 		}
 
-		// ADDED: Methods for Book Reviews
 		/**
 		 * Display a listing of book reviews.
 		 */
 		public function bookReviews()
 		{
 			$bookReviews = BookReview::where('is_published', true)
-				->latest('published_at')
+				->latest('updated_at')
 				->paginate(72);
 			return view('frontend.book_reviews.index', compact('bookReviews'));
 		}
@@ -785,9 +784,7 @@
 			$listTitle = '#' . $tag->name;
 			return view('frontend.book_reviews.list_by', compact('bookReviews', 'listTitle'));
 		}
-		// END ADDED
 
-		// ADDED: Methods for user book submission
 		/**
 		 * Show the form for a user to submit their book.
 		 */
@@ -850,5 +847,4 @@
 
 			return redirect()->route('frontend.book-reviews.index')->with('success', __('default.Your book has been submitted successfully.'));
 		}
-		// END ADDED
 	}

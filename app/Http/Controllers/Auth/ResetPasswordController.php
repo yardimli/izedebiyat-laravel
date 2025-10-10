@@ -18,7 +18,6 @@
 		 *
 		 * @var string
 		 */
-		// MODIFIED: This is kept for reference but will be overridden by our custom response logic.
 		protected $redirectTo = '/login';
 
 		/**
@@ -28,7 +27,6 @@
 		 * @param string $password
 		 * @return void
 		 */
-		// MODIFIED: Overriding this method to prevent automatic login after a password reset.
 		protected function resetPassword($user, $password)
 		{
 			$user->password = Hash::make($password);
@@ -45,12 +43,9 @@
 		 * @param string $response
 		 * @return \Illuminate\Http\RedirectResponse
 		 */
-		// ADDED: A new method to override the default redirect behavior.
 		protected function sendResetResponse(Request $request, $response)
 		{
-			// MODIFIED: Redirect to the 'login' route instead of the dashboard.
 			return redirect()->route('login')
-				// MODIFIED: Add a specific, localized success message to the session.
 				->with('status', 'Şifreniz başarıyla değiştirildi. Lütfen yeni şifrenizle giriş yapın.');
 		}
 

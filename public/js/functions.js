@@ -238,7 +238,6 @@ var e = {
 			}
 		});
 	},
-	// END: Navbar dropdown hover
 
 
 

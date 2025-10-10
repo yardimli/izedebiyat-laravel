@@ -2,15 +2,15 @@
 
 	namespace App\Http\Controllers;
 
-	use App\Models\BookAuthor; // ADDED: Import BookAuthor model
+	use App\Models\BookAuthor;
 	use App\Models\BookReview;
 	use App\Models\BookCategory;
 	use App\Models\BookTag;
-	use Carbon\Carbon; // ADDED: Import Carbon for date parsing
+	use Carbon\Carbon;
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Auth;
-	use Illuminate\Support\Facades\Storage; // ADDED: For file handling
-	use Illuminate\Support\Facades\Validator; // ADDED: For custom validation
+	use Illuminate\Support\Facades\Storage;
+	use Illuminate\Support\Facades\Validator;
 	use Illuminate\Support\Str;
 
 	class BookReviewController extends Controller
@@ -24,7 +24,6 @@
 		{
 			// Middleware to ensure only admins can access these methods
 			$this->middleware(function ($request, $next) {
-				// MODIFIED: Allow ingest method to bypass auth middleware
 				if ($request->route()->getName() === 'book-reviews.ingest') {
 					return $next($request);
 				}
@@ -42,7 +41,7 @@
 		 */
 		public function index()
 		{
-			$bookReviews = BookReview::with('user', 'bookAuthor')->latest()->paginate(20); // MODIFIED: Eager load bookAuthor
+			$bookReviews = BookReview::with('user', 'bookAuthor')->latest()->paginate(20);
 			return view('backend.book_reviews.index', compact('bookReviews'));
 		}
 
@@ -53,7 +52,6 @@
 		 */
 		public function create()
 		{
-			// ADDED: Fetch authors for the dropdown
 			$authors = BookAuthor::orderBy('name')->get();
 			return view('backend.book_reviews.create', compact('authors'));
 		}
@@ -70,7 +68,6 @@
 			$validated['user_id'] = Auth::id();
 			$validated['slug'] = Str::slug($validated['title']);
 
-			// MODIFIED: Handle file upload for cover image
 			if ($request->hasFile('cover_image')) {
 				$path = $request->file('cover_image')->store('public/book_covers');
 				$validated['cover_image'] = Storage::url($path); // Store the public URL
@@ -90,7 +87,6 @@
 		 */
 		public function edit(BookReview $bookReview)
 		{
-			// ADDED: Fetch authors for the dropdown
 			$authors = BookAuthor::orderBy('name')->get();
 			return view('backend.book_reviews.edit', compact('bookReview', 'authors'));
 		}
@@ -107,7 +103,6 @@
 			$validated = $this->validateRequest($request);
 			$validated['slug'] = Str::slug($validated['title']);
 
-			// MODIFIED: Handle file upload for update
 			if ($request->hasFile('cover_image')) {
 				// Delete old image if it exists
 				if ($bookReview->cover_image) {
@@ -133,7 +128,6 @@
 		 */
 		public function destroy(BookReview $bookReview)
 		{
-			// ADDED: Delete cover image from storage
 			if ($bookReview->cover_image) {
 				// Convert public URL back to storage path
 				$imagePath = str_replace('/storage', 'public', $bookReview->cover_image);
@@ -152,11 +146,10 @@
 		 */
 		private function validateRequest(Request $request)
 		{
-			// MODIFIED: Updated validation rules for file upload and new fields
 			return $request->validate([
 				'title' => 'required|string|max:255',
-				'author' => 'required_without:book_author_id|nullable|string|max:255', // MODIFIED: Manual author is only required if no author is selected from DB
-				'book_author_id' => 'nullable|exists:book_authors,id', // ADDED: Validate the selected author
+				'author' => 'required_without:book_author_id|nullable|string|max:255',
+				'book_author_id' => 'nullable|exists:book_authors,id',
 				'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 				'review_content' => 'required|string',
 				'is_published' => 'boolean',
@@ -208,7 +201,6 @@
 			$bookReview->tags()->sync($tagIds);
 		}
 
-		// ADDED: New method to handle book ingestion from a script.
 		/**
 		 * Store a new book review from an automated script.
 		 *
@@ -273,7 +265,6 @@
 			}
 		}
 
-		// ADDED: Helper function to parse publication string.
 		/**
 		 * Parses the publication info string from Goodreads.
 		 * E.g., "October 1, 2003 by Yapı Kredi Yayınları"

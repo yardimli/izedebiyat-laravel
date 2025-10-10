@@ -177,7 +177,7 @@
 		'Published' => 'Yayında',
 		'Draft' => 'Taslak',
 		'Are you sure you want to delete this article?' => 'Bu eseri silmek istediğinizden emin misiniz?',
-		'Are you sure?' => 'Emin misiniz?', // ADDED
+		'Are you sure?' => 'Emin misiniz?',
 		'Edit Article' => 'Eseri Düzenle',
 		'Create Article' => 'Sakla',
 		'Subtitle' => 'Alt Başlık',
@@ -281,7 +281,7 @@
 		'Enter your Page Title' => 'Sayfanızın Başlığını Girin',
 		'About Me Placeholder' => 'Ben kimim, ne yaparım, nereden gelirim, nereye giderim, ne okurum, ne yazarım, neden yazarım, neyi severim, neyi sevmem, hobilerim nelerdir, hayattaki amacım nedir... gibi şeyleri yazabilirsiniz.',
 
-		// ADDED: Book Review translations
+		//  Book Review translations
 		'No book reviews found.' => 'KİTAP İZİ bulunamadı.',
 		'Book Reviews' => 'KİTAP İZLERİ',
 		'Create New Book Review' => 'Yeni Kitap İzi Oluştur',
@@ -308,5 +308,4 @@
 		'Submit Your Book for Review' => 'Kitabını İncelemeye Gönder',
 		'Submit Book' => 'Kitabı Gönder',
 		'Your book has been submitted successfully.' => 'Kitabınız başarıyla gönderildi. Sizinle en kısa zamanda e-posta yoluyla iletişime geçeceğiz.',
-		// END ADDED
 	];

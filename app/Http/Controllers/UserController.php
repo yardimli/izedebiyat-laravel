@@ -5,7 +5,7 @@
 	use App\Helpers\MyHelper;
 	use App\Models\ChatBody;
 	use App\Models\ChatHeader;
-	use App\Models\Article; // ADDED: Import Article model
+	use App\Models\Article;
 	use Illuminate\Http\Request;
 	use App\Models\User;
 	use Illuminate\Pagination\LengthAwarePaginator;

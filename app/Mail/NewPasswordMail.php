@@ -14,17 +14,17 @@
 		use SerializesModels;
 
 		public string $newPassword;
-		public string $newEmail; // ADDED: Public property for the new email
+		public string $newEmail;
 
 		/**
 		 * Create a new message instance.
 		 * @param string $newPassword
 		 * @param string $newEmail
 		 */
-		public function __construct(string $newPassword, string $newEmail) // MODIFIED: Constructor now accepts the new email
+		public function __construct(string $newPassword, string $newEmail)
 		{
 			$this->newPassword = $newPassword;
-			$this->newEmail = $newEmail; // ADDED: Assign the new email to the property
+			$this->newEmail = $newEmail;
 		}
 
 		/**
