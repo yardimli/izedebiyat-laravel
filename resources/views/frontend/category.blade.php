@@ -1,4 +1,4 @@
-extends('layouts.app-frontend')
+@extends('layouts.app-frontend')
 
 @section('title', 'İzEdebiyat - ' . $category->category_name)
 
