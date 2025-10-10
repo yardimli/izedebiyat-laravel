@@ -115,8 +115,8 @@
 					// 1. Convert Markdown to HTML
 					$htmlContent = $converter->convertToHtml($review->review_content);
 					// 2. Strip HTML tags to get plain text
-					$plainText = str_ireplace(['<br/>', '<br>'], ']]br[[', $plainText);
-					$plainText = strip_tags($htmlContent);
+					$plainText = str_ireplace(['<br/>', '<br>'], ']]br[[', $htmlContent);
+					$plainText = strip_tags($plainText);
 					$plainText = str_ireplace(']]br[[', '<br>', $plainText);
 					$plainText = preg_replace('/\s+/', ' ', $plainText); // Normalize whitespace
 					$plainText = trim($plainText);
