@@ -116,6 +116,8 @@
 					$htmlContent = $converter->convertToHtml($review->review_content);
 					// 2. Strip HTML tags to get plain text
 					$plainText = strip_tags($htmlContent);
+					$plainText = preg_replace('/\s+/', ' ', $plainText); // Normalize whitespace
+					$plainText = trim($plainText);
 					// 3. Limit by word count using the existing helper
 					$review->excerpt = MyHelper::getWords($plainText, 25);
 				}
