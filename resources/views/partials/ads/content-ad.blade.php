@@ -34,7 +34,7 @@
 										<p class="card-text"><small
 												class="text-muted">{{ $randomBookReviewForAd->display_author }}</small></p>
 										<div class="card-text d-none d-md-block">
-											{!! \Illuminate\Support\Str::limit(strip_tags($randomBookReviewForAd->review_content), 150) !!}
+											{!! $randomBookReviewForAd->excerpt !!}
 										</div>
 										<a href="{{ route('frontend.book-review.show', $randomBookReviewForAd->slug) }}"
 										   class="btn btn-sm btn-outline-info mt-2">{{ __('default.Read Review') }}</a>

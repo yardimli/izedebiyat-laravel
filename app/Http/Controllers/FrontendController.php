@@ -102,11 +102,28 @@
 			// MODIFIED: Fetch a collection of random book reviews for the ad partials.
 			// This allows multiple, different ads to be shown on the same page.
 			// Cache for 10 minutes to avoid DB hit on every page load.
-			$randomBookReviewsForAd = Cache::remember('random_book_reviews_ad', 60, function () {
-				return BookReview::where('is_published', true)
+			$randomBookReviewsForAd = Cache::remember('random_book_reviews_ad', 600, function () {
+				$reviews = BookReview::where('is_published', true)
 					->inRandomOrder()
 					->take(5) // Fetch up to 5 random reviews
 					->get();
+
+				// NEW: Pre-process the review content to create a clean excerpt.
+				$converter = new CommonMarkConverter([
+					'html_input' => 'strip',
+					'allow_unsafe_links' => false,
+				]);
+
+				foreach ($reviews as $review) {
+					// 1. Convert Markdown to HTML
+					$htmlContent = $converter->convertToHtml($review->review_content);
+					// 2. Strip HTML tags to get plain text
+					$plainText = strip_tags($htmlContent);
+					// 3. Limit by word count using the existing helper
+					$review->excerpt = MyHelper::getWords($plainText, 25);
+				}
+
+				return $reviews;
 			});
 
 			// Share with all views that might use the ad partials
