@@ -175,7 +175,7 @@
 			
 			
 			<div class="content-widget">
-				@include('partials.ads.sidebar-ad')
+				@include('partials.ads.content-ad')
 			</div>
 		</main>
 	</section>
