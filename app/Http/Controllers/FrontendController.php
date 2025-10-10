@@ -102,7 +102,7 @@
 			// MODIFIED: Fetch a collection of random book reviews for the ad partials.
 			// This allows multiple, different ads to be shown on the same page.
 			// Cache for 10 minutes to avoid DB hit on every page load.
-			$randomBookReviewsForAd = Cache::remember('random_book_reviews_ad', 600, function () {
+			$randomBookReviewsForAd = Cache::remember('random_book_reviews_ad', 60, function () {
 				return BookReview::where('is_published', true)
 					->inRandomOrder()
 					->take(5) // Fetch up to 5 random reviews
