@@ -99,36 +99,49 @@
 			// Share with all views
 			view()->share('mainMenuCategories', $this->mainMenuCategories);
 
-			$randomBookReviewsForAd = Cache::remember('random_book_reviews_ad', 30, function () {
-				$reviews = BookReview::where('is_published', true)
-					->inRandomOrder()
-					->take(5) // Fetch up to 5 random reviews
-					->get();
+			$randomBookReviewsForAd = collect();
 
-				// NEW: Pre-process the review content to create a clean excerpt.
-				$converter = new CommonMarkConverter([
-					'html_input' => 'strip',
-					'allow_unsafe_links' => false,
-				]);
+			if (config('features.kitap_izleri_visible')) {
+				$randomBookReviewsForAd = Cache::remember('random_book_reviews_ad', 30, function () {
+					$reviews = BookReview::where('is_published', true)
+						->inRandomOrder()
+						->take(5) // Fetch up to 5 random reviews
+						->get();
 
-				foreach ($reviews as $review) {
-					// 1. Convert Markdown to HTML
-					$htmlContent = $converter->convertToHtml($review->review_content);
-					// 2. Strip HTML tags to get plain text
-					$plainText = str_ireplace(['<br/>', '<br>'], ']]br[[', $htmlContent);
-					$plainText = strip_tags($plainText);
-					$plainText = str_ireplace(']]br[[', '<br>', $plainText);
-					$plainText = preg_replace('/\s+/', ' ', $plainText); // Normalize whitespace
-					$plainText = trim($plainText);
-					// 3. Limit by word count using the existing helper
-					$review->excerpt = MyHelper::getWords($plainText, 25);
-				}
+					// NEW: Pre-process the review content to create a clean excerpt.
+					$converter = new CommonMarkConverter([
+						'html_input' => 'strip',
+						'allow_unsafe_links' => false,
+					]);
 
-				return $reviews;
-			});
+					foreach ($reviews as $review) {
+						// 1. Convert Markdown to HTML
+						$htmlContent = $converter->convertToHtml($review->review_content);
+						// 2. Strip HTML tags to get plain text
+						$plainText = str_ireplace(['<br/>', '<br>'], ']]br[[', $htmlContent);
+						$plainText = strip_tags($plainText);
+						$plainText = str_ireplace(']]br[[', '<br>', $plainText);
+						$plainText = preg_replace('/\s+/', ' ', $plainText); // Normalize whitespace
+						$plainText = trim($plainText);
+						// 3. Limit by word count using the existing helper
+						$review->excerpt = MyHelper::getWords($plainText, 25);
+					}
+
+					return $reviews;
+				});
+			}
 
 			// Share with all views that might use the ad partials
 			view()->share('randomBookReviewsForAd', $randomBookReviewsForAd);
+		}
+
+		private function redirectIfBookReviewsHidden()
+		{
+			if (!config('features.kitap_izleri_visible')) {
+				return redirect()->route('frontend.index');
+			}
+
+			return null;
 		}
 
 		public function page_legal()
@@ -778,6 +791,10 @@
 		 */
 		public function bookReviews()
 		{
+			if ($redirect = $this->redirectIfBookReviewsHidden()) {
+				return $redirect;
+			}
+
 			$bookReviews = BookReview::where('is_published', true)
 				->latest('updated_at')
 				->paginate(72);
@@ -789,6 +806,10 @@
 		 */
 		public function showBookReview($slug)
 		{
+			if ($redirect = $this->redirectIfBookReviewsHidden()) {
+				return $redirect;
+			}
+
 			$bookReview = BookReview::where('slug', $slug)
 				->where('is_published', true)
 				->firstOrFail();
@@ -800,6 +821,10 @@
 		 */
 		public function listBookAuthors()
 		{
+			if ($redirect = $this->redirectIfBookReviewsHidden()) {
+				return $redirect;
+			}
+
 			$authors = BookAuthor::whereHas('bookReviews', function ($query) {
 				$query->where('is_published', true);
 			})->withCount(['bookReviews' => function ($query) {
@@ -814,6 +839,10 @@
 		 */
 		public function showBookAuthor($slug)
 		{
+			if ($redirect = $this->redirectIfBookReviewsHidden()) {
+				return $redirect;
+			}
+
 			$author = BookAuthor::where('slug', $slug)->firstOrFail();
 			$bookReviews = $author->bookReviews()->where('is_published', true)->latest('published_at')->paginate(16);
 			return view('frontend.book_reviews.author_show', compact('author', 'bookReviews'));
@@ -824,6 +853,10 @@
 		 */
 		public function listBookCategories()
 		{
+			if ($redirect = $this->redirectIfBookReviewsHidden()) {
+				return $redirect;
+			}
+
 			$categories = BookCategory::whereHas('bookReviews', function ($query) {
 				$query->where('is_published', true);
 			})->withCount(['bookReviews' => function ($query) {
@@ -837,6 +870,10 @@
 		 */
 		public function showBookReviewsByCategory($slug)
 		{
+			if ($redirect = $this->redirectIfBookReviewsHidden()) {
+				return $redirect;
+			}
+
 			$category = BookCategory::where('slug', $slug)->firstOrFail();
 			$bookReviews = $category->bookReviews()->where('is_published', true)->latest('published_at')->paginate(32);
 			$listTitle = $category->name;
@@ -848,6 +885,10 @@
 		 */
 		public function listBookTags()
 		{
+			if ($redirect = $this->redirectIfBookReviewsHidden()) {
+				return $redirect;
+			}
+
 			$tags = BookTag::whereHas('bookReviews', function ($query) {
 				$query->where('is_published', true);
 			})->withCount(['bookReviews' => function ($query) {
@@ -861,6 +902,10 @@
 		 */
 		public function showBookReviewsByTag($slug)
 		{
+			if ($redirect = $this->redirectIfBookReviewsHidden()) {
+				return $redirect;
+			}
+
 			$tag = BookTag::where('slug', $slug)->firstOrFail();
 			$bookReviews = $tag->bookReviews()->where('is_published', true)->latest('published_at')->paginate(200);
 			$listTitle = '#' . $tag->name;
@@ -872,6 +917,14 @@
 		 */
 		public function createBookSubmission()
 		{
+			if ($redirect = $this->redirectIfBookReviewsHidden()) {
+				return $redirect;
+			}
+
+			if (!Auth::check()) {
+				return redirect()->route('login');
+			}
+
 			return view('frontend.book_reviews.create_submission');
 		}
 
@@ -880,6 +933,14 @@
 		 */
 		public function storeBookSubmission(Request $request)
 		{
+			if ($redirect = $this->redirectIfBookReviewsHidden()) {
+				return $redirect;
+			}
+
+			if (!Auth::check()) {
+				return redirect()->route('login');
+			}
+
 			$validated = $request->validate([
 				'book_title' => 'required|string|max:255',
 				'book_cover_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',

@@ -24,9 +24,11 @@
 						</a>
 					</li>
 				@endforeach
-				<li class="nav-item">
-					<a class="nav-link" href="{{ route('frontend.book-reviews.index') }}">KİTAP İZLERİ</a>
-				</li>
+				@if(config('features.kitap_izleri_visible'))
+					<li class="nav-item">
+						<a class="nav-link" href="{{ route('frontend.book-reviews.index') }}">KİTAP İZLERİ</a>
+					</li>
+				@endif
 			</ul>
 			<span></span>
 		</div>

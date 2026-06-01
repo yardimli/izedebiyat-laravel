@@ -148,6 +148,8 @@
 	Route::get('/kitap-izleri/etiketler', [FrontendController::class, 'listBookTags'])->name('frontend.book-reviews.tags');
 	Route::get('/kitap-izleri/etiket/{slug}', [FrontendController::class, 'showBookReviewsByTag'])->name('frontend.book-reviews.show-by-tag');
 	Route::get('/kitap-izleri/{slug}', [FrontendController::class, 'showBookReview'])->name('frontend.book-review.show');
+	Route::get('/kitap-gonder', [FrontendController::class, 'createBookSubmission'])->name('frontend.book-reviews.create-submission');
+	Route::post('/kitap-gonder', [FrontendController::class, 'storeBookSubmission'])->name('frontend.book-reviews.store-submission');
 
 // Replace the old search route
 	Route::get('/arabul', [FrontendController::class, 'search'])->name('search');
@@ -342,9 +344,6 @@
 		Route::post('/book-reviews/generate-keywords', [ChatController::class, 'generateBookKeywords'])->name('book-reviews.generate-keywords');
 		Route::resource('admin/book-authors', BookAuthorController::class);
 
-		// User book submission routes
-		Route::get('/kitap-gonder', [FrontendController::class, 'createBookSubmission'])->name('frontend.book-reviews.create-submission');
-		Route::post('/kitap-gonder', [FrontendController::class, 'storeBookSubmission'])->name('frontend.book-reviews.store-submission');
 	});
 
 	//-------------------------------------------------------------------------

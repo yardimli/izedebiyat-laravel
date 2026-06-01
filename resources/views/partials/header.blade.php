@@ -63,9 +63,12 @@
 		
 		{{-- MODIFIED: Kitap İzleri menu item and submenu for mobile --}}
 		<div>
+			@if(config('features.kitap_izleri_visible'))
 			<a href="{{ route('frontend.book-reviews.index') }}" style="text-transform: uppercase;">KİTAP İZLERİ</a>
+			@endif
 		</div>
 		<div class="pl-4 pb-3">
+			@if(config('features.kitap_izleri_visible'))
 			<a href="{{ route('frontend.book-reviews.authors') }}">Yazarlar</a>
 			<br>
 			<a href="{{ route('frontend.book-reviews.categories') }}">Kümeler</a>
@@ -74,6 +77,7 @@
 			<br>
 			<a href="{{ route('frontend.book-reviews.create-submission') }}">İnceleme için Kitap Gönder</a>
 			<br>
+			@endif
 		</div>
 		
 		<form action="{{ route('search') }}" method="get" class="search-form mt-2" style="border: 1px solid #ccc;">
@@ -139,7 +143,7 @@
 		@endisset
 		
 		{{-- MODIFIED: Conditionally display the main menu or the book reviews menu based on the current route. --}}
-		@if(request()->routeIs('frontend.book-review.*') || request()->routeIs('frontend.book-reviews.*'))
+		@if(config('features.kitap_izleri_visible') && (request()->routeIs('frontend.book-review.*') || request()->routeIs('frontend.book-reviews.*')))
 			@include('partials.book-reviews-main-menu')
 		@else
 			@include('partials.main-menu')

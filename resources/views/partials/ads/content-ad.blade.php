@@ -1,4 +1,5 @@
 {{-- MODIFIED: This partial displays a different random book review each time it's called. --}}
+@if(config('features.kitap_izleri_visible'))
 @isset($randomBookReviewsForAd)
 	@php
 		// Pop a review from the collection to ensure it's unique on the page.
@@ -48,5 +49,6 @@
 		</div>
 	@endif
 @endisset
+@endif
 
 {{-- MODIFIED: Removed the dedicated style block as styles are now inline or simple enough not to require it --}}
