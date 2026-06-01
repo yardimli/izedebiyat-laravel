@@ -313,6 +313,55 @@
 			return view('frontend.search', compact('articles', 'query'));
 		}
 
+		private function reorderRecentArticles($articles, int $limit = 100)
+		{
+			$remaining = $articles->values();
+			$ordered = collect();
+
+			while ($remaining->isNotEmpty() && $ordered->count() < $limit) {
+				$index = $this->findRecentArticleIndex($remaining, $ordered, true, true)
+					?? $this->findRecentArticleIndex($remaining, $ordered, true, false)
+					?? $this->findRecentArticleIndex($remaining, $ordered, false, true)
+					?? 0;
+
+				$ordered->push($remaining->get($index));
+				$remaining->forget($index);
+				$remaining = $remaining->values();
+			}
+
+			return $ordered;
+		}
+
+		private function findRecentArticleIndex($articles, $ordered, bool $enforceAuthor, bool $enforceSubcategory): ?int
+		{
+			foreach ($articles as $index => $article) {
+				if ($enforceAuthor && $this->wouldMakeThreeInARow($ordered, $article->user_id, 'user_id')) {
+					continue;
+				}
+
+				if ($enforceSubcategory && $this->wouldMakeThreeInARow($ordered, $article->category_id, 'category_id')) {
+					continue;
+				}
+
+				return $index;
+			}
+
+			return null;
+		}
+
+		private function wouldMakeThreeInARow($ordered, $value, string $field): bool
+		{
+			if ($ordered->count() < 2) {
+				return false;
+			}
+
+			$lastTwo = $ordered->slice(-2);
+
+			return $lastTwo->every(function ($article) use ($value, $field) {
+				return $article->{$field} === $value;
+			});
+		}
+
 
 		public function recentTexts()
 		{
@@ -322,8 +371,10 @@
 				->where('moderation_flagged', 0)
 				->where('created_at', '>=', Carbon::now()->subDays(30))
 				->orderBy('created_at', 'DESC')
-				->limit(100)
+				->limit(300)
 				->get();
+
+			$articles = $this->reorderRecentArticles($articles);
 
 			$categories = Category::where('parent_category_id', 0)
 				->orderBy('category_name')
@@ -353,8 +404,10 @@
 				->where('moderation_flagged', 0)
 				->where('created_at', '>=', Carbon::now()->subDays(30))
 				->orderBy('created_at', 'DESC')
-				->limit(100)
+				->limit(300)
 				->get();
+
+			$articles = $this->reorderRecentArticles($articles);
 
 			$categories = Category::where('parent_category_id', 0)
 				->orderBy('category_name')
