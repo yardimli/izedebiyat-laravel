@@ -257,7 +257,7 @@
 
 		private function randomizeTopArticles($articles)
 		{
-			$topPoolSize = min(60, $articles->count());
+			$topPoolSize = min(40, $articles->count());
 
 			return $articles->take($topPoolSize)
 				->shuffle()
