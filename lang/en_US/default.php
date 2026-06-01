@@ -350,4 +350,6 @@
 		'Image Generation' => 'Image Generation',
 		'Image History' => 'Image History',
 
+		'Book Review' => 'Book Review',
+
 	];

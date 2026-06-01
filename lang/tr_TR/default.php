@@ -308,4 +308,6 @@
 		'Submit Your Book for Review' => 'Kitabını İncelemeye Gönder',
 		'Submit Book' => 'Kitabı Gönder',
 		'Your book has been submitted successfully.' => 'Kitabınız başarıyla gönderildi. Sizinle en kısa zamanda e-posta yoluyla iletişime geçeceğiz.',
+
+		'Book Review' => 'Kitap İzi',
 	];
