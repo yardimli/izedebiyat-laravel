@@ -26,8 +26,9 @@
 					</div>
 					<div class="input-group input-group-sm" style="width: 190px;">
 						<span class="input-group-text">Hours</span>
-						<input type="number" min="1" max="720" class="form-control" name="window_hours" value="{{ $filters['window_hours'] }}">
+						<input type="number" min="0" max="720" class="form-control" name="window_hours" value="{{ $filters['window_hours'] }}">
 					</div>
+					<div class="small text-muted align-self-center">Use 0 for all data.</div>
 					<button class="btn btn-sm btn-primary" type="submit">Scan</button>
 				</form>
 			</div>
@@ -72,7 +73,12 @@
 						<div>
 							<h6 class="mb-1">Suspicious IPs</h6>
 							<div class="small text-muted">
-								More than {{ number_format($filters['threshold']) }} reads in the last {{ $filters['window_hours'] }} hours.
+								More than {{ number_format($filters['threshold']) }} reads
+								@if($filters['window_hours'] > 0)
+									in the last {{ $filters['window_hours'] }} hours.
+								@else
+									across all data.
+								@endif
 							</div>
 						</div>
 						@if($suspiciousIps->isNotEmpty())

@@ -147,7 +147,7 @@
 
 			$validated = $request->validate([
 				'threshold' => 'required|integer|min:1|max:100000',
-				'window_hours' => 'required|integer|min:1|max:720',
+				'window_hours' => 'required|integer|min:0|max:720',
 			]);
 
 			$filters = [
@@ -167,17 +167,16 @@
 				]);
 			}
 
-			$windowStart = now()->subHours($filters['window_hours']);
-			$articleIds = ArticleRead::whereIn('ip_address', $ipAddresses)
-				->where('created_at', '>=', $windowStart)
-				->distinct()
-				->pluck('article_id');
+			$readQuery = ArticleRead::whereIn('ip_address', $ipAddresses);
+			if ($filters['window_hours'] > 0) {
+				$readQuery->where('created_at', '>=', now()->subHours($filters['window_hours']));
+			}
+
+			$articleIds = (clone $readQuery)->distinct()->pluck('article_id');
 
 			$oldReadCounts = Article::whereIn('id', $articleIds)->pluck('read_count', 'id');
 
-			$deletedReads = ArticleRead::whereIn('ip_address', $ipAddresses)
-				->where('created_at', '>=', $windowStart)
-				->delete();
+			$deletedReads = $readQuery->delete();
 
 			$newReadCounts = ArticleRead::whereIn('article_id', $articleIds)
 				->select('article_id', DB::raw('COUNT(*) as reads_count'))
@@ -222,13 +221,13 @@
 
 			return [
 				'threshold' => min(max($threshold, 1), 100000),
-				'window_hours' => min(max($windowHours, 1), 720),
+				'window_hours' => min(max($windowHours, 0), 720),
 			];
 		}
 
 		private function suspiciousReadIps(int $threshold, int $windowHours)
 		{
-			return ArticleRead::query()
+			$query = ArticleRead::query()
 				->select(
 					'ip_address',
 					DB::raw('COUNT(*) as hits'),
@@ -236,8 +235,13 @@
 					DB::raw('MIN(created_at) as first_seen'),
 					DB::raw('MAX(created_at) as last_seen')
 				)
-				->where('created_at', '>=', now()->subHours($windowHours))
-				->groupBy('ip_address')
+				->groupBy('ip_address');
+
+			if ($windowHours > 0) {
+				$query->where('created_at', '>=', now()->subHours($windowHours));
+			}
+
+			return $query
 				->havingRaw('COUNT(*) > ?', [$threshold])
 				->orderByDesc('hits')
 				->get();
