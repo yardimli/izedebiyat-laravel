@@ -207,6 +207,8 @@
 					->limit($limit_formul_ekim)
 					->get();
 
+				$articles = $this->randomizeTopArticles($articles);
+
 				// Keep the strongest articles while preventing one author from filling the whole category block.
 				$uniqueArticles = collect();
 
@@ -251,6 +253,16 @@
 			}
 
 			return view('frontend.index', compact('categories'));
+		}
+
+		private function randomizeTopArticles($articles)
+		{
+			$topPoolSize = min(60, $articles->count());
+
+			return $articles->take($topPoolSize)
+				->shuffle()
+				->merge($articles->slice($topPoolSize))
+				->values();
 		}
 
 		public function search(Request $request, $page = 1)
