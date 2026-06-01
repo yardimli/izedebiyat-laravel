@@ -183,22 +183,14 @@
 				return $posA - $posB;
 			})->values();
 
-			$seenUserIds = [];
-			$userArticleCount = []; // Track count of articles per user
-
-			$seenUserIdsInNew = [];
-			$userNewArticleCount = []; // Track count of new articles per user
-
 			$limit_formul_ekim = 400;
 			$limit_yeni = 50;
 
 			foreach ($categories as $category) {
-				if ($category->slug === 'deneme' || $category->slug === 'bilimsel'  || $category->slug === 'elestiri') {
-					$seenUserIds = [];
-					$userArticleCount = []; // Track count of articles per user
+				$userArticleCount = []; // Track count of articles per user in this category
+				$userNewArticleCount = []; // Track count of new articles per user in this category
 
-					$seenUserIdsInNew = [];
-					$userNewArticleCount = []; // Track count of new articles per user
+				if ($category->slug === 'deneme' || $category->slug === 'bilimsel'  || $category->slug === 'elestiri') {
 					$limit_yeni = 150;
 				} else
 				{
@@ -215,18 +207,15 @@
 					->limit($limit_formul_ekim)
 					->get();
 
-				// Remove duplicate user_ids keeping first occurrence
+				// Keep the strongest articles while preventing one author from filling the whole category block.
 				$uniqueArticles = collect();
 
 				foreach ($articles as $article) {
-					// Initialize count if not exists
 					if (!isset($userArticleCount[$article->user_id])) {
 						$userArticleCount[$article->user_id] = 0;
 					}
 
-					if ((!in_array($article->user_id, $seenUserIds) &&
-						$userArticleCount[$article->user_id] < 2)) { // Limit to 2 articles per user
-						$seenUserIds[] = $article->user_id;
+					if ($userArticleCount[$article->user_id] < 2) {
 						$userArticleCount[$article->user_id]++;
 						$uniqueArticles->push($article);
 					}
@@ -244,18 +233,15 @@
 					->limit($limit_yeni)
 					->get();
 
-				// Remove duplicate user_ids keeping first occurrence
+				// Keep newest articles local to each category, with up to 2 per author.
 				$uniqueYeniArticles = collect();
 
 				foreach ($yeniArticles as $article) {
-					// Initialize count if not exists
 					if (!isset($userNewArticleCount[$article->user_id])) {
 						$userNewArticleCount[$article->user_id] = 0;
 					}
 
-					if ((!in_array($article->user_id, $seenUserIdsInNew) &&
-						$userNewArticleCount[$article->user_id] < 2)) { // Limit to 2 articles per user
-						$seenUserIdsInNew[] = $article->user_id;
+					if ($userNewArticleCount[$article->user_id] < 2) {
 						$userNewArticleCount[$article->user_id]++;
 						$uniqueYeniArticles->push($article);
 					}
