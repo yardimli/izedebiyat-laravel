@@ -9,12 +9,23 @@
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>
 			@endif
+			@if($errors->any())
+				<div class="alert alert-danger alert-dismissible fade show" role="alert">
+					{{ $errors->first() }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			@endif
 
 			<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
 				<h5 class="mb-0">Yeni Yazilar</h5>
-				<form action="{{ route('admin.articles.index') }}" method="GET" class="flex-grow-1" style="max-width: 620px;">
+				<form action="{{ route('admin.articles.index') }}" method="GET" class="flex-grow-1" style="max-width: 760px;">
 					<div class="input-group">
 						<input name="search" type="text" class="form-control" placeholder="Title, subtitle, or text ara" value="{{ request('search') }}">
+						<select class="form-select" name="per_page" style="max-width: 110px;" onchange="this.form.submit()">
+							@foreach([25, 50, 100, 200] as $size)
+								<option value="{{ $size }}" {{ (int) request('per_page', 50) === $size ? 'selected' : '' }}>{{ $size }}</option>
+							@endforeach
+						</select>
 						<button class="btn btn-primary" type="submit">Search</button>
 						@if(request('search'))
 							<a class="btn btn-outline-secondary" href="{{ route('admin.articles.index') }}">Clear</a>
@@ -28,10 +39,30 @@
 					@if($articles->isEmpty())
 						<p class="text-center my-3">No articles found.</p>
 					@else
+						<form id="bulk-articles-form" action="{{ route('admin.articles.bulk-update') }}" method="POST" class="d-flex flex-wrap align-items-center gap-2 mb-3" onsubmit="return confirm('Apply this action to selected articles?')">
+							@csrf
+							<input type="hidden" name="page" value="{{ request('page') }}">
+							<input type="hidden" name="search" value="{{ request('search') }}">
+							<input type="hidden" name="per_page" value="{{ request('per_page', 50) }}">
+							<select class="form-select form-select-sm" name="bulk_action" style="max-width: 230px;">
+								<option value="">Bulk action</option>
+								<option value="publish">Set published</option>
+								<option value="unpublish">Set draft</option>
+								<option value="approve">Set approved</option>
+								<option value="unapprove">Set not approved</option>
+								<option value="publish_approve">Publish and approve</option>
+								<option value="unpublish_unapprove">Draft and not approved</option>
+								<option value="delete">Delete selected</option>
+							</select>
+							<button type="submit" class="btn btn-sm btn-primary">Apply</button>
+						</form>
 						<div class="table-responsive">
 							<table class="table table-hover align-middle">
 								<thead>
 								<tr>
+									<th style="width: 42px;">
+										<input class="form-check-input" type="checkbox" id="select-all-articles">
+									</th>
 									<th style="min-width: 320px;">Article</th>
 									<th>Author</th>
 									<th>Created</th>
@@ -43,6 +74,9 @@
 								<tbody>
 								@foreach($articles as $article)
 									<tr>
+										<td>
+											<input class="form-check-input article-checkbox" type="checkbox" name="article_ids[]" value="{{ $article->id }}" form="bulk-articles-form">
+										</td>
 										<td>
 											<div class="fw-semibold">{{ strip_tags($article->title) }}</div>
 											@if($article->subtitle)
@@ -79,6 +113,7 @@
 												@method('PATCH')
 												<input type="hidden" name="page" value="{{ request('page') }}">
 												<input type="hidden" name="search" value="{{ request('search') }}">
+												<input type="hidden" name="per_page" value="{{ request('per_page', 50) }}">
 												<div class="d-flex gap-2">
 													<select class="form-select form-select-sm" name="is_published">
 														<option value="1" {{ $article->is_published ? 'selected' : '' }}>Published</option>
@@ -104,6 +139,7 @@
 													@method('DELETE')
 													<input type="hidden" name="page" value="{{ request('page') }}">
 													<input type="hidden" name="search" value="{{ request('search') }}">
+													<input type="hidden" name="per_page" value="{{ request('per_page', 50) }}">
 													<button type="submit" class="btn btn-sm btn-danger">Delete</button>
 												</form>
 											</div>
@@ -127,3 +163,30 @@
 	</main>
 	@include('layouts.footer')
 @endsection
+
+@push('scripts')
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const selectAll = document.getElementById('select-all-articles');
+			const checkboxes = document.querySelectorAll('.article-checkbox');
+
+			if (!selectAll) {
+				return;
+			}
+
+			selectAll.addEventListener('change', function () {
+				checkboxes.forEach(function (checkbox) {
+					checkbox.checked = selectAll.checked;
+				});
+			});
+
+			checkboxes.forEach(function (checkbox) {
+				checkbox.addEventListener('change', function () {
+					selectAll.checked = Array.from(checkboxes).every(function (item) {
+						return item.checked;
+					});
+				});
+			});
+		});
+	</script>
+@endpush

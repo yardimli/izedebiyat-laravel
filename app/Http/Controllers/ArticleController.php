@@ -26,6 +26,11 @@
 		{
 			$this->ensureAdmin();
 
+			$perPage = (int) $request->input('per_page', 50);
+			if (!in_array($perPage, [25, 50, 100, 200], true)) {
+				$perPage = 50;
+			}
+
 			$query = Article::query()
 				->where('deleted', 0)
 				->with('user')
@@ -43,7 +48,7 @@
 
 			$articles = $query->orderBy('created_at', 'desc')
 				->orderBy('id', 'desc')
-				->paginate(50)
+				->paginate($perPage)
 				->withQueryString();
 
 			return view('backend.admin_articles', compact('articles'));
@@ -60,8 +65,54 @@
 
 			$article->update($validated);
 
-			return redirect()->route('admin.articles.index', $request->only('search', 'page'))
+			return redirect()->route('admin.articles.index', $request->only('search', 'page', 'per_page'))
 				->with('success', 'Article flags updated successfully.');
+		}
+
+		public function adminBulkUpdate(Request $request)
+		{
+			$this->ensureAdmin();
+
+			$validated = $request->validate([
+				'article_ids' => 'required|array|min:1',
+				'article_ids.*' => 'integer|exists:articles,id',
+				'bulk_action' => 'required|in:publish,unpublish,approve,unapprove,publish_approve,unpublish_unapprove,delete',
+			]);
+
+			$updates = [];
+
+			switch ($validated['bulk_action']) {
+				case 'publish':
+					$updates['is_published'] = 1;
+					break;
+				case 'unpublish':
+					$updates['is_published'] = 0;
+					break;
+				case 'approve':
+					$updates['approved'] = 1;
+					break;
+				case 'unapprove':
+					$updates['approved'] = 0;
+					break;
+				case 'publish_approve':
+					$updates['is_published'] = 1;
+					$updates['approved'] = 1;
+					break;
+				case 'unpublish_unapprove':
+					$updates['is_published'] = 0;
+					$updates['approved'] = 0;
+					break;
+				case 'delete':
+					$updates['deleted'] = 1;
+					break;
+			}
+
+			Article::whereIn('id', $validated['article_ids'])
+				->where('deleted', 0)
+				->update($updates);
+
+			return redirect()->route('admin.articles.index', $request->only('search', 'page', 'per_page'))
+				->with('success', count($validated['article_ids']) . ' articles updated successfully.');
 		}
 
 		public function adminDestroy(Request $request, Article $article)
@@ -70,7 +121,7 @@
 
 			$article->update(['deleted' => 1]);
 
-			return redirect()->route('admin.articles.index', $request->only('search', 'page'))
+			return redirect()->route('admin.articles.index', $request->only('search', 'page', 'per_page'))
 				->with('success', 'Article deleted successfully.');
 		}
 

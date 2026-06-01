@@ -324,6 +324,7 @@
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');
 		Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 		Route::get('/admin/articles', [ArticleController::class, 'adminIndex'])->name('admin.articles.index');
+		Route::post('/admin/articles/bulk-update', [ArticleController::class, 'adminBulkUpdate'])->name('admin.articles.bulk-update');
 		Route::patch('/admin/articles/{article}/flags', [ArticleController::class, 'adminUpdateFlags'])->name('admin.articles.flags');
 		Route::delete('/admin/articles/{article}', [ArticleController::class, 'adminDestroy'])->name('admin.articles.destroy');
 
