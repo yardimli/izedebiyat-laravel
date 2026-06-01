@@ -172,12 +172,6 @@
 			$articleMainImage = str_ireplace('.png', '.jpg', $articleMainImage);
 			$articleMainImage = str_replace('\\', '/', $articleMainImage);
 
-			$aiResim = '';
-			if (strpos($articleMainImage, '_00001_') !== false) {
-				$aiResim = '<span class="ai-article-image" data-toggle="tooltip" data-placement="top" 
-                        title="Yapay zekaya yazının içeriğini vererek üretildi">YZ</span>';
-			}
-
 			$storage_path = $articleMainImage;
 			$storage_path = str_replace('storage/', '', $storage_path);
 
@@ -204,7 +198,7 @@
 
 				return "<div style='position:relative;'>
                     <img src='/{$image_src}' class='{$extraClass}' 
-                    style='{$extraStyle}' alt='yazı resim'>{$aiResim}</div>";
+                    style='{$extraStyle}' alt='yazı resim'></div>";
 			}
 
 			if (key_exists($categoryId, self::$categoryImages)) {
