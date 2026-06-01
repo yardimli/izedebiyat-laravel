@@ -327,6 +327,8 @@
 		Route::post('/admin/articles/bulk-update', [ArticleController::class, 'adminBulkUpdate'])->name('admin.articles.bulk-update');
 		Route::patch('/admin/articles/{article}/flags', [ArticleController::class, 'adminUpdateFlags'])->name('admin.articles.flags');
 		Route::delete('/admin/articles/{article}', [ArticleController::class, 'adminDestroy'])->name('admin.articles.destroy');
+		Route::get('/admin/read-cleanup', [ArticleController::class, 'adminReadCleanup'])->name('admin.read-cleanup.index');
+		Route::delete('/admin/read-cleanup', [ArticleController::class, 'adminReadCleanupDestroy'])->name('admin.read-cleanup.destroy');
 
 		// Admin Account Recovery Routes
 		Route::get('/admin/hesap-kurtarma', [AccountRecoveryController::class, 'index'])->name('admin.account-recovery.index');

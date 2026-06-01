@@ -204,6 +204,9 @@ Header START -->
 								<a class="nav-link {{ request()->routeIs('admin.articles.*') ? 'active' : '' }}" href="{{ route('admin.articles.index') }}">Yaz</a>
 							</li>
 							<li class="nav-item">
+								<a class="nav-link {{ request()->routeIs('admin.read-cleanup.*') ? 'active' : '' }}" href="{{ route('admin.read-cleanup.index') }}">Oku</a>
+							</li>
+							<li class="nav-item">
 								<a class="nav-link {{ request()->routeIs('book-reviews.*') ? 'active' : '' }}" href="{{ route('book-reviews.index') }}">Kit Iz</a>
 							</li>
 							{{-- ADDED: Link to Book Authors admin page --}}

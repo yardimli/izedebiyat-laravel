@@ -10,6 +10,7 @@
 	use App\Models\Keyword;
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Auth;
+	use Illuminate\Support\Facades\DB;
 	use Illuminate\Support\Str;
 	use App\Helpers\IdHasher;
 
@@ -123,6 +124,123 @@
 
 			return redirect()->route('admin.articles.index', $request->only('search', 'page', 'per_page'))
 				->with('success', 'Article deleted successfully.');
+		}
+
+		public function adminReadCleanup(Request $request)
+		{
+			$this->ensureAdmin();
+
+			$filters = $this->readCleanupFilters($request);
+			$suspiciousIps = $this->suspiciousReadIps($filters['threshold'], $filters['window_hours']);
+
+			return view('backend.admin_read_cleanup', [
+				'filters' => $filters,
+				'suspiciousIps' => $suspiciousIps,
+				'changes' => collect(),
+				'deletedReads' => null,
+			]);
+		}
+
+		public function adminReadCleanupDestroy(Request $request)
+		{
+			$this->ensureAdmin();
+
+			$validated = $request->validate([
+				'threshold' => 'required|integer|min:1|max:100000',
+				'window_hours' => 'required|integer|min:1|max:720',
+			]);
+
+			$filters = [
+				'threshold' => (int) $validated['threshold'],
+				'window_hours' => (int) $validated['window_hours'],
+			];
+
+			$suspiciousIps = $this->suspiciousReadIps($filters['threshold'], $filters['window_hours']);
+			$ipAddresses = $suspiciousIps->pluck('ip_address');
+
+			if ($ipAddresses->isEmpty()) {
+				return view('backend.admin_read_cleanup', [
+					'filters' => $filters,
+					'suspiciousIps' => $suspiciousIps,
+					'changes' => collect(),
+					'deletedReads' => 0,
+				]);
+			}
+
+			$windowStart = now()->subHours($filters['window_hours']);
+			$articleIds = ArticleRead::whereIn('ip_address', $ipAddresses)
+				->where('created_at', '>=', $windowStart)
+				->distinct()
+				->pluck('article_id');
+
+			$oldReadCounts = Article::whereIn('id', $articleIds)->pluck('read_count', 'id');
+
+			$deletedReads = ArticleRead::whereIn('ip_address', $ipAddresses)
+				->where('created_at', '>=', $windowStart)
+				->delete();
+
+			$newReadCounts = ArticleRead::whereIn('article_id', $articleIds)
+				->select('article_id', DB::raw('COUNT(*) as reads_count'))
+				->groupBy('article_id')
+				->pluck('reads_count', 'article_id');
+
+			$articles = Article::whereIn('id', $articleIds)
+				->select('id', 'title', 'slug', 'name', 'read_count')
+				->get();
+
+			$changes = $articles->map(function ($article) use ($oldReadCounts, $newReadCounts) {
+				$oldReadCount = (int) ($oldReadCounts[$article->id] ?? 0);
+				$newReadCount = (int) ($newReadCounts[$article->id] ?? 0);
+
+				$article->read_count = $newReadCount;
+				$article->save();
+
+				return (object) [
+					'article' => $article,
+					'old_read_count' => $oldReadCount,
+					'new_read_count' => $newReadCount,
+					'lost_read_count' => $oldReadCount - $newReadCount,
+				];
+			})->filter(function ($change) {
+				return $change->lost_read_count > 50;
+			})->sortByDesc('lost_read_count')->values();
+
+			$suspiciousIps = $this->suspiciousReadIps($filters['threshold'], $filters['window_hours']);
+
+			return view('backend.admin_read_cleanup', [
+				'filters' => $filters,
+				'suspiciousIps' => $suspiciousIps,
+				'changes' => $changes,
+				'deletedReads' => $deletedReads,
+			]);
+		}
+
+		private function readCleanupFilters(Request $request): array
+		{
+			$threshold = (int) $request->input('threshold', 200);
+			$windowHours = (int) $request->input('window_hours', 24);
+
+			return [
+				'threshold' => min(max($threshold, 1), 100000),
+				'window_hours' => min(max($windowHours, 1), 720),
+			];
+		}
+
+		private function suspiciousReadIps(int $threshold, int $windowHours)
+		{
+			return ArticleRead::query()
+				->select(
+					'ip_address',
+					DB::raw('COUNT(*) as hits'),
+					DB::raw('COUNT(DISTINCT article_id) as article_count'),
+					DB::raw('MIN(created_at) as first_seen'),
+					DB::raw('MAX(created_at) as last_seen')
+				)
+				->where('created_at', '>=', now()->subHours($windowHours))
+				->groupBy('ip_address')
+				->havingRaw('COUNT(*) > ?', [$threshold])
+				->orderByDesc('hits')
+				->get();
 		}
 
 		public function index(Request $request)
