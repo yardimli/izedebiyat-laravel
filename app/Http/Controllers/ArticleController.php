@@ -15,6 +15,65 @@
 
 	class ArticleController extends Controller
 	{
+		private function ensureAdmin(): void
+		{
+			if (!Auth::check() || !Auth::user()->isAdmin()) {
+				abort(403, 'Unauthorized action.');
+			}
+		}
+
+		public function adminIndex(Request $request)
+		{
+			$this->ensureAdmin();
+
+			$query = Article::query()
+				->where('deleted', 0)
+				->with('user')
+				->withCount('comments');
+
+			if ($request->filled('search')) {
+				$search = $request->input('search');
+
+				$query->where(function ($query) use ($search) {
+					$query->where('title', 'like', '%' . $search . '%')
+						->orWhere('subtitle', 'like', '%' . $search . '%')
+						->orWhere('main_text', 'like', '%' . $search . '%');
+				});
+			}
+
+			$articles = $query->orderBy('created_at', 'desc')
+				->orderBy('id', 'desc')
+				->paginate(50)
+				->withQueryString();
+
+			return view('backend.admin_articles', compact('articles'));
+		}
+
+		public function adminUpdateFlags(Request $request, Article $article)
+		{
+			$this->ensureAdmin();
+
+			$validated = $request->validate([
+				'is_published' => 'required|boolean',
+				'approved' => 'required|boolean',
+			]);
+
+			$article->update($validated);
+
+			return redirect()->route('admin.articles.index', $request->only('search', 'page'))
+				->with('success', 'Article flags updated successfully.');
+		}
+
+		public function adminDestroy(Request $request, Article $article)
+		{
+			$this->ensureAdmin();
+
+			$article->update(['deleted' => 1]);
+
+			return redirect()->route('admin.articles.index', $request->only('search', 'page'))
+				->with('success', 'Article deleted successfully.');
+		}
+
 		public function index(Request $request)
 		{
 			$query = Article::where('user_id', Auth::id())

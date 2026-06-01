@@ -323,6 +323,9 @@
 		Route::get('/users', [UserController::class, 'index'])->name('admin-users-index');
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');
 		Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+		Route::get('/admin/articles', [ArticleController::class, 'adminIndex'])->name('admin.articles.index');
+		Route::patch('/admin/articles/{article}/flags', [ArticleController::class, 'adminUpdateFlags'])->name('admin.articles.flags');
+		Route::delete('/admin/articles/{article}', [ArticleController::class, 'adminDestroy'])->name('admin.articles.destroy');
 
 		// Admin Account Recovery Routes
 		Route::get('/admin/hesap-kurtarma', [AccountRecoveryController::class, 'index'])->name('admin.account-recovery.index');

@@ -201,6 +201,9 @@ Header START -->
 								<a class="nav-link" href="{{route('admin-users-index')}}">Kullanicilar</a>
 							</li>
 							<li class="nav-item">
+								<a class="nav-link {{ request()->routeIs('admin.articles.*') ? 'active' : '' }}" href="{{ route('admin.articles.index') }}"><i class="bi bi-file-text fa-fw me-2"></i>Yazilar</a>
+							</li>
+							<li class="nav-item">
 								<a class="nav-link {{ request()->routeIs('book-reviews.*') ? 'active' : '' }}" href="{{ route('book-reviews.index') }}"><i class="bi bi-book fa-fw me-2"></i>{{ __('default.Book Reviews') }}</a>
 							</li>
 							{{-- ADDED: Link to Book Authors admin page --}}
