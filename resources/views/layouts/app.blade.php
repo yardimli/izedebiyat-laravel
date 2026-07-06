@@ -47,6 +47,9 @@
 		gtag('config', 'G-WSXNSG0STF');
 	</script>
 	
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6778116346723377"
+	        crossorigin="anonymous"></script>
+	
 	
 	@stack('styles')
 </head>
