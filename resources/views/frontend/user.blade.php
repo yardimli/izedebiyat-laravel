@@ -123,7 +123,7 @@
 							@include('partials.author-sidebar')
 							<div class="mt-4 mb-4">
 								<button type="button" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal"
-								        data-bs-target="#authorPdfModal">
+								        data-bs-target="{{ Auth::check() ? '#authorPdfModal' : '#authorPdfLoginModal' }}">
 									<i class="bi bi-file-earmark-pdf"></i> PDF olarak indir
 								</button>
 							</div>
@@ -185,9 +185,10 @@
 			</div>
 		</main>
 	</section>
+	@auth
 	<div class="modal fade" id="authorPdfModal" tabindex="-1" aria-labelledby="authorPdfModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
-			<form class="modal-content" method="GET" action="{{ route('user.pdf', $user->slug) }}">
+			<form class="modal-content" id="authorPdfForm" method="GET" action="{{ route('user.pdf', $user->slug) }}">
 				<div class="modal-header">
 					<h5 class="modal-title" id="authorPdfModalLabel">PDF indirme seçenekleri</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
@@ -209,7 +210,7 @@
 							<option value="a4_landscape_columns">A4 yatay, iki sütun</option>
 						</select>
 					</div>
-					<div>
+					<div class="mb-3">
 						<label for="authorPdfMargin" class="form-label">Kenar boşlukları</label>
 						<select class="form-select" id="authorPdfMargin" name="margin">
 							<option value="small">Küçük</option>
@@ -217,21 +218,67 @@
 							<option value="large">Büyük</option>
 						</select>
 					</div>
+					<div class="form-check mb-2">
+						<input type="hidden" name="include_toc" value="0">
+						<input class="form-check-input" type="checkbox" value="1" id="authorPdfIncludeToc" name="include_toc" checked>
+						<label class="form-check-label" for="authorPdfIncludeToc">İçindekiler eklensin</label>
+					</div>
+					<div class="form-check mb-3">
+						<input type="hidden" name="include_read_count" value="0">
+						<input class="form-check-input" type="checkbox" value="1" id="authorPdfIncludeReadCount" name="include_read_count" checked>
+						<label class="form-check-label" for="authorPdfIncludeReadCount">Okunma sayısı eklensin</label>
+					</div>
+					<div id="authorPdfProgress" class="d-none">
+						<div class="small text-muted mb-2">PDF hazırlanıyor, lütfen bekleyin...</div>
+						<div class="progress">
+							<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+							     style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+						</div>
+					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
-					<button type="submit" class="btn btn-primary">
+					<button type="submit" class="btn btn-primary" id="authorPdfSubmit">
 						<i class="bi bi-download"></i> PDF indir
 					</button>
 				</div>
 			</form>
 		</div>
 	</div>
+	@endauth
+
+	@guest
+	<div class="modal fade" id="authorPdfLoginModal" tabindex="-1" aria-labelledby="authorPdfLoginModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="authorPdfLoginModalLabel">Giriş gerekli</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+				</div>
+				<div class="modal-body">
+					PDF indirmek için önce giriş yapmalısınız.
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+					<a href="{{ route('login') }}" class="btn btn-primary">Giriş yap</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	@endguest
 @endsection
 
 @push('scripts')
 	<script>
 		$(document).ready(function () {
+			$('#authorPdfForm').on('submit', function () {
+				$('#authorPdfProgress').removeClass('d-none');
+				$('#authorPdfSubmit').prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Hazırlanıyor');
+
+				setTimeout(function () {
+					$('#authorPdfSubmit').prop('disabled', false).html('<i class="bi bi-download"></i> PDF indir');
+				}, 90000);
+			});
 		});
 	</script>
 @endpush

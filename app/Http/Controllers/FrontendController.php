@@ -625,6 +625,10 @@
 
 		public function userPdf(Request $request, $slug)
 		{
+			if (!Auth::check()) {
+				return redirect()->route('login');
+			}
+
 			ini_set('memory_limit', '1536M');
 			set_time_limit(600);
 
@@ -634,13 +638,17 @@
 				'order' => 'nullable|in:first,last,reads',
 				'layout' => 'nullable|in:a4_portrait,a5_portrait,a4_landscape_columns',
 				'margin' => 'nullable|in:small,medium,large',
+				'include_toc' => 'nullable|boolean',
+				'include_read_count' => 'nullable|boolean',
 			]);
 
 			$order = $validated['order'] ?? 'first';
 			$layout = $validated['layout'] ?? 'a4_portrait';
 			$margin = $validated['margin'] ?? 'medium';
+			$includeToc = $request->boolean('include_toc', true);
+			$includeReadCount = $request->boolean('include_read_count', true);
 
-			$query = Article::select('id', 'title', 'category_name', 'created_at', 'read_count', 'main_text')
+			$query = Article::select('id', 'title', 'subheading', 'category_name', 'parent_category_name', 'created_at', 'read_count', 'main_text')
 				->where('user_id', $user->id)
 				->where('approved', 1)
 				->where('is_published', 1)
@@ -672,6 +680,14 @@
 				return $article;
 			});
 
+			$dateRange = [
+				'start' => optional($articles->min('created_at'))->format('d.m.Y'),
+				'end' => optional($articles->max('created_at'))->format('d.m.Y'),
+			];
+			$exportedAt = now()->format('d.m.Y H:i');
+			$logoPath = public_path('assets/images/logo/logo-large.png');
+			$logoPath = File::exists($logoPath) ? $logoPath : null;
+
 			$margins = [
 				'small' => 8,
 				'medium' => 14,
@@ -681,7 +697,7 @@
 			$paper = $layout === 'a5_portrait' ? 'A5' : 'A4';
 			$orientation = $layout === 'a4_landscape_columns' ? 'L' : 'P';
 			$fileName = Str::slug($user->name) . '-yazilari.pdf';
-			$tempDir = storage_path('app/mpdf');
+			$tempDir = storage_path('app/mpdf/' . Str::uuid());
 
 			if (!File::exists($tempDir)) {
 				File::makeDirectory($tempDir, 0755, true);
@@ -698,11 +714,25 @@
 				'tempDir' => $tempDir,
 			]);
 			$mpdf->SetTitle($user->name . ' - Yazıları');
+			$mpdf->SetHTMLFooter('<div style="font-size: 8pt; color: #777; text-align: center;">{PAGENO}</div>');
 			$mpdf->WriteHTML(view('pdfs.author_styles')->render(), HTMLParserMode::HEADER_CSS);
-			$mpdf->WriteHTML(view('pdfs.author_toc', [
+			$mpdf->WriteHTML(view('pdfs.author_title', [
 				'user' => $user,
 				'articles' => $articles,
+				'dateRange' => $dateRange,
+				'exportedAt' => $exportedAt,
+				'includeReadCount' => $includeReadCount,
+				'logoPath' => $logoPath,
 			])->render(), HTMLParserMode::HTML_BODY);
+
+			if ($includeToc) {
+				$mpdf->AddPage();
+				$mpdf->WriteHTML(view('pdfs.author_toc', [
+					'user' => $user,
+					'articles' => $articles,
+					'includeReadCount' => $includeReadCount,
+				])->render(), HTMLParserMode::HTML_BODY);
+			}
 
 			$mpdf->AddPage();
 			$mpdf->WriteHTML(view('pdfs.author_intro', [
@@ -719,6 +749,7 @@
 
 				$mpdf->WriteHTML(view('pdfs.author_entry', [
 					'article' => $article,
+					'includeReadCount' => $includeReadCount,
 				])->render(), HTMLParserMode::HTML_BODY);
 
 				if ($layout === 'a4_landscape_columns') {
@@ -726,7 +757,10 @@
 				}
 			}
 
-			return response($mpdf->Output($fileName, Destination::STRING_RETURN), 200, [
+			$pdfContent = $mpdf->Output($fileName, Destination::STRING_RETURN);
+			File::deleteDirectory($tempDir);
+
+			return response($pdfContent, 200, [
 				'Content-Type' => 'application/pdf',
 				'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
 			]);
