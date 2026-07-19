@@ -216,6 +216,9 @@ Header START -->
 							<li class="nav-item">
 								<a class="nav-link {{ request()->routeIs('book-authors.*') ? 'active' : '' }}" href="{{ route('book-authors.index') }}">Kit Yaz</a>
 							</li>
+							<li class="nav-item">
+								<a class="nav-link {{ request()->routeIs('admin.forum.*') ? 'active' : '' }}" href="{{ route('admin.forum.index') }}">Forum</a>
+							</li>
 							{{-- END ADDED --}}
 						@endif
 					@endif

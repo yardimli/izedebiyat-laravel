@@ -1,4 +1,4 @@
-body {
+﻿body {
 	font-family: DejaVu Sans, sans-serif;
 	font-size: 11pt;
 	line-height: 1.55;
@@ -37,6 +37,12 @@ a {
 
 img, figure {
 	display: none;
+}
+
+.title-logo-img {
+	display: block;
+	width: 56mm;
+	margin: 0 auto 24mm;
 }
 
 .title-page {
@@ -105,4 +111,15 @@ img, figure {
 
 .content {
 	word-wrap: break-word;
+}
+.entry-block {
+	margin-bottom: 9mm;
+	padding-bottom: 5mm;
+	border-bottom: 1px solid #ddd;
+}
+
+.entry-block h2 {
+	font-size: 13pt;
+	margin-bottom: 4mm;
+	padding-bottom: 2mm;
 }

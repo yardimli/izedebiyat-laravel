@@ -1,4 +1,4 @@
-@extends('layouts.app-frontend')
+﻿@extends('layouts.app-frontend')
 
 @section('title', 'İzEdebiyat - ' . $user->name)
 @section('body-class', 'archive')
@@ -186,8 +186,8 @@
 		</main>
 	</section>
 	@auth
-	<div class="modal fade" id="authorPdfModal" tabindex="-1" aria-labelledby="authorPdfModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
+	<div class="modal fade author-pdf-modal" id="authorPdfModal" tabindex="-1" aria-labelledby="authorPdfModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
 			<form class="modal-content" id="authorPdfForm" method="GET" action="{{ route('user.pdf', $user->slug) }}">
 				<div class="modal-header">
 					<h5 class="modal-title" id="authorPdfModalLabel">PDF indirme seçenekleri</h5>
@@ -246,10 +246,27 @@
 		</div>
 	</div>
 	@endauth
-
+	@auth
+	<div class="modal fade author-pdf-modal" id="downloadStartedModal" tabindex="-1" aria-labelledby="downloadStartedModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="downloadStartedModalLabel">İndirme başladı</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+				</div>
+				<div class="modal-body">
+					PDF indirmeniz başladı. Dosyayı indirmeler klasörünüzde kontrol edin.
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tamam</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	@endauth
 	@guest
-	<div class="modal fade" id="authorPdfLoginModal" tabindex="-1" aria-labelledby="authorPdfLoginModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
+	<div class="modal fade author-pdf-modal" id="authorPdfLoginModal" tabindex="-1" aria-labelledby="authorPdfLoginModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="authorPdfLoginModalLabel">Giriş gerekli</h5>
@@ -271,13 +288,63 @@
 @push('scripts')
 	<script>
 		$(document).ready(function () {
-			$('#authorPdfForm').on('submit', function () {
+			let authorPdfPreparing = false;
+
+			function resetAuthorPdfDialog() {
+				$('#authorPdfProgress').addClass('d-none');
+				$('#authorPdfSubmit').prop('disabled', false).html('<i class="bi bi-download"></i> PDF indir');
+			}
+			$('#authorPdfForm').on('submit', async function (event) {
+				event.preventDefault();
+
+				authorPdfPreparing = true;
 				$('#authorPdfProgress').removeClass('d-none');
 				$('#authorPdfSubmit').prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Hazırlanıyor');
 
-				setTimeout(function () {
-					$('#authorPdfSubmit').prop('disabled', false).html('<i class="bi bi-download"></i> PDF indir');
-				}, 90000);
+				const optionsModalEl = document.getElementById('authorPdfModal');
+				const startedModalEl = document.getElementById('downloadStartedModal');
+				const optionsModal = bootstrap.Modal.getInstance(optionsModalEl) || new bootstrap.Modal(optionsModalEl);
+				const startedModal = bootstrap.Modal.getOrCreateInstance(startedModalEl);
+
+				try {
+					const query = new URLSearchParams(new FormData(this));
+					const response = await fetch(`${this.action}?${query.toString()}`, {
+						credentials: 'same-origin',
+						headers: {
+							'Accept': 'application/pdf',
+						},
+					});
+
+					if (!response.ok) {
+						throw new Error('PDF hazırlanamadı.');
+					}
+
+					const blob = await response.blob();
+					const disposition = response.headers.get('Content-Disposition') || '';
+					const filenameMatch = disposition.match(/filename="?([^";]+)"?/i);
+					const filename = filenameMatch ? filenameMatch[1] : 'izedebiyat-yazar.pdf';
+					const downloadUrl = window.URL.createObjectURL(blob);
+					const link = document.createElement('a');
+
+					link.href = downloadUrl;
+					link.download = filename;
+					document.body.appendChild(link);
+					link.click();
+					link.remove();
+					window.URL.revokeObjectURL(downloadUrl);
+
+					authorPdfPreparing = false;
+					resetAuthorPdfDialog();
+					optionsModal.hide();
+
+					setTimeout(function () {
+						startedModal.show();
+					}, 250);
+				} catch (error) {
+					authorPdfPreparing = false;
+					resetAuthorPdfDialog();
+					alert('PDF hazırlanırken bir sorun oluştu. Lütfen tekrar deneyin.');
+				}
 			});
 		});
 	</script>
@@ -285,5 +352,59 @@
 
 @push('styles')
 	<style>
+		.author-pdf-modal .modal-content {
+			background: #fff;
+			color: #212529;
+			border: 1px solid rgba(0, 0, 0, .12);
+			box-shadow: 0 18px 60px rgba(0, 0, 0, .18);
+		}
+
+		.author-pdf-modal .modal-header,
+		.author-pdf-modal .modal-footer {
+			border-color: rgba(0, 0, 0, .1);
+		}
+
+		.author-pdf-modal .form-label,
+		.author-pdf-modal .form-check-label {
+			color: inherit;
+		}
+
+		.author-pdf-modal .form-select {
+			background-color: #fff;
+			color: #212529;
+			border-color: #ced4da;
+		}
+
+		[data-bs-theme="dark"] .author-pdf-modal .modal-content,
+		body.dark .author-pdf-modal .modal-content,
+		.dark-mode .author-pdf-modal .modal-content {
+			background: #17191c;
+			color: #f1f3f5;
+			border-color: rgba(255, 255, 255, .16);
+			box-shadow: 0 18px 60px rgba(0, 0, 0, .55);
+		}
+
+		[data-bs-theme="dark"] .author-pdf-modal .modal-header,
+		[data-bs-theme="dark"] .author-pdf-modal .modal-footer,
+		body.dark .author-pdf-modal .modal-header,
+		body.dark .author-pdf-modal .modal-footer,
+		.dark-mode .author-pdf-modal .modal-header,
+		.dark-mode .author-pdf-modal .modal-footer {
+			border-color: rgba(255, 255, 255, .16);
+		}
+
+		[data-bs-theme="dark"] .author-pdf-modal .form-select,
+		body.dark .author-pdf-modal .form-select,
+		.dark-mode .author-pdf-modal .form-select {
+			background-color: #22262a;
+			color: #f1f3f5;
+			border-color: rgba(255, 255, 255, .2);
+		}
+
+		[data-bs-theme="dark"] .author-pdf-modal .text-muted,
+		body.dark .author-pdf-modal .text-muted,
+		.dark-mode .author-pdf-modal .text-muted {
+			color: #adb5bd !important;
+		}
 	</style>
 @endpush

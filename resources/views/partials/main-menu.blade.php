@@ -29,6 +29,9 @@
 						<a class="nav-link" href="{{ route('frontend.book-reviews.index') }}">KİTAP İZLERİ</a>
 					</li>
 				@endif
+				<li class="nav-item">
+					<a class="nav-link" href="{{ route('forum.index') }}">FORUM</a>
+				</li>
 			</ul>
 			<span></span>
 		</div>

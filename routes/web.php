@@ -11,6 +11,8 @@
 	use App\Http\Controllers\FrontendController;
 	use App\Http\Controllers\ImageController;
 	use App\Http\Controllers\LangController;
+	use App\Http\Controllers\ForumController;
+	use App\Http\Controllers\AdminForumController;
 	use App\Http\Controllers\LoginWithGoogleController;
 	use App\Http\Controllers\UserController;
 	use App\Http\Controllers\UserSettingsController;
@@ -121,6 +123,23 @@
 
 	Route::get('yazarlar.asp', function (Request $request) {
 		return redirect()->route('users', [], 301);
+	});
+
+	// Forum pages are public to read.
+	Route::prefix('forum')->name('forum.')->group(function () {
+		Route::get('/', [ForumController::class, 'index'])->name('index');
+		Route::get('/etiketler', [ForumController::class, 'tags'])->name('tags');
+		Route::get('/etiket/{tag}', [ForumController::class, 'index'])->name('tag');
+		Route::get('/uye/{user}', [ForumController::class, 'profile'])->name('profile');
+		Route::get('/tartisma/{discussion}', [ForumController::class, 'show'])->name('show');
+
+		Route::middleware('auth')->group(function () {
+			Route::get('/yeni', [ForumController::class, 'create'])->name('create');
+			Route::post('/', [ForumController::class, 'store'])->name('store');
+			Route::post('/tartisma/{discussion}/yanit', [ForumController::class, 'reply'])->name('reply');
+			Route::post('/ileti/{post}/begen', [ForumController::class, 'like'])->name('like');
+			Route::post('/ileti/{post}/bildir', [ForumController::class, 'flag'])->name('flag');
+		});
 	});
 
 	// Static pages
@@ -345,8 +364,21 @@
 		Route::post('/book-reviews/generate-keywords', [ChatController::class, 'generateBookKeywords'])->name('book-reviews.generate-keywords');
 		Route::resource('admin/book-authors', BookAuthorController::class);
 
+
+		Route::prefix('admin/forum')->name('admin.forum.')->group(function () {
+			Route::get('/', [AdminForumController::class, 'index'])->name('index');
+			Route::get('/tartismalar/{discussion}/duzenle', [AdminForumController::class, 'editDiscussion'])->name('discussions.edit');
+			Route::put('/tartismalar/{discussion}', [AdminForumController::class, 'updateDiscussion'])->name('discussions.update');
+			Route::delete('/tartismalar/{discussion}', [AdminForumController::class, 'destroyDiscussion'])->name('discussions.destroy');
+			Route::get('/iletiler/{post}/duzenle', [AdminForumController::class, 'editPost'])->name('posts.edit');
+			Route::put('/iletiler/{post}', [AdminForumController::class, 'updatePost'])->name('posts.update');
+			Route::delete('/iletiler/{post}', [AdminForumController::class, 'destroyPost'])->name('posts.destroy');
+			Route::patch('/bildirimler/{flag}', [AdminForumController::class, 'updateFlag'])->name('flags.update');
+		});
+
 	});
 
 	//-------------------------------------------------------------------------
+
 
 	Auth::routes(['verify' => true]);

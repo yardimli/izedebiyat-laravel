@@ -685,8 +685,7 @@
 				'end' => optional($articles->max('created_at'))->format('d.m.Y'),
 			];
 			$exportedAt = now()->format('d.m.Y H:i');
-			$logoPath = public_path('assets/images/logo/logo-large.png');
-			$logoPath = File::exists($logoPath) ? $logoPath : null;
+			$logoPath = 'https://www.izedebiyat.com/assets/images/logo/logo-large.png';
 
 			$margins = [
 				'small' => 8,
@@ -740,20 +739,27 @@
 				'aboutMe' => $aboutMe,
 			])->render(), HTMLParserMode::HTML_BODY);
 
-			foreach ($articles as $article) {
+			if ($layout === 'a4_landscape_columns') {
 				$mpdf->AddPage();
+				$mpdf->SetColumns(2, 'J', 8);
 
-				if ($layout === 'a4_landscape_columns') {
-					$mpdf->SetColumns(2, 'J', 8);
+				foreach ($articles as $article) {
+					$mpdf->WriteHTML(view('pdfs.author_entry', [
+						'article' => $article,
+						'includeReadCount' => $includeReadCount,
+						'compactEntry' => true,
+					])->render(), HTMLParserMode::HTML_BODY);
 				}
 
-				$mpdf->WriteHTML(view('pdfs.author_entry', [
-					'article' => $article,
-					'includeReadCount' => $includeReadCount,
-				])->render(), HTMLParserMode::HTML_BODY);
-
-				if ($layout === 'a4_landscape_columns') {
-					$mpdf->SetColumns(0);
+				$mpdf->SetColumns(0);
+			} else {
+				foreach ($articles as $article) {
+					$mpdf->AddPage();
+					$mpdf->WriteHTML(view('pdfs.author_entry', [
+						'article' => $article,
+						'includeReadCount' => $includeReadCount,
+						'compactEntry' => false,
+					])->render(), HTMLParserMode::HTML_BODY);
 				}
 			}
 
