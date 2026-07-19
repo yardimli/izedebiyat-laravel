@@ -714,8 +714,8 @@
 			]);
 			$mpdf->SetTitle($user->name . ' - Yazıları');
 			$mpdf->SetHTMLFooter('<div style="font-size: 8pt; color: #777; text-align: center;">{PAGENO}</div>');
-			$mpdf->WriteHTML(view('pdfs.author_styles')->render(), HTMLParserMode::HEADER_CSS);
-			$mpdf->WriteHTML(view('pdfs.author_title', [
+			$this->writePdfHtml($mpdf, view('pdfs.author_styles')->render(), HTMLParserMode::HEADER_CSS);
+			$this->writePdfHtml($mpdf, view('pdfs.author_title', [
 				'user' => $user,
 				'articles' => $articles,
 				'dateRange' => $dateRange,
@@ -726,7 +726,7 @@
 
 			if ($includeToc) {
 				$mpdf->AddPage();
-				$mpdf->WriteHTML(view('pdfs.author_toc', [
+				$this->writePdfHtml($mpdf, view('pdfs.author_toc', [
 					'user' => $user,
 					'articles' => $articles,
 					'includeReadCount' => $includeReadCount,
@@ -734,7 +734,7 @@
 			}
 
 			$mpdf->AddPage();
-			$mpdf->WriteHTML(view('pdfs.author_intro', [
+			$this->writePdfHtml($mpdf, view('pdfs.author_intro', [
 				'user' => $user,
 				'aboutMe' => $aboutMe,
 			])->render(), HTMLParserMode::HTML_BODY);
@@ -744,7 +744,7 @@
 				$mpdf->SetColumns(2, 'J', 8);
 
 				foreach ($articles as $article) {
-					$mpdf->WriteHTML(view('pdfs.author_entry', [
+					$this->writePdfHtml($mpdf, view('pdfs.author_entry', [
 						'article' => $article,
 						'includeReadCount' => $includeReadCount,
 						'compactEntry' => true,
@@ -755,7 +755,7 @@
 			} else {
 				foreach ($articles as $article) {
 					$mpdf->AddPage();
-					$mpdf->WriteHTML(view('pdfs.author_entry', [
+					$this->writePdfHtml($mpdf, view('pdfs.author_entry', [
 						'article' => $article,
 						'includeReadCount' => $includeReadCount,
 						'compactEntry' => false,
@@ -779,7 +779,30 @@
 			$html = preg_replace('/<script\b[^>]*>.*?<\/script>/is', '', $html);
 			$html = preg_replace('/<style\b[^>]*>.*?<\/style>/is', '', $html);
 
-			return $html ?? '';
+			return $this->ensurePdfUtf8($html ?? '');
+		}
+
+		private function writePdfHtml(Mpdf $mpdf, string $html, int $mode): void
+		{
+			$mpdf->WriteHTML($this->ensurePdfUtf8($html), $mode);
+		}
+
+		private function ensurePdfUtf8(string $html): string
+		{
+			$html = mb_convert_encoding($html, 'UTF-8', 'UTF-8, Windows-1254, ISO-8859-9, Windows-1252, ISO-8859-1');
+
+			while ($html !== '' && mb_convert_encoding(mb_convert_encoding($html, 'UTF-32', 'UTF-8'), 'UTF-8', 'UTF-32') !== $html) {
+				$clean = @iconv('UTF-8', 'UTF-8//IGNORE', $html);
+
+				if ($clean === false || $clean === $html) {
+					$html = mb_substr($html, 1, null, 'UTF-8');
+					continue;
+				}
+
+				$html = $clean;
+			}
+
+			return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $html) ?? '';
 		}
 
 		public function users($filter = 'yeni', $page = 1)
@@ -877,39 +900,39 @@
 
 		public function article($slug)
 		{
-			Log::info('Article page accessed: ' . $slug);
+//			Log::info('Article page accessed: ' . $slug);
 			// Get the article
 			$article = Article::where('slug', $slug)
 				->where('approved', 1)
 				->where('deleted', 0)
 				->where('is_published', 1)
 				->firstOrFail();
-			Log::info('Article found: ' . $article->id);
+//			Log::info('Article found: ' . $article->id);
 
 			$converter = new CommonMarkConverter([
 				'html_input' => 'strip',
 				'allow_unsafe_links' => false,
 			]);
 
-			Log::info('Converting article text to HTML...');
+//			Log::info('Converting article text to HTML...');
 			try {
 				$article->main_text = $converter->convertToHtml($article->main_text);
 			} catch (\Exception $e) {
 				Log::error('Error converting article text to HTML: ' . $e->getMessage());
 				$article->main_text = str_replace("\n", '<br>', $article->main_text);
 			}
-			Log::info('Article text converted to HTML');
+//			Log::info('Article text converted to HTML');
 
 			// Get the user
-			Log::info('Finding user... with id: ' . $article->user_id);
+//			Log::info('Finding user... with id: ' . $article->user_id);
 			$user = User::findOrFail($article->user_id);
-			Log::info('User found: ' . $user->id);
+//			Log::info('User found: ' . $user->id);
 
 			// Get keywords for this article
 			$keywords = $article->keywords()
 				->where('count', '>', 1)
 				->get();
-			Log::info('Keywords found: ' . $keywords->count());
+//			Log::info('Keywords found: ' . $keywords->count());
 
 			// Get related posts (you may want to customize this query)
 			$sameUserAndCategory = Article::where('category_id', $article->category_id)
