@@ -1,14 +1,23 @@
-﻿body {
+html, body {
+	background: #fff !important;
+}
+
+body {
 	font-family: DejaVu Sans, sans-serif;
 	font-size: 11pt;
 	line-height: 1.55;
-	color: #222;
+	color: #111 !important;
+}
+
+body, section, div, article, h1, h2, h3, p, ol, ul, li, span, strong, em, pre, code {
+	background: #fff !important;
+	color: #111 !important;
 }
 
 h1, h2, h3 {
 	line-height: 1.25;
 	margin: 0 0 8mm;
-	color: #111;
+	color: #111 !important;
 }
 
 h1 {
@@ -31,7 +40,7 @@ p {
 }
 
 a {
-	color: #111;
+	color: #111 !important;
 	text-decoration: none;
 }
 
@@ -65,7 +74,7 @@ img, figure {
 
 .title-subtitle {
 	font-size: 13pt;
-	color: #555;
+	color: #111 !important;
 	margin-bottom: 18mm;
 }
 
@@ -95,7 +104,7 @@ img, figure {
 
 .toc-meta, .subheading {
 	font-size: 9pt;
-	color: #666;
+	color: #111 !important;
 }
 
 .subheading {
@@ -105,7 +114,7 @@ img, figure {
 
 .meta {
 	font-size: 9pt;
-	color: #666;
+	color: #111 !important;
 	margin-bottom: 7mm;
 }
 

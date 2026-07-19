@@ -714,7 +714,11 @@
 			]);
 			$mpdf->SetTitle($user->name . ' - Yazıları');
 			$mpdf->SetHTMLFooter('<div style="font-size: 8pt; color: #777; text-align: center;">{PAGENO}</div>');
+			$isTwoColumnLayout = $layout === 'a4_landscape_columns';
 			$this->writePdfHtml($mpdf, view('pdfs.author_styles')->render(), HTMLParserMode::HEADER_CSS);
+			if ($isTwoColumnLayout) {
+				$mpdf->SetColumns(2, 'J', 8);
+			}
 			$this->writePdfHtml($mpdf, view('pdfs.author_title', [
 				'user' => $user,
 				'articles' => $articles,
@@ -726,6 +730,9 @@
 
 			if ($includeToc) {
 				$mpdf->AddPage();
+				if ($isTwoColumnLayout) {
+					$mpdf->SetColumns(2, 'J', 8);
+				}
 				$this->writePdfHtml($mpdf, view('pdfs.author_toc', [
 					'user' => $user,
 					'articles' => $articles,
@@ -734,21 +741,29 @@
 			}
 
 			$mpdf->AddPage();
+			if ($isTwoColumnLayout) {
+				$mpdf->SetColumns(2, 'J', 8);
+			}
 			$this->writePdfHtml($mpdf, view('pdfs.author_intro', [
 				'user' => $user,
 				'aboutMe' => $aboutMe,
 			])->render(), HTMLParserMode::HTML_BODY);
 
-			if ($layout === 'a4_landscape_columns') {
+			if ($isTwoColumnLayout) {
 				$mpdf->AddPage();
 				$mpdf->SetColumns(2, 'J', 8);
+				$articleCount = $articles->count();
 
-				foreach ($articles as $article) {
+				foreach ($articles as $index => $article) {
 					$this->writePdfHtml($mpdf, view('pdfs.author_entry', [
 						'article' => $article,
 						'includeReadCount' => $includeReadCount,
 						'compactEntry' => true,
 					])->render(), HTMLParserMode::HTML_BODY);
+
+					if ($index < $articleCount - 1) {
+						$mpdf->AddColumn();
+					}
 				}
 
 				$mpdf->SetColumns(0);
