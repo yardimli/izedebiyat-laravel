@@ -11,6 +11,9 @@
 	use App\Models\User;
 	use App\Models\Article;
 	use App\Models\BookReview;
+	use Mpdf\HTMLParserMode;
+	use Mpdf\Mpdf;
+	use Mpdf\Output\Destination;
 	use Carbon\Carbon;
 	use GuzzleHttp\Client;
 	use Illuminate\Http\Request;
@@ -620,6 +623,124 @@
 			return view('frontend.user', compact('user', 'articles', 'sidebarTexts'));
 		}
 
+		public function userPdf(Request $request, $slug)
+		{
+			ini_set('memory_limit', '1536M');
+			set_time_limit(600);
+
+			$user = User::where('slug', $slug)->firstOrFail();
+
+			$validated = $request->validate([
+				'order' => 'nullable|in:first,last,reads',
+				'layout' => 'nullable|in:a4_portrait,a5_portrait,a4_landscape_columns',
+				'margin' => 'nullable|in:small,medium,large',
+			]);
+
+			$order = $validated['order'] ?? 'first';
+			$layout = $validated['layout'] ?? 'a4_portrait';
+			$margin = $validated['margin'] ?? 'medium';
+
+			$query = Article::select('id', 'title', 'category_name', 'created_at', 'read_count', 'main_text')
+				->where('user_id', $user->id)
+				->where('approved', 1)
+				->where('is_published', 1)
+				->where('deleted', 0);
+
+			match ($order) {
+				'last' => $query->orderBy('created_at', 'DESC'),
+				'reads' => $query->orderBy('read_count', 'DESC')->orderBy('created_at', 'ASC'),
+				default => $query->orderBy('created_at', 'ASC'),
+			};
+
+			$converter = new CommonMarkConverter([
+				'html_input' => 'strip',
+				'allow_unsafe_links' => false,
+			]);
+
+			$aboutMe = $converter->convertToHtml((string)$user->about_me);
+			$aboutMe = $this->cleanPdfHtml($aboutMe);
+
+			$articles = $query->get()->map(function (Article $article) use ($converter) {
+				try {
+					$article->pdf_text = $converter->convertToHtml((string)$article->main_text);
+				} catch (\Exception $e) {
+					$article->pdf_text = nl2br(e((string)$article->main_text));
+				}
+
+				$article->pdf_text = $this->cleanPdfHtml($article->pdf_text);
+
+				return $article;
+			});
+
+			$margins = [
+				'small' => 8,
+				'medium' => 14,
+				'large' => 22,
+			];
+			$marginSize = $margins[$margin] ?? $margins['medium'];
+			$paper = $layout === 'a5_portrait' ? 'A5' : 'A4';
+			$orientation = $layout === 'a4_landscape_columns' ? 'L' : 'P';
+			$fileName = Str::slug($user->name) . '-yazilari.pdf';
+			$tempDir = storage_path('app/mpdf');
+
+			if (!File::exists($tempDir)) {
+				File::makeDirectory($tempDir, 0755, true);
+			}
+
+			$mpdf = new Mpdf([
+				'mode' => 'utf-8',
+				'format' => $paper,
+				'orientation' => $orientation,
+				'margin_left' => $marginSize,
+				'margin_right' => $marginSize,
+				'margin_top' => $marginSize,
+				'margin_bottom' => $marginSize,
+				'tempDir' => $tempDir,
+			]);
+			$mpdf->SetTitle($user->name . ' - Yazıları');
+			$mpdf->WriteHTML(view('pdfs.author_styles')->render(), HTMLParserMode::HEADER_CSS);
+			$mpdf->WriteHTML(view('pdfs.author_toc', [
+				'user' => $user,
+				'articles' => $articles,
+			])->render(), HTMLParserMode::HTML_BODY);
+
+			$mpdf->AddPage();
+			$mpdf->WriteHTML(view('pdfs.author_intro', [
+				'user' => $user,
+				'aboutMe' => $aboutMe,
+			])->render(), HTMLParserMode::HTML_BODY);
+
+			foreach ($articles as $article) {
+				$mpdf->AddPage();
+
+				if ($layout === 'a4_landscape_columns') {
+					$mpdf->SetColumns(2, 'J', 8);
+				}
+
+				$mpdf->WriteHTML(view('pdfs.author_entry', [
+					'article' => $article,
+				])->render(), HTMLParserMode::HTML_BODY);
+
+				if ($layout === 'a4_landscape_columns') {
+					$mpdf->SetColumns(0);
+				}
+			}
+
+			return response($mpdf->Output($fileName, Destination::STRING_RETURN), 200, [
+				'Content-Type' => 'application/pdf',
+				'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+			]);
+		}
+
+		private function cleanPdfHtml(string $html): string
+		{
+			$html = preg_replace('/<img\b[^>]*>/i', '', $html);
+			$html = preg_replace('/<figure\b[^>]*>.*?<\/figure>/is', '', $html);
+			$html = preg_replace('/<script\b[^>]*>.*?<\/script>/is', '', $html);
+			$html = preg_replace('/<style\b[^>]*>.*?<\/style>/is', '', $html);
+
+			return $html ?? '';
+		}
 
 		public function users($filter = 'yeni', $page = 1)
 		{

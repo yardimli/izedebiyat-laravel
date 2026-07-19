@@ -167,6 +167,7 @@
 	Route::get('kume/{categorySlug}/{subcategorySlug}', [FrontendController::class, 'subcategory'])->name('frontend.subcategory');
 	Route::get('kume/{categorySlug}/{subcategorySlug}/sayfa/{page}', [FrontendController::class, 'subcategory'])->name('frontend.subcategory.page');
 
+	Route::get('yazar/{slug}/pdf', [FrontendController::class, 'userPdf'])->name('user.pdf');
 	Route::get('yazar/{slug}', [FrontendController::class, 'user'])->name('user');
 	Route::get('yazar/{slug}/sayfa/{page}', [FrontendController::class, 'user'])->name('user.page');
 
