@@ -59,7 +59,52 @@
 .forum-empty { color: var(--forum-muted); padding: 70px 20px; text-align: center; }
 .forum-empty > i { font-size: 42px; }
 .forum-empty h2 { color: var(--forum-ink); font-size: 22px; margin: 12px 0 4px; }
-.forum-pagination { margin-top: 28px; }
+.forum-pagination { margin-top: 28px; overflow-x: auto; padding: 2px 0 8px; }
+.forum-pagination nav { display: flex; justify-content: center; }
+.forum-pagination .pagination {
+    align-items: center;
+    border-top: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+.forum-pagination .page-item { margin: 0; }
+.forum-pagination .page-link {
+    align-items: center;
+    border: 1px solid var(--forum-line);
+    border-radius: 5px;
+    color: var(--forum-blue);
+    display: inline-flex;
+    font-size: 14px;
+    height: 40px;
+    justify-content: center;
+    line-height: 1;
+    margin: 0;
+    min-width: 40px;
+    padding: 0 12px;
+}
+.forum-pagination .page-link:hover,
+.forum-pagination .page-link:focus {
+    background: var(--forum-soft);
+    border-color: var(--forum-blue);
+    color: var(--forum-blue-dark);
+    box-shadow: none;
+}
+.forum-pagination .page-item.active .page-link {
+    background: var(--forum-blue);
+    border-color: var(--forum-blue);
+    color: #fff;
+}
+.forum-pagination .page-item.disabled .page-link {
+    background: var(--forum-surface);
+    border-color: var(--forum-line);
+    color: #a7b1bf;
+}
 
 .forum-tag-hero, .forum-discussion-hero { background: var(--tag-color); color: #fff; margin: -42px 0 42px; padding: 40px 20px; text-align: center; }
 .forum-tag-hero > span { font-size: 28px; font-weight: 500; }
@@ -187,4 +232,8 @@
     .forum-profile-stats > * { display: flex; flex-direction: column; font-size: 11px; }
     .forum-profile-avatar { flex-basis: 86px; height: 86px; width: 86px; }
     .forum-post-excerpt { margin-left: 0; }
+    .forum-pagination { justify-content: flex-start; }
+    .forum-pagination nav { justify-content: flex-start; min-width: max-content; }
+    .forum-pagination .pagination { flex-wrap: nowrap; }
+    .forum-pagination .page-link { height: 38px; min-width: 38px; padding: 0 10px; }
 }
