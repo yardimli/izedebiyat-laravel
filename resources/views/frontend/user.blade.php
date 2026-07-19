@@ -1,4 +1,4 @@
-﻿@extends('layouts.app-frontend')
+@extends('layouts.app-frontend')
 
 @section('title', 'İzEdebiyat - ' . $user->name)
 @section('body-class', 'archive')
@@ -186,7 +186,7 @@
 		</main>
 	</section>
 	@auth
-	<div class="modal fade author-pdf-modal" id="authorPdfModal" tabindex="-1" aria-labelledby="authorPdfModalLabel" aria-hidden="true">
+	<div class="modal fade author-pdf-modal" id="authorPdfModal" tabindex="-1" aria-labelledby="authorPdfModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
 		<div class="modal-dialog modal-dialog-centered">
 			<form class="modal-content" id="authorPdfForm" method="GET" action="{{ route('user.pdf', $user->slug) }}">
 				<div class="modal-header">
@@ -194,6 +194,11 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
 				</div>
 				<div class="modal-body">
+					@if($articles->total() > 50)
+						<div class="alert alert-warning small mb-3" role="alert">
+							Bu yazarın {{ $articles->total() }} yazısı var. PDF hazırlama işlemi 5 dakikaya kadar sürebilir; indirme başlayana kadar lütfen bu sayfayı ve pencereyi açık bırakın.
+						</div>
+					@endif
 					<div class="mb-3">
 						<label for="authorPdfOrder" class="form-label">Sıralama</label>
 						<select class="form-select" id="authorPdfOrder" name="order">
@@ -255,6 +260,11 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
 				</div>
 				<div class="modal-body">
+					@if($articles->total() > 50)
+						<div class="alert alert-warning small mb-3" role="alert">
+							Bu yazarın {{ $articles->total() }} yazısı var. PDF hazırlama işlemi 5 dakikaya kadar sürebilir; indirme başlayana kadar lütfen bu sayfayı ve pencereyi açık bırakın.
+						</div>
+					@endif
 					PDF indirmeniz başladı. Dosyayı indirmeler klasörünüzde kontrol edin.
 				</div>
 				<div class="modal-footer">
@@ -273,6 +283,11 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
 				</div>
 				<div class="modal-body">
+					@if($articles->total() > 50)
+						<div class="alert alert-warning small mb-3" role="alert">
+							Bu yazarın {{ $articles->total() }} yazısı var. PDF hazırlama işlemi 5 dakikaya kadar sürebilir; indirme başlayana kadar lütfen bu sayfayı ve pencereyi açık bırakın.
+						</div>
+					@endif
 					PDF indirmek için önce giriş yapmalısınız.
 				</div>
 				<div class="modal-footer">

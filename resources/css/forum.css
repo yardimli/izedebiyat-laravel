@@ -10,7 +10,7 @@
 
 .forum-page { background: var(--forum-surface); }
 .forum-page main { min-height: 62vh; }
-.forum-shell { color: var(--forum-ink); font-family: Inter, "Noto Sans", sans-serif; padding: 42px 0 70px; }
+.forum-shell { color: var(--forum-ink); font-family: Inter, "Noto Sans", sans-serif; min-height: 100vh; padding: 42px 0 70px; }
 .forum-container { width: min(1320px, calc(100% - 40px)); margin: 0 auto; }
 .forum-list-layout { display: grid; grid-template-columns: 245px minmax(0, 1fr); gap: 54px; }
 
