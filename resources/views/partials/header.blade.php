@@ -29,70 +29,38 @@
 </div>
 </div>
 <div class="mobi-menu" style="overflow: auto;">
-	<nav style="text-align: left; padding:10px;">
-		<div class="current-menu-item"><a href="{{ url('/') }}" style="text-transform: uppercase;">Ana Sayfa</a></div>
-		<div class="pl-4 pb-3">
-			<a href="{{ url('/son-eklenenler') }}">Son Eklenenler</a>
-			<br>
-			<a href="{{ url('/yazarlar') }}">Yazarlar</a>
-			<br>
-			<a href="{{ url('/katilim') }}">Katılım</a>
-			<br>
-			<a href="mailto:iletisim@izedebiyat.com">İletişim</a>
-			<br>
-			<a href="{{ url('/yasallik') }}">Yasallık</a>
-			<br>
-			<a href="{{ url('/gizlilik') }}">Saklılık & Gizlilik</a>
-			<br>
-			<a href="{{ url('/yayin-ilkeleri') }}">Yayın İlkeleri</a>
-			<br>
-			<a href="{{ url('/izedebiyat') }}">İzEdebiyat?</a>
-			<br>
-			<a href="{{ url('/sorular') }}">Sıkça Sorulanlar</a>
-			<br>
-			<a href="{{ url('/kunye') }}">Künye</a>
-		</div>
-		
-		@foreach($mainMenuCategories as $category)
-			<div>
-				<a href="{{ url('/kume/' . $category->slug) }}" style="text-transform: uppercase;">
-					{!! $category->category_name !!}
-				</a>
-			</div>
-		@endforeach
-		
-		{{-- MODIFIED: Kitap İzleri menu item and submenu for mobile --}}
-		<div>
-			@if(config('features.kitap_izleri_visible'))
-			<a href="{{ route('frontend.book-reviews.index') }}" style="text-transform: uppercase;">KİTAP İZLERİ</a>
-			@endif
-		</div>
-		<div class="pl-4 pb-3">
-			@if(config('features.kitap_izleri_visible'))
-			<a href="{{ route('frontend.book-reviews.authors') }}">Yazarlar</a>
-			<br>
-			<a href="{{ route('frontend.book-reviews.categories') }}">Kümeler</a>
-			<br>
-			<a href="{{ route('frontend.book-reviews.tags') }}">Etiketler</a>
-			<br>
-			<a href="{{ route('frontend.book-reviews.create-submission') }}">İnceleme için Kitap Gönder</a>
-			<br>
-			@endif
-		</div>
-		
-		<form action="{{ route('search') }}" method="get" class="search-form mt-2" style="border: 1px solid #ccc;">
-			<a href="javascript:void(0)" class="search-toggle" style="padding-left:10px; padding-right:10px;">
-				<i class="bi bi-search"></i>
-			</a>
-			<input type="text" class="search_field" name="q" value="{{ request('q') }}" placeholder="Ara...">
-			<button type="submit" class="btn-info" style="border-radius: 5px; width: 50px;">
-				Bul
-			</button>
-		</form>
-	</nav>
+    <nav class="mobile-mega-menu" aria-label="Mobil ana menü">
+        <details class="mobile-mega-item">
+            <summary><span>ANA SAYFA</span><i class="bi bi-chevron-down"></i></summary>
+            <div class="mobile-mega-panel">@include('partials.mega-menu-content', ['menuType' => 'home'])</div>
+        </details>
+        @foreach($mainMenuCategories as $category)
+            <details class="mobile-mega-item">
+                <summary>
+                    <span>{!! $category->category_name !!}</span>
+                    <span class="mobile-menu-summary-meta"><b>{{ number_format($category->menu_new) }} yeni</b><small>{{ number_format($category->menu_total) }} toplam</small><i class="bi bi-chevron-down"></i></span>
+                </summary>
+                <div class="mobile-mega-panel">@include('partials.mega-menu-content', ['menuType' => 'category', 'menuCategory' => $category])</div>
+            </details>
+        @endforeach
+        @if(config('features.kitap_izleri_visible'))
+            <details class="mobile-mega-item">
+                <summary><span>KİTAP İZLERİ</span><i class="bi bi-chevron-down"></i></summary>
+                <div class="mobile-mega-panel">@include('partials.mega-menu-content', ['menuType' => 'books'])</div>
+            </details>
+        @endif
+        <details class="mobile-mega-item">
+            <summary><span>FORUM</span><i class="bi bi-chevron-down"></i></summary>
+            <div class="mobile-mega-panel">@include('partials.mega-menu-content', ['menuType' => 'forum'])</div>
+        </details>
+        <form action="{{ route('search') }}" method="get" class="mobile-mega-search">
+            <i class="bi bi-search"></i>
+            <input type="search" name="q" value="{{ request('q') }}" placeholder="Eser, yazar veya konu ara..." aria-label="Ara">
+            <button type="submit">Bul</button>
+        </form>
+    </nav>
 </div>
 </div>
-
 <!--Desktop Header-->
 <div id="wrapper">
 	<header id="header" class="d-lg-block d-none">

@@ -1,91 +1,66 @@
-<nav id="main-menu" class="stick d-lg-block d-none">
-	<div class="container">
-		<div class="menu-primary">
-			<ul>
-				<li class="menu-item-has-children current-menu-item">
-					<a href="{{ url('/') }}" style="text-transform: uppercase;">Ana Sayfa</a>
-					<ul class="sub-menu dropdown-menu">
-						<li><a href="{{ url('/son-eklenenler') }}">Son Eklenenler</a></li>
-						<li><a href="{{ url('/yazarlar') }}">Yazarlar</a></li>
-						<li><a href="{{ url('/katilim') }}">Katılım</a></li>
-						<li><a href="mailto:iletisim@izedebiyat.com">İletişim</a></li>
-						<li><a href="{{ url('/yasallik') }}">Yasallık</a></li>
-						<li><a href="{{ url('/gizlilik') }}">Saklılık & Gizlilik</a></li>
-						<li><a href="{{ url('/yayin-ilkeleri') }}">Yayın İlkeleri</a></li>
-						<li><a href="{{ url('/izedebiyat') }}">İzEdebiyat?</a></li>
-						<li><a href="{{ url('/sorular') }}">Sıkça Sorulanlar</a></li>
-						<li><a href="{{ url('/kunye') }}">Künye</a></li>
-					</ul>
-				</li>
-				@foreach($mainMenuCategories as $category)
-					<li class="menu-item-has-children">
-						<a href="{{ url('/kume/' . $category->slug) }}" style="text-transform: uppercase;">
-							{!! $category->category_name !!}
-						</a>
-					</li>
-				@endforeach
-				@if(config('features.kitap_izleri_visible'))
-					<li class="nav-item">
-						<a class="nav-link" href="{{ route('frontend.book-reviews.index') }}">KİTAP İZLERİ</a>
-					</li>
-				@endif
-				<li class="nav-item">
-					<a class="nav-link" href="{{ route('forum.index') }}">FORUM</a>
-				</li>
-			</ul>
-			<span></span>
-		</div>
-	</div>
+<nav id="main-menu" class="stick d-lg-block d-none" aria-label="Ana menü">
+    <div class="container">
+        <div class="menu-primary">
+            <ul class="mega-menu-root">
+                <li class="mega-menu-item current-menu-item">
+                    <a href="{{ route('frontend.index') }}">ANA SAYFA</a>
+                    <button class="mega-menu-toggle" type="button" aria-expanded="false" aria-label="Ana Sayfa menüsünü aç"><i class="bi bi-chevron-down"></i></button>
+                    <div class="mega-menu-panel">@include('partials.mega-menu-content', ['menuType' => 'home'])</div>
+                </li>
+                @foreach($mainMenuCategories as $category)
+                    <li class="mega-menu-item">
+                        <a href="{{ route('frontend.category', $category->slug) }}">
+                            <span>{!! $category->category_name !!}</span>
+                            <span class="mega-menu-nav-stats"><b>{{ number_format($category->menu_new) }}</b><small>/{{ number_format($category->menu_total) }}</small></span>
+                        </a>
+                        <button class="mega-menu-toggle" type="button" aria-expanded="false" aria-label="{{ strip_tags($category->category_name) }} menüsünü aç"><i class="bi bi-chevron-down"></i></button>
+                        <div class="mega-menu-panel">@include('partials.mega-menu-content', ['menuType' => 'category', 'menuCategory' => $category])</div>
+                    </li>
+                @endforeach
+                @if(config('features.kitap_izleri_visible'))
+                    <li class="mega-menu-item">
+                        <a href="{{ route('frontend.book-reviews.index') }}">KİTAP İZLERİ</a>
+                        <button class="mega-menu-toggle" type="button" aria-expanded="false" aria-label="Kitap İzleri menüsünü aç"><i class="bi bi-chevron-down"></i></button>
+                        <div class="mega-menu-panel">@include('partials.mega-menu-content', ['menuType' => 'books'])</div>
+                    </li>
+                @endif
+                <li class="mega-menu-item">
+                    <a href="{{ route('forum.index') }}">FORUM</a>
+                    <button class="mega-menu-toggle" type="button" aria-expanded="false" aria-label="Forum menüsünü aç"><i class="bi bi-chevron-down"></i></button>
+                    <div class="mega-menu-panel">@include('partials.mega-menu-content', ['menuType' => 'forum'])</div>
+                </li>
+            </ul>
+        </div>
+    </div>
 </nav>
+
 @push('scripts')
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			// Function to adjust submenu position
-			function adjustSubmenuPosition() {
-				const submenus = document.querySelectorAll('.sub-menu.dropdown-menu');
-				
-				submenus.forEach(submenu => {
-					// Reset position first
-					submenu.style.left = '';
-					submenu.style.right = '';
-					
-					// Get the submenu bounds
-					const rect = submenu.getBoundingClientRect();
-					const viewportWidth = window.innerWidth;
-					
-					// If submenu extends beyond viewport
-					if (rect.right > viewportWidth) {
-						const overflow = rect.right - viewportWidth;
-						
-						// If parent menu item is one of the last items
-						const parentMenuItem = submenu.parentElement;
-						const parentRect = parentMenuItem.getBoundingClientRect();
-						
-						if (parentRect.right > (viewportWidth * 0.7)) {
-							// Align to the right if parent is towards the right side
-							submenu.style.left = 'auto';
-							submenu.style.right = '0';
-						} else {
-							// Otherwise, shift left by the overflow amount
-							submenu.style.left = `-${overflow + 10}px`;
-						}
-					}
-				});
-			}
-			
-			// Initial adjustment
-			adjustSubmenuPosition();
-			
-			// Adjust on window resize
-			window.addEventListener('resize', adjustSubmenuPosition);
-			
-			// Adjust when hovering menu items (in case of dynamic content)
-			const menuItems = document.querySelectorAll('.menu-item-has-children');
-			menuItems.forEach(item => {
-				item.addEventListener('mouseenter', () => {
-					setTimeout(adjustSubmenuPosition, 0);
-				});
-			});
-		});
-	</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const menu = document.getElementById('main-menu');
+        if (!menu) return;
+        const items = menu.querySelectorAll('.mega-menu-item');
+        const closeMenus = (except) => items.forEach(item => {
+            if (item !== except) item.classList.remove('is-open');
+            const button = item.querySelector('.mega-menu-toggle');
+            if (button && item !== except) button.setAttribute('aria-expanded', 'false');
+        });
+        items.forEach(item => {
+            const button = item.querySelector('.mega-menu-toggle');
+            button?.addEventListener('click', event => {
+                event.stopPropagation();
+                const willOpen = !item.classList.contains('is-open');
+                closeMenus(item);
+                item.classList.toggle('is-open', willOpen);
+                button.setAttribute('aria-expanded', String(willOpen));
+            });
+        });
+        document.addEventListener('click', event => {
+            if (!menu.contains(event.target)) closeMenus();
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') closeMenus();
+        });
+    });
+</script>
 @endpush
