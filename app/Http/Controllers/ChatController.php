@@ -209,7 +209,7 @@
 				];
 
 				$result = MyHelper::llm_no_tool_call(
-					'anthropic/claude-3.7-sonnet:beta',
+					'openai/gpt-5.6-luna',
 					'',
 					$chat_history,
 					false
@@ -272,7 +272,7 @@
 					['role' => 'user', 'content' => $prompt]
 				];
 
-				$result = MyHelper::llm_no_tool_call('anthropic/claude-3.7-sonnet:beta', '', $chat_history, false);
+				$result = MyHelper::llm_no_tool_call('openai/gpt-5.6-luna', '', $chat_history, false);
 
 				if ($result['error']) {
 					Log::error('Error in Description call: ' . $result['content']);
@@ -302,7 +302,7 @@
 					['role' => 'user', 'content' => $prompt]
 				];
 
-				$result = MyHelper::llm_no_tool_call('anthropic/claude-3.7-sonnet:beta', '', $chat_history, false);
+				$result = MyHelper::llm_no_tool_call('openai/gpt-5.6-luna', '', $chat_history, false);
 
 				if ($result['error']) {
 					Log::error('Error in Keywords call: ' . $result['content']);
@@ -330,7 +330,7 @@
         Output JSON as: ``` { \"categories\": [\"category1\", \"category2\"] } ```";
 
 			$llm_result = MyHelper::llm_no_tool_call(
-				'openai/gpt-4.1-mini',
+				'openai/gpt-5.6-luna',
 				'',
 				[['role' => 'user', 'content' => $prompt]],
 				true
@@ -351,7 +351,7 @@
         Output JSON as: ``` { \"keywords\": [\"keyword1\", \"keyword2\", \"keyword3\"] } ```";
 
 			$llm_result = MyHelper::llm_no_tool_call(
-				'openai/gpt-4.1-mini',
+				'openai/gpt-5.6-luna',
 				'',
 				[['role' => 'user', 'content' => $prompt]],
 				true

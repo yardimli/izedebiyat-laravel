@@ -704,7 +704,7 @@
 					$counter++;
 
 					$llm_result = self::llm_no_tool_call(
-						'openai/gpt-4.1-mini',
+						'openai/gpt-5.6-luna',
 						'',
 						[[
 							'role' => 'user',
@@ -784,7 +784,7 @@
 					$article_text = implode(' ', array_slice($article_words, 0, 1000));
 
 					$llm_result = self::llm_no_tool_call(
-						'openai/gpt-4.1-mini', //google/gemini-flash-1.5-8b
+						'openai/gpt-5.6-luna', //google/gemini-flash-1.5-8b
 						'',
 						[[
 							'role' => 'user',
@@ -1167,7 +1167,7 @@
 					}
 
 					$llm_result = self::llm_no_tool_call(
-						'openai/gpt-4.1-mini', //google/gemini-flash-1.5-8b
+						'openai/gpt-5.6-luna', //google/gemini-flash-1.5-8b
 						'',
 						[['role' => 'user', 'content' => "
 	take the following Turkish text and output the most meaningful 5 keywords that describe the text then do sentiment analysis on the text. the sentiment analysis should choose one of the following:
@@ -1459,7 +1459,7 @@ output in Turkish, output JSON as:
 							$prompt = "Bugün {$dateTimeString}. Bu tarihe veya güne özel olarak, edebiyat, felsefe, sanat ya da bilim dünyasından bir kişinin söylemiş olduğu çarpıcı, düşündürücü veya ilham verici bir söz paylaş. Eğer mümkünse, bu sözü mizahi, nükteli, alaycı veya hiciv içeren bir tarzda seç - yazarlara ve okurlara hitap edecek türden olsun. Söz gerçek bir alıntı olabileceği gibi, o kişinin söylemiş olabileceği kurgusal bir söz de olabilir. Yanıt olarak sadece sözü ve kime ait olduğunu belirt, fazladan açıklama yapma.";
 
 							$llm_result = self::llm_no_tool_call(
-								'google/gemini-2.5-flash', // Or your chosen model
+								'openai/gpt-5.6-luna', // Or your chosen model
 								'', // System prompt (optional)
 								[['role' => 'user', 'content' => $prompt]],
 								false // We want plain text
@@ -1555,40 +1555,10 @@ output in Turkish, output JSON as:
 			set_time_limit(300);
 			session_write_close();
 
-			if ($llm === 'anthropic-haiku') {
-				$llm_base_url = env('ANTHROPIC_HAIKU_BASE');
-				$llm_api_key = env('ANTHROPIC_KEY');
-				$llm_model = env('ANTHROPIC_HAIKU_MODEL');
+			$llm_base_url = env('OPEN_ROUTER_BASE');
+			$llm_api_key = env('OPEN_ROUTER_KEY');
+			$llm_model = $llm ?? 'openai/gpt-5.6-luna';
 
-			} else if ($llm === 'anthropic-sonet') {
-				$llm_base_url = env('ANTHROPIC_SONET_BASE');
-				$llm_api_key = env('ANTHROPIC_KEY');
-				$llm_model = env('ANTHROPIC_SONET_MODEL');
-
-			} else if ($llm === 'open-ai-gpt-4o') {
-				$llm_base_url = env('OPEN_AI_GPT4_BASE');
-				$llm_api_key = env('OPEN_AI_API_KEY');
-				$llm_model = env('OPEN_AI_GPT4_MODEL');
-
-			} else if ($llm === 'open-ai-gpt-4o-mini') {
-				$llm_base_url = env('OPEN_AI_GPT4_MINI_BASE');
-				$llm_api_key = env('OPEN_AI_API_KEY');
-				$llm_model = env('OPEN_AI_GPT4_MINI_MODEL');
-			} else {
-				$llm_base_url = env('OPEN_ROUTER_BASE');
-				$llm_api_key = env('OPEN_ROUTER_KEY');
-				$llm_model = $llm;
-			}
-
-
-			if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
-			} else {
-				$chat_messages = [[
-					'role' => 'system',
-					'content' => $system_prompt],
-					...$chat_messages
-				];
-			}
 
 			$temperature = 0.8;
 			$max_tokens = 8096;
@@ -1599,37 +1569,10 @@ output in Turkish, output JSON as:
 				'temperature' => $temperature,
 				'max_tokens' => $max_tokens,
 				'top_p' => 1,
-				'frequency_penalty' => 0,
-				'presence_penalty' => 0,
-				'n' => 1,
 				'stream' => false
 			);
 
-			if ($llm === 'open-ai-gpt-4o' || $llm === 'open-ai-gpt-4o-mini') {
-				$data['max_tokens'] = 4096;
-				$data['temperature'] = 1;
-			} else if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
-				$data['max_tokens'] = 8096;
-				unset($data['frequency_penalty']);
-				unset($data['presence_penalty']);
-				unset($data['n']);
-				$data['system'] = $system_prompt;
-			} else {
-				$data['max_tokens'] = 8096;
-				if (stripos($llm_model, 'anthropic') !== false) {
-					unset($data['frequency_penalty']);
-					unset($data['presence_penalty']);
-					unset($data['n']);
-				} else if (stripos($llm_model, 'openai') !== false) {
-					$data['temperature'] = 1;
-				} else if (stripos($llm_model, 'google') !== false) {
-					$data['stop'] = [];
-				} else {
-					unset($data['frequency_penalty']);
-					unset($data['presence_penalty']);
-					unset($data['n']);
-				}
-			}
+			$data['max_tokens'] = 8096;
 
 			Log::info('GPT NO TOOL USE: ' . $llm_base_url . ' (' . $llm . ')');
 			Log::info($data);
@@ -1644,16 +1587,10 @@ output in Turkish, output JSON as:
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_json);
 
 			$headers = array();
-			if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
-				$headers[] = "x-api-key: " . $llm_api_key;
-				$headers[] = 'anthropic-version: 2023-06-01';
-				$headers[] = 'content-type: application/json';
-			} else {
-				$headers[] = 'Content-Type: application/json';
-				$headers[] = "Authorization: Bearer " . $llm_api_key;
-				$headers[] = "HTTP-Referer: https://izedebiyat.com";
-				$headers[] = "X-Title: IzEdebiyat";
-			}
+			$headers[] = 'Content-Type: application/json';
+			$headers[] = "Authorization: Bearer " . $llm_api_key;
+			$headers[] = "HTTP-Referer: https://izedebiyat.com";
+			$headers[] = "X-Title: IzEdebiyat";
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
 			$complete = curl_exec($ch);
@@ -1674,29 +1611,19 @@ output in Turkish, output JSON as:
 			$prompt_tokens = 0;
 			$completion_tokens = 0;
 
-			if ($llm === 'open-ai-gpt-4o' || $llm === 'open-ai-gpt-4o-mini') {
+			if (isset($complete_rst['error'])) {
+				Log::info('================== ERROR =====================');
+				Log::info($complete_rst);
+				Log::info($complete_rst['error']['message']);
+				return array('error' => true, 'content' => $complete_rst['error']['message'], 'prompt_tokens' => 0, 'completion_tokens' => 0);
+			}
+
+			if (isset($complete_rst['choices'][0]['message']['content'])) {
 				$content = $complete_rst['choices'][0]['message']['content'];
 				$prompt_tokens = $complete_rst['usage']['prompt_tokens'] ?? 0;
 				$completion_tokens = $complete_rst['usage']['completion_tokens'] ?? 0;
-			} else if ($llm === 'anthropic-haiku' || $llm === 'anthropic-sonet') {
-				$content = $complete_rst['content'][0]['text'];
-				$prompt_tokens = $complete_rst['usage']['prompt_tokens'] ?? 0;
-				$completion_tokens = $complete_rst['usage']['completion_tokens'] ?? 0;
 			} else {
-				if (isset($complete_rst['error'])) {
-					Log::info('================== ERROR =====================');
-					Log::info($complete_rst);
-					Log::info($complete_rst['error']['message']);
-					return array('error' => true, 'content' => $complete_rst['error']['message'], 'prompt_tokens' => 0, 'completion_tokens' => 0);
-				}
-
-				if (isset($complete_rst['choices'][0]['message']['content'])) {
-					$content = $complete_rst['choices'][0]['message']['content'];
-					$prompt_tokens = $complete_rst['usage']['prompt_tokens'] ?? 0;
-					$completion_tokens = $complete_rst['usage']['completion_tokens'] ?? 0;
-				} else {
-					$content = '';
-				}
+				$content = '';
 			}
 
 			if (!$return_json) {
