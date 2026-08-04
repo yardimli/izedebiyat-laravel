@@ -32,7 +32,6 @@
         </section>
     @elseif($menuType === 'category')
         <section class="mega-menu-column mega-menu-intro">
-            <span class="mega-menu-eyebrow">Eser kümesi</span>
             <h3>{!! $menuCategory->category_name !!}</h3>
             <p>
                 <strong>{{ number_format($menuCategory->menu_total) }}</strong> eser
