@@ -12,9 +12,6 @@
 				@if($article->parent_category_name || $article->category_name)
 					· {{ $article->parent_category_name }}@if($article->parent_category_name && $article->category_name) / @endif{{ $article->category_name }}
 				@endif
-				@if($includeReadCount)
-					· {{ (int)$article->read_count }} okunma
-				@endif
 			</div>
 		</li>
 	@endforeach

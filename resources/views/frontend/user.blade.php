@@ -228,11 +228,6 @@
 						<input class="form-check-input" type="checkbox" value="1" id="authorPdfIncludeToc" name="include_toc" checked>
 						<label class="form-check-label" for="authorPdfIncludeToc">İçindekiler eklensin</label>
 					</div>
-					<div class="form-check mb-3">
-						<input type="hidden" name="include_read_count" value="0">
-						<input class="form-check-input" type="checkbox" value="1" id="authorPdfIncludeReadCount" name="include_read_count" checked>
-						<label class="form-check-label" for="authorPdfIncludeReadCount">Okunma sayısı eklensin</label>
-					</div>
 					<div id="authorPdfProgress" class="d-none">
 						<div class="small text-muted mb-2">PDF hazırlanıyor, lütfen bekleyin...</div>
 						<div class="progress">

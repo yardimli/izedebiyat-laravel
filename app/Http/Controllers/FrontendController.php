@@ -571,16 +571,14 @@
 				'layout' => 'nullable|in:a4_portrait,a5_portrait,a4_landscape_columns',
 				'margin' => 'nullable|in:small,medium,large',
 				'include_toc' => 'nullable|boolean',
-				'include_read_count' => 'nullable|boolean',
 			]);
 
 			$order = $validated['order'] ?? 'first';
 			$layout = $validated['layout'] ?? 'a4_portrait';
 			$margin = $validated['margin'] ?? 'medium';
 			$includeToc = $request->boolean('include_toc', true);
-			$includeReadCount = $request->boolean('include_read_count', true);
 
-			$query = Article::select('id', 'title', 'subheading', 'category_name', 'parent_category_name', 'created_at', 'read_count', 'main_text')
+			$query = Article::select('id', 'title', 'subheading', 'category_name', 'parent_category_name', 'created_at', 'main_text')
 				->where('user_id', $user->id)
 				->where('approved', 1)
 				->where('is_published', 1)
@@ -656,7 +654,6 @@
 				'articles' => $articles,
 				'dateRange' => $dateRange,
 				'exportedAt' => $exportedAt,
-				'includeReadCount' => $includeReadCount,
 				'logoPath' => $logoPath,
 			])->render(), HTMLParserMode::HTML_BODY);
 
@@ -668,7 +665,6 @@
 				$this->writePdfHtml($mpdf, view('pdfs.author_toc', [
 					'user' => $user,
 					'articles' => $articles,
-					'includeReadCount' => $includeReadCount,
 				])->render(), HTMLParserMode::HTML_BODY);
 			}
 
@@ -689,7 +685,6 @@
 				foreach ($articles as $index => $article) {
 					$this->writePdfHtml($mpdf, view('pdfs.author_entry', [
 						'article' => $article,
-						'includeReadCount' => $includeReadCount,
 						'compactEntry' => true,
 					])->render(), HTMLParserMode::HTML_BODY);
 
@@ -704,7 +699,6 @@
 					$mpdf->AddPage();
 					$this->writePdfHtml($mpdf, view('pdfs.author_entry', [
 						'article' => $article,
-						'includeReadCount' => $includeReadCount,
 						'compactEntry' => false,
 					])->render(), HTMLParserMode::HTML_BODY);
 				}

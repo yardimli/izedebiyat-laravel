@@ -18,9 +18,6 @@
 			@endif
 		</p>
 		<p>Dışa aktarma tarihi: {{ $exportedAt }}</p>
-		@if($includeReadCount)
-			<p>Yazı bilgilerinde okunma sayıları yer almaktadır.</p>
-		@endif
 	</div>
 
 	<p>Bu derleme okuma kolaylığı için hazırlanmıştır. Metinlerin tüm hakları yazarına aittir.</p>
