@@ -34,7 +34,13 @@
         <section class="mega-menu-column mega-menu-intro">
             <span class="mega-menu-eyebrow">Eser kümesi</span>
             <h3>{!! $menuCategory->category_name !!}</h3>
-            <p><strong>{{ number_format($menuCategory->menu_total) }}</strong> eser@if($menuCategory->menu_new > 0), son 3 ayda <strong>{{ number_format($menuCategory->menu_new) }}</strong> yeni eser@endif.</p>
+            <p>
+                <strong>{{ number_format($menuCategory->menu_total) }}</strong> eser
+                @if($menuCategory->menu_new > 0)
+                    , son 3 ayda <strong>{{ number_format($menuCategory->menu_new) }}</strong> yeni eser
+                @endif
+                .
+            </p>
             <div class="mega-menu-actions">
                 <a href="{{ route('frontend.category', $menuCategory->slug) }}">Tümünü gör</a>
                 <a href="{{ route('frontend.recent-articles-by-category', $menuCategory->slug) }}">En yeniler</a>
@@ -46,7 +52,12 @@
                 @forelse($menuCategory->subCategories as $subCategory)
                     <a href="{{ route('frontend.subcategory', [$menuCategory->slug, $subCategory->slug]) }}">
                         <span>{!! $subCategory->category_name !!}</span>
-                        <small>@if($subCategory->menu_new > 0)<b>{{ number_format($subCategory->menu_new) }} yeni</b> · @endif{{ number_format($subCategory->menu_total) }} toplam</small>
+                        <small>
+                            @if($subCategory->menu_new > 0)
+                                <b>{{ number_format($subCategory->menu_new) }} yeni</b> ·
+                            @endif
+                            {{ number_format($subCategory->menu_total) }} toplam
+                        </small>
                     </a>
                 @empty
                     <span class="mega-menu-empty">Bu kümede alt küme yok.</span>

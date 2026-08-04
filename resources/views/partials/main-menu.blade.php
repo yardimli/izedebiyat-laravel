@@ -11,7 +11,13 @@
                     <li class="mega-menu-item">
                         <a href="{{ route('frontend.category', $category->slug) }}">
                             <span>{!! $category->category_name !!}</span>
-                            <span class="mega-menu-nav-stats">@if($category->menu_new > 0)<b>{{ number_format($category->menu_new) }}</b><small>/{{ number_format($category->menu_total) }}</small>@else<small>{{ number_format($category->menu_total) }}</small>@endif</span>
+                            <span class="mega-menu-nav-stats">
+                                @if($category->menu_new > 0)
+                                    <b>{{ number_format($category->menu_new) }}</b><small>/{{ number_format($category->menu_total) }}</small>
+                                @else
+                                    <small>{{ number_format($category->menu_total) }}</small>
+                                @endif
+                            </span>
                         </a>
                         <button class="mega-menu-toggle" type="button" aria-expanded="false" aria-label="{{ strip_tags($category->category_name) }} menüsünü aç"><i class="bi bi-chevron-down"></i></button>
                         <div class="mega-menu-panel">@include('partials.mega-menu-content', ['menuType' => 'category', 'menuCategory' => $category])</div>
