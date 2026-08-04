@@ -38,7 +38,7 @@
             <details class="mobile-mega-item">
                 <summary>
                     <span>{!! $category->category_name !!}</span>
-                    <span class="mobile-menu-summary-meta"><b>{{ number_format($category->menu_new) }} yeni</b><small>{{ number_format($category->menu_total) }} toplam</small><i class="bi bi-chevron-down"></i></span>
+                    <span class="mobile-menu-summary-meta">@if($category->menu_new > 0)<b>{{ number_format($category->menu_new) }} yeni</b>@endif<small>{{ number_format($category->menu_total) }} toplam</small><i class="bi bi-chevron-down"></i></span>
                 </summary>
                 <div class="mobile-mega-panel">@include('partials.mega-menu-content', ['menuType' => 'category', 'menuCategory' => $category])</div>
             </details>

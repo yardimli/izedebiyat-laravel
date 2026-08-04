@@ -12,7 +12,7 @@ use Illuminate\View\View;
 
 class MainMenuComposer
 {
-    public const CACHE_KEY = 'frontend.mega-menu.v1';
+    public const CACHE_KEY = 'frontend.mega-menu.v2';
 
     public function compose(View $view): void
     {
@@ -24,12 +24,12 @@ class MainMenuComposer
 
             $totalByParent = $articleQuery()->selectRaw('parent_category_id, COUNT(*) as aggregate')
                 ->groupBy('parent_category_id')->pluck('aggregate', 'parent_category_id');
-            $newByParent = $articleQuery()->where('created_at', '>=', now()->subDays(30))
+            $newByParent = $articleQuery()->where('created_at', '>=', now()->subMonths(3))
                 ->selectRaw('parent_category_id, COUNT(*) as aggregate')
                 ->groupBy('parent_category_id')->pluck('aggregate', 'parent_category_id');
             $totalByCategory = $articleQuery()->selectRaw('category_id, COUNT(*) as aggregate')
                 ->groupBy('category_id')->pluck('aggregate', 'category_id');
-            $newByCategory = $articleQuery()->where('created_at', '>=', now()->subDays(30))
+            $newByCategory = $articleQuery()->where('created_at', '>=', now()->subMonths(3))
                 ->selectRaw('category_id, COUNT(*) as aggregate')
                 ->groupBy('category_id')->pluck('aggregate', 'category_id');
 
@@ -42,7 +42,17 @@ class MainMenuComposer
                     $subCategory->menu_total = (int) ($totalByCategory[$subCategory->id] ?? 0);
                     $subCategory->menu_new = (int) ($newByCategory[$subCategory->id] ?? 0);
                 }
+
+                $category->setRelation('subCategories', $category->subCategories
+                    ->sort(fn ($a, $b) => $b->menu_new <=> $a->menu_new
+                        ?: strcasecmp(strip_tags($a->category_name), strip_tags($b->category_name)))
+                    ->values());
             }
+
+            $categories = $categories
+                ->sort(fn ($a, $b) => $b->menu_new <=> $a->menu_new
+                    ?: strcasecmp(strip_tags($a->category_name), strip_tags($b->category_name)))
+                ->values();
 
             $recentArticles = $articleQuery()->latest('created_at')->limit(5)
                 ->get(['id', 'title', 'slug', 'created_at']);
