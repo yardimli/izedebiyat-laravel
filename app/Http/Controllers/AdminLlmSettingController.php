@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\MyHelper;
 use App\Models\LlmSetting;
+use App\Services\OpenRouterModelCatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class AdminLlmSettingController extends Controller
@@ -18,22 +19,23 @@ class AdminLlmSettingController extends Controller
         });
     }
 
-    public function edit()
+    public function edit(OpenRouterModelCatalog $catalog)
     {
         return view('backend.llm-settings', [
             'setting' => LlmSetting::current(),
-            'models' => MyHelper::checkLLMsJson(false),
+            'models' => $catalog->all(),
         ]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, OpenRouterModelCatalog $catalog)
     {
+        $modelIds = array_column($catalog->all(), 'id');
         $data = $request->validate([
-            'frontend_model' => ['required', 'string', 'max:255'],
-            'backend_model' => ['required', 'string', 'max:255'],
-            'cron_model' => ['required', 'string', 'max:255'],
+            'frontend_model' => ['required', 'string', Rule::in($modelIds)],
+            'backend_model' => ['required', 'string', Rule::in($modelIds)],
+            'cron_model' => ['required', 'string', Rule::in($modelIds)],
             'allowed_frontend_models' => ['required', 'array', 'min:1'],
-            'allowed_frontend_models.*' => ['string', 'max:255', 'distinct'],
+            'allowed_frontend_models.*' => ['string', 'distinct', Rule::in($modelIds)],
         ]);
 
         if (!in_array($data['frontend_model'], $data['allowed_frontend_models'], true)) {

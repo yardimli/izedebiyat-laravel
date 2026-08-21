@@ -503,6 +503,12 @@
 			usort($filtered_llms, function ($a, $b) {
 				return strcmp($a['name'], $b['name']);
 			});
+			usort($filtered_llms, function ($a, $b) {
+				$aCost = (float) ($a['pricing']['prompt'] ?? 0) + (float) ($a['pricing']['completion'] ?? 0);
+				$bCost = (float) ($b['pricing']['prompt'] ?? 0) + (float) ($b['pricing']['completion'] ?? 0);
+
+				return $aCost <=> $bCost ?: strcmp($a['name'] ?? '', $b['name'] ?? '');
+			});
 
 			//for each llm with score 0 sort them alphabetically
 			return array_values($filtered_llms);
