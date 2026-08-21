@@ -3,6 +3,7 @@
 	namespace App\Helpers;
 
 	use App\Models\Article;
+	use App\Models\LlmSetting;
 	use App\Models\Keyword;
 	use App\Models\SentencesTable;
 	use App\Models\User;
@@ -394,6 +395,7 @@
 
 		public static function checkLLMsJson()
 		{
+			$applyFrontendAllowList = func_num_args() === 0 || func_get_arg(0) !== false;
 			$llmsJsonPath = Storage::disk('public')->path('llms.json');
 
 			if (!File::exists($llmsJsonPath) || Carbon::now()->diffInDays(Carbon::createFromTimestamp(File::lastModified($llmsJsonPath))) > 1) {
@@ -490,6 +492,14 @@
 			});
 
 
+			if ($applyFrontendAllowList) {
+				$allowed = LlmSetting::current()->allowed_frontend_models;
+				if (!empty($allowed)) {
+					$filtered_llms = array_filter($filtered_llms, fn ($model) =>
+						in_array($model['id'] ?? '', $allowed, true)
+					);
+				}
+			}
 			usort($filtered_llms, function ($a, $b) {
 				return strcmp($a['name'], $b['name']);
 			});
@@ -1558,6 +1568,14 @@ output in Turkish, output JSON as:
 			$llm_base_url = env('OPEN_ROUTER_BASE');
 			$llm_api_key = env('OPEN_ROUTER_KEY');
 			$llm_model = $llm ?? 'openai/gpt-5.6-luna';
+
+			$caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1] ?? [];
+			if (($llm === null || $llm === config('llm.backend_model')) && ($caller['function'] ?? '') !== 'sendLlmPrompt') {
+				$llm_model = LlmSetting::modelFor(app()->runningInConsole() ? 'cron' : 'backend');
+			}
+			if (!$llm_model) {
+				$llm_model = LlmSetting::modelFor(app()->runningInConsole() ? 'cron' : 'backend');
+			}
 
 
 			$temperature = 0.8;

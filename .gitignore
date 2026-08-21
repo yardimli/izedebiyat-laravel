@@ -51,3 +51,5 @@ public/deniz/grenser.php
 public/deniz/grenser.php
 izedebiyat.zip
 /storage/app/mpdf
+storage/app/legacy-forum-import.sql
+app/Console/Commands/ExportLegacyForumSql.php

@@ -3,6 +3,7 @@
 	namespace App\Http\Controllers;
 
 	use App\Helpers\MyHelper;
+	use App\Models\LlmSetting;
 	use App\Models\Category;
 	use App\Models\ChatMessage;
 	use App\Models\ChatSession;
@@ -78,6 +79,18 @@
 			$userPrompt = $request->input('user_prompt');
 			$sessionId = $request->input('session_id');
 			$llm = $request->input('llm');
+			$llmSetting = LlmSetting::current();
+			$llm = $llm ?: $llmSetting->frontend_model;
+			if (!$llmSetting->frontendModelIsAllowed($llm)) {
+				return response()->json([
+					'success' => false,
+					'message' => "Bu model y\u{00F6}netici taraf\u{0131}ndan kullan\u{0131}ma a\u{00E7}\u{0131}lmam\u{0131}\u{015F}.",
+				], 422);
+				return response()->json([
+					'success' => false,
+					'message' => 'Bu model y”netici tarafindan kullanima a‡ilmamis.',
+				], 422);
+			}
 
 			$chatSession = ChatSession::where('session_id', $sessionId)
 				->where('user_id', Auth::id())

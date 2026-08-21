@@ -66,9 +66,13 @@
 @push('scripts')
 	<!-- Inline JavaScript code -->
 	<script>
+		const configuredDefaultLlm = @json(\App\Models\LlmSetting::modelFor('frontend'));
 		let savedLlm = localStorage.getItem('chat-llm') || 'anthropic/claude-3.5-haiku:beta';
 		if (savedLlm === 'null') {
 			savedLlm = 'anthropic/claude-3.5-haiku:beta';
+		}
+		if (!localStorage.getItem('chat-llm')) {
+			savedLlm = configuredDefaultLlm;
 		}
 		let sessionId = null;
 		
@@ -229,6 +233,10 @@
 				});
 				
 				// Set the saved LLM if it exists
+				const availableModelIds = llmsData.map(model => model.id);
+				if (!availableModelIds.includes(savedLlm)) {
+					savedLlm = availableModelIds.includes(configuredDefaultLlm) ? configuredDefaultLlm : availableModelIds[0];
+				}
 				if (savedLlm) {
 					llmSelect.val(savedLlm);
 				}

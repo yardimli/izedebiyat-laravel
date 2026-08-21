@@ -13,6 +13,8 @@
 	use App\Http\Controllers\LangController;
 	use App\Http\Controllers\ForumController;
 	use App\Http\Controllers\AdminForumController;
+	use App\Http\Controllers\AdminQuoteController;
+	use App\Http\Controllers\AdminLlmSettingController;
 	use App\Http\Controllers\LoginWithGoogleController;
 	use App\Http\Controllers\UserController;
 	use App\Http\Controllers\UserSettingsController;
@@ -363,6 +365,10 @@
 		Route::post('/book-reviews/generate-category', [ChatController::class, 'generateBookCategory'])->name('book-reviews.generate-category');
 		Route::post('/book-reviews/generate-keywords', [ChatController::class, 'generateBookKeywords'])->name('book-reviews.generate-keywords');
 		Route::resource('admin/book-authors', BookAuthorController::class);
+		Route::resource('admin/quotes', AdminQuoteController::class)->except('show')->names('admin.quotes');
+		Route::post('/admin/quotes/generate', [AdminQuoteController::class, 'generate'])->name('admin.quotes.generate');
+		Route::get('/admin/llm-settings', [AdminLlmSettingController::class, 'edit'])->name('admin.llm-settings.edit');
+		Route::put('/admin/llm-settings', [AdminLlmSettingController::class, 'update'])->name('admin.llm-settings.update');
 
 
 		Route::prefix('admin/forum')->name('admin.forum.')->group(function () {

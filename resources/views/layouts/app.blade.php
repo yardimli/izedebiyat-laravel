@@ -200,6 +200,7 @@ Header START -->
 					@endif
 					@if (Auth::check())
 						@if (Auth::user()->member_type === 1)
+							@if(false)
 							<li class="nav-item">
 								<a class="nav-link" href="{{route('admin-users-index')}}">Kul</a>
 							</li>
@@ -220,6 +221,39 @@ Header START -->
 								<a class="nav-link {{ request()->routeIs('admin.forum.*') ? 'active' : '' }}" href="{{ route('admin.forum.index') }}">Forum</a>
 							</li>
 							{{-- END ADDED --}}
+							@endif
+							@if(false)
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle {{ request()->routeIs('admin.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Y馬etim</a>
+								<ul class="dropdown-menu">
+									<li><a class="dropdown-item" href="{{ route('admin-users-index') }}">Kullanici Y馬etimi</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.articles.index') }}">Yazi Y馬etimi</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.read-cleanup.index') }}">Okuma Kayitlarini Temizleme</a></li>
+									<li><a class="dropdown-item" href="{{ route('book-reviews.index') }}">Kitap Incelemeleri</a></li>
+									<li><a class="dropdown-item" href="{{ route('book-authors.index') }}">Kitap Yazarlari</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.forum.index') }}">Forum Y馬etimi</a></li>
+									<li><hr class="dropdown-divider"></li>
+									<li><a class="dropdown-item" href="{{ route('admin.quotes.index') }}">Edebiyat Alintilari</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.llm-settings.edit') }}">LLM Ayarlari</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.account-recovery.index') }}">Hesap Kurtarma Talepleri</a></li>
+								</ul>
+							</li>
+							@endif
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle {{ request()->routeIs('admin.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Y&#246;netim</a>
+								<ul class="dropdown-menu">
+									<li><a class="dropdown-item" href="{{ route('admin-users-index') }}">Kullan&#305;c&#305; Y&#246;netimi</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.articles.index') }}">Yaz&#305; Y&#246;netimi</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.read-cleanup.index') }}">Okuma Kay&#305;tlar&#305;n&#305; Temizleme</a></li>
+									<li><a class="dropdown-item" href="{{ route('book-reviews.index') }}">Kitap &#304;ncelemeleri</a></li>
+									<li><a class="dropdown-item" href="{{ route('book-authors.index') }}">Kitap Yazarlar&#305;</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.forum.index') }}">Forum Y&#246;netimi</a></li>
+									<li><hr class="dropdown-divider"></li>
+									<li><a class="dropdown-item" href="{{ route('admin.quotes.index') }}">Edebiyat Al&#305;nt&#305;lar&#305;</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.llm-settings.edit') }}">LLM Ayarlar&#305;</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.account-recovery.index') }}">Hesap Kurtarma Talepleri</a></li>
+								</ul>
+							</li>
 						@endif
 					@endif
 				
