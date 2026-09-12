@@ -2418,3 +2418,7 @@ body:has(#workspace) dialog {
 .site-header .writer-brand .dark-mode-item { display: none; }
 html[data-theme="dark"] .site-header .writer-brand .light-mode-item { display: none; }
 html[data-theme="dark"] .site-header .writer-brand .dark-mode-item { display: block; }
+
+.book-manage-actions { align-items: end; justify-content: space-between; flex-wrap: wrap; }
+.book-manage-actions label { margin: 0; font-size: 12px; }
+.book-manage-actions select { margin-top: 4px; padding: 4px 9px; }

@@ -50,6 +50,45 @@ class WriterIntegrationTest extends WriterTestCase
         $this->assertSame('App\\Http\\Controllers\\CommentController@store', app('router')->getRoutes()->getByName('comments.store')->getActionName());
     }
 
+    public function test_featured_image_paths_are_not_prefixed_twice_and_generated_images_are_owner_scoped(): void
+    {
+        $user = User::factory()->create();
+        $book = $this->book($user);
+        $path = '/storage/upload-images/medium/3867c900_medium.jfif';
+        $book->featured_image = $path;
+        foreach (['getOriginalUrl', 'getLargeUrl', 'getMediumUrl', 'getSmallUrl'] as $method) {
+            $this->assertSame(asset(ltrim($path, '/')), $book->$method());
+        }
+        $book->featured_image = 'https://www.izedebiyat.com'.$path;
+        $this->assertSame($book->featured_image, $book->getOriginalUrl());
+        $book->featured_image = 'upload.jpg';
+        $this->assertSame(asset('storage/upload-images/original/upload.jpg'), $book->getOriginalUrl());
+        $image = \App\Models\Image::create(['user_id' => $user->id, 'image_type' => 'generated', 'image_guid' => 'image-guid', 'image_alt' => '', 'image_original_filename' => 'ai.jpg', 'image_large_filename' => 'ai_large.jpg', 'image_medium_filename' => 'ai_medium.jpg', 'image_small_filename' => 'ai_small.jpg']);
+        $url = '/yazi-atolyesi/api/books/'.$book->id;
+        $this->actingAs($user)->patchJson($url, ['revision' => 1, 'featured_image' => '/storage/ai-images/medium/ai_medium.jpg'])->assertOk();
+        $this->assertSame(asset('storage/ai-images/medium/ai_medium.jpg'), $book->fresh()->getOriginalUrl());
+        $this->patchJson($url, ['revision' => 2, 'featured_image' => 'https://unrelated.example/storage/ai-images/medium/ai_medium.jpg'])->assertUnprocessable();
+        $image->update(['user_id' => User::factory()->create()->id]);
+        $this->patchJson($url, ['revision' => 2, 'featured_image' => '/storage/ai-images/large/ai_large.jpg'])->assertUnprocessable();
+    }
+
+    public function test_dashboard_publication_requires_category_and_details_save_preserves_publication(): void
+    {
+        $user = User::factory()->create();
+        $book = $this->book($user);
+        $url = '/yazi-atolyesi/api/books/'.$book->id;
+        $this->actingAs($user)->patchJson($url, ['revision' => 1, 'is_published' => true])->assertUnprocessable();
+        $parent = Category::create(['category_name' => 'Edebiyat', 'slug' => 'edebiyat']);
+        $category = Category::create(['category_name' => 'Deneme', 'slug' => 'deneme', 'parent_category_id' => $parent->id]);
+        $this->patchJson($url, ['revision' => 1, 'category_id' => $category->id])->assertOk();
+        $this->patchJson($url, ['revision' => 2, 'is_published' => true])->assertOk();
+        $this->patchJson($url, ['revision' => 3, 'subtitle' => 'Yeni alt başlık'])->assertOk();
+        $this->assertTrue($book->fresh()->is_published);
+        $this->patchJson($url, ['revision' => 3, 'is_published' => false])->assertConflict();
+        $this->patchJson($url, ['revision' => 4, 'is_published' => false])->assertOk();
+        $this->assertFalse($book->fresh()->is_published);
+    }
+
     private function book(User $user): Book
     {
         return Book::create(['user_id' => $user->id, 'title' => 'Türkçe eser', 'document' => Manuscript::fromText('İlk metin'), 'codex_types' => ['People']]);

@@ -9,6 +9,9 @@ const server=http.createServer(async(req,res)=>{
  if(pathname.endsWith('/api/models'))return json({data:[model],refreshed_at:new Date().toISOString()});
  if(pathname.endsWith('/api/countries'))return json([{code:'TR',name:'Türkiye'}]);
  if(pathname==='/yazi-atolyesi/account')return json({saved:true});
+ if(pathname.endsWith('/publication-ai/category'))return json({category_id:state.book.category_id});
+ if(pathname.endsWith('/publication-ai/keywords'))return json({keywords_string:'deniz, umut'});
+ if(req.method==='POST'&&pathname==='/image-gen')return json({success:true,image_medium_filename:'generated_medium.jpg'});
  if(pathname==='/yazi-atolyesi/api/books/1'){
   if(req.method==='PATCH'){let body='';for await(const chunk of req)body+=chunk;const data=JSON.parse(body);saves.push(data);state.book={...state.book,...data,revision:state.book.revision+1};return json({revision:state.book.revision});}
   return json(state);
@@ -19,11 +22,22 @@ const server=http.createServer(async(req,res)=>{
 (async()=>{await new Promise(resolve=>server.listen(8123,'127.0.0.1',resolve));let browser;try{
  browser=await chromium.launch({channel:'chrome',headless:true});const page=await browser.newPage({viewport:{width:1440,height:1000}});page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:8123/eserlerim');await page.locator('.book-card').waitFor();await page.screenshot({path:path.join(root,'library.png'),fullPage:true});
+ if(await page.locator('[data-archive-book]').count())throw new Error('Archive control remains');
+ await page.locator('[data-publish-book]').selectOption('1');await page.waitForTimeout(350);
+ if(!saves.some(s=>s.is_published===true))throw new Error('Dashboard did not save publish status');
  await page.locator('.book-bottom a').click();await page.locator('.ProseMirror').waitFor();await page.waitForFunction(()=>document.querySelector('#usage').textContent.includes('100'));
  const welcome=page.locator('#writing-welcome');if(await welcome.isVisible())await welcome.locator('[data-welcome-close]').last().click();
  await page.screenshot({path:path.join(root,'editor.png'),fullPage:true});
- await page.locator('[data-panel="details"]').click();await page.locator('#details-form input[name="subtitle"]').fill('Yeni alt başlık');await page.locator('#details-form textarea[name="subheading"]').fill('Yeni giriş');await page.locator('#details-form input[name="keywords_string"]').fill('deniz, öykü');await page.locator('#details-form select[name="is_published"]').selectOption('1');await page.locator('#details-form button.primary').click();await page.waitForFunction(()=>document.querySelector('#save-status').textContent.length>0);await page.waitForTimeout(300);
- if(!saves.some(s=>s.subtitle==='Yeni alt başlık'&&s.subheading==='Yeni giriş'&&s.is_published===true&&s.category_id===String(state.book.category_id)))throw new Error('Publication metadata was not sent correctly: '+JSON.stringify(saves));
+ if(!await page.locator('#details-form').isVisible())throw new Error('Details did not open automatically');
+ if(await page.locator('#details-form [name="is_published"]').count())throw new Error('Publish status remains in editor');
+ await page.locator('#details-form input[name="subtitle"]').fill('Yeni alt başlık');await page.locator('#details-form textarea[name="subheading"]').fill('Yeni giriş');await page.locator('#details-form input[name="keywords_string"]').fill('deniz, öykü');await page.locator('#details-form button.primary').click();await page.waitForFunction(()=>document.querySelector('#save-status').textContent.length>0);await page.waitForTimeout(300);
+ if(!saves.some(s=>s.subtitle==='Yeni alt başlık'&&s.subheading==='Yeni giriş'&&!('is_published' in s)&&s.category_id===String(state.book.category_id)))throw new Error('Publication metadata was not sent correctly: '+JSON.stringify(saves));
+ await page.locator('[data-publication-ai="category"]').click();await page.waitForTimeout(150);
+ await page.locator('[data-publication-ai="keywords"]').click();await page.waitForTimeout(150);
+ if(await page.locator('[name="keywords_string"]').inputValue()!=='deniz, umut')throw new Error('AI tags were not applied');
+ await page.locator('#generate-featured-image').click();await page.waitForTimeout(150);
+ if(await page.locator('[name="featured_image"]').inputValue()!=='/storage/ai-images/medium/generated_medium.jpg')throw new Error('AI image was not applied');
+ await page.locator('#details-form button.primary').click();await page.waitForTimeout(200);
  await page.screenshot({path:path.join(root,'details.png'),fullPage:true});
  await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(root,'mobile-details.png'),fullPage:true});await page.locator('#close-panel').click();await page.waitForTimeout(300);if(await page.locator('.writing-pane').evaluate(el=>el.getBoundingClientRect().width)<350)throw new Error('Mobile manuscript is squeezed');await page.screenshot({path:path.join(root,'mobile.png'),fullPage:true});
  await page.goto('http://127.0.0.1:8123/yazi-atolyesi/admin/budgets');await page.locator('.budget-table').waitFor();await page.screenshot({path:path.join(root,'budget.png'),fullPage:true});

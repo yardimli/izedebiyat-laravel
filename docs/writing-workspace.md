@@ -6,6 +6,24 @@ The port lives under `app/Writer`, `resources/js/writer`, and `resources/views/w
 
 Public browsing controllers and templates, read tracking, comments, and the existing chat system remain in place. Workspace tables use the `writer_` prefix so their chat messages do not collide with the site's existing chat tables. Saving a manuscript also updates the article's Markdown `main_text`, including when an AI edit is approved or a revision is restored. The public frontend keeps its existing renderer.
 
+## Eser dashboard and publication tools
+
+The workspace labels use “eser.” Publication status is changed on the dashboard; saving Eser Bilgileri in the editor preserves that status. Eser Bilgileri opens automatically. Publishing still requires a child category.
+
+Category and tag AI suggestions use the selected OpenRouter model, with the same demo reservation and personal-key rules as chat. Suggestions populate the form and are applied when the author saves. Image generation restores the site's existing FAL generator and requires its existing FAL_API_KEY and server OpenRouter configuration; FAL image charges remain separate from the writer's OpenRouter demo allowance. Generated images can be previewed, saved, or removed. Stored /storage/ paths and full image URLs are used directly.
+
+Archiving and trash recovery are removed. Previously archived works appear on the dashboard. Deleting a work permanently removes that article and its dependent content after an explicit browser confirmation; shared image files and other works are preserved. AI billing records, monetary spending and pending reconciliation survive deletion. Previously soft-deleted records are not bulk-purged by this update.
+
+Existing installations must apply the billing-link migration before enabling the new deletion behavior:
+
+```sh
+php artisan migrate --force --path=database/migrations/2026_09_13_100000_preserve_writer_billing_on_work_deletion.php
+npm run build
+php artisan optimize:clear
+```
+
+This migration changes only the AI-call link, without repeating article conversion. Its rollback deliberately retains the nullable link to preserve detached billing records.
+
 ## Configuration
 
 Set the amount in `.env` **before migrating**:
@@ -31,6 +49,7 @@ php artisan config:clear
 php artisan migrate --force --path=database/migrations/2026_09_12_100000_add_total_author_workspace.php
 php artisan writer:migrate-articles --dry-run
 php artisan migrate --force --path=database/migrations/2026_09_12_100001_convert_articles_to_writer_documents.php
+php artisan migrate --force --path=database/migrations/2026_09_13_100000_preserve_writer_billing_on_work_deletion.php
 php artisan view:clear
 php artisan config:cache
 php artisan up
@@ -71,7 +90,7 @@ node --test tests/writer-money.test.mjs tests/writer-revision-diff.test.mjs
 npm run build
 ```
 
-The 48 PHP tests use an isolated in-memory SQLite fixture matching the relevant legacy schema. They cover migration, rollback, grant initialization, metadata and image persistence, public route preservation, ownership, revisions, AI proposals, uncertain charges, resets, encryption, and personal keys. Three JavaScript tests cover cost display and revision comparisons. A read-only sample of 110 real articles, including the ten largest, also converted successfully.
+The 51 PHP tests use an isolated in-memory SQLite fixture matching the relevant legacy schema. They cover migration, rollback, grant initialization, metadata and image persistence, public route preservation, ownership, revisions, AI proposals, uncertain charges, resets, encryption, and personal keys. Three JavaScript tests cover cost display and revision comparisons. A read-only sample of 110 real articles, including the ten largest, also converted successfully.
 
 Optional browser checks use synthetic Turkish fixtures and mocked API responses; they do not modify the site's database or call an LLM:
 

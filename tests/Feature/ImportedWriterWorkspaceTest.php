@@ -205,7 +205,7 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $this->patchJson('/yazi-atolyesi/api/books/'.$book->id, ['revision' => 1, 'archived' => true])->assertUnprocessable();
         DB::table('article_reads')->insert(['article_id' => $book->id]);
         $book->comments()->create(['user_id' => $book->user_id, 'content' => 'A comment']);
-        $book->entries()->create(['name' => 'Mara', 'type' => 'People', 'content' => 'A character']);
+        $book->entries()->create(['name' => 'Mara', 'type' => 'People', 'content' => 'A character', 'aliases' => []]);
         $call = AiCall::create(['book_id' => $book->id, 'user_id' => $book->user_id, 'model' => 'test/writer', 'stage' => 'chat', 'funding' => 'demo', 'reserved' => 0.1, 'status' => 'pending']);
         $this->delete('/yazi-atolyesi/books/'.$other->id)->assertNotFound();
         $this->delete('/yazi-atolyesi/books/'.$book->id)->assertRedirect('/eserlerim');
@@ -232,7 +232,8 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $body = ['text' => 'Deniz ve umut', 'model' => 'test/writer'];
         $this->postJson($url.'category', $body)->assertOk()->assertJsonPath('category_id', $category->id);
         $this->assertEquals(0.02, $book->user->fresh()->demo_spent);
-        $book->user->update(['openrouter_key' => 'personal-test-key']);
+        $book->user->forceFill(['openrouter_key' => 'personal-test-key'])->save();
+        $this->actingAs($book->user->fresh());
         $this->postJson($url.'keywords', $body)->assertOk()->assertJsonPath('keywords_string', 'deniz, umut');
         $this->assertEquals(0.02, $book->user->fresh()->demo_spent);
         Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer personal-test-key'));

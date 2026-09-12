@@ -14,8 +14,7 @@
             <h2>{{ $book->title }}</h2><p class="muted">{{ $book->metadata['genre'] ?? __('A work in progress') }}</p>
             <p class="muted">{{ $book->is_published ? __('Published') : __('Draft') }} · {{ number_format($book->read_count) }} {{ __('reads') }} · {{ $book->comments_count }} {{ __('comments') }}</p><p class="book-word-count">{{ number_format($book->word_count) }} {{ __('words') }}</p>
             <div class="book-bottom"><small>{{ __('Last opened') }} {{ $book->updated_at->diffForHumans() }}</small>
-            @if ($book->trashed())<form method="post" action="{{ route('writer.books.recover',$book->id) }}">@csrf<button>{{ __('Recover book') }}</button></form>
-            @else<a href="{{ route('articles.edit', \App\Helpers\IdHasher::encode($book->id)) }}">{{ __('Open manuscript ↗') }}</a></div>
+            <a href="{{ route('articles.edit', \App\Helpers\IdHasher::encode($book->id)) }}">{{ __('Open manuscript ↗') }}</a></div>
             <div class="book-file-actions" data-book-files="{{ $book->id }}">
                 <button type="button" data-import-book>{{ __('Import') }}</button>
                 <select aria-label="{{ __('Export format for :book', ['book' => $book->title]) }}"><option value="txt">TXT</option><option value="docx">DOCX</option></select>

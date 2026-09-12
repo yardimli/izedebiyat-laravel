@@ -19,8 +19,15 @@ class PublicationAiController extends \App\Http\Controllers\Controller
             ? 'Choose exactly one category from this list. Return JSON {"category_id": integer}: '. $categories->map(fn ($c) => ['id' => $c->id, 'name' => $c->parentCategory?->category_name.' / '.$c->category_name])->toJson(JSON_UNESCAPED_UNICODE)
             : 'Suggest 5 to 10 Turkish tags, each at most 16 characters. Return JSON {"keywords": ["tag", ...]}.';
         $messages = [['role' => 'system', 'content' => $instruction], ['role' => 'user', 'content' => $data['text']]];
-        $call = $router->reserve($request->user(), $book, $model, $messages, 'publication-'.$kind);
-        $result = $router->send($request->user(), $call, $model, $messages);
+        $lock = new \App\Writer\Services\BookChatLock;
+        abort_unless($lock->acquire($book->id), 409, __('A chat request is already running for this book.'));
+        try {
+            $book = Book::findOrFail($book->id);
+            $call = $router->reserve($request->user(), $book, $model, $messages, 'publication-'.$kind);
+            $result = $router->send($request->user(), $call, $model, $messages);
+        } finally {
+            $lock->release();
+        }
         if ($kind === 'category') {
             abort_unless($categories->contains('id', $result['category_id'] ?? null), 422, __('AI returned an invalid category.'));
             return ['category_id' => (int) $result['category_id']];
