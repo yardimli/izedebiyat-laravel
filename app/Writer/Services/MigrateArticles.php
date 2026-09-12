@@ -8,6 +8,11 @@ class MigrateArticles
 {
     public function run(bool $dryRun = false, ?callable $progress = null): int
     {
+        return LegacyDates::run(fn () => $this->convert($dryRun, $progress));
+    }
+
+    private function convert(bool $dryRun, ?callable $progress): int
+    {
         $count = 0;
         DB::table('articles')->whereNull('document')->orderBy('id')->chunkById(100, function ($articles) use ($dryRun, $progress, &$count) {
             foreach ($articles as $article) {

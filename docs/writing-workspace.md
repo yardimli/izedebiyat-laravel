@@ -36,6 +36,8 @@ php artisan config:cache
 php artisan up
 ```
 
+Legacy zero timestamps such as `0000-00-00 00:00:00` are preserved. Schema migration, rollback, and document conversion temporarily remove only `NO_ZERO_DATE` and `NO_ZERO_IN_DATE` from the current MySQL connection, retaining strict mode and restoring the original settings in `finally`. No global or application-wide SQL configuration changes are needed. If the schema migration previously failed on a zero-date error in its initial `ALTER TABLE`, update the code and rerun `php artisan migrate`; that failed ALTER did not add the columns.
+
 The explicit migration paths avoid replaying unrelated historical imports. The old migrations do not fully describe the current legacy database; this integration targets the existing production article schema.
 
 The conversion processes 100 records at a time and commits each article separately. It preserves `main_text`, `markdown`, `created_at`, and `updated_at`, records the originals in `writer_original_text` / `writer_original_markdown`, and adds the structured document. Already-converted documents are skipped. After an interruption, rerun the data migration or `php artisan writer:migrate-articles`; edited documents are never overwritten. A failed conversion identifies the article ID.
@@ -79,3 +81,9 @@ node scripts/check-writer-browser.cjs
 ```
 
 Install Playwright in your development tooling or set `WRITER_PLAYWRIGHT_MODULE` to its package directory. Chrome must be available. Screenshots are written to ignored `storage/app/writer-preview/`. The browser check covers the dashboard, editor initialization, publication-details submission, mobile manuscript width, and the admin quota page.
+
+A MySQL-specific regression check reproduces the strict-mode failure and verifies successful ALTER/update operations and SQL-mode restoration using connection-local temporary tables only:
+
+```sh
+php scripts/check-writer-zero-dates.php
+```

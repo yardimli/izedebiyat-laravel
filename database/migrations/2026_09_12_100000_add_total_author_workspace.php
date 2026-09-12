@@ -9,6 +9,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        \App\Writer\Services\LegacyDates::run(fn () => $this->addWorkspace());
+    }
+
+    private function addWorkspace(): void
+    {
         Schema::table('articles', function (Blueprint $table) {
             $table->json('document')->nullable();
             $table->longText('manuscript')->nullable();
@@ -107,6 +112,11 @@ return new class extends Migration
     }
 
     public function down(): void
+    {
+        \App\Writer\Services\LegacyDates::run(fn () => $this->removeWorkspace());
+    }
+
+    private function removeWorkspace(): void
     {
         foreach (['writer_budget_resets', 'writer_ai_calls', 'writer_ai_proposals', 'writer_chat_messages', 'writer_revisions', 'writer_codex_entries'] as $name) {
             Schema::dropIfExists($name);
