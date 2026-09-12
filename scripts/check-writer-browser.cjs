@@ -27,5 +27,18 @@ const server=http.createServer(async(req,res)=>{
  await page.screenshot({path:path.join(root,'details.png'),fullPage:true});
  await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(root,'mobile-details.png'),fullPage:true});await page.locator('#close-panel').click();await page.waitForTimeout(300);if(await page.locator('.writing-pane').evaluate(el=>el.getBoundingClientRect().width)<350)throw new Error('Mobile manuscript is squeezed');await page.screenshot({path:path.join(root,'mobile.png'),fullPage:true});
  await page.goto('http://127.0.0.1:8123/yazi-atolyesi/admin/budgets');await page.locator('.budget-table').waitFor();await page.screenshot({path:path.join(root,'budget.png'),fullPage:true});
+ // A paragraph containing text and one BR matched the old CSS :only-child rule.
+ state.book.document={type:'doc',content:[{type:'paragraph',content:[{type:'text',text:'Loaded manuscript'},{type:'hard_break'}]}]};
+ const placeholderPage=await browser.newPage();placeholderPage.on('pageerror',e=>errors.push(e.message));
+ await placeholderPage.goto('http://127.0.0.1:8123/eserlerim/test/duzenle');
+ const prose=placeholderPage.locator('.ProseMirror');await prose.waitFor();
+ const intro=placeholderPage.locator('#writing-welcome');if(await intro.isVisible())await intro.locator('[data-welcome-close]').last().click();
+ if(await prose.getAttribute('data-placeholder')!==null)throw new Error('Placeholder overlaps loaded text');
+ if(await prose.evaluate(el=>getComputedStyle(el,'::before').content)!=='none')throw new Error('Placeholder is rendered over loaded text');
+ await prose.click();await placeholderPage.keyboard.press('Control+a');await placeholderPage.keyboard.press('Backspace');
+ if(!await prose.getAttribute('data-placeholder'))throw new Error('Empty manuscript has no placeholder');
+ await placeholderPage.keyboard.type('New writing');
+ if(await prose.getAttribute('data-placeholder')!==null)throw new Error('Placeholder persists after typing');
+ await placeholderPage.close();
  if(errors.length)throw new Error(errors.join('\n'));console.log('Browser checks passed: Turkish library, editor, metadata save, mobile layout, admin budget; no JavaScript errors.');
  }finally{if(browser)await browser.close();server.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

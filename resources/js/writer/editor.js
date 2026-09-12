@@ -133,12 +133,16 @@ export function createEditor(
     });
     const view = new EditorView($("#editor"), {
         state,
-        attributes: {
+        attributes: ({ doc }) => ({
             "aria-label": t("Book manuscript"),
-            "data-placeholder": t("Begin here. The page is yours."),
+            ...(doc.childCount === 1 &&
+            doc.firstChild.type === schema.nodes.paragraph &&
+            doc.firstChild.content.size === 0
+                ? { "data-placeholder": t("Begin here. The page is yours.") }
+                : {}),
             role: "textbox",
             "aria-multiline": "true",
-        },
+        }),
         dispatchTransaction(tr) {
             if (readOnly && tr.docChanged) return;
             view.updateState(view.state.apply(tr));
