@@ -2,17 +2,18 @@ import { t, locale } from "./i18n";
 import { api, $, action, notify } from "./api";
 
 export function start() {
-    document.querySelectorAll("[data-archive-book]").forEach((button) => {
-        button.onclick = async () => {
+    document.querySelectorAll("[data-publish-book]").forEach((button) => {
+        button.onchange = async () => {
             button.disabled = true;
             try {
-                await api(`/yazi-atolyesi/api/books/${button.dataset.archiveBook}`, "PATCH", {
+                await api(`/yazi-atolyesi/api/books/${button.dataset.publishBook}`, "PATCH", {
                     revision: Number(button.dataset.revision),
-                    archived: button.dataset.archived !== "1",
+                    is_published: button.value === "1",
                 });
                 window.location.reload();
             } catch (e) {
                 notify(e.message);
+                button.value = button.dataset.published;
                 button.disabled = false;
             }
         };
@@ -22,7 +23,7 @@ export function start() {
             if (
                 !confirm(
                     t(
-                        "Move this book to recently deleted? You can recover it from your library.",
+                        "Permanently delete this work and its comments? This cannot be undone.",
                     ),
                 )
             )

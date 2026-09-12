@@ -82,7 +82,7 @@ return new class extends Migration
         Schema::create('writer_ai_calls', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('book_id')->constrained('articles')->cascadeOnDelete();
+            $table->foreignId('book_id')->nullable()->constrained('articles')->nullOnDelete();
             $table->string('model');
             $table->string('stage');
             $table->string('funding');

@@ -54,7 +54,20 @@ class BookController extends Controller
             throw \Illuminate\Validation\ValidationException::withMessages(['category_id' => 'Yayımlamadan önce bir kategori seçin.']);
         }
         if (array_key_exists('featured_image', $data) && $data['featured_image'] && $data['featured_image'] !== $book->featured_image) {
-            abort_unless(\App\Models\Image::where('user_id', $book->user_id)->where('image_original_filename', $data['featured_image'])->exists(), 422, 'Kendi görsellerinizden birini seçin.');
+            $value = $data['featured_image'];
+            $filename = basename(parse_url($value, PHP_URL_PATH) ?: $value);
+            $owned = \App\Models\Image::where('user_id', $book->user_id)->where(function ($query) use ($filename) {
+                foreach (['original', 'large', 'medium', 'small'] as $size) $query->orWhere('image_'.$size.'_filename', $filename);
+            })->get()->contains(function ($image) use ($value) {
+                $folder = $image->image_type === 'generated' ? 'ai-images' : 'upload-images';
+                foreach (['original', 'large', 'medium', 'small'] as $size) {
+                    $filename = $image->{'image_'.$size.'_filename'};
+                    $path = '/storage/'.$folder.'/'.$size.'/'.$filename;
+                    if ($value === $path || $value === asset(ltrim($path, '/')) || ($size === 'original' && $folder === 'upload-images' && $value === $filename)) return true;
+                }
+                return false;
+            });
+            abort_unless($owned, 422, 'Kendi görsellerinizden birini seçin.');
         }
         if (array_key_exists('keywords_string', $data)) {
             $tags = array_values(array_unique(array_filter(array_map('trim', explode(',', $data['keywords_string'] ?? '')))));
@@ -105,16 +118,9 @@ class BookController extends Controller
 
     public function index(Request $request)
     {
-        $filter = $request->query('filter', 'active');
-        abort_unless(in_array($filter, ['active', 'archived', 'deleted']), 422);
         $books = Book::where('user_id', $request->user()->id);
-        if ($filter === 'deleted') {
-            $books->onlyTrashed();
-        } else {
-            $books->where('archived', $filter === 'archived');
-        }
 
-        return view('writer.books.index', ['books' => $books->select(['id', 'title', 'user_id', 'metadata', 'manuscript', 'archived', 'deleted', 'revision', 'updated_at', 'read_count', 'is_published', 'approved', 'category_name', 'subtitle'])->withCount('comments')->latest('updated_at')->paginate(30)->withQueryString(), 'filter' => $filter]);
+        return view('writer.books.index', ['books' => $books->select(['id', 'title', 'user_id', 'metadata', 'manuscript', 'archived', 'deleted', 'revision', 'updated_at', 'read_count', 'is_published', 'approved', 'category_name', 'subtitle'])->withCount('comments')->latest('updated_at')->paginate(30)->withQueryString()]);
     }
 
     public function store(Request $request)
@@ -163,7 +169,7 @@ class BookController extends Controller
         $data = $request->validate(['revision' => 'required|integer', 'title' => 'sometimes|required|string|max:200', 'document' => 'sometimes|required|array',
             'metadata' => 'sometimes|array', 'metadata.synopsis' => 'nullable|string|max:20000', 'metadata.genre' => 'nullable|string|max:200',
             'metadata.point_of_view' => 'nullable|string|max:200', 'metadata.tense' => 'nullable|string|max:200', 'metadata.style_notes' => 'nullable|string|max:20000',
-            'archived' => 'sometimes|boolean', 'codex_types' => 'sometimes|array|min:1|max:50', 'codex_types.*' => 'string|max:80|distinct',
+            'archived' => 'prohibited', 'codex_types' => 'sometimes|array|min:1|max:50', 'codex_types.*' => 'string|max:80|distinct',
             'subtitle' => 'sometimes|nullable|string|max:255', 'subheading' => 'sometimes|nullable|string|max:500', 'category_id' => 'sometimes|nullable|integer|exists:categories,id', 'keywords_string' => 'sometimes|nullable|string|max:255', 'featured_image' => 'sometimes|nullable|string|max:255', 'is_published' => 'sometimes|boolean']);
         if (isset($data['document'])) {
             Manuscript::validate($data['document']);
@@ -191,15 +197,22 @@ class BookController extends Controller
     public function destroy(Request $request, Book $book)
     {
         $this->owned($request, $book);
-        $book->delete();
-
-        return redirect()->route('articles.index');
-    }
-
-    public function recover(Request $request, int $id)
-    {
-        $book = Book::withTrashed()->where('user_id', $request->user()->id)->findOrFail($id);
-        $book->restore();
+        $lock = new \App\Writer\Services\BookChatLock;
+        abort_unless($lock->acquire($book->id), 409, __('Wait for the AI request to finish before deleting this work.'));
+        try {
+            DB::transaction(function () use ($book) {
+                $book = Book::lockForUpdate()->findOrFail($book->id);
+                // Billing survives work deletion, including pending reconciliation.
+                AiCall::where('book_id', $book->id)->update(['book_id' => null]);
+                $book->keywords()->detach();
+                // article_reads has a restrictive FK; comments has no cascade.
+                DB::table('article_reads')->where('article_id', $book->id)->delete();
+                $book->comments()->delete();
+                $book->delete();
+            });
+        } finally {
+            $lock->release();
+        }
 
         return redirect()->route('articles.index');
     }

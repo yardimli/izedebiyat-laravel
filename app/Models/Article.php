@@ -82,6 +82,13 @@
 
 		public function getOriginalUrl(): string
 		{
+            $path = str_replace('\\', '/', $this->featured_image ?? '');
+            if (preg_match('~^https?://~i', $path)) {
+                return $path;
+            }
+            if (str_starts_with(ltrim($path, '/'), 'storage/')) {
+                return asset(ltrim($path, '/'));
+            }
 			if (!$this->featured_image) {
 				return asset('images/no-image.png');
 			}
@@ -98,6 +105,13 @@
 
 		public function getLargeUrl(): string
 		{
+            $path = str_replace('\\', '/', $this->featured_image ?? '');
+            if (preg_match('~^https?://~i', $path)) {
+                return $path;
+            }
+            if (str_starts_with(ltrim($path, '/'), 'storage/')) {
+                return asset(ltrim($path, '/'));
+            }
 			if (!$this->featured_image) {
 				return asset('images/no-image.png');
 			}
@@ -115,6 +129,13 @@
 
 		public function getMediumUrl(): string
 		{
+            $path = str_replace('\\', '/', $this->featured_image ?? '');
+            if (preg_match('~^https?://~i', $path)) {
+                return $path;
+            }
+            if (str_starts_with(ltrim($path, '/'), 'storage/')) {
+                return asset(ltrim($path, '/'));
+            }
 			if (!$this->featured_image) {
 				return asset('images/no-image.png');
 			}
@@ -131,6 +152,13 @@
 
 		public function getSmallUrl(): string
 		{
+            $path = str_replace('\\', '/', $this->featured_image ?? '');
+            if (preg_match('~^https?://~i', $path)) {
+                return $path;
+            }
+            if (str_starts_with(ltrim($path, '/'), 'storage/')) {
+                return asset(ltrim($path, '/'));
+            }
 			if (!$this->featured_image) {
 				return asset('images/no-image.png');
 			}

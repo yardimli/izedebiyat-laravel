@@ -39,31 +39,6 @@ class Book extends Article
         });
     }
 
-    public function scopeOnlyTrashed(Builder $query): Builder
-    {
-        return $query->withoutGlobalScope('writer_visible')->where('articles.deleted', 1);
-    }
-
-    public function scopeWithTrashed(Builder $query): Builder
-    {
-        return $query->withoutGlobalScope('writer_visible');
-    }
-
-    public function trashed(): bool
-    {
-        return (bool) $this->deleted;
-    }
-
-    public function delete()
-    {
-        return $this->update(['deleted' => 1]);
-    }
-
-    public function restore()
-    {
-        return $this->update(['deleted' => 0]);
-    }
-
     public function getWordCountAttribute(): int
     {
         return preg_match_all('/\S+/u', $this->manuscript ?? Manuscript::text($this->document ?? []));

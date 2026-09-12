@@ -196,22 +196,49 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $this->assertSoftDeleted('writer_chat_messages', ['id' => $message->id]);
     }
 
-    public function test_library_filters_archive_and_recoverable_deletion(): void
+    public function test_library_includes_former_archives_and_deletes_permanently(): void
     {
         $book = $this->book();
-        $this->get('/eserlerim')->assertSee('5 words');
-        $other = Book::create(['user_id' => User::factory()->create()->id, 'title' => 'Private manuscript', 'archived' => true, 'codex_types' => ['People'], 'document' => Manuscript::fromText('')]);
-        $this->get('/eserlerim')->assertOk()->assertSee('The Orchard')->assertDontSee($other->title);
-        $this->patchJson('/yazi-atolyesi/api/books/'.$book->id, ['revision' => 1, 'archived' => true])->assertOk();
-        $this->get('/eserlerim')->assertOk()->assertDontSee('The Orchard');
-        $this->get('/eserlerim?filter=archived')->assertOk()->assertSee('The Orchard')->assertSee('Unarchive')->assertDontSee($other->title);
-        $this->patchJson('/yazi-atolyesi/api/books/'.$book->id, ['revision' => 2, 'archived' => false])->assertOk();
-        $this->get('/eserlerim')->assertSee('The Orchard');
+        $book->update(['archived' => true]);
+        $other = Book::create(['user_id' => User::factory()->create()->id, 'title' => 'Private manuscript', 'codex_types' => ['People'], 'document' => Manuscript::fromText('')]);
+        $this->get('/eserlerim')->assertOk()->assertSee('The Orchard')->assertSee('data-publish-book', false)->assertDontSee('data-archive-book', false)->assertDontSee($other->title);
+        $this->patchJson('/yazi-atolyesi/api/books/'.$book->id, ['revision' => 1, 'archived' => true])->assertUnprocessable();
+        DB::table('article_reads')->insert(['article_id' => $book->id]);
+        $book->comments()->create(['user_id' => $book->user_id, 'content' => 'A comment']);
+        $book->entries()->create(['name' => 'Mara', 'type' => 'People', 'content' => 'A character']);
+        $call = AiCall::create(['book_id' => $book->id, 'user_id' => $book->user_id, 'model' => 'test/writer', 'stage' => 'chat', 'funding' => 'demo', 'reserved' => 0.1, 'status' => 'pending']);
+        $this->delete('/yazi-atolyesi/books/'.$other->id)->assertNotFound();
         $this->delete('/yazi-atolyesi/books/'.$book->id)->assertRedirect('/eserlerim');
-        $this->get('/eserlerim')->assertDontSee('The Orchard');
-        $this->get('/eserlerim?filter=deleted')->assertOk()->assertSee('The Orchard')->assertSee('Recover book');
-        $this->post('/yazi-atolyesi/books/'.$book->id.'/recover')->assertRedirect('/eserlerim');
-        $this->get('/eserlerim')->assertSee('The Orchard');
+        $this->assertDatabaseMissing('articles', ['id' => $book->id]);
+        $this->assertDatabaseMissing('comments', ['article_id' => $book->id]);
+        $this->assertDatabaseMissing('article_reads', ['article_id' => $book->id]);
+        $this->assertDatabaseMissing('writer_codex_entries', ['book_id' => $book->id]);
+        $this->assertDatabaseHas('articles', ['id' => $other->id]);
+        $this->assertNull($call->fresh()->book_id);
+        $this->assertSame('pending', $call->fresh()->status);
+        $this->post('/yazi-atolyesi/books/'.$book->id.'/recover')->assertNotFound();
+    }
+
+    public function test_publication_ai_uses_demo_budget_and_personal_key_and_checks_ownership(): void
+    {
+        $book = $this->book();
+        $this->catalog();
+        $parent = \App\Models\Category::create(['category_name' => 'Edebiyat', 'slug' => 'edebiyat']);
+        $category = \App\Models\Category::create(['category_name' => 'Deneme', 'slug' => 'deneme', 'parent_category_id' => $parent->id]);
+        Http::fake(['*/chat/completions' => Http::sequence()
+            ->push(['usage' => ['cost' => 0.02], 'choices' => [['message' => ['content' => json_encode(['category_id' => $category->id])]]]])
+            ->push(['usage' => ['cost' => 0.01], 'choices' => [['message' => ['content' => json_encode(['keywords' => ['deniz', 'deniz', str_repeat('a', 17), 'umut']])]]]])]);
+        $url = '/yazi-atolyesi/api/books/'.$book->id.'/publication-ai/';
+        $body = ['text' => 'Deniz ve umut', 'model' => 'test/writer'];
+        $this->postJson($url.'category', $body)->assertOk()->assertJsonPath('category_id', $category->id);
+        $this->assertEquals(0.02, $book->user->fresh()->demo_spent);
+        $book->user->update(['openrouter_key' => 'personal-test-key']);
+        $this->postJson($url.'keywords', $body)->assertOk()->assertJsonPath('keywords_string', 'deniz, umut');
+        $this->assertEquals(0.02, $book->user->fresh()->demo_spent);
+        Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer personal-test-key'));
+        $this->assertNull($book->fresh()->category_id); // Suggestions wait for the author's save.
+        $this->actingAs(User::factory()->create())->postJson($url.'category', $body)->assertNotFound();
+        Http::assertSentCount(2);
     }
 
     public function test_saves_are_versioned_and_stale_writes_are_rejected(): void

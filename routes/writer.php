@@ -19,7 +19,6 @@ Route::middleware(['auth', \App\Writer\Http\Middleware\WriterLocale::class])->pr
     Route::get('/books/{book}/llm-log/{id}', [BookController::class, 'llmCallPage'])->name('writer.books.llm-call');
     Route::get('/books/{book}/export/{format}', [BookController::class, 'export'])->name('writer.books.export');
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('writer.books.destroy');
-    Route::post('/books/{id}/recover', [BookController::class, 'recover'])->name('writer.books.recover');
     Route::get('/account', [SettingsController::class, 'edit'])->name('writer.settings');
     Route::patch('/account', [SettingsController::class, 'update'])->name('writer.settings.update');
     Route::get('/admin/budgets', [BudgetController::class, 'index'])->name('writer.budgets.index');
@@ -31,6 +30,7 @@ Route::middleware(['auth', \App\Writer\Http\Middleware\WriterLocale::class])->pr
         Route::post('/models/refresh', [SettingsController::class, 'refresh'])->middleware('throttle:6,1');
         Route::get('/books/{book}', [BookController::class, 'state']);
         Route::patch('/books/{book}', [BookController::class, 'update']);
+        Route::post('/books/{book}/publication-ai/{kind}', [\App\Writer\Http\Controllers\PublicationAiController::class, 'suggest'])->whereIn('kind', ['category', 'keywords'])->middleware('throttle:12,1');
         Route::post('/books/{book}/featured-image', [BookController::class, 'uploadImage']);
         Route::post('/books/{book}/entries/{id?}', [BookController::class, 'entry']);
         Route::delete('/books/{book}/entries/{id}', [BookController::class, 'deleteEntry']);

@@ -11,7 +11,7 @@
 </head>
 <body data-app-name="{{ config('app.name') }}" data-user="{{ auth()->id() }}">
 <header class="site-header">
-    <a class="brand" aria-label="{{ config('app.name') }}" href="{{ url('/') }}">@include('writer.partials.brand')<span class="brand-caption">{{ __('A place for your words') }}</span></a>
+    @include('writer.partials.brand')
     <nav aria-label="{{ __('Main navigation') }}">
         @auth
         <a class="nav-icon" href="{{ route('articles.index') }}" aria-label="{{ __('My library') }}" title="{{ __('My library') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h4v16H3Zm6 0h4v16H9Zm6 1 4-1 3 15-4 1Z"/></svg></a>

@@ -180,6 +180,7 @@ export async function start() {
             .querySelectorAll("[data-content]")
             .forEach((el) => (el.hidden = el.dataset.content !== name));
     }
+    panel("details");
     function closePanel() {
         root.classList.remove("panel-open");
         $("#side-panel").inert = true;
@@ -304,7 +305,6 @@ export async function start() {
         if (!detailsDirty) {
             details.elements.title.value = state.book.title;
             for (const key of ['subtitle','subheading','category_id','keywords_string','featured_image']) details.elements[key].value = state.book[key] ?? '';
-            details.elements.is_published.value = state.book.is_published ? '1' : '0';
             for (const key of [
                 "synopsis",
                 "genre",
@@ -800,9 +800,9 @@ export async function start() {
         async (e) => {
             e.preventDefault();
             const values = Object.fromEntries(new FormData(e.target));
-            const { title, subtitle, subheading, category_id, keywords_string, featured_image, is_published, ...metadata } = values;
+            const { title, subtitle, subheading, category_id, keywords_string, featured_image, ...metadata } = values;
             await mutate(base, "PATCH", {
-                title, subtitle, subheading, category_id: category_id || null, keywords_string, featured_image: featured_image || null, is_published: is_published === "1",
+                title, subtitle, subheading, category_id: category_id || null, keywords_string, featured_image: featured_image || null,
                 metadata,
             });
             detailsDirty = false;
@@ -811,6 +811,32 @@ export async function start() {
         },
         "submit",
     );
+    document.querySelectorAll('[data-publication-ai]').forEach(button => {
+        button.onclick = async () => {
+            button.disabled = true;
+            try {
+                const result = await api(base + '/publication-ai/' + button.dataset.publicationAi, 'POST', {text: editor.text().slice(0, 60000), model});
+                const field = button.dataset.publicationAi === 'category' ? 'category_id' : 'keywords_string';
+                $('#details-form').elements[field].value = result[field];
+                detailsDirty = true;
+                await refresh();
+            } catch (error) { notify(error.message); }
+            finally { button.disabled = false; }
+        };
+    });
+    action('#generate-featured-image', async () => {
+        const button = $('#generate-featured-image');
+        button.disabled = true;
+        try {
+            const result = await api(button.dataset.url, 'POST', {user_prompt: $('#ai-image-prompt').value.trim() || editor.text().slice(0, 4000)});
+            if (!result?.success || !result.image_medium_filename) throw new Error(result?.message || result?.error || t('Image generation failed.'));
+            const path = '/storage/ai-images/medium/' + result.image_medium_filename;
+            $('#details-form').elements.featured_image.value = path;
+            $('#featured-image-preview').src = path;
+            $('#featured-image-preview').hidden = false;
+            detailsDirty = true;
+        } finally { button.disabled = false; }
+    });
     action('#featured-image-upload', async (event) => {
         const file = event.target.files[0]; if (!file) return;
         const data = new FormData(); data.append('image', file);
@@ -1415,7 +1441,7 @@ export async function start() {
         link.remove();
     });
     window.addEventListener("beforeunload", (e) => {
-        if (dirty || codexDirty) {
+        if (dirty || codexDirty || detailsDirty) {
             e.preventDefault();
             e.returnValue = "";
         }

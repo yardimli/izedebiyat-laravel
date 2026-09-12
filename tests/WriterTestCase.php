@@ -89,5 +89,6 @@ abstract class WriterTestCase extends TestCase
             }$t->timestamps();
         });
         (require database_path('migrations/2026_09_12_100000_add_total_author_workspace.php'))->up();
+        (require database_path('migrations/2026_09_13_100000_preserve_writer_billing_on_work_deletion.php'))->up();
     }
 }
