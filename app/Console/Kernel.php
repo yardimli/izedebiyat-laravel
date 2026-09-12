@@ -12,6 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+	    $schedule->command('writer:reconcile-usage')->everyFiveMinutes()->withoutOverlapping();
 	    $schedule->command('app:moderate-texts')->hourly();
 	    $schedule->command('articles:update-rankings')
 		    ->daily()

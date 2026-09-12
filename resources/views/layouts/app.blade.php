@@ -251,6 +251,7 @@ Header START -->
 									<li><hr class="dropdown-divider"></li>
 									<li><a class="dropdown-item" href="{{ route('admin.quotes.index') }}">Edebiyat Al&#305;nt&#305;lar&#305;</a></li>
 									<li><a class="dropdown-item" href="{{ route('admin.llm-settings.edit') }}">LLM Ayarlar&#305;</a></li>
+									<li><a class="dropdown-item" href="{{ route('writer.budgets.index') }}">Yapay zek&#226; kotalar&#305;</a></li>
 									<li><a class="dropdown-item" href="{{ route('admin.account-recovery.index') }}">Hesap Kurtarma Talepleri</a></li>
 								</ul>
 							</li>

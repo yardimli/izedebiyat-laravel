@@ -298,13 +298,13 @@
 		Route::delete('/image-gen/{session_id}', [ImageController::class, 'destroyGenImage'])->name('image-gen.destroy');
 
 
-		Route::prefix('eserlerim')->group(function () {
-			Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
-			Route::get('/create', [ArticleController::class, 'create'])->name('articles.create');
-			Route::post('/', [ArticleController::class, 'store'])->name('articles.store');
-			Route::get('/{hashedId}/duzenle', [ArticleController::class, 'edit'])->name('articles.edit');
-			Route::put('/{hashedId}', [ArticleController::class, 'update'])->name('articles.update');
-			Route::delete('/{hashedId}', [ArticleController::class, 'destroy'])->name('articles.destroy');
+		Route::prefix('eserlerim')->middleware(\App\Writer\Http\Middleware\WriterLocale::class)->group(function () {
+			Route::get('/', [\App\Writer\Http\Controllers\BookController::class, 'index'])->name('articles.index');
+			Route::get('/create', [\App\Writer\Http\Controllers\BookController::class, 'create'])->name('articles.create');
+			Route::post('/', [\App\Writer\Http\Controllers\BookController::class, 'store'])->name('articles.store');
+			Route::get('/{hashedId}/duzenle', [\App\Writer\Http\Controllers\BookController::class, 'edit'])->name('articles.edit');
+			Route::put('/{hashedId}', [\App\Writer\Http\Controllers\BookController::class, 'updateArticle'])->name('articles.update');
+			Route::delete('/{hashedId}', [\App\Writer\Http\Controllers\BookController::class, 'destroyArticle'])->name('articles.destroy');
 			Route::get('/get-images', [ArticleController::class, 'getImages'])->name('articles.get-images');
 
 			Route::get('/keywords/search', [ArticleController::class, 'searchKeywords'])->name('keywords.search');
@@ -388,3 +388,5 @@
 
 
 	Auth::routes(['verify' => true]);
+
+require __DIR__.'/writer.php';

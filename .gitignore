@@ -53,3 +53,6 @@ izedebiyat.zip
 /storage/app/mpdf
 storage/app/legacy-forum-import.sql
 app/Console/Commands/ExportLegacyForumSql.php
+
+/storage/app/writer-preview/
+/data/names_by_country

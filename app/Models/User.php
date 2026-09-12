@@ -68,6 +68,7 @@
 			'remember_token',
 			'two_factor_recovery_codes',
 			'two_factor_secret',
+			'openrouter_key',
 		];
 
 		/**
@@ -78,6 +79,11 @@
 		protected $casts = [
 			'email_verified_at' => 'datetime',
 			'password' => 'hashed',
+			'openrouter_key' => 'encrypted',
+			'favorite_models' => 'array',
+			'favorites_only' => 'boolean',
+			'demo_limit' => 'decimal:8',
+			'demo_allowance' => 'decimal:8',
 		];
 
 		protected $appends = [
