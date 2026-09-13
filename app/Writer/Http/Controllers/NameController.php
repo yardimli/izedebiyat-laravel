@@ -11,9 +11,20 @@ class NameController extends Controller
     public function countries()
     {
         $countries = [];
-        foreach (glob(base_path('data/names_by_country/*_first_names.json')) as $path) {
+        foreach (glob(base_path('data/names_by_country/*_first_names.json')) ?: [] as $path) {
             $code = explode('_', basename($path))[0];
-            $countries[] = ['code' => $code, 'name' => Countries::exists($code) ? Countries::getName($code, app()->getLocale()) : $code];
+            if (! preg_match('/^[A-Z]{2}$/', $code)) continue;
+            $name = $code;
+            if (class_exists(Countries::class)) {
+                try {
+                    // exists() uses Locale::getDefault(), requiring PHP Intl even
+                    // though getName() can use our explicit locale without it.
+                    $name = Countries::getName($code, app()->getLocale());
+                } catch (\Symfony\Component\Intl\Exception\MissingResourceException $exception) {
+                    // Unknown codes or missing translation resources remain usable.
+                }
+            }
+            $countries[] = ['code' => $code, 'name' => $name];
         }
         usort($countries, fn ($a, $b) => strcmp($a['name'], $b['name']));
 

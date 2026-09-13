@@ -782,7 +782,7 @@ export async function start() {
                 $("#generate-featured-image").dataset.url,
                 "POST",
                 { user_prompt: $("#ai-image-prompt").value.trim() || editor.text().slice(0, 4000) },
-                240000,
+                Number($("#generate-featured-image").dataset.timeoutMs) || 390000,
             );
             if (!result?.success || !result.image_medium_filename)
                 throw new Error(result?.message || result?.error || t("Image generation failed."));

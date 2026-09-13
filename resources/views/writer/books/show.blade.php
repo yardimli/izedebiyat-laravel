@@ -201,7 +201,9 @@
         </div>
         <div id="image-generation-screen" hidden><label for="ai-image-prompt">{{ __('Image description') }}</label>
             <textarea id="ai-image-prompt" rows="5" maxlength="4000"
-                placeholder="{{ __('Describe an image or leave blank to use your work.') }}"></textarea><button type="button" id="generate-featured-image" class="primary ai-action"
+                placeholder="{{ __('Describe an image or leave blank to use your work.') }}"></textarea><button type="button" id="generate-featured-image"
+                data-timeout-ms="{{ (config('image_generation.request_timeout', 360) + 30) * 1000 }}"
+                class="primary ai-action"
                 data-url="{{ route('send-image-gen-prompt') }}">{{ __('Draw image with AI') }}</button><button
                 type="button" id="show-image-upload">{{ __('Back to upload') }}</button>
         </div>

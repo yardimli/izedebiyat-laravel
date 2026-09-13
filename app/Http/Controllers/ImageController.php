@@ -200,13 +200,33 @@
 			return response()->json(['success' => true]);
 		}
 
+        protected function enhanceImagePrompt(string $model, array $messages): array
+        {
+            return MyHelper::llm_no_tool_call($model, '', $messages, false);
+        }
+
+        protected function imageClient(): \GuzzleHttp\Client
+        {
+            return new \GuzzleHttp\Client(['connect_timeout' => 10, 'timeout' => 30]);
+        }
+
+        protected function waitForImagePoll(int $seconds): void
+        {
+            sleep($seconds);
+        }
+
 		public function makeImage(Request $request)
 		{
 			if (!Auth::check()) {
 				return [];
 			}
 
-			$model = config('image_generation.fal_endpoint');
+            $requestTimeout = (int) config('image_generation.request_timeout', 360);
+            // The poll count alone cannot extend PHP's execution allowance.
+            if (function_exists('set_time_limit')) set_time_limit($requestTimeout);
+            $deadline = microtime(true) + $requestTimeout;
+            $pollInterval = (int) config('image_generation.poll_interval', 3);
+            $model = config('image_generation.fal_endpoint');
 			$size = 'landscape_4_3';
 
 			//square_hd,square,portrait_4_3,portrait_16_9,landscape_4_3,landscape_16_9
@@ -234,7 +254,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 			];
 
 
-			$image_prompt = MyHelper::llm_no_tool_call($llm, '', $chat_history, false);
+			$image_prompt = $this->enhanceImagePrompt($llm, $chat_history);
 
 			if ($image_prompt['error']) {
 				Log::info('Error generating image');
@@ -247,10 +267,10 @@ With the above information, compose a image. Write it as a single paragraph. The
 
 				$falApiKey = config('image_generation.fal_key');
 				if (empty($falApiKey)) {
-					echo json_encode(['error' => 'FAL_API_KEY environment variable is not set']);
+					return response()->json(['success' => false, 'message' => 'FAL_API_KEY environment variable is not set'], 503);
 				}
 
-				$client = new \GuzzleHttp\Client();
+				$client = $this->imageClient();
 
 				$response = $client->post($model, [
 					'headers' => [
@@ -260,6 +280,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 					'json' => [
 						'prompt' => $image_prompt['content'],
 						'image_size' => $size,
+						'enable_safety_checker' => false,
 						'safety_tolerance' => '5',
 					]
 				]);
@@ -273,16 +294,18 @@ With the above information, compose a image. Write it as a single paragraph. The
 
 					$status_url = $data['status_url'];
 					$check_count = 0;
-					$check_limit = 40; // Allow twice as many one-second fal queue checks.
+					$check_limit = (int) config('image_generation.poll_limit', 40);
 					$response_url = '';
-					while ($check_count < $check_limit) {
-						$response = $client->get($status_url, [
+					while ($check_count < $check_limit && microtime(true) < $deadline) {
+						$check_count++;
+                        $response = $client->get($status_url, [
+                            'timeout' => max(0.1, min(30, $deadline - microtime(true))),
 							'headers' => [
 								'Authorization' => 'Key ' . $falApiKey,
 								'Content-Type' => 'application/json',
 							]
 						]);
-						Log::info('image status response');
+						Log::info('fal image status response', ['check' => $check_count, 'limit' => $check_limit]);
 						Log::info($response->getBody());
 
 						$body = $response->getBody();
@@ -291,11 +314,18 @@ With the above information, compose a image. Write it as a single paragraph. The
 							$response_url = $data['response_url'];
 							break;
 						}
-						sleep(1);
-						$check_count++;
+						if ($check_count < $check_limit && microtime(true) + $pollInterval < $deadline) {
+                            $this->waitForImagePoll($pollInterval);
+                        } else {
+                            break;
+                        }
 					}
 
-					if ($response_url !== '') {
+                    if ($response_url === '') {
+                        Log::warning('fal image generation wait ended', ['checks' => $check_count, 'limit' => $check_limit, 'interval_seconds' => $pollInterval, 'status' => $data['status'] ?? null, 'request_id' => $data['request_id'] ?? null]);
+                        return response()->json(['success' => false, 'message' => 'Görsel hâlâ hazırlanıyor. Bekleme süresi doldu; fal işlemi arka planda devam ediyor olabilir.', 'checks' => $check_count, 'request_id' => $data['request_id'] ?? null], 504);
+                    }
+                    if ($response_url !== '') {
 						$response = $client->get($response_url, [
 							'headers' => [
 								'Authorization' => 'Key ' . $falApiKey,
@@ -388,6 +418,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 							'completion_tokens' => $image_prompt['completion_tokens'] ?? 0
 						]);
 					}
+					return response()->json(['success' => false, 'message' => 'fal yanıtında görsel bulunamadı.'], 502);
 				} else {
 					return json_encode(['success' => false, 'message' => __('Error (2) generating image'), 'status_code' => $response->getStatusCode()]);
 				}
