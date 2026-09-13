@@ -29,13 +29,13 @@
         <section data-content="details" hidden><form id="details-form"><label>{{ __('Book title') }}<input name="title" required maxlength="200"></label>
 <label>{{ __('Subtitle') }}<input name="subtitle" maxlength="255"></label>
 <label>{{ __('Introduction') }}<textarea name="subheading" rows="4" maxlength="500"></textarea></label>
-<button type="button" class="ai-action" data-publication-ai="category">{{ __('Suggest category with AI') }}</button>
-<label>{{ __('Category') }}<select name="category_id"><option value="">{{ __('Choose a category') }}</option>@foreach($categories as $category)<option value="{{ $category->id }}" data-image="{{ $category->picture ? asset('storage/catpicbox/'.$category->picture) : asset('images/no-image.png') }}">{{ $category->parentCategory ? $category->parentCategory->category_name.' / ' : '' }}{{ $category->category_name }}</option>@endforeach</select></label>
-<button type="button" class="ai-action" data-publication-ai="keywords">{{ __('Suggest tags with AI') }}</button>
-<label>{{ __('Keywords, separated by commas') }}<input name="keywords_string" maxlength="255"><small>{{ __('Each tag can contain up to 16 characters.') }}</small></label>
+
+<label>{{ __('Category') }}<select name="category_id"><option value="">{{ __('Choose a category') }}</option>@foreach($categories as $category)<option value="{{ $category->id }}" data-image="{{ $category->picture ? asset('storage/catpicbox/'.$category->picture) : asset('images/no-image.png') }}">{{ $category->parentCategory ? $category->parentCategory->category_name.' / ' : '' }}{{ $category->category_name }}</option>@endforeach</select></label><button type="button" class="ai-action" data-publication-ai="category">{{ __('Suggest category with AI') }}</button>
+
+<label>{{ __('Keywords, separated by commas') }}<input name="keywords_string" maxlength="255"><small>{{ __('Each tag can contain up to 16 characters.') }}</small></label><button type="button" class="ai-action" data-publication-ai="keywords">{{ __('Suggest tags with AI') }}</button>
 <div class="featured-image-field"><input type="hidden" name="featured_image"><img id="featured-image-preview" src="{{ $book->getOriginalUrl() }}" data-default-image="{{ asset('images/no-image.png') }}" alt="{{ __('Featured image') }}"><button type="button" id="change-featured-image">{{ __('Change image') }}</button></div>
-<button type="button" class="ai-action" data-publication-ai="synopsis">{{ __('Create summary with AI') }}</button>
-@foreach (['synopsis'=>'Synopsis','genre'=>'Genre','point_of_view'=>'Point of view','tense'=>'Tense','style_notes'=>'Style notes'] as $key=>$label)<label>{{ __($label) }}<textarea name="{{ $key }}" rows="{{ in_array($key,['synopsis','style_notes']) ? 4 : 1 }}"></textarea></label>@endforeach<button class="primary">{{ __('Save book details') }}</button></form></section>
+
+@foreach (['synopsis'=>'Synopsis','genre'=>'Genre','point_of_view'=>'Point of view','tense'=>'Tense','style_notes'=>'Style notes'] as $key=>$label)<label>{{ __($label) }}<textarea name="{{ $key }}" rows="{{ in_array($key,['synopsis','style_notes']) ? 4 : 1 }}"></textarea></label>@if($key === 'synopsis')<button type="button" class="ai-action" data-publication-ai="synopsis">{{ __('Create summary with AI') }}</button>@endif@endforeach<button class="primary">{{ __('Save book details') }}</button></form></section>
         <section data-content="history" hidden><p class="muted">{{ __('Select a revision to compare it with the current manuscript and codex before restoring.') }}</p><div id="revision-list"></div><h3>{{ __('Chapters & scenes') }}</h3><div id="outline"></div></section>
     </aside><div id="panel-resizer" role="separator" tabindex="0" aria-label="{{ __('Resize side panel') }}" aria-orientation="vertical" aria-valuemin="180" aria-valuemax="560" aria-valuenow="300"></div></div>
         <section class="writing-pane" aria-label="{{ __('Manuscript editor') }}">
