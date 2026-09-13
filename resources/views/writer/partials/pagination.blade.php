@@ -1,6 +1,6 @@
 @if ($paginator->total() > 0)
-<nav class="library-pagination" aria-label="{{ __('Works pagination') }}">
-    <p class="muted">{{ __('Showing :first–:last of :total works', ['first' => $paginator->firstItem() ?? 0, 'last' => $paginator->lastItem() ?? 0, 'total' => $paginator->total()]) }}</p>
+<nav class="library-pagination" aria-label="{{ __($paginationLabel ?? 'Works pagination') }}">
+    <p class="muted">{{ __($summaryKey ?? 'Showing :first–:last of :total works', ['first' => $paginator->firstItem() ?? 0, 'last' => $paginator->lastItem() ?? 0, 'total' => $paginator->total()]) }}</p>
     <ul>
         @if($paginator->onFirstPage())
             <li><span aria-disabled="true">{{ __('First page') }}</span></li><li><span aria-disabled="true">← {{ __('Previous') }}</span></li>

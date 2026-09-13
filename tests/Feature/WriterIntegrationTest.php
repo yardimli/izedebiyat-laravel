@@ -128,6 +128,48 @@ class WriterIntegrationTest extends WriterTestCase
         $this->get('/eserlerim?q=Match&page=3')->assertOk()->assertSee('Showing 61–61 of 61 works');
     }
 
+    public function test_admin_budget_sorting_matches_displayed_values_and_validates_columns(): void
+    {
+        $admin = User::factory()->create(['member_type' => 1]);
+        $a = User::factory()->create(['name' => 'Budget A', 'email' => 'z@example.com']);
+        $b = User::factory()->create(['name' => 'Budget B', 'email' => 'a@example.com']);
+        $a->forceFill(['demo_limit' => null, 'demo_allowance' => null, 'demo_spent' => 0.25, 'demo_reserved' => 0.25])->save();
+        $b->forceFill(['demo_limit' => 5, 'demo_allowance' => 2, 'demo_spent' => 3, 'demo_reserved' => 0.1])->save();
+        AiCall::create(['user_id' => $a->id, 'book_id' => $this->book($a)->id, 'model' => 'test/writer', 'stage' => 'chat', 'funding' => 'demo', 'cost' => 7]);
+        $this->actingAs($admin);
+        $url = '/yazi-atolyesi/admin/budgets?search=Budget&';
+        foreach (['name' => $a->id, 'email' => $b->id, 'total_spent' => $b->id, 'demo_spent' => $a->id, 'pending' => $b->id, 'limit' => $a->id, 'remaining' => $a->id, 'percentage' => $a->id] as $sort => $first) {
+            $ascending = $this->get($url.'sort='.$sort.'&direction=asc')->assertOk()->viewData('users');
+            $this->assertSame($first, $ascending->first()->id, $sort);
+            $descending = $this->get($url.'sort='.$sort.'&direction=desc')->assertOk()->viewData('users');
+            $this->assertSame(array_reverse($ascending->pluck('id')->all()), $descending->pluck('id')->all());
+            foreach ($ascending as $user) {
+                $this->assertEquals(DemoBudget::remaining($user), $user->writer_remaining);
+                $this->assertEquals(DemoBudget::percentage($user), $user->writer_percentage);
+            }
+        }
+        $b->forceFill(['demo_limit' => 0, 'demo_allowance' => 0])->save();
+        $this->assertSame($b->id, $this->get($url.'sort=percentage')->assertOk()->viewData('users')->first()->id);
+        $this->getJson($url.'sort=password')->assertUnprocessable();
+        $this->getJson($url.'direction=invalid')->assertUnprocessable();
+        $this->getJson($url.'per_page=1000')->assertUnprocessable();
+        $this->actingAs($a)->get($url.'sort=total_spent')->assertForbidden();
+    }
+
+    public function test_admin_budget_pagination_preserves_search_sort_and_page_size(): void
+    {
+        $admin = User::factory()->create(['member_type' => 1]);
+        for ($i = 0; $i < 27; $i++) User::factory()->create(['name' => 'Pagination member '.str_pad((string) $i, 2, '0', STR_PAD_LEFT)]);
+        $response = $this->actingAs($admin)->get('/yazi-atolyesi/admin/budgets?search=Pagination&sort=name&direction=desc&per_page=25&page=2')->assertOk();
+        $users = $response->viewData('users');
+        $this->assertSame(27, $users->total());
+        $this->assertCount(2, $users);
+        $this->assertSame('Pagination member 01', $users->first()->name);
+        parse_str(parse_url($users->url(1), PHP_URL_QUERY), $query);
+        $this->assertSame(['search'=>'Pagination', 'sort'=>'name', 'direction'=>'desc', 'per_page'=>'25', 'page'=>'1'], $query);
+        $response->assertSee('Showing 26–27 of 27 members')->assertSee('aria-sort="descending"', false)->assertSee('First page')->assertSee('Last page');
+    }
+
     private function book(User $user): Book
     {
         return Book::create(['user_id' => $user->id, 'title' => 'Türkçe eser', 'document' => Manuscript::fromText('İlk metin'), 'codex_types' => ['People']]);

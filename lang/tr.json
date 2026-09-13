@@ -731,5 +731,7 @@
     "Last page": "Son",
     "Previous": "Önceki",
     "Next": "Sonraki",
-    "Page :page": "Sayfa :page"
+    "Page :page": "Sayfa :page",
+    "Members pagination": "Üye sayfaları",
+    "Showing :first–:last of :total members": ":total üyeden :first–:last arası gösteriliyor"
 }

@@ -2436,3 +2436,11 @@ html[data-theme="dark"] .site-header .writer-brand .dark-mode-item { display: bl
 .library-pagination [aria-current="page"] { background: var(--accent); color: var(--page); border-color: var(--accent); font-weight: bold; }
 .library-pagination [aria-disabled="true"] { color: var(--muted); background: transparent; }
 .library-pagination li > .pagination-gap { border-color: transparent; background: transparent; }
+
+.budget-filters { align-items: end; flex-wrap: wrap; gap: 12px; }
+.budget-filters label { margin: 0; }
+.budget-filters select { display: block; }
+.budget-table th a { display: inline-flex; align-items: center; gap: 6px; color: inherit; text-decoration: none; }
+.budget-table th a:hover { text-decoration: underline; }
+.budget-table th[aria-sort="ascending"], .budget-table th[aria-sort="descending"] { background: var(--soft); }
+.budget-table td:nth-child(n+3):nth-child(-n+8) { white-space: nowrap; font-variant-numeric: tabular-nums; }
