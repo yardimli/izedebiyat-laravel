@@ -7,8 +7,9 @@
 		<div class="container mt-5">
 			<div class="row align-items-center">
 				{{-- Search Form --}}
-				<form action="/users" method="GET" class="col-md-8 col-lg-9">
-					<div class="input-group mb-3">
+				<form action="{{ route('admin-users-index') }}" method="GET" class="col-md-8 col-lg-9">
+					<input type="hidden" name="sort" value="{{ $sort }}"><input type="hidden" name="direction" value="{{ $direction }}">
+                    <div class="input-group mb-3">
 						<input name="search" type="text" class="form-control" placeholder="Search users" value="{{ request('search') }}">
 						<button class="btn btn-primary" type="submit">Search</button>
 					</div>
@@ -24,17 +25,17 @@
 				<thead>
 				<tr>
 					<th style="width: 50px"></th>
-					<th>Name</th>
-					<th>Email</th>
-					<th>Stories</th>
-					<th>Last Story</th>
-					<th>Created</th>
+					<th scope="col" aria-sort="{{ $sort === 'name' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}"><a class="admin-sort-link" href="{{ route('admin-users-index', ['search'=>$search, 'sort'=>'name', 'direction'=>$sort === 'name' && $direction === 'asc' ? 'desc' : 'asc']) }}">Name <span aria-hidden="true">{{ $sort === 'name' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a></th>
+					<th scope="col" aria-sort="{{ $sort === 'email' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}"><a class="admin-sort-link" href="{{ route('admin-users-index', ['search'=>$search, 'sort'=>'email', 'direction'=>$sort === 'email' && $direction === 'asc' ? 'desc' : 'asc']) }}">Email <span aria-hidden="true">{{ $sort === 'email' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a></th>
+					<th scope="col" aria-sort="{{ $sort === 'story_count' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}"><a class="admin-sort-link" href="{{ route('admin-users-index', ['search'=>$search, 'sort'=>'story_count', 'direction'=>$sort === 'story_count' && $direction === 'asc' ? 'desc' : 'asc']) }}">Eserler <span aria-hidden="true">{{ $sort === 'story_count' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a></th>
+					<th scope="col" aria-sort="{{ $sort === 'last_story_date' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}"><a class="admin-sort-link" href="{{ route('admin-users-index', ['search'=>$search, 'sort'=>'last_story_date', 'direction'=>$sort === 'last_story_date' && $direction === 'asc' ? 'desc' : 'asc']) }}">Son eser <span aria-hidden="true">{{ $sort === 'last_story_date' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a></th>
+					<th scope="col" aria-sort="{{ $sort === 'created_at' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}"><a class="admin-sort-link" href="{{ route('admin-users-index', ['search'=>$search, 'sort'=>'created_at', 'direction'=>$sort === 'created_at' && $direction === 'asc' ? 'desc' : 'asc']) }}">Created <span aria-hidden="true">{{ $sort === 'created_at' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a></th>
 					<th>Actions</th>
 				</tr>
 				</thead>
 				<tbody>
 				@foreach($users as $user)
-					<tr style="background-color: #222;">
+					<tr>
 						<td class="text-center">
 							@if($user->avatar)
 								<img src="{{ !empty($user->avatar) ? Storage::url($user->avatar) : '/assets/images/avatar/placeholder.jpg' }}" class="rounded-circle" width="40" height="40">
@@ -72,6 +73,10 @@
 						</td>
 					</tr>
 					
+				@endforeach
+				</tbody>
+			</table>
+                @foreach($users as $user)
 					{{-- ADDED: Deletion confirmation modal for each user --}}
 					<div class="modal fade" id="deleteUserModal-{{ $user->id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel-{{ $user->id }}" aria-hidden="true">
 						<div class="modal-dialog">
@@ -94,18 +99,12 @@
 							</div>
 						</div>
 					</div>
-				@endforeach
-				</tbody>
-			</table>
+                @endforeach
 			
 			<!-- Pagination Links -->
-			<?php $users = $users->appends([
-				'purchase' => $_GET['purchase'] ?? 'no',
-				'written' => $_GET['written'] ?? 'no',
-				'search' => $_GET['search'] ?? ''
-			]); ?>
+
 			
-			<div class="d-flex justify-content-center">
+			<div class="d-flex justify-content-center flex-wrap gap-1">
 				@if ($users->onFirstPage())
 					<button class="btn btn-secondary mx-1" disabled>First</button>
 				@else

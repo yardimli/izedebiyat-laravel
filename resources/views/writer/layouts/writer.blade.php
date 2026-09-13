@@ -8,6 +8,7 @@
 @if(config('app.favicon'))<link rel="icon" href="{{ asset(config('app.favicon')) }}">@endif
 <meta name="robots" content="noindex,nofollow">
 @include('writer.partials.translations')
+@include('partials.admin-contrast')
 </head>
 <body data-app-name="{{ config('app.name') }}" data-user="{{ auth()->id() }}">
 <header class="site-header">

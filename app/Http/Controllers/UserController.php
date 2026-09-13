@@ -19,37 +19,26 @@
 
 	class UserController extends Controller
 	{
-		public function index(Request $request)
-		{
-			if (Auth::user()->member_type === 1) {
-				$query = User::query()
-					->select('users.*')
-					->selectRaw('(SELECT COUNT(*) FROM articles WHERE articles.user_id = users.id AND articles.approved = 1 AND articles.deleted = 0) as story_count')
-					->selectRaw('(SELECT MAX(created_at) FROM articles WHERE articles.user_id = users.id AND articles.approved = 1 AND articles.deleted = 0) as last_story_date');
-
-				if ($request->has('search')) {
-					$query->where('name', 'like', "%{$request->search}%")
-						->orWhere('email', 'like', "%{$request->search}%");
-				}
-
-				$users = $query->orderBy('id', 'desc')->get();
-
-				$page = LengthAwarePaginator::resolveCurrentPage() ?: 1;
-				$items = $users->forPage($page, 100);
-
-				$users = new LengthAwarePaginator(
-					$items,
-					$users->count(),
-					100,
-					$page,
-					['path' => LengthAwarePaginator::resolveCurrentPath()]
-				);
-
-				return view('backend.users', compact('users'));
-			} else {
-				abort(403, 'Unauthorized action.');
-			}
-		}
+        public function index(Request $request)
+        {
+            abort_unless($request->user()->isAdmin(), 403);
+            $columns = ['id'=>'users.id', 'name'=>'users.name', 'email'=>'users.email', 'story_count'=>'story_count', 'last_story_date'=>'last_story_date', 'created_at'=>'users.created_at'];
+            $data = $request->validate(['search'=>'nullable|string|max:200', 'sort'=>'sometimes|in:'.implode(',', array_keys($columns)), 'direction'=>'sometimes|in:asc,desc']);
+            $sort = $data['sort'] ?? 'id';
+            $direction = $data['direction'] ?? 'desc';
+            $search = trim($data['search'] ?? '');
+            $query = User::query()->select('users.*')
+                ->selectRaw('(SELECT COUNT(*) FROM articles WHERE articles.user_id = users.id AND articles.approved = 1 AND articles.deleted = 0) as story_count')
+                ->selectRaw('(SELECT MAX(created_at) FROM articles WHERE articles.user_id = users.id AND articles.approved = 1 AND articles.deleted = 0) as last_story_date');
+            if ($search !== '') {
+                $pattern = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search).'%';
+                $query->where(fn ($q) => $q->whereRaw("users.name LIKE ? ESCAPE '!'", [$pattern])->orWhereRaw("users.email LIKE ? ESCAPE '!'", [$pattern]));
+            }
+            $query->orderBy($columns[$sort], $direction);
+            if ($sort !== 'id') $query->orderByDesc('users.id');
+            $users = $query->paginate(100)->withQueryString();
+            return view('backend.users', compact('users', 'sort', 'direction', 'search'));
+        }
 
 		public function loginAs(Request $request)
 		{

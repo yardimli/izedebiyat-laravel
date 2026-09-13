@@ -344,9 +344,13 @@
 		Route::get('/favorilerim', [FollowController::class, 'following'])->name('backend.following');
 		Route::post('/yapit/{article}/clap', [ArticleController::class, 'toggleClap'])->name('article.clap');
 
-		Route::get('/users', [UserController::class, 'index'])->name('admin-users-index');
+		Route::get('/admin/users', [UserController::class, 'index'])->name('admin-users-index');
+        Route::get('/users', function (\Illuminate\Http\Request $request) {
+            abort_unless($request->user()->isAdmin(), 403);
+            return redirect()->route('admin-users-index', $request->query());
+        });
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');
-		Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+		Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 		Route::get('/admin/articles', [ArticleController::class, 'adminIndex'])->name('admin.articles.index');
 		Route::post('/admin/articles/bulk-update', [ArticleController::class, 'adminBulkUpdate'])->name('admin.articles.bulk-update');
 		Route::patch('/admin/articles/{article}/flags', [ArticleController::class, 'adminUpdateFlags'])->name('admin.articles.flags');

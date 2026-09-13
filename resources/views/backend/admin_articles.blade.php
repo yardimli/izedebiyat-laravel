@@ -66,9 +66,7 @@
 									<th style="min-width: 320px;">Article</th>
 									<th>Author</th>
 									<th>Created</th>
-									<th>Status</th>
 									<th style="min-width: 250px;">Flags</th>
-									<th>Actions</th>
 								</tr>
 								</thead>
 								<tbody>
@@ -78,7 +76,7 @@
 											<input class="form-check-input article-checkbox" type="checkbox" name="article_ids[]" value="{{ $article->id }}" form="bulk-articles-form">
 										</td>
 										<td>
-											<div class="fw-semibold">{{ strip_tags($article->title) }}</div>
+											<div class="fw-semibold">@if($article->is_published && $article->approved && !$article->deleted)<a href="{{ route('article', $article->slug) }}" target="_blank" rel="noopener noreferrer">{{ strip_tags($article->title) }}</a>@else{{ strip_tags($article->title) }}@endif</div>
 											@if($article->subtitle)
 												<div class="small text-muted">{{ strip_tags($article->subtitle) }}</div>
 											@endif
@@ -97,16 +95,7 @@
 											@endif
 										</td>
 										<td>{{ $article->created_at ? $article->created_at->format('d M Y H:i') : '-' }}</td>
-										<td>
-											<div class="d-flex flex-column gap-1">
-												<span class="badge bg-{{ $article->is_published ? 'success' : 'warning' }}">
-													{{ $article->is_published ? 'Published' : 'Draft' }}
-												</span>
-												<span class="badge bg-{{ $article->approved ? 'success' : 'secondary' }}">
-													{{ $article->approved ? 'Approved' : 'Not Approved' }}
-												</span>
-											</div>
-										</td>
+
 										<td>
 											<form action="{{ route('admin.articles.flags', $article) }}" method="POST" class="d-flex flex-column gap-2">
 												@csrf
@@ -127,23 +116,7 @@
 												<button type="submit" class="btn btn-sm btn-primary align-self-start">Save</button>
 											</form>
 										</td>
-										<td>
-											<div class="d-flex flex-wrap gap-2">
-												@if($article->is_published && $article->approved && !$article->deleted)
-													<a href="{{ route('article', $article->slug) }}" class="btn btn-sm btn-info" target="_blank">Live URL</a>
-												@else
-													<span class="btn btn-sm btn-secondary disabled">Not Live</span>
-												@endif
-												<form action="{{ route('admin.articles.destroy', $article) }}" method="POST" onsubmit="return confirm('Delete this article?')">
-													@csrf
-													@method('DELETE')
-													<input type="hidden" name="page" value="{{ request('page') }}">
-													<input type="hidden" name="search" value="{{ request('search') }}">
-													<input type="hidden" name="per_page" value="{{ request('per_page', 50) }}">
-													<button type="submit" class="btn btn-sm btn-danger">Delete</button>
-												</form>
-											</div>
-										</td>
+
 									</tr>
 								@endforeach
 								</tbody>

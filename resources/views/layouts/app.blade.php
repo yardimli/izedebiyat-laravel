@@ -52,6 +52,7 @@
 	
 	
 	@stack('styles')
+@include('partials.admin-contrast')
 </head>
 @php
 	use Carbon\Carbon;

@@ -170,6 +170,42 @@ class WriterIntegrationTest extends WriterTestCase
         $response->assertSee('Showing 26–27 of 27 members')->assertSee('aria-sort="descending"', false)->assertSee('First page')->assertSee('Last page');
     }
 
+    public function test_admin_users_route_and_column_sorting_preserve_search(): void
+    {
+        $admin = User::factory()->create(['member_type' => 1, 'slug' => 'sorting-admin']);
+        $a = User::factory()->create(['name' => 'Sort A', 'email' => 'z@example.com', 'created_at' => '2025-01-01']);
+        $b = User::factory()->create(['name' => 'Sort B', 'email' => 'a@example.com', 'created_at' => '2025-02-01']);
+        $this->book($a)->update(['created_at' => '2025-03-01']);
+        $this->book($b)->update(['created_at' => '2025-04-01']);
+        $this->book($b)->update(['created_at' => '2025-05-01']);
+        $this->actingAs($admin);
+        $this->get('/users?search=Sort')->assertRedirect(route('admin-users-index', ['search'=>'Sort']));
+        foreach (['name'=>$a->id, 'email'=>$b->id, 'story_count'=>$a->id, 'last_story_date'=>$a->id, 'created_at'=>$a->id] as $sort=>$first) {
+            $response = $this->get('/admin/users?search=Sort&sort='.$sort.'&direction=asc')->assertOk();
+            $this->assertSame($first, $response->viewData('users')->first()->id);
+            $response->assertDontSee('background-color: #222', false)->assertSee('aria-sort="ascending"', false);
+            $this->assertStringContainsString('sort='.$sort, $response->viewData('users')->url(2));
+            $descending = $this->get('/admin/users?search=Sort&sort='.$sort.'&direction=desc')->assertOk();
+            $this->assertNotSame($first, $descending->viewData('users')->first()->id);
+        }
+        $this->getJson('/admin/users?sort=password')->assertUnprocessable();
+        $this->actingAs($a)->get('/admin/users')->assertForbidden();
+    }
+
+    public function test_admin_articles_link_live_titles_and_keep_bulk_actions_without_duplicate_columns(): void
+    {
+        $admin = User::factory()->create(['member_type' => 1, 'slug' => 'admin-test']);
+        $live = $this->book($admin); $live->update(['title'=>'Published work', 'is_published'=>1, 'approved'=>1]);
+        $draft = $this->book($admin); $draft->update(['title'=>'Draft work']);
+        $response = $this->actingAs($admin)->get('/admin/articles')->assertOk();
+        $response->assertDontSee('<th>Status</th>', false)->assertDontSee('<th>Actions</th>', false)
+            ->assertDontSee('Live URL')->assertDontSee('Delete this article?')
+            ->assertSee('Delete selected')->assertSee('article-checkbox')->assertSee('Flags');
+        $response->assertSee('href="'.route('article', $live->slug).'" target="_blank"', false);
+        $response->assertDontSee('href="'.route('article', $draft->slug).'"', false);
+        $response->assertSee('color: #59616b !important;', false);
+    }
+
     private function book(User $user): Book
     {
         return Book::create(['user_id' => $user->id, 'title' => 'Türkçe eser', 'document' => Manuscript::fromText('İlk metin'), 'codex_types' => ['People']]);
