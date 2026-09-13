@@ -67,7 +67,7 @@ Rolling back the schema removes workspace data and its original-text backup colu
 
 ## Administrator quotas
 
-Open **Yapay zekâ kotaları** in the existing admin menu or visit `/yazi-atolyesi/admin/budgets`.
+Open **Yapay zeka kotaları** in the existing admin menu or visit `/yazi-atolyesi/admin/budgets`.
 
 The page lists every member's total settled AI spending, demo spending, pending reservations, cumulative limit, and remaining USD. Member-facing allowance indicators show a percentage.
 

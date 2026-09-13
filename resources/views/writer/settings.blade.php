@@ -5,16 +5,16 @@
 <section class="profile-settings">@include('writer.partials.profile-settings', ['user'=>auth()->user()])</section>
 <section class="panel account-images" aria-labelledby="account-images-title">
     <div class="account-images-heading"><h2 id="account-images-title"><a href="{{ route('backend.images') }}">Görsellerim</a></h2><a href="{{ route('backend.images') }}">Tüm görselleri yönet ↗</a></div>
-    <div class="account-image-stats"><span><strong>{{ number_format($imageCounts->sum()) }}</strong> toplam görsel</span><span><strong>{{ number_format($imageCounts->get('upload', 0)) }}</strong> yüklenen</span><span><strong>{{ number_format($imageCounts->get('generated', 0)) }}</strong> yapay zekâ ile oluşturulan</span></div>
+    <div class="account-image-stats"><span><strong>{{ number_format($imageCounts->sum()) }}</strong> toplam görsel</span><span><strong>{{ number_format($imageCounts->get('upload', 0)) }}</strong> yüklenen</span><span><strong>{{ number_format($imageCounts->get('generated', 0)) }}</strong> zekai ile oluşturulan</span></div>
     @if($latestImages->isNotEmpty())
     <h3>Son görseller</h3><div class="account-image-grid">
     @foreach($latestImages as $image)
-        <a href="{{ route('backend.images') }}" class="account-image-item"><img src="{{ asset('storage/'.($image->image_type === 'upload' ? 'upload-images' : 'ai-images').'/medium/'.$image->image_medium_filename) }}" alt="{{ $image->image_alt ?: 'Görsel' }}" loading="lazy"><span>{{ $image->image_type === 'upload' ? 'Yüklenen' : 'Yapay zekâ' }} · {{ $image->created_at?->format('d.m.Y') }}</span></a>
+        <a href="{{ route('backend.images') }}" class="account-image-item"><img src="{{ asset('storage/'.($image->image_type === 'upload' ? 'upload-images' : 'ai-images').'/medium/'.$image->image_medium_filename) }}" alt="{{ $image->image_alt ?: 'Görsel' }}" loading="lazy"><span>{{ $image->image_type === 'upload' ? 'Yüklenen' : 'Yapay zeka' }} · {{ $image->created_at?->format('d.m.Y') }}</span></a>
     @endforeach
     </div>
-    @else <p class="muted">Henüz görseliniz yok. Görsellerim sayfasından görsel yükleyebilir veya yapay zekâ ile oluşturabilirsiniz.</p> @endif
+    @else <p class="muted">Henüz görseliniz yok. Görsellerim sayfasından görsel yükleyebilir veya zekai ile oluşturabilirsiniz.</p> @endif
 </section>
-@if(auth()->user()->isAdmin())<section class="panel"><h2>Yönetim</h2><a class="toolbar-link" href="{{ route('writer.budgets.index') }}">Yapay zekâ kotaları ↗</a></section>@endif
+@if(auth()->user()->isAdmin())<section class="panel"><h2>Yönetim</h2><a class="toolbar-link" href="{{ route('writer.budgets.index') }}">Yapay zeka kotaları ↗</a></section>@endif
 <div class="settings-grid"><section class="panel"><h2>{{ __('Your OpenRouter key') }}</h2><p class="muted">{{ __('Use your own key for continued AI assistance. It is encrypted at rest and never returned to your browser.') }}</p>
 <p>{{ auth()->user()->openrouter_key ? __('A personal key is saved.') : __('Using the demo allowance when available.') }}</p>
 <form method="post" action="{{ route('writer.settings.update') }}">@csrf @method('PATCH')<label for="api-key">{{ __('Personal API key') }}</label><input id="api-key" type="password" name="openrouter_key" autocomplete="off" placeholder="{{ __('Enter a key to save or replace') }}" required><button class="primary">{{ __('Save API key') }}</button></form>

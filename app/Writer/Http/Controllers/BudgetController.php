@@ -46,6 +46,6 @@ class BudgetController extends Controller
         abort_unless($request->user()->isAdmin(), 403);
         DemoBudget::reset($user, $request->user());
 
-        return back()->with('status', 'Yapay zekâ kotası %100 olarak yenilendi.');
+        return back()->with('status', 'Yapay zeka kotası %100 olarak yenilendi.');
     }
 }
