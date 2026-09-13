@@ -9,12 +9,12 @@
     @if($latestImages->isNotEmpty())
     <h3>Son görseller</h3><div class="account-image-grid">
     @foreach($latestImages as $image)
-        <a href="{{ route('backend.images') }}" class="account-image-item"><img src="{{ asset('storage/'.($image->image_type === 'upload' ? 'upload-images' : 'ai-images').'/medium/'.$image->image_medium_filename) }}" alt="{{ $image->image_alt ?: 'Görsel' }}" loading="lazy"><span>{{ $image->image_type === 'upload' ? 'Yüklenen' : 'Yapay zeka' }} · {{ $image->created_at?->format('d.m.Y') }}</span></a>
+        <a href="{{ route('backend.images') }}" class="account-image-item"><img src="{{ asset('storage/'.($image->image_type === 'upload' ? 'upload-images' : 'ai-images').'/medium/'.$image->image_medium_filename) }}" alt="{{ $image->image_alt ?: 'Görsel' }}" loading="lazy"><span>{{ $image->image_type === 'upload' ? 'Yüklenen' : 'Zekai' }} · {{ $image->created_at?->format('d.m.Y') }}</span></a>
     @endforeach
     </div>
     @else <p class="muted">Henüz görseliniz yok. Görsellerim sayfasından görsel yükleyebilir veya zekai ile oluşturabilirsiniz.</p> @endif
 </section>
-@if(auth()->user()->isAdmin())<section class="panel"><h2>Yönetim</h2><a class="toolbar-link" href="{{ route('writer.budgets.index') }}">Yapay zeka kotaları ↗</a></section>@endif
+@if(auth()->user()->isAdmin())<section class="panel"><h2>Yönetim</h2><a class="toolbar-link" href="{{ route('writer.budgets.index') }}">Zekai kotaları ↗</a></section>@endif
 <div class="settings-grid"><section class="panel"><h2>{{ __('Your OpenRouter key') }}</h2><p class="muted">{{ __('Use your own key for continued AI assistance. It is encrypted at rest and never returned to your browser.') }}</p>
 <p>{{ auth()->user()->openrouter_key ? __('A personal key is saved.') : __('Using the demo allowance when available.') }}</p>
 <form method="post" action="{{ route('writer.settings.update') }}">@csrf @method('PATCH')<label for="api-key">{{ __('Personal API key') }}</label><input id="api-key" type="password" name="openrouter_key" autocomplete="off" placeholder="{{ __('Enter a key to save or replace') }}" required><button class="primary">{{ __('Save API key') }}</button></form>
