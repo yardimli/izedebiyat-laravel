@@ -106,3 +106,9 @@ A MySQL-specific regression check reproduces the strict-mode failure and verifie
 ```sh
 php scripts/check-writer-zero-dates.php
 ```
+
+### Retrying the billing-link migration
+
+If the billing migration fails with errno 121 (duplicate constraint name), deploy the updated migration and rerun `php artisan migrate`. It inspects the existing foreign key, skips the already-correct schema, and separates dropping, changing nullability, and adding the new relationship. It can resume if the foreign key was already dropped. No article reconversion or database reset is needed.
+
+`php scripts/check-writer-billing-migration.php` verifies the upgrade and interrupted retries in a randomly named local MySQL/MariaDB test database, then removes only that test database. It refuses remote database hosts.
