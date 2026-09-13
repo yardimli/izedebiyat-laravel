@@ -719,5 +719,17 @@
     "Permanently delete this work and its comments? This cannot be undone.": "Bu eser ve yorumları kalıcı olarak silinsin mi? Bu işlem geri alınamaz.",
     "Wait for the AI request to finish before deleting this work.": "Eseri silmeden önce yapay zekâ isteğinin tamamlanmasını bekleyin.",
     "AI returned an invalid category.": "Yapay zekâ geçerli bir kategori önermedi.",
-    "AI returned no valid tags.": "Yapay zekâ geçerli etiketler önermedi."
+    "AI returned no valid tags.": "Yapay zekâ geçerli etiketler önermedi.",
+    "Search your works": "Eserlerinizde arayın",
+    "Search titles and short descriptions…": "Başlık ve kısa açıklamalarda arayın…",
+    "Clear search": "Aramayı temizle",
+    "No matching works.": "Aramanızla eşleşen eser bulunamadı.",
+    "Try another title or a phrase from the short description.": "Başka bir başlık veya kısa açıklamadan bir ifade deneyin.",
+    "Works pagination": "Eser sayfaları",
+    "Showing :first–:last of :total works": ":total eserden :first–:last arası gösteriliyor",
+    "First page": "İlk",
+    "Last page": "Son",
+    "Previous": "Önceki",
+    "Next": "Sonraki",
+    "Page :page": "Sayfa :page"
 }

@@ -89,6 +89,45 @@ class WriterIntegrationTest extends WriterTestCase
         $this->assertFalse($book->fresh()->is_published);
     }
 
+    public function test_library_search_matches_title_and_short_description_only_for_the_owner(): void
+    {
+        $owner = User::factory()->create();
+        $title = $this->book($owner); $title->update(['title' => 'Deniz feneri']);
+        $description = $this->book($owner); $description->update(['title' => 'Bir akşam', 'subheading' => 'Deniz kıyısında bir akşam']);
+        $unmatched = $this->book($owner); $unmatched->update(['title' => 'Dağ yolu', 'subtitle' => 'Deniz']);
+        $private = $this->book(User::factory()->create()); $private->update(['subheading' => 'Deniz']);
+        $deleted = $this->book($owner); $deleted->update(['title' => 'Deniz', 'deleted' => 1]);
+        $response = $this->actingAs($owner)->get('/eserlerim?q=Deniz')->assertOk();
+        $this->assertEqualsCanonicalizing([$title->id, $description->id], $response->viewData('books')->pluck('id')->all());
+        $this->assertSame('Deniz', $response->viewData('search'));
+        $this->get('/eserlerim?q=no-match')->assertOk()->assertSee('No matching works.')->assertSee('Clear search');
+        $title->update(['title' => '100%_tam']);
+        $this->assertSame([$title->id], $this->get('/eserlerim?q='.urlencode('%_'))->assertOk()->viewData('books')->pluck('id')->all());
+        $this->assertSame(3, $this->get('/eserlerim?q=%20%20')->assertOk()->viewData('books')->total());
+        $this->getJson('/eserlerim?q[]=invalid')->assertUnprocessable();
+    }
+
+    public function test_numbered_library_pagination_retains_search_and_has_stable_page_boundaries(): void
+    {
+        $owner = User::factory()->create();
+        $ids = [];
+        for ($i = 0; $i < 61; $i++) {
+            $book = $this->book($owner);
+            $book->update(['title' => 'Match '.$i, 'updated_at' => '2026-09-01 12:00:00']);
+            $ids[] = $book->id;
+        }
+        $this->book($owner)->update(['title' => 'Unrelated']);
+        $response = $this->actingAs($owner)->get('/eserlerim?q=Match&page=2')->assertOk();
+        $paginator = $response->viewData('books');
+        $this->assertSame(61, $paginator->total());
+        $this->assertSame(3, $paginator->lastPage());
+        $this->assertSame(array_slice(array_reverse($ids), 30, 30), $paginator->pluck('id')->all());
+        $response->assertSee('aria-current="page"', false)->assertSee('Page 3')->assertSee('First page')->assertSee('Last page')->assertSee('Showing 31–60 of 61 works');
+        parse_str(parse_url($paginator->url(3), PHP_URL_QUERY), $query);
+        $this->assertSame(['q' => 'Match', 'page' => '3'], $query);
+        $this->get('/eserlerim?q=Match&page=3')->assertOk()->assertSee('Showing 61–61 of 61 works');
+    }
+
     private function book(User $user): Book
     {
         return Book::create(['user_id' => $user->id, 'title' => 'Türkçe eser', 'document' => Manuscript::fromText('İlk metin'), 'codex_types' => ['People']]);

@@ -6,6 +6,10 @@
     <div class="eyebrow">{{ __('THE WRITING LIFE') }}</div>
     <div class="library-heading"><div><h1>{{ __('A room for your stories.') }}</h1><p class="muted">{{ __('Return to a world you know. Or begin somewhere new.') }}</p></div><span class="ornament">❧</span></div>
     <form action="{{ route('writer.books.store') }}" method="post" class="new-book">@csrf<label for="book-title">{{ __('Your next book') }}</label><div class="row"><input id="book-title" name="title" placeholder="{{ __('Every story begins with a title…') }}" maxlength="200" required><button class="primary">{{ __('Begin a book') }} <span>↗</span></button></div></form>
+    <form method="get" action="{{ route('articles.index') }}" class="library-search" role="search">
+        <label for="work-search">{{ __('Search your works') }}</label>
+        <div class="row"><input id="work-search" type="search" name="q" value="{{ $search }}" maxlength="200" placeholder="{{ __('Search titles and short descriptions…') }}"><button type="submit">{{ __('Search') }}</button>@if($search !== '')<a href="{{ route('articles.index') }}">{{ __('Clear search') }}</a>@endif</div>
+    </form>
     <h2 class="section-heading">{{ __('On your desk') }} <span>{{ $books->total() }} {{ __('manuscripts') }}</span></h2>
     <div class="book-grid">
     @forelse ($books as $book)
@@ -25,9 +29,9 @@
                 <form method="post" action="{{ route('writer.books.destroy', $book) }}" data-delete-book>@csrf @method('DELETE')<button type="submit">{{ __('Delete book') }}</button></form>
             </div>
         </article>
-    @empty <div class="empty-library"><span>Ⅰ</span><h2>{{ __('The first page is waiting.') }}</h2><p>{{ __('Give your book a title above. You can always change it later.') }}</p></div> @endforelse
+    @empty <div class="empty-library"><span>Ⅰ</span><h2>{{ $search !== '' ? __('No matching works.') : __('The first page is waiting.') }}</h2><p>{{ $search !== '' ? __('Try another title or a phrase from the short description.') : __('Give your book a title above. You can always change it later.') }}</p></div> @endforelse
     </div>
-{{ $books->links('pagination::simple-default') }}
+{{ $books->onEachSide(1)->links('writer.partials.pagination') }}
 </main>
 <dialog id="library-import-dialog"><div class="dialog-heading"><h2>{{ __('Import your story') }}</h2><button type="button" id="library-cancel-import" aria-label="{{ __('Close import') }}">×</button></div><p>{{ __('Preview before replacing this book’s manuscript. A revision preserves the previous text.') }}</p><input id="library-import-file" type="file" accept=".txt,.docx"><textarea id="library-import-preview" rows="14" aria-label="{{ __('Imported text preview') }}"></textarea><div class="row"><button id="library-confirm-import" class="primary" disabled>{{ __('Replace manuscript') }}</button></div></dialog>
 @endsection

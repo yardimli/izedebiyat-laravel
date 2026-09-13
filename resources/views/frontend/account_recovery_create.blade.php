@@ -1,6 +1,76 @@
 @extends('layouts.app-frontend')
 
 @section('title', 'Hesap Kurtarma')
+@section('body-class', 'account-recovery-page')
+
+@push('styles')
+<style>
+    .account-recovery-page {
+        --recovery-bg: #fefeee;
+        --recovery-surface: #fff;
+        --recovery-input: #fff;
+        --recovery-text: #292d32;
+        --recovery-muted: #626970;
+        --recovery-border: #ced4da;
+        background-color: var(--recovery-bg);
+        color: var(--recovery-text);
+        color-scheme: light;
+    }
+    [data-bs-theme="dark"] .account-recovery-page {
+        --recovery-bg: #141414;
+        --recovery-surface: #202020;
+        --recovery-input: #292929;
+        --recovery-text: #eeeeee;
+        --recovery-muted: #b8b8b8;
+        --recovery-border: #505050;
+        color-scheme: dark;
+    }
+    .account-recovery-page main .card,
+    .account-recovery-page main .card-header {
+        background-color: var(--recovery-surface);
+        color: var(--recovery-text);
+        border-color: var(--recovery-border);
+    }
+    .account-recovery-page main .card h1,
+    .account-recovery-page main .form-label,
+    .account-recovery-page main .form-check-label {
+        color: var(--recovery-text);
+    }
+    .account-recovery-page main .text-muted,
+    .account-recovery-page main .form-text {
+        color: var(--recovery-muted) !important;
+    }
+    .account-recovery-page main .form-control,
+    .account-recovery-page main .form-control:focus {
+        background-color: var(--recovery-input);
+        color: var(--recovery-text);
+        border-color: var(--recovery-border);
+    }
+    .account-recovery-page main .form-control::placeholder {
+        color: var(--recovery-muted);
+        opacity: 1;
+    }
+    .account-recovery-page main .form-control::file-selector-button {
+        background-color: var(--recovery-surface);
+        color: var(--recovery-text);
+    }
+    .account-recovery-page main .form-check-input:not(:checked) {
+        background-color: var(--recovery-input);
+        border-color: var(--recovery-border);
+    }
+    [data-bs-theme="dark"] .account-recovery-page main .alert-success {
+        background-color: #19392b;
+        border-color: #3e765a;
+        color: #c7efdb;
+    }
+    [data-bs-theme="dark"] .account-recovery-page main .alert-danger {
+        background-color: #412522;
+        border-color: #88524b;
+        color: #ffd6d1;
+    }
+</style>
+@endpush
+
 
 @section('content')
 	<div class="container my-5">

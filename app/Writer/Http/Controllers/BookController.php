@@ -118,9 +118,19 @@ class BookController extends Controller
 
     public function index(Request $request)
     {
+        $data = $request->validate(['q' => 'nullable|string|max:200']);
+        $search = trim($data['q'] ?? '');
         $books = Book::where('user_id', $request->user()->id);
+        if ($search !== '') {
+            // Treat wildcard characters as literal text and keep both matches owner-scoped.
+            $pattern = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search).'%';
+            $books->where(function ($query) use ($pattern) {
+                $query->whereRaw("title LIKE ? ESCAPE '!'", [$pattern])
+                    ->orWhereRaw("subheading LIKE ? ESCAPE '!'", [$pattern]);
+            });
+        }
 
-        return view('writer.books.index', ['books' => $books->select(['id', 'title', 'user_id', 'metadata', 'manuscript', 'archived', 'deleted', 'revision', 'updated_at', 'read_count', 'is_published', 'approved', 'category_name', 'subtitle'])->withCount('comments')->latest('updated_at')->paginate(30)->withQueryString()]);
+        return view('writer.books.index', ['books' => $books->select(['id', 'title', 'user_id', 'metadata', 'manuscript', 'archived', 'deleted', 'revision', 'updated_at', 'read_count', 'is_published', 'approved', 'category_name', 'subtitle'])->withCount('comments')->latest('updated_at')->orderByDesc('id')->paginate(30)->withQueryString(), 'search' => $search]);
     }
 
     public function store(Request $request)
