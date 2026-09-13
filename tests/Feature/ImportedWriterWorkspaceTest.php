@@ -681,4 +681,22 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         Http::assertSentCount(4);
         $this->travelBack();
     }
+
+    public function test_ai_synopsis_is_billed_and_returned_for_review_without_saving(): void
+    {
+        $book = $this->book();
+        $this->catalog();
+        Http::fake(['*/chat/completions' => Http::sequence()
+            ->push(['usage' => ['cost' => 0.02], 'choices' => [['message' => ['content' => json_encode(['synopsis' => '  Elif evine döner.  '])]]]])
+            ->push(['usage' => ['cost' => 0.01], 'choices' => [['message' => ['content' => json_encode(['synopsis' => ['invalid']])]]]])]);
+        $url = '/yazi-atolyesi/api/books/'.$book->id.'/publication-ai/synopsis';
+        $body = ['text' => 'Elif evine döndü.', 'model' => 'test/writer'];
+        $this->postJson($url, $body)->assertOk()->assertJsonPath('synopsis', 'Elif evine döner.');
+        $this->assertEquals(0.02, $book->user->fresh()->demo_spent);
+        $this->assertEmpty($book->fresh()->metadata['synopsis'] ?? null);
+        $this->postJson($url, $body)->assertUnprocessable();
+        $this->actingAs(User::factory()->create())->postJson($url, $body)->assertNotFound();
+        Http::assertSentCount(2);
+    }
+
 }

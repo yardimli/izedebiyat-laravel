@@ -16,6 +16,7 @@ const server=http.createServer(async(req,res)=>{
  if(pathname.endsWith('/api/countries'))return json([{code:'TR',name:'Türkiye'}]);
  if(pathname==='/yazi-atolyesi/hesap'&&req.method==='PATCH')return json({saved:true});
  if(pathname.endsWith('/featured-image')&&req.method==='POST')return json({filename:'uploaded.png',url:'/storage/upload-images/original/uploaded.png'});
+ if(pathname.endsWith('/publication-ai/synopsis'))return json({synopsis:'Elif yıllar sonra kasabasına döner.'});
  if(pathname.endsWith('/publication-ai/category'))return json({category_id:state.book.category_id});
  if(pathname.endsWith('/publication-ai/keywords'))return json({keywords_string:'deniz, umut'});
  if(req.method==='POST'&&pathname==='/image-gen')return json({success:true,image_medium_filename:'generated_medium.jpg'});
@@ -59,6 +60,8 @@ const server=http.createServer(async(req,res)=>{
  if(await page.locator('#featured-image-preview').getAttribute('src')!==categoryImage)throw Error('AI category did not update image');
  await page.locator('[data-publication-ai="keywords"]').click();await page.waitForTimeout(150);
  if(await page.locator('[name="keywords_string"]').inputValue()!=='deniz, umut')throw new Error('AI tags were not applied');
+ await page.locator('[data-publication-ai="synopsis"]').click();await page.waitForTimeout(150);
+ if(await page.locator('[name="synopsis"]').inputValue()!=='Elif yıllar sonra kasabasına döner.')throw Error('AI summary was not applied');
  await page.locator('#change-featured-image').click();
  if(!await page.locator('#image-upload-screen').isVisible()||await page.locator('#image-generation-screen').isVisible())throw Error('Image dialog must start with upload');
  await page.locator('#show-image-generation').click();

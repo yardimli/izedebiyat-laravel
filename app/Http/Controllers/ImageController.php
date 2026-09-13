@@ -206,7 +206,7 @@
 				return [];
 			}
 
-			$model = 'https://queue.fal.run/fal-ai/qwen-image';
+			$model = config('image_generation.fal_endpoint');
 			$size = 'landscape_4_3';
 
 			//square_hd,square,portrait_4_3,portrait_16_9,landscape_4_3,landscape_16_9
@@ -226,7 +226,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 			}
 			$gpt_prompt = str_replace('##UserPrompt##', $user_prompt, $prompt_enhancer);
 			//$llm = $request->input('llm');
-			$llm = 'openai/gpt-5.6-luna';
+			$llm = config('image_generation.prompt_model');
 
 			$chat_history[] = [
 				'role' => 'user',
@@ -245,7 +245,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 				Log::info('Enhanced Cover Image Prompt');
 				Log::info($image_prompt['content']);
 
-				$falApiKey = env('FAL_API_KEY');
+				$falApiKey = config('image_generation.fal_key');
 				if (empty($falApiKey)) {
 					echo json_encode(['error' => 'FAL_API_KEY environment variable is not set']);
 				}
@@ -273,7 +273,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 
 					$status_url = $data['status_url'];
 					$check_count = 0;
-					$check_limit = 10;
+					$check_limit = 20; // Allow twice as many one-second fal queue checks.
 					$response_url = '';
 					while ($check_count < $check_limit) {
 						$response = $client->get($status_url, [

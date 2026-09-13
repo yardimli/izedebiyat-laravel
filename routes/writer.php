@@ -31,7 +31,7 @@ Route::middleware(['auth', \App\Writer\Http\Middleware\WriterLocale::class])->pr
         Route::post('/models/refresh', [SettingsController::class, 'refresh'])->middleware('throttle:6,1');
         Route::get('/books/{book}', [BookController::class, 'state']);
         Route::patch('/books/{book}', [BookController::class, 'update']);
-        Route::post('/books/{book}/publication-ai/{kind}', [\App\Writer\Http\Controllers\PublicationAiController::class, 'suggest'])->whereIn('kind', ['category', 'keywords'])->middleware('throttle:12,1');
+        Route::post('/books/{book}/publication-ai/{kind}', [\App\Writer\Http\Controllers\PublicationAiController::class, 'suggest'])->whereIn('kind', ['category', 'keywords', 'synopsis'])->middleware('throttle:12,1');
         Route::post('/books/{book}/featured-image', [BookController::class, 'uploadImage']);
         Route::post('/books/{book}/entries/{id?}', [BookController::class, 'entry']);
         Route::delete('/books/{book}/entries/{id}', [BookController::class, 'deleteEntry']);

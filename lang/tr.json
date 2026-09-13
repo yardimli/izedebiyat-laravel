@@ -758,4 +758,7 @@
     "OK": "Tamam"
 ,
     "Do not show again during this session": "Bu oturumda tekrar gösterme"
+,
+    "Create summary with AI": "Yapay zekâyla özet oluştur",
+    "AI returned an invalid summary.": "Yapay zekâ geçerli bir özet döndürmedi."
 }

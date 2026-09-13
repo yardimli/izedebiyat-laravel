@@ -817,7 +817,7 @@ export async function start() {
             button.disabled = true;
             try {
                 const result = await api(base + '/publication-ai/' + button.dataset.publicationAi, 'POST', {text: editor.text().slice(0, 60000), model});
-                const field = button.dataset.publicationAi === 'category' ? 'category_id' : 'keywords_string';
+                const field = ({category: 'category_id', keywords: 'keywords_string', synopsis: 'synopsis'})[button.dataset.publicationAi];
                 $('#details-form').elements[field].value = result[field];
                 updateFeaturedImage();
                 detailsDirty = true;
@@ -863,7 +863,7 @@ export async function start() {
     action('#generate-featured-image', async () => {
         imageLoading(true);
         try {
-            const result = await api($('#generate-featured-image').dataset.url, 'POST', {user_prompt: $('#ai-image-prompt').value.trim() || editor.text().slice(0, 4000)});
+            const result = await api($('#generate-featured-image').dataset.url, 'POST', {user_prompt: $('#ai-image-prompt').value.trim() || editor.text().slice(0, 4000)}, 240000);
             if (!result?.success || !result.image_medium_filename) throw new Error(result?.message || result?.error || t('Image generation failed.'));
             const path = '/storage/ai-images/medium/' + result.image_medium_filename;
             $('#details-form').elements.featured_image.value = path;

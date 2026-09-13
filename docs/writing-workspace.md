@@ -124,3 +124,7 @@ After deploying, run `npm run build` and `php artisan optimize:clear`. No new da
 ## Administrator account viewing
 
 The users table login-as action saves the original administrator ID and the viewed user ID in the server-side session. A banner on writer, account and public site layouts identifies the viewed account and offers `Yönetici hesabıma dön`. The CSRF-protected POST return action (`/yoneticiye-don`) validates the saved identity and rechecks that the original account remains an administrator. Nested switches are blocked; logging out or session expiration ends the saved return context. Identity switches rotate the session ID and CSRF token and clear password-confirmation state.
+
+### Image generation models
+
+Set `FAL_IMAGE_MODEL_ENDPOINT=https://queue.fal.run/fal-ai/qwen-image` and `IMAGE_PROMPT_LLM_MODEL=openai/gpt-5.6-luna` in `.env` to choose the fal queue endpoint and OpenRouter model used to turn image descriptions into prompts. `FAL_API_KEY` is also read through Laravel config. These settings work with config caching; after changing them run `php artisan config:cache` (or `php artisan config:clear` when not caching). The endpoint must support the existing text-to-image queue payload and image response format. The editor’s selected writing model is separate.

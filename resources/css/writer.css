@@ -2470,3 +2470,5 @@ html[data-theme="dark"] .site-header .writer-brand .dark-mode-item { display: bl
 #image-generation-screen[hidden], #image-upload-screen[hidden] { display:none; }
 #featured-image-dialog small { display:block; margin-top:16px; color:var(--muted); }
 #image-upload-screen > button, #remove-featured-image { margin-top:14px; }
+
+#details-form .ai-action, #featured-image-dialog .ai-action { padding:5px 9px; font-size:12px; line-height:1.4; min-height:28px; width:auto; align-self:start; }
