@@ -4,10 +4,10 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "format:js": "prettier \"resources/js/**/*.{js,cjs,mjs}\" \"scripts/*.{js,cjs,mjs}\" \"tests/*.{js,cjs,mjs}\" \"*.{js,cjs,mjs}\" \"public/js/{custom-ui,functions,counter}.js\" \"public/frontend/assets/js/{admin,embed-comments,scripts}.js\" --write",
+        "format:js": "prettier \"resources/js/**/*.{js,cjs,mjs}\" \"scripts/*.{js,cjs,mjs}\" \"tests/*.{js,cjs,mjs}\" \"*.{js,cjs,mjs}\" \"public/js/{custom-ui,functions,counter,article-read}.js\" \"public/frontend/assets/js/{admin,embed-comments,scripts}.js\" --write",
         "format:blade": "node scripts/format-blade.mjs",
         "format": "npm run format:js && npm run format:blade",
-        "format:check": "prettier \"resources/js/**/*.{js,cjs,mjs}\" \"scripts/*.{js,cjs,mjs}\" \"tests/*.{js,cjs,mjs}\" \"*.{js,cjs,mjs}\" \"public/js/{custom-ui,functions,counter}.js\" \"public/frontend/assets/js/{admin,embed-comments,scripts}.js\" --check && node scripts/format-blade.mjs --check"
+        "format:check": "prettier \"resources/js/**/*.{js,cjs,mjs}\" \"scripts/*.{js,cjs,mjs}\" \"tests/*.{js,cjs,mjs}\" \"*.{js,cjs,mjs}\" \"public/js/{custom-ui,functions,counter,article-read}.js\" \"public/frontend/assets/js/{admin,embed-comments,scripts}.js\" --check && node scripts/format-blade.mjs --check"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",

@@ -52,26 +52,34 @@
                             —
                         @endif
                     </p>
-                    <h2>{{ $book->title }}</h2>
+                    <h2><a class="book-title-link"
+                            href="{{ route('articles.edit', \App\Helpers\IdHasher::encode($book->id)) }}">{{ $book->title }}</a>
+                    </h2>
                     <p class="muted">{{ $book->metadata['genre'] ?? __('A work in progress') }}</p>
                     <p class="muted">{{ $book->is_published ? __('Published') : __('Draft') }} ·
-                        {{ number_format($book->read_count) }} {{ __('reads') }} · {{ $book->comments_count }}
-                        {{ __('comments') }}</p>
+                        {{ number_format($book->read_count) }} {{ __('reads') }}
+                        @if ($book->comments_count > 0)
+                            · {{ $book->comments_count }} {{ __('comments') }}
+                        @endif
+                    </p>
                     <p class="book-word-count">{{ number_format($book->word_count) }} {{ __('words') }}</p>
-                    <div class="book-bottom">
-                        <a
-                            href="{{ route('articles.edit', \App\Helpers\IdHasher::encode($book->id)) }}">{{ __('Open manuscript ↗') }}</a>
-                        @if ($book->is_published && $book->approved)
-                            <a class="read-work" href="{{ route('article', $book->slug) }}" target="_blank"
-                                rel="noopener noreferrer">{{ __('Read work') }} ↗</a>
-                        @endif
-                    </div>
-                    <div class="book-file-actions" data-book-files="{{ $book->id }}">
-                        @if ($book->word_count === 0)
-                            <button type="button" data-import-book>{{ __('Import') }}</button>
-                        @endif
-                        <a href="{{ route('writer.books.export', ['book' => $book->id, 'format' => 'txt']) }}"
-                            data-export-book>{{ __('Export ↗') }}</a>
+                    <div class="book-bottom" data-book-files="{{ $book->id }}">
+                        <form method="get"
+                            action="{{ route('articles.edit', \App\Helpers\IdHasher::encode($book->id)) }}"
+                            class="continue-writing">
+                            <button type="submit" class="primary">{{ __('Continue writing') }}</button>
+                        </form>
+                        <div class="book-file-actions">
+                            @if ($book->is_published && $book->approved)
+                                <a class="read-work" href="{{ route('article', $book->slug) }}" target="_blank"
+                                    rel="noopener noreferrer">{{ __('Read work') }} ↗</a>
+                            @endif
+                            <a href="{{ route('writer.books.export', ['book' => $book->id, 'format' => 'txt']) }}"
+                                data-export-book>{{ __('Export ↗') }}</a>
+                            @if ($book->word_count === 0)
+                                <button type="button" data-import-book>{{ __('Import') }}</button>
+                            @endif
+                        </div>
                     </div>
                     <div class="book-manage-actions">
                         <label>{{ __('Publish status') }}<select data-publish-book="{{ $book->id }}"

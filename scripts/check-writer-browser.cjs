@@ -163,7 +163,7 @@ const server = http.createServer(async (req, res) => {
                 ],
             })),
         );
-        await page.locator(".book-bottom a").first().click();
+        await page.locator(".book-title-link").first().click();
         await page.locator(".ProseMirror").waitFor();
         await page.waitForFunction(() =>
             document.querySelector("#usage").textContent.includes("100"),

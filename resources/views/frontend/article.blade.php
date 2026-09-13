@@ -612,11 +612,13 @@
 
 
 @push('scripts')
+    <script src="{{ asset('js/article-read.js') }}?v={{ filemtime(public_path('js/article-read.js')) }}"
+        data-read-url="{{ route('article.read', $article->id) }}" defer></script>
     <script src="/js/mo.min.js"></script>
     {{-- Preserve template literal whitespace: repeated formatting changes these strings. --}}
     {{-- blade-formatter-disable --}}
     <script>
-        let hasRecordedRead = false;
+
         let currentArticleId = '{{ $article->id }}';
         let clap;
         let clapCount;
@@ -626,24 +628,6 @@
         let tlDuration = 300;
         let numberOfClaps = 0;
         let clapHold;
-
-        function recordRead() {
-            if (!hasRecordedRead) {
-                const articleId = '{{ $article->id }}';
-                $.ajax({
-                    url: `/yapit/${articleId}/read`,
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            hasRecordedRead = true;
-                        }
-                    }
-                });
-            }
-        }
 
         function toggleFollow(userId) {
             $.ajax({
@@ -951,21 +935,6 @@ ${replies}
                 $('.bar-long').css('width', "0px");
             }
 
-            const entryContent = $('.entry-main-content');
-            if (entryContent.length) {
-                const contentTop = entryContent.offset().top;
-                const contentHeight = entryContent.height();
-                const scrollPosition = $(window).scrollTop();
-                const windowHeight = $(window).height();
-
-                // Calculate the middle point of the content
-                const middlePoint = contentTop + (contentHeight / 2);
-
-                // Check if user has scrolled past the middle point
-                if (scrollPosition + (windowHeight / 2) > middlePoint) {
-                    recordRead();
-                }
-            }
         });
 
 

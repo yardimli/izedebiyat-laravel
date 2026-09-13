@@ -2472,3 +2472,8 @@ html[data-theme="dark"] .site-header .writer-brand .dark-mode-item { display: bl
 #image-upload-screen > button, #remove-featured-image { margin-top:14px; }
 
 #details-form .ai-action, #featured-image-dialog .ai-action { padding:5px 9px; font-size:12px; line-height:1.4; min-height:28px; width:auto; align-self:start; }
+
+.book-title-link { color:inherit; text-decoration:none; }
+.book-title-link:hover { text-decoration:underline; text-underline-offset:4px; }
+.continue-writing { margin:0; }
+.continue-writing button { width:100%; }
