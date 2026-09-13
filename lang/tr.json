@@ -761,4 +761,7 @@
 ,
     "Create summary with AI": "Zekai ile özet oluştur",
     "AI returned an invalid summary.": "Zekai geçerli bir özet döndürmedi."
+,
+    "Export format": "Dışa aktarma biçimi",
+    "Save export": "Dışa aktar ve kaydet"
 }

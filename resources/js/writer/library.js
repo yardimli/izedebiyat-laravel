@@ -29,28 +29,51 @@ export function start() {
     let bookId, revision;
     let readVersion = 0;
     const dialog = $("#library-import-dialog");
+    const exportDialog = $("#library-export-dialog");
+    let exportBookId;
     document.querySelectorAll("[data-book-files]").forEach((card) => {
-        card.querySelector("[data-import-book]").onclick = async () => {
-            try {
-                const state = await api(`/yazi-atolyesi/api/books/${card.dataset.bookFiles}`);
-                bookId = card.dataset.bookFiles;
-                revision = state.book.revision;
-                readVersion++;
-                $("#library-import-file").value = "";
-                $("#library-import-preview").value = "";
-                $("#library-confirm-import").disabled = true;
-                dialog.showModal();
-            } catch (e) {
-                notify(e.message);
-            }
-        };
-        card.querySelector("[data-export-book]").onclick = () => {
-            const link = document.createElement("a");
-            link.href = `/yazi-atolyesi/eserler/${card.dataset.bookFiles}/disari-aktar/${card.querySelector("select").value}`;
-            link.download = "";
-            link.click();
+        const importButton = card.querySelector("[data-import-book]");
+        if (importButton)
+            importButton.onclick = async () => {
+                try {
+                    const state = await api(`/yazi-atolyesi/api/books/${card.dataset.bookFiles}`);
+                    bookId = card.dataset.bookFiles;
+                    revision = state.book.revision;
+                    readVersion++;
+                    $("#library-import-file").value = "";
+                    $("#library-import-preview").value = "";
+                    $("#library-confirm-import").disabled = true;
+                    dialog.showModal();
+                } catch (e) {
+                    notify(e.message);
+                }
+            };
+        card.querySelector("[data-export-book]").onclick = (event) => {
+            event.preventDefault();
+            exportBookId = card.dataset.bookFiles;
+            $("#library-export-format").value = "txt";
+            exportDialog.showModal();
         };
     });
+    action(
+        "#library-export-form",
+        (event) => {
+            event.preventDefault();
+            if (!exportBookId) return;
+            const link = document.createElement("a");
+            link.href =
+                "/yazi-atolyesi/eserler/" +
+                exportBookId +
+                "/disari-aktar/" +
+                $("#library-export-format").value;
+            link.download = "";
+            document.body.append(link);
+            link.click();
+            link.remove();
+            exportDialog.close();
+        },
+        "submit",
+    );
     action("#library-cancel-import", () => dialog.close());
     action(
         "#library-import-file",
@@ -91,6 +114,7 @@ export function start() {
             };
             await api(`/yazi-atolyesi/api/books/${bookId}`, "PATCH", { revision, document });
             dialog.close();
+            window.location.reload();
             notify(t("Story imported. Open the manuscript to continue writing or scan its codex."));
         } finally {
             $("#library-confirm-import").disabled = false;

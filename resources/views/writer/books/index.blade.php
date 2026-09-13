@@ -67,12 +67,11 @@
                         @endif
                     </div>
                     <div class="book-file-actions" data-book-files="{{ $book->id }}">
-                        <button type="button" data-import-book>{{ __('Import') }}</button>
-                        <select aria-label="{{ __('Export format for :book', ['book' => $book->title]) }}">
-                            <option value="txt">TXT</option>
-                            <option value="docx">DOCX</option>
-                        </select>
-                        <button type="button" data-export-book>{{ __('Export ↗') }}</button>
+                        @if ($book->word_count === 0)
+                            <button type="button" data-import-book>{{ __('Import') }}</button>
+                        @endif
+                        <a href="{{ route('writer.books.export', ['book' => $book->id, 'format' => 'txt']) }}"
+                            data-export-book>{{ __('Export ↗') }}</a>
                     </div>
                     <div class="book-manage-actions">
                         <label>{{ __('Publish status') }}<select data-publish-book="{{ $book->id }}"
@@ -94,6 +93,20 @@
         </div>
         {{ $books->onEachSide(1)->links('writer.partials.pagination') }}
     </main>
+    <dialog id="library-export-dialog" aria-labelledby="library-export-title">
+        <div class="dialog-heading">
+            <h2 id="library-export-title">{{ __('Export ↗') }}</h2><button type="button" data-close-dialog
+                aria-label="{{ __('Close') }}">×</button>
+        </div>
+        <form id="library-export-form">
+            <label for="library-export-format">{{ __('Export format') }}</label>
+            <select id="library-export-format">
+                <option value="txt">TXT</option>
+                <option value="docx">DOCX</option>
+            </select>
+            <button type="submit" class="primary">{{ __('Save export') }}</button>
+        </form>
+    </dialog>
     <dialog id="library-import-dialog">
         <div class="dialog-heading">
             <h2>{{ __('Import your story') }}</h2><button type="button" id="library-cancel-import"

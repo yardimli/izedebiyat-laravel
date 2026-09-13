@@ -16,6 +16,13 @@ const model = {
 };
 const server = http.createServer(async (req, res) => {
     const pathname = new URL(req.url, "http://127.0.0.1:8123").pathname;
+    if (pathname.includes("/disari-aktar/")) {
+        res.setHeader(
+            "Content-Disposition",
+            'attachment; filename="eser.' + pathname.split("/").pop() + '"',
+        );
+        return res.end("Test export");
+    }
     const json = (value) => {
         res.setHeader("Content-Type", "application/json");
         res.end(JSON.stringify(value));
@@ -122,6 +129,19 @@ const server = http.createServer(async (req, res) => {
         await page.goto("http://127.0.0.1:8123/eserlerim");
         await page.locator(".book-card").waitFor();
         await page.screenshot({ path: path.join(root, "library.png"), fullPage: true });
+        if (await page.locator("[data-import-book]").count())
+            throw Error("Import visible for non-empty work");
+        if (await page.locator(".book-file-actions select").count())
+            throw Error("Export selector remains on card");
+        await page.locator("[data-export-book]").click();
+        await page.locator("#library-export-dialog").waitFor();
+        await page.locator("#library-export-format").selectOption("docx");
+        const downloadEvent = page.waitForEvent("download");
+        await page.locator('#library-export-form button[type="submit"]').click();
+        const download = await downloadEvent;
+        if (download.suggestedFilename() !== "eser.docx") throw Error("Wrong export format");
+        if (await page.locator("#library-export-dialog").isVisible())
+            throw Error("Export dialog did not close");
         if (await page.locator("[data-archive-book]").count())
             throw new Error("Archive control remains");
         await page.locator("[data-publish-book]").selectOption("1");

@@ -459,4 +459,22 @@ class WriterIntegrationTest extends WriterTestCase
             ->assertSee('data-hidden-for-session="0"', false);
     }
 
+
+    public function test_dashboard_only_offers_import_for_empty_works(): void
+    {
+        $user = User::factory()->create();
+        $written = $this->book($user);
+        $empty = $this->book($user);
+        $empty->update(['document' => Manuscript::fromText('')]);
+        $response = $this->actingAs($user)->get('/eserlerim')->assertOk();
+        $dom = new \DOMDocument();
+        @$dom->loadHTML($response->getContent());
+        $xpath = new \DOMXPath($dom);
+        $this->assertCount(0, $xpath->query('//*[@data-book-files="'.$written->id.'"]//*[@data-import-book]'));
+        $this->assertCount(1, $xpath->query('//*[@data-book-files="'.$empty->id.'"]//*[@data-import-book]'));
+        $this->assertCount(2, $xpath->query('//a[@data-export-book]'));
+        $this->assertCount(0, $xpath->query('//*[@data-book-files]//select'));
+        $this->assertCount(1, $xpath->query('//dialog[@id="library-export-dialog"]//select'));
+    }
+
 }
