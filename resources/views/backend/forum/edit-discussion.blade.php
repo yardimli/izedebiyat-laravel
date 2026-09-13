@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 @section('title', 'Tartışmayı Düzenle - Forum Yönetimi')
-@section('content')
+@section('portal-content')
 <main><div class="container mt-5" style="max-width: 850px; min-height: 88vh;">
     <div class="d-flex justify-content-between align-items-center mb-4"><h4>Tartışmayı Düzenle</h4><a href="{{ route('admin.forum.index') }}" class="btn btn-outline-secondary">Geri</a></div>
     @if($errors->any())<div class="alert alert-danger">{{ $errors->first() }}</div>@endif
@@ -14,5 +14,5 @@
         </form>
     </div></div>
 </div></main>
-@include('layouts.footer')
+
 @endsection

@@ -136,6 +136,8 @@ return [
     'Your codex',
     'You’ll be writing with :v0.',
     'approved',
+    'Show page breaks',
+    'Hide page breaks',
     'dark',
     'light',
     'not yet',

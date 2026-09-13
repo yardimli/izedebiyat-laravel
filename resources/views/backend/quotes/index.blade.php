@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 
-@section('content')
+@section('portal-content')
 <main><div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div><h1 class="h3 mb-1">Edebiyat Alıntıları</h1><p class="text-muted mb-0">Tarihli alıntılar yalnızca seçilen gün gösterilir.</p></div>

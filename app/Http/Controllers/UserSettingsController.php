@@ -29,7 +29,7 @@
 		public function account()
 		{
 			$user = auth()->user();
-			return view('backend.account', compact('user'));
+			return redirect()->route('writer.settings');
 		}
 
 		public function images()

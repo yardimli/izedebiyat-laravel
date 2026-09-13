@@ -276,7 +276,7 @@
 			MyHelper::updateArticleTable();
 			$output = ob_get_clean();
 			return response($output)->header('Content-Type', 'text/plain');
-		})->name('maintenance.check-moderation');
+		})->name('maintenance.update-articles-table');
 
 		Route::get('/maintenance/check-markdown', function () {
 			ob_start();
@@ -329,13 +329,13 @@
 		Route::delete('/sohbet/{sessionId}', [ChatController::class, 'destroy'])->name('chat.destroy');
 
 
-		Route::get('/sahne-arkasi',  [UserSettingsController::class, 'account'])->name('backend.account');
+		Route::get('/sahne-arkasi', [UserSettingsController::class, 'account']);
 		Route::post('/sahne-arkasi', [UserSettingsController::class, 'updateSettings'])->name('backend.update');
 		Route::get('/sahne-arkasi/hesap', [UserSettingsController::class, 'account'])->name('backend.account');
 
-		Route::get('/sahne-arkasi/images', [UserSettingsController::class, 'images'])->name('backend.images');
+		Route::get('/yazi-atolyesi/gorseller', [UserSettingsController::class, 'images'])->name('backend.images');
 
-		Route::get('/sahne-arkasi/close-account', [UserSettingsController::class, 'closeAccount'])->name('backend.close-account');
+		Route::get('/yazi-atolyesi/hesabi-kapat', [UserSettingsController::class, 'closeAccount'])->name('backend.close-account');
 
 		Route::post('/sahne-arkasi/password', [UserSettingsController::class, 'updatePassword'])->name('backend.sifre-guncelle');
 
@@ -344,35 +344,38 @@
 		Route::get('/favorilerim', [FollowController::class, 'following'])->name('backend.following');
 		Route::post('/yapit/{article}/clap', [ArticleController::class, 'toggleClap'])->name('article.clap');
 
-		Route::get('/admin/users', [UserController::class, 'index'])->name('admin-users-index');
+		Route::get('/admin/kullanicilar', [UserController::class, 'index'])->name('admin-users-index');
         Route::get('/users', function (\Illuminate\Http\Request $request) {
             abort_unless($request->user()->isAdmin(), 403);
             return redirect()->route('admin-users-index', $request->query());
         });
 		Route::post('/login-as', [UserController::class, 'loginAs'])->name('users-login-as');
-		Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
-		Route::get('/admin/articles', [ArticleController::class, 'adminIndex'])->name('admin.articles.index');
-		Route::post('/admin/articles/bulk-update', [ArticleController::class, 'adminBulkUpdate'])->name('admin.articles.bulk-update');
-		Route::patch('/admin/articles/{article}/flags', [ArticleController::class, 'adminUpdateFlags'])->name('admin.articles.flags');
-		Route::delete('/admin/articles/{article}', [ArticleController::class, 'adminDestroy'])->name('admin.articles.destroy');
-		Route::get('/admin/read-cleanup', [ArticleController::class, 'adminReadCleanup'])->name('admin.read-cleanup.index');
-		Route::delete('/admin/read-cleanup', [ArticleController::class, 'adminReadCleanupDestroy'])->name('admin.read-cleanup.destroy');
+        Route::post('/yoneticiye-don', [UserController::class, 'stopImpersonating'])->name('users-stop-impersonating');
+		Route::delete('/admin/kullanicilar/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+		Route::get('/admin/eserler', [ArticleController::class, 'adminIndex'])->name('admin.articles.index');
+		Route::post('/admin/eserler/toplu-guncelle', [ArticleController::class, 'adminBulkUpdate'])->name('admin.articles.bulk-update');
+		Route::patch('/admin/eserler/{article}/durumlar', [ArticleController::class, 'adminUpdateFlags'])->name('admin.articles.flags');
+		Route::delete('/admin/eserler/{article}', [ArticleController::class, 'adminDestroy'])->name('admin.articles.destroy');
+		Route::get('/admin/okuma-kayitlari', [ArticleController::class, 'adminReadCleanup'])->name('admin.read-cleanup.index');
+		Route::delete('/admin/okuma-kayitlari', [ArticleController::class, 'adminReadCleanupDestroy'])->name('admin.read-cleanup.destroy');
 
 		// Admin Account Recovery Routes
 		Route::get('/admin/hesap-kurtarma', [AccountRecoveryController::class, 'index'])->name('admin.account-recovery.index');
 		Route::get('/admin/hesap-kurtarma/{id}', [AccountRecoveryController::class, 'show'])->name('admin.account-recovery.show');
-		Route::post('/admin/hesap-kurtarma/{id}/approve', [AccountRecoveryController::class, 'approve'])->name('admin.account-recovery.approve');
-		Route::post('/admin/hesap-kurtarma/{id}/reject', [AccountRecoveryController::class, 'reject'])->name('admin.account-recovery.reject');
+		Route::post('/admin/hesap-kurtarma/{id}/onayla', [AccountRecoveryController::class, 'approve'])->name('admin.account-recovery.approve');
+		Route::post('/admin/hesap-kurtarma/{id}/reddet', [AccountRecoveryController::class, 'reject'])->name('admin.account-recovery.reject');
 
 		// Admin routes for Book Reviews
-		Route::resource('admin/book-reviews', BookReviewController::class, ['except' => ['show']]);
+		Route::resourceVerbs(['create' => 'ekle', 'edit' => 'duzenle']);
+        Route::resource('admin/kitap-incelemeleri', BookReviewController::class, ['except' => ['show']])->names('book-reviews')->parameters(['kitap-incelemeleri' => 'book_review']);
 		Route::post('/book-reviews/generate-category', [ChatController::class, 'generateBookCategory'])->name('book-reviews.generate-category');
 		Route::post('/book-reviews/generate-keywords', [ChatController::class, 'generateBookKeywords'])->name('book-reviews.generate-keywords');
-		Route::resource('admin/book-authors', BookAuthorController::class);
-		Route::resource('admin/quotes', AdminQuoteController::class)->except('show')->names('admin.quotes');
-		Route::post('/admin/quotes/generate', [AdminQuoteController::class, 'generate'])->name('admin.quotes.generate');
-		Route::get('/admin/llm-settings', [AdminLlmSettingController::class, 'edit'])->name('admin.llm-settings.edit');
-		Route::put('/admin/llm-settings', [AdminLlmSettingController::class, 'update'])->name('admin.llm-settings.update');
+		Route::resource('admin/kitap-yazarlari', BookAuthorController::class)->names('book-authors')->parameters(['kitap-yazarlari' => 'book_author']);
+		Route::resource('admin/alintilar', AdminQuoteController::class)->except('show')->names('admin.quotes')->parameters(['alintilar' => 'quote']);
+        Route::resourceVerbs(['create' => 'create', 'edit' => 'edit']);
+		Route::post('/admin/alintilar/olustur', [AdminQuoteController::class, 'generate'])->name('admin.quotes.generate');
+		Route::get('/admin/yapay-zeka-ayarlari', [AdminLlmSettingController::class, 'edit'])->name('admin.llm-settings.edit');
+		Route::put('/admin/yapay-zeka-ayarlari', [AdminLlmSettingController::class, 'update'])->name('admin.llm-settings.update');
 
 
 		Route::prefix('admin/forum')->name('admin.forum.')->group(function () {
@@ -394,3 +397,37 @@
 	Auth::routes(['verify' => true]);
 
 require __DIR__.'/writer.php';
+
+// Preserve old bookmarks and open forms while publishing Turkish-facing URLs.
+$legacyPaths = [
+    'yazi-atolyesi/gorseller' => 'sahne-arkasi/images',
+    'yazi-atolyesi/hesabi-kapat' => 'sahne-arkasi/close-account',
+    'yazi-atolyesi/hesap' => 'yazi-atolyesi/account',
+    'yazi-atolyesi/admin/kotalar' => 'yazi-atolyesi/admin/budgets',
+    'yazi-atolyesi/eserler' => 'yazi-atolyesi/books',
+    'admin/kullanicilar' => 'admin/users', 'admin/eserler' => 'admin/articles',
+    'admin/okuma-kayitlari' => 'admin/read-cleanup', 'admin/kitap-incelemeleri' => 'admin/book-reviews',
+    'admin/kitap-yazarlari' => 'admin/book-authors', 'admin/alintilar' => 'admin/quotes',
+    'admin/yapay-zeka-ayarlari' => 'admin/llm-settings',
+];
+foreach (array_values(Route::getRoutes()->getRoutes()) as $canonical) {
+    foreach ($legacyPaths as $current => $legacy) {
+        if ($canonical->uri() !== $current && !str_starts_with($canonical->uri(), $current.'/')) continue;
+        $oldUri = $legacy.substr($canonical->uri(), strlen($current));
+        $oldUri = strtr($oldUri, ['/ekle'=>'/create', '/duzenle'=>'/edit', '/yapay-zeka-gunlugu'=>'/llm-log', '/disari-aktar'=>'/export', '/yenile'=>'/reset', '/toplu-guncelle'=>'/bulk-update', '/durumlar'=>'/flags', '/olustur'=>'/generate']);
+        if (in_array('GET', $canonical->methods())) {
+            $destination = $canonical->getName();
+            Route::get($oldUri, function (\Illuminate\Http\Request $request) use ($destination) {
+                return redirect()->route($destination, array_merge($request->query(), $request->route()->parameters()));
+            })->middleware($canonical->getAction('middleware') ?? [])->where($canonical->wheres);
+        } else {
+            $action = $canonical->getAction(); unset($action['as'], $action['prefix']);
+            Route::match($canonical->methods(), $oldUri, $action)->where($canonical->wheres);
+        }
+        break;
+    }
+}
+
+// Support forms opened before the recovery action URLs were translated.
+Route::post('/admin/hesap-kurtarma/{id}/approve', [AccountRecoveryController::class, 'approve'])->middleware('auth');
+Route::post('/admin/hesap-kurtarma/{id}/reject', [AccountRecoveryController::class, 'reject'])->middleware('auth');

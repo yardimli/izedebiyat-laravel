@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 @section('title', 'Kitap Yazarını Düzenle')
 
-@section('content')
+@section('portal-content')
 	<main>
 		<div class="container mb-5" style="min-height: calc(88vh);">
 			<div class="row mt-3">
@@ -29,5 +29,5 @@
 			</div>
 		</div>
 	</main>
-	@include('layouts.footer')
+
 @endsection

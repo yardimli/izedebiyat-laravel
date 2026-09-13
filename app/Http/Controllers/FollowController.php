@@ -53,11 +53,11 @@
 		{
 			$following = Auth::user()->following()
 				->with('following')
-				->paginate(10);
+				->paginate(10, ['*'], 'yazarlar_sayfa')->withQueryString();
 
 			$favorites = Auth::user()->favorites()
 				->with('article')
-				->paginate(10);
+				->paginate(10, ['*'], 'eserler_sayfa')->withQueryString();
 
 			return view('backend.following', compact('following', 'favorites'));
 		}

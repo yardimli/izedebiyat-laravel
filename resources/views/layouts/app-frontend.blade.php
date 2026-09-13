@@ -74,6 +74,7 @@
 </head>
 <body class="@yield('body-class')">
 @include('partials.header')
+@include('partials.impersonation-banner')
 
 <main>
 	@yield('content')

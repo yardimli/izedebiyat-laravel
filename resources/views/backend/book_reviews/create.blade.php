@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 @section('title', __('default.Create Book Review'))
 
-@section('content')
+@section('portal-content')
 	<main>
 		<div class="container mb-5" style="min-height: calc(88vh);">
 			<div class="row mt-3">
@@ -47,5 +47,5 @@
 	--}}
 	{{-- @include('partials.image-modal') --}}
 	
-	@include('layouts.footer')
+
 @endsection

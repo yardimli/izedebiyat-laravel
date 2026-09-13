@@ -90,7 +90,7 @@ node --test tests/writer-money.test.mjs tests/writer-revision-diff.test.mjs
 npm run build
 ```
 
-The 51 PHP tests use an isolated in-memory SQLite fixture matching the relevant legacy schema. They cover migration, rollback, grant initialization, metadata and image persistence, public route preservation, ownership, revisions, AI proposals, uncertain charges, resets, encryption, and personal keys. Three JavaScript tests cover cost display and revision comparisons. A read-only sample of 110 real articles, including the ten largest, also converted successfully.
+The 59 PHP tests use an isolated in-memory SQLite fixture matching the relevant legacy schema. They cover migration, rollback, grant initialization, metadata and image persistence, public route preservation, ownership, revisions, AI proposals, uncertain charges, resets, encryption, and personal keys. Three JavaScript tests cover cost display and revision comparisons. A read-only sample of 110 real articles, including the ten largest, also converted successfully.
 
 Optional browser checks use synthetic Turkish fixtures and mocked API responses; they do not modify the site's database or call an LLM:
 
@@ -112,3 +112,15 @@ php scripts/check-writer-zero-dates.php
 If the billing migration fails with errno 121 (duplicate constraint name), deploy the updated migration and rerun `php artisan migrate`. It inspects the existing foreign key, skips the already-correct schema, and separates dropping, changing nullability, and adding the new relationship. It can resume if the foreign key was already dropped. No article reconversion or database reset is needed.
 
 `php scripts/check-writer-billing-migration.php` verifies the upgrade and interrupted retries in a randomly named local MySQL/MariaDB test database, then removes only that test database. It refuses remote database hosts.
+
+## Shared account and administration design
+
+Chat, favorites, profile settings, image management and administration use the writer layout and its paper, light and dark palettes. The account page at `/yazi-atolyesi/hesap` combines profile/password forms and personal OpenRouter settings. Administrators find AI quota management there, at `/yazi-atolyesi/admin/kotalar`. The shared toolbar includes favorites, chat, account and an administrator-only menu; the editor header includes only the library, typography and appearance controls.
+
+User-facing administration URLs use Turkish: `/admin/kullanicilar`, `/admin/eserler`, `/admin/okuma-kayitlari`, `/admin/kitap-incelemeleri`, `/admin/kitap-yazarlari`, `/admin/alintilar`, `/admin/yapay-zeka-ayarlari`. Existing English page URLs redirect while preserving query parameters, and old form action URLs continue working. Public reading URLs and internal API endpoints remain compatible.
+
+After deploying, run `npm run build` and `php artisan optimize:clear`. No new database migration is required for this design update. Browser fixtures also cover account, chat, favorites, users and articles at desktop/mobile widths in all three palettes.
+
+## Administrator account viewing
+
+The users table login-as action saves the original administrator ID and the viewed user ID in the server-side session. A banner on writer, account and public site layouts identifies the viewed account and offers `Yönetici hesabıma dön`. The CSRF-protected POST return action (`/yoneticiye-don`) validates the saved identity and rechecks that the original account remains an administrator. Nested switches are blocked; logging out or session expiration ends the saved return context. Identity switches rotate the session ID and CSRF token and clear password-confirmation state.

@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 @section('title', __('default.Book Reviews'))
-@section('content')
+@section('portal-content')
 	<main>
 		<div class="container" style="min-height: calc(88vh);">
 			@if(session('success'))

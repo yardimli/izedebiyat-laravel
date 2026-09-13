@@ -734,4 +734,17 @@
     "Page :page": "Sayfa :page",
     "Members pagination": "Üye sayfaları",
     "Showing :first–:last of :total members": ":total üyeden :first–:last arası gösteriliyor"
+,
+    "Sort works by": "Eserleri sırala",
+    "Last modified": "Son düzenleme",
+    "Publication date": "Yayın tarihi",
+    "Created on": "Oluşturulma tarihi",
+    "Read count": "Okunma sayısı",
+    "Sort direction": "Sıralama yönü",
+    "Descending": "Azalan",
+    "Ascending": "Artan",
+    "Apply sorting": "Sırala"
+    ,"Show page breaks": "Sayfa sonlarını göster",
+    "Hide page breaks": "Sayfa sonlarını gizle",
+    "Read work": "Oku"
 }

@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 
 @section('title', 'İzEdebiyat - Sohbet')
 
-@section('content')
+@section('portal-content')
 	
 	<!-- **************** MAIN CONTENT START **************** -->
 	<main>
@@ -16,7 +16,7 @@
 					
 					
 					<div class="chat-window" id="chatWindow"
-					     style="border: 1px solid #ccc; height: 400px; overflow-y: scroll; padding: 10px;">
+					     style="border: 1px solid var(--line); height: 55vh; overflow-y: auto; padding: 24px;">
 						<!-- Chat messages will be appended here -->
 					</div>
 					<div class="mb-3">
@@ -39,7 +39,7 @@
 					</div>
 					
 					<div class="mb-5" id="modelInfo">
-						<div class="mt-1 small" style="border: 1px solid #ccc; border-radius: 5px; padding: 5px;">
+						<div class="mt-1 small" style="border: 1px solid var(--line); border-radius: 5px; padding: 5px;">
 							<div id="modelDescription"></div>
 							<div id="modelPricing"></div>
 						</div>
@@ -59,7 +59,7 @@
 			<!-- Container END -->
 	</main>
 	
-	@include('layouts.footer')
+
 
 @endsection
 

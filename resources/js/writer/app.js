@@ -30,6 +30,7 @@ if (!document.body.dataset.user)
 const themeButtons = [...document.querySelectorAll("[data-theme-choice]")];
 function showTheme(value) {
     document.documentElement.dataset.theme = value;
+    document.documentElement.dataset.bsTheme = value === "dark" ? "dark" : "light";
     themeButtons.forEach((button) =>
         button.setAttribute(
             "aria-pressed",
@@ -64,7 +65,7 @@ themeButtons.forEach((button) =>
         if (document.body.dataset.user) {
             themeSave = themeSave
                 .catch(() => {})
-                .then(() => api("/yazi-atolyesi/account", "PATCH", { theme: value }));
+                .then(() => api("/yazi-atolyesi/hesap", "PATCH", { theme: value }));
             await themeSave;
         }
     }),
@@ -90,3 +91,6 @@ if ($("#library-import-dialog"))
         .catch((e) => notify(e.message));
 
 if (document.querySelector("#workspace")) setupTypography();
+
+const adminMenu = document.querySelector('.admin-menu');
+if(adminMenu){document.addEventListener('click', event=>{if(!adminMenu.contains(event.target))adminMenu.open=false;});document.addEventListener('keydown',event=>{if(event.key==='Escape'){adminMenu.open=false;}});}

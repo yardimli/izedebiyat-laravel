@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 @section('title', 'İzEdebiyat - Kullanıcılar')
-@section('content')
+@section('portal-content')
 	<!-- **************** MAIN CONTENT START **************** -->
 	<main>
 		<!-- Container START -->
@@ -21,7 +21,7 @@
 				@endif
 			</div>
 			
-			<table class="table table-bordered">
+			<div class="table-responsive"><table class="table table-bordered">
 				<thead>
 				<tr>
 					<th style="width: 50px"></th>
@@ -75,7 +75,7 @@
 					
 				@endforeach
 				</tbody>
-			</table>
+			</table></div>
                 @foreach($users as $user)
 					{{-- ADDED: Deletion confirmation modal for each user --}}
 					<div class="modal fade" id="deleteUserModal-{{ $user->id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel-{{ $user->id }}" aria-hidden="true">
@@ -144,7 +144,7 @@
 		</div>
 	</main>
 	<!-- **************** MAIN CONTENT END **************** -->
-	@include('layouts.footer')
+
 @endsection
 
 @push('scripts')

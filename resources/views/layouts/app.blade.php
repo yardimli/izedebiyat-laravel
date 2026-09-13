@@ -225,14 +225,14 @@ Header START -->
 							@endif
 							@if(false)
 							<li class="nav-item dropdown">
-								<a class="nav-link dropdown-toggle {{ request()->routeIs('admin.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Y”netim</a>
+								<a class="nav-link dropdown-toggle {{ request()->routeIs('admin.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Yï¿½netim</a>
 								<ul class="dropdown-menu">
-									<li><a class="dropdown-item" href="{{ route('admin-users-index') }}">Kullanici Y”netimi</a></li>
-									<li><a class="dropdown-item" href="{{ route('admin.articles.index') }}">Yazi Y”netimi</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin-users-index') }}">Kullanici Yï¿½netimi</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.articles.index') }}">Yazi Yï¿½netimi</a></li>
 									<li><a class="dropdown-item" href="{{ route('admin.read-cleanup.index') }}">Okuma Kayitlarini Temizleme</a></li>
 									<li><a class="dropdown-item" href="{{ route('book-reviews.index') }}">Kitap Incelemeleri</a></li>
 									<li><a class="dropdown-item" href="{{ route('book-authors.index') }}">Kitap Yazarlari</a></li>
-									<li><a class="dropdown-item" href="{{ route('admin.forum.index') }}">Forum Y”netimi</a></li>
+									<li><a class="dropdown-item" href="{{ route('admin.forum.index') }}">Forum Yï¿½netimi</a></li>
 									<li><hr class="dropdown-divider"></li>
 									<li><a class="dropdown-item" href="{{ route('admin.quotes.index') }}">Edebiyat Alintilari</a></li>
 									<li><a class="dropdown-item" href="{{ route('admin.llm-settings.edit') }}">LLM Ayarlari</a></li>
@@ -365,6 +365,7 @@ Header START -->
 	</nav>
 	<!-- Logo Nav END -->
 </header>
+@include('partials.impersonation-banner')
 <!-- =======================
 Header END -->
 

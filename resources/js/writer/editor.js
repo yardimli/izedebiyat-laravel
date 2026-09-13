@@ -38,6 +38,7 @@ export function createEditor(
 ) {
     let entries = [];
     let readOnly = false;
+    let showPageBreaks = false;
     let markerFrame,
         markerGeneration = 0;
     function references(doc) {
@@ -193,6 +194,7 @@ export function createEditor(
     function scheduleMarkers() {
         cancelAnimationFrame(markerFrame);
         const generation = ++markerGeneration;
+        if (!showPageBreaks) return;
         markerFrame = requestAnimationFrame(() => {
             if (view.composing) {
                 setTimeout(scheduleMarkers, 100);
@@ -205,7 +207,7 @@ export function createEditor(
                 view.state.tr.setMeta(pageMarkerKey, DecorationSet.empty),
             );
             markerFrame = requestAnimationFrame(() => {
-                if (generation !== markerGeneration) return;
+                if (!showPageBreaks || generation !== markerGeneration) return;
                 const top = view.dom.getBoundingClientRect().top;
                 const padding = parseFloat(
                     getComputedStyle(view.dom).paddingTop,
@@ -289,6 +291,15 @@ export function createEditor(
             });
         });
     }
+    action("#toggle-page-breaks", () => {
+        showPageBreaks = !showPageBreaks;
+        const toggle = $("#toggle-page-breaks");
+        toggle.setAttribute("aria-pressed", String(showPageBreaks));
+        toggle.textContent = t(showPageBreaks ? "Hide page breaks" : "Show page breaks");
+        // Decorations only: this must not create edits, revisions or autosaves.
+        view.dispatch(view.state.tr.setMeta(pageMarkerKey, DecorationSet.empty));
+        scheduleMarkers();
+    });
     function updateCounts() {
         const count = (text) => (text.trim().match(/\S+/gu) || []).length;
         const selection = view.state.selection;

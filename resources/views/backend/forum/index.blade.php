@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 
 @section('title', 'Forum Yönetimi - İzEdebiyat')
 
-@section('content')
+@section('portal-content')
 <main>
     <div class="container mt-5" style="min-height: 88vh;">
         @if(session('success'))<div class="alert alert-success">{{ session('success') }}</div>@endif
@@ -112,5 +112,5 @@
         </div>
     </div>
 </main>
-@include('layouts.footer')
+
 @endsection

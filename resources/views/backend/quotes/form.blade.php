@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 
-@section('content')
+@section('portal-content')
 <main><div class="container py-4" style="max-width: 850px">
     <div class="d-flex justify-content-between align-items-center mb-4"><h1 class="h3 mb-0">{{ $quote->exists ? 'Alıntıyı düzenle' : 'Yeni alıntı' }}</h1><a href="{{ route('admin.quotes.index') }}" class="btn btn-outline-secondary">Listeye dön</a></div>
     @if($errors->any())<div class="alert alert-danger"><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif

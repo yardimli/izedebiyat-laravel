@@ -118,7 +118,9 @@ class BookController extends Controller
 
     public function index(Request $request)
     {
-        $data = $request->validate(['q' => 'nullable|string|max:200']);
+        $data = $request->validate(['q' => 'nullable|string|max:200', 'sort' => 'nullable|in:updated_at,created_at,read_count', 'direction' => 'nullable|in:asc,desc']);
+        $sort = $data['sort'] ?? 'updated_at';
+        $direction = $data['direction'] ?? 'desc';
         $search = trim($data['q'] ?? '');
         $books = Book::where('user_id', $request->user()->id);
         if ($search !== '') {
@@ -130,7 +132,7 @@ class BookController extends Controller
             });
         }
 
-        return view('writer.books.index', ['books' => $books->select(['id', 'title', 'user_id', 'metadata', 'manuscript', 'archived', 'deleted', 'revision', 'updated_at', 'read_count', 'is_published', 'approved', 'category_name', 'subtitle'])->withCount('comments')->latest('updated_at')->orderByDesc('id')->paginate(30)->withQueryString(), 'search' => $search]);
+        return view('writer.books.index', ['books' => $books->select(['id', 'title', 'slug', 'user_id', 'metadata', 'manuscript', 'archived', 'deleted', 'revision', 'created_at', 'updated_at', 'read_count', 'is_published', 'approved', 'category_name', 'subtitle'])->withCount('comments')->orderBy($sort, $direction)->orderByDesc('id')->paginate(30)->withQueryString(), 'search' => $search, 'sort' => $sort, 'direction' => $direction]);
     }
 
     public function store(Request $request)

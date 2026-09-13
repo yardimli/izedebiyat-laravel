@@ -162,11 +162,11 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $detail = $this->getJson('/yazi-atolyesi/api/books/'.$book->id.'/llm-log/'.$call->id)->assertOk()->assertJsonPath('request_payload.messages', $messages)->assertJsonPath('response_status', 200);
         $this->assertSame($body, json_decode($detail->json('response_body'), true));
         $detail->assertJsonPath('prompt_tokens', 449)->assertJsonPath('completion_tokens', 364)->assertJsonPath('total_tokens', 813);
-        $this->get('/yazi-atolyesi/books/'.$book->id.'/llm-log?funding=personal')->assertOk()->assertViewHas('summary', fn ($summary) => $summary->actions === 0);
-        $this->get('/yazi-atolyesi/books/'.$book->id.'/llm-log?funding=demo')->assertOk()->assertViewHas('summary', fn ($summary) => (int) $summary->prompt_tokens === 449);
+        $this->get('/yazi-atolyesi/eserler/'.$book->id.'/yapay-zeka-gunlugu?funding=personal')->assertOk()->assertViewHas('summary', fn ($summary) => $summary->actions === 0);
+        $this->get('/yazi-atolyesi/eserler/'.$book->id.'/yapay-zeka-gunlugu?funding=demo')->assertOk()->assertViewHas('summary', fn ($summary) => (int) $summary->prompt_tokens === 449);
         $this->assertStringNotContainsString('demo-test-key', $detail->getContent());
-        $this->get('/yazi-atolyesi/books/'.$book->id.'/llm-log')->assertOk()->assertSee('Request recorded')->assertSee('Response recorded');
-        $this->get('/yazi-atolyesi/books/'.$book->id.'/llm-log/'.$call->id)->assertOk()
+        $this->get('/yazi-atolyesi/eserler/'.$book->id.'/yapay-zeka-gunlugu')->assertOk()->assertSee('Request recorded')->assertSee('Response recorded');
+        $this->get('/yazi-atolyesi/eserler/'.$book->id.'/yapay-zeka-gunlugu/'.$call->id)->assertOk()
             ->assertViewHas('payload', fn ($value) => str_contains($value, "\n") && json_decode($value, true)['messages'] === $messages)
             ->assertViewHas('response', fn ($value) => str_contains($value, "\n") && json_decode($value, true) === $body)
             ->assertDontSee('No request was recorded');
@@ -176,8 +176,8 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $this->actingAs(User::factory()->create());
         $this->getJson('/yazi-atolyesi/api/books/'.$book->id.'/llm-log')->assertNotFound();
         $this->getJson('/yazi-atolyesi/api/books/'.$book->id.'/llm-log/'.$call->id)->assertNotFound();
-        $this->get('/yazi-atolyesi/books/'.$book->id.'/llm-log')->assertNotFound();
-        $this->get('/yazi-atolyesi/books/'.$book->id.'/llm-log/'.$call->id)->assertNotFound();
+        $this->get('/yazi-atolyesi/eserler/'.$book->id.'/yapay-zeka-gunlugu')->assertNotFound();
+        $this->get('/yazi-atolyesi/eserler/'.$book->id.'/yapay-zeka-gunlugu/'.$call->id)->assertNotFound();
     }
 
     public function test_deleted_messages_leave_history_but_keep_request_deduplication(): void
@@ -207,8 +207,8 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $book->comments()->create(['user_id' => $book->user_id, 'content' => 'A comment']);
         $book->entries()->create(['name' => 'Mara', 'type' => 'People', 'content' => 'A character', 'aliases' => []]);
         $call = AiCall::create(['book_id' => $book->id, 'user_id' => $book->user_id, 'model' => 'test/writer', 'stage' => 'chat', 'funding' => 'demo', 'reserved' => 0.1, 'status' => 'pending']);
-        $this->delete('/yazi-atolyesi/books/'.$other->id)->assertNotFound();
-        $this->delete('/yazi-atolyesi/books/'.$book->id)->assertRedirect('/eserlerim');
+        $this->delete('/yazi-atolyesi/eserler/'.$other->id)->assertNotFound();
+        $this->delete('/yazi-atolyesi/eserler/'.$book->id)->assertRedirect('/eserlerim');
         $this->assertDatabaseMissing('articles', ['id' => $book->id]);
         $this->assertDatabaseMissing('comments', ['article_id' => $book->id]);
         $this->assertDatabaseMissing('article_reads', ['article_id' => $book->id]);
@@ -216,7 +216,7 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $this->assertDatabaseHas('articles', ['id' => $other->id]);
         $this->assertNull($call->fresh()->book_id);
         $this->assertSame('pending', $call->fresh()->status);
-        $this->post('/yazi-atolyesi/books/'.$book->id.'/recover')->assertNotFound();
+        $this->post('/yazi-atolyesi/eserler/'.$book->id.'/recover')->assertNotFound();
     }
 
     public function test_publication_ai_uses_demo_budget_and_personal_key_and_checks_ownership(): void
@@ -306,8 +306,8 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $doc = Manuscript::fromText('Mara & Élodie <returned>.');
         $doc['content'][0]['content'][0]['marks'] = [['type' => 'em']];
         $book->update(['document' => $doc]);
-        $this->get('/yazi-atolyesi/books/'.$book->id.'/export/txt')->assertOk()->assertDownload('the-orchard.txt')->assertStreamedContent('Mara & Élodie <returned>.');
-        $response = $this->get('/yazi-atolyesi/books/'.$book->id.'/export/docx')->assertOk()->assertDownload('the-orchard.docx');
+        $this->get('/yazi-atolyesi/eserler/'.$book->id.'/disari-aktar/txt')->assertOk()->assertDownload('the-orchard.txt')->assertStreamedContent('Mara & Élodie <returned>.');
+        $response = $this->get('/yazi-atolyesi/eserler/'.$book->id.'/disari-aktar/docx')->assertOk()->assertDownload('the-orchard.docx');
         $path = tempnam(sys_get_temp_dir(), 'writer-test-');
         try {
             file_put_contents($path, $response->streamedContent());
@@ -323,14 +323,14 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         } finally {
             unlink($path);
         }
-        $this->actingAs(User::factory()->create())->get('/yazi-atolyesi/books/'.$book->id.'/export/docx')->assertNotFound();
+        $this->actingAs(User::factory()->create())->get('/yazi-atolyesi/eserler/'.$book->id.'/disari-aktar/docx')->assertNotFound();
     }
 
     public function test_keys_are_encrypted_and_preferences_persist(): void
     {
         $user = User::factory()->create();
         $this->actingAs($user);
-        $this->patchJson('/yazi-atolyesi/account', ['openrouter_key' => 'private-test-key', 'selected_model' => 'a/model', 'favorite_models' => ['a/model'], 'theme' => 'dark'])->assertOk();
+        $this->patchJson('/yazi-atolyesi/hesap', ['openrouter_key' => 'private-test-key', 'selected_model' => 'a/model', 'favorite_models' => ['a/model'], 'theme' => 'dark'])->assertOk();
         $this->assertNotSame('private-test-key', DB::table('users')->where('id', $user->id)->value('openrouter_key'));
         $this->assertSame('private-test-key', $user->fresh()->openrouter_key);
         $this->assertArrayNotHasKey('openrouter_key', $user->fresh()->toArray());

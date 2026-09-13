@@ -1,6 +1,6 @@
-@extends('layouts.settings')
+@extends('writer.layouts.portal')
 
-@section('settings-content')
+@section('portal-content')
 	
 	<!-- Images tab START -->
 	<div class="tab-pane" id="nav-setting-tab-4">

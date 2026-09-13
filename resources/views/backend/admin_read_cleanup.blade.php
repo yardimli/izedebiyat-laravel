@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 @section('title', 'IzEdebiyat - Read Cleanup')
-@section('content')
+@section('portal-content')
 	<main>
 		<div class="container mt-5" style="min-height: calc(88vh);">
 			@if($errors->any())
@@ -124,5 +124,5 @@
 			</div>
 		</div>
 	</main>
-	@include('layouts.footer')
+
 @endsection

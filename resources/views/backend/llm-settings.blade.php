@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 
-@section('content')
+@section('portal-content')
 <main><div class="container py-4" style="max-width: 1100px">
     <h1 class="h3 mb-2">LLM Ayarları</h1>
     <p class="text-muted">Modeller doğrudan OpenRouter kataloğundan alınır. Fiyatlar bir milyon token için ABD dolarıdır.</p>

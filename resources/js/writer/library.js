@@ -50,7 +50,7 @@ export function start() {
         };
         card.querySelector("[data-export-book]").onclick = () => {
             const link = document.createElement("a");
-            link.href = `/yazi-atolyesi/books/${card.dataset.bookFiles}/export/${card.querySelector("select").value}`;
+            link.href = `/yazi-atolyesi/eserler/${card.dataset.bookFiles}/disari-aktar/${card.querySelector("select").value}`;
             link.download = "";
             link.click();
         };

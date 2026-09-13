@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 @section('title', 'Hesap Kurtarma Talepleri')
-@section('content')
+@section('portal-content')
 	<main>
 		<div class="container mt-5" style="min-height: calc(88vh);">
 			@if(session('success'))

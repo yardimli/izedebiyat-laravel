@@ -40,17 +40,39 @@
             return view('backend.users', compact('users', 'sort', 'direction', 'search'));
         }
 
-		public function loginAs(Request $request)
-		{
-			if (Auth::user()->member_type === 1) {
-				Auth::loginUsingId($request->user_id);
-				return redirect()->route('articles.index');
-			} else {
-				abort(403, 'Unauthorized action.');
-			}
-		}
+        public function loginAs(Request $request)
+        {
+            abort_unless($request->user()->isAdmin(), 403);
+            abort_if($request->session()->has('admin_impersonation'), 409, 'Önce yönetici hesabınıza dönün.');
+            $data = $request->validate(['user_id' => 'required|integer|exists:users,id']);
+            $target = User::findOrFail($data['user_id']);
+            $admin = $request->user();
+            if ($target->id === $admin->id) return redirect()->route('admin-users-index');
 
+            // Keep the return identity server-side; never accept it from a form.
+            $request->session()->put('admin_impersonation', ['admin_id' => $admin->id, 'user_id' => $target->id]);
+            Auth::logoutCurrentDevice();
+            Auth::login($target);
+            $request->session()->forget(['auth.password_confirmed_at', 'password_hash_web']);
+            $request->session()->regenerateToken();
 
+            return redirect()->route('articles.index');
+        }
+
+        public function stopImpersonating(Request $request)
+        {
+            $identity = $request->session()->get('admin_impersonation');
+            abort_unless(is_array($identity) && (int) ($identity['user_id'] ?? 0) === (int) $request->user()->id, 403);
+            $admin = User::find($identity['admin_id'] ?? null);
+            abort_unless($admin && $admin->isAdmin(), 403, 'Yönetici hesabı artık kullanılamıyor.');
+
+            Auth::logoutCurrentDevice();
+            Auth::login($admin);
+            $request->session()->forget(['admin_impersonation', 'auth.password_confirmed_at', 'password_hash_web']);
+            $request->session()->regenerateToken();
+
+            return redirect()->route('admin-users-index');
+        }
 
 		public function destroy(User $user)
 		{

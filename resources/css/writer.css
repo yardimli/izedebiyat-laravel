@@ -2444,3 +2444,21 @@ html[data-theme="dark"] .site-header .writer-brand .dark-mode-item { display: bl
 .budget-table th a:hover { text-decoration: underline; }
 .budget-table th[aria-sort="ascending"], .budget-table th[aria-sort="descending"] { background: var(--soft); }
 .budget-table td:nth-child(n+3):nth-child(-n+8) { white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.admin-menu { position: relative; }
+.admin-menu summary { display: flex; align-items: center; gap: 6px; cursor: pointer; list-style: none; padding: 7px 10px; border: 1px solid var(--line); border-radius: 4px; }
+.admin-menu summary::-webkit-details-marker { display: none; }
+.admin-menu summary svg { width: 20px; height: 20px; }
+.admin-menu-items { position: absolute; z-index: 100; right: 0; top: calc(100% + 8px); min-width: 240px; padding: 8px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 6px; }
+.admin-menu-items a { display: block; padding: 9px 12px; color: var(--ink); text-decoration: none; }
+.admin-menu-items a:hover { background: var(--soft); }
+@media(max-width:600px){ .admin-menu summary span { display:none; } .site-header { gap:8px; padding-inline:12px; } .site-header nav { gap:6px; } }
+
+.library-sort { margin-top: 16px; align-items: end; }
+.library-sort label { margin-bottom: 0; }
+.library-sort select { display: block; margin-top: 6px; }
+.book-publication-date { margin: 0; font-size: 12px; }
+
+.page-navigation #toggle-page-breaks { border:0; background:transparent; padding:0; color:var(--muted); text-decoration:underline; text-underline-offset:3px; font:inherit; font-size:12px; cursor:pointer; }
+.page-navigation #toggle-page-breaks:hover { color:var(--ink); }
+.page-navigation { flex-wrap:wrap; }

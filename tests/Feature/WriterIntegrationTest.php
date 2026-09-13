@@ -137,7 +137,7 @@ class WriterIntegrationTest extends WriterTestCase
         $b->forceFill(['demo_limit' => 5, 'demo_allowance' => 2, 'demo_spent' => 3, 'demo_reserved' => 0.1])->save();
         AiCall::create(['user_id' => $a->id, 'book_id' => $this->book($a)->id, 'model' => 'test/writer', 'stage' => 'chat', 'funding' => 'demo', 'cost' => 7]);
         $this->actingAs($admin);
-        $url = '/yazi-atolyesi/admin/budgets?search=Budget&';
+        $url = '/yazi-atolyesi/admin/kotalar?search=Budget&';
         foreach (['name' => $a->id, 'email' => $b->id, 'total_spent' => $b->id, 'demo_spent' => $a->id, 'pending' => $b->id, 'limit' => $a->id, 'remaining' => $a->id, 'percentage' => $a->id] as $sort => $first) {
             $ascending = $this->get($url.'sort='.$sort.'&direction=asc')->assertOk()->viewData('users');
             $this->assertSame($first, $ascending->first()->id, $sort);
@@ -160,7 +160,7 @@ class WriterIntegrationTest extends WriterTestCase
     {
         $admin = User::factory()->create(['member_type' => 1]);
         for ($i = 0; $i < 27; $i++) User::factory()->create(['name' => 'Pagination member '.str_pad((string) $i, 2, '0', STR_PAD_LEFT)]);
-        $response = $this->actingAs($admin)->get('/yazi-atolyesi/admin/budgets?search=Pagination&sort=name&direction=desc&per_page=25&page=2')->assertOk();
+        $response = $this->actingAs($admin)->get('/yazi-atolyesi/admin/kotalar?search=Pagination&sort=name&direction=desc&per_page=25&page=2')->assertOk();
         $users = $response->viewData('users');
         $this->assertSame(27, $users->total());
         $this->assertCount(2, $users);
@@ -181,15 +181,15 @@ class WriterIntegrationTest extends WriterTestCase
         $this->actingAs($admin);
         $this->get('/users?search=Sort')->assertRedirect(route('admin-users-index', ['search'=>'Sort']));
         foreach (['name'=>$a->id, 'email'=>$b->id, 'story_count'=>$a->id, 'last_story_date'=>$a->id, 'created_at'=>$a->id] as $sort=>$first) {
-            $response = $this->get('/admin/users?search=Sort&sort='.$sort.'&direction=asc')->assertOk();
+            $response = $this->get('/admin/kullanicilar?search=Sort&sort='.$sort.'&direction=asc')->assertOk();
             $this->assertSame($first, $response->viewData('users')->first()->id);
             $response->assertDontSee('background-color: #222', false)->assertSee('aria-sort="ascending"', false);
             $this->assertStringContainsString('sort='.$sort, $response->viewData('users')->url(2));
-            $descending = $this->get('/admin/users?search=Sort&sort='.$sort.'&direction=desc')->assertOk();
+            $descending = $this->get('/admin/kullanicilar?search=Sort&sort='.$sort.'&direction=desc')->assertOk();
             $this->assertNotSame($first, $descending->viewData('users')->first()->id);
         }
-        $this->getJson('/admin/users?sort=password')->assertUnprocessable();
-        $this->actingAs($a)->get('/admin/users')->assertForbidden();
+        $this->getJson('/admin/kullanicilar?sort=password')->assertUnprocessable();
+        $this->actingAs($a)->get('/admin/kullanicilar')->assertForbidden();
     }
 
     public function test_admin_articles_link_live_titles_and_keep_bulk_actions_without_duplicate_columns(): void
@@ -197,13 +197,13 @@ class WriterIntegrationTest extends WriterTestCase
         $admin = User::factory()->create(['member_type' => 1, 'slug' => 'admin-test']);
         $live = $this->book($admin); $live->update(['title'=>'Published work', 'is_published'=>1, 'approved'=>1]);
         $draft = $this->book($admin); $draft->update(['title'=>'Draft work']);
-        $response = $this->actingAs($admin)->get('/admin/articles')->assertOk();
+        $response = $this->actingAs($admin)->get('/admin/eserler')->assertOk();
         $response->assertDontSee('<th>Status</th>', false)->assertDontSee('<th>Actions</th>', false)
             ->assertDontSee('Live URL')->assertDontSee('Delete this article?')
             ->assertSee('Delete selected')->assertSee('article-checkbox')->assertSee('Flags');
         $response->assertSee('href="'.route('article', $live->slug).'" target="_blank"', false);
         $response->assertDontSee('href="'.route('article', $draft->slug).'"', false);
-        $response->assertSee('color: #59616b !important;', false);
+        $response->assertSee('writer-portal.css', false);
     }
 
     private function book(User $user): Book
@@ -264,9 +264,9 @@ class WriterIntegrationTest extends WriterTestCase
         $hash = \App\Helpers\IdHasher::encode($book->id);
         $this->actingAs($other)->get('/eserlerim/'.$hash.'/duzenle')->assertNotFound();
         $this->delete('/eserlerim/'.$hash)->assertNotFound();
-        $this->post('/yazi-atolyesi/books/'.$book->id.'/recover')->assertNotFound();
-        $this->get('/yazi-atolyesi/admin/budgets')->assertForbidden();
-        $this->post('/yazi-atolyesi/admin/budgets/'.$owner->id.'/reset')->assertForbidden();
+        $this->post('/yazi-atolyesi/eserler/'.$book->id.'/recover')->assertNotFound();
+        $this->get('/yazi-atolyesi/admin/kotalar')->assertForbidden();
+        $this->post('/yazi-atolyesi/admin/kotalar/'.$owner->id.'/yenile')->assertForbidden();
         $this->actingAs($owner)->get('/eserlerim')->assertOk()->assertSee('Türkçe eser');
         Http::fake(['*/models' => Http::response(['data' => []])]);
         $this->get('/eserlerim/'.$hash.'/duzenle')->assertOk()->assertSee('featured-image-upload')->assertSee('keywords_string');
@@ -281,7 +281,7 @@ class WriterIntegrationTest extends WriterTestCase
         $user->forceFill(['demo_spent' => 0.8, 'demo_reserved' => 0.2, 'demo_limit' => 1, 'demo_allowance' => 1])->save();
         $call = AiCall::create(['user_id' => $user->id, 'book_id' => $book->id, 'funding' => 'demo', 'model' => 'test', 'stage' => 'execution', 'status' => 'pending', 'reserved' => 0.2]);
         config(['writer.demo_limit' => 2.5]);
-        $this->actingAs($admin)->post('/yazi-atolyesi/admin/budgets/'.$user->id.'/reset')->assertRedirect();
+        $this->actingAs($admin)->post('/yazi-atolyesi/admin/kotalar/'.$user->id.'/yenile')->assertRedirect();
         $user->refresh();
         $this->assertEquals(3.5, $user->demo_limit);
         $this->assertEquals(0.8, $user->demo_spent);
@@ -297,14 +297,14 @@ class WriterIntegrationTest extends WriterTestCase
         DemoBudget::reset($user, $admin);
         $this->assertEquals(3.5, $user->fresh()->demo_limit);
         $this->assertSame(2, DB::table('writer_budget_resets')->count());
-        $this->get('/yazi-atolyesi/admin/budgets')->assertOk()->assertSee($user->email);
+        $this->get('/yazi-atolyesi/admin/kotalar')->assertOk()->assertSee($user->email);
     }
 
     public function test_personal_key_is_encrypted_hidden_and_does_not_consume_demo_credit(): void
     {
         $user = User::factory()->create();
         $book = $this->book($user);
-        $this->actingAs($user)->patchJson('/yazi-atolyesi/account', ['openrouter_key' => 'personal-secret'])->assertOk();
+        $this->actingAs($user)->patchJson('/yazi-atolyesi/hesap', ['openrouter_key' => 'personal-secret'])->assertOk();
         $user->refresh();
         $this->assertSame('personal-secret', $user->openrouter_key);
         $this->assertNotSame('personal-secret', $user->getRawOriginal('openrouter_key'));
@@ -316,7 +316,7 @@ class WriterIntegrationTest extends WriterTestCase
         $this->assertSame('personal', $call->funding);
         app(OpenRouter::class)->settle($call, 2);
         $this->assertEquals(0, $user->fresh()->demo_spent);
-        $this->get('/yazi-atolyesi/account')->assertOk()->assertSee('100%')->assertDontSee('personal-secret');
+        $this->get('/yazi-atolyesi/hesap')->assertOk()->assertSee('100%')->assertDontSee('personal-secret');
     }
 
     public function test_featured_image_upload_and_removal_use_the_existing_article_image_paths(): void
@@ -335,4 +335,81 @@ class WriterIntegrationTest extends WriterTestCase
         $this->patchJson('/yazi-atolyesi/api/books/'.$book->id, ['revision' => 2, 'featured_image' => null])->assertOk();
         $this->assertNull($book->fresh()->featured_image);
     }
+
+    public function test_shared_navigation_and_merged_account_keep_admin_controls_in_the_right_place(): void
+    {
+        $admin = User::factory()->create(['member_type' => 1]);
+        $book = $this->book($admin);
+        $this->actingAs($admin)->get('/eserlerim')->assertOk()
+            ->assertSee('class="admin-menu"', false)->assertSee('href="'.route('chat').'"', false)
+            ->assertSee('href="'.route('backend.following').'"', false)
+            ->assertDontSee('href="'.route('writer.budgets.index').'"', false)->assertDontSee('Site hesabı');
+        $this->get('/yazi-atolyesi/hesap')->assertOk()->assertSee('writer-portal.css')
+            ->assertSee('name="openrouter_key"', false)->assertSee('name="about_me"', false)
+            ->assertSee('name="current_password"', false)
+            ->assertSee('href="'.route('writer.budgets.index').'"', false);
+        Http::fake(['*/models' => Http::response(['data' => []])]);
+        $html = $this->get('/eserlerim/'.\App\Helpers\IdHasher::encode($book->id).'/duzenle')->assertOk()->getContent();
+        preg_match('/<header class="site-header">(.*?)<\/header>/s', $html, $matches);
+        $this->assertStringContainsString('open-typography', $matches[1]);
+        $this->assertStringContainsString('theme-picker', $matches[1]);
+        $this->assertStringContainsString(route('articles.index'), $matches[1]);
+        $this->assertStringNotContainsString('admin-menu', $matches[1]);
+        $this->assertStringNotContainsString(route('chat'), $matches[1]);
+        $this->assertStringNotContainsString(route('writer.settings'), $matches[1]);
+        $this->actingAs(User::factory()->create())->get('/yazi-atolyesi/hesap')->assertOk()
+            ->assertDontSee('class="admin-menu"', false)->assertDontSee('href="'.route('writer.budgets.index').'"', false);
+    }
+
+    public function test_legacy_urls_redirect_to_turkish_routes_and_old_settings_forms_still_save(): void
+    {
+        $user = User::factory()->create(['member_type' => 1]);
+        $this->actingAs($user);
+        foreach ([
+            '/sahne-arkasi/hesap' => '/yazi-atolyesi/hesap',
+            '/yazi-atolyesi/account' => '/yazi-atolyesi/hesap',
+            '/yazi-atolyesi/admin/budgets' => '/yazi-atolyesi/admin/kotalar',
+            '/admin/users' => '/admin/kullanicilar', '/admin/articles' => '/admin/eserler',
+            '/admin/book-reviews/create' => '/admin/kitap-incelemeleri/ekle',
+            '/admin/book-authors/42/edit' => '/admin/kitap-yazarlari/42/duzenle',
+            '/admin/quotes' => '/admin/alintilar', '/admin/llm-settings' => '/admin/yapay-zeka-ayarlari',
+        ] as $old => $new) {
+            $this->get($old)->assertRedirect($new);
+        }
+        $this->get('/admin/users?sort=name&page=2')->assertRedirect('/admin/kullanicilar?sort=name&page=2');
+        $this->patchJson('/yazi-atolyesi/account', ['theme' => 'dark'])->assertOk();
+        $this->assertSame('dark', $user->fresh()->theme);
+    }
+
+
+    public function test_library_sorts_by_reads_and_publication_date_and_shows_the_original_date(): void
+    {
+        $owner = User::factory()->create();
+        $older = $this->book($owner);
+        $older->update(['title' => 'Match older', 'created_at' => '2020-01-02 12:30:00', 'read_count' => 100, 'is_published' => 1]);
+        $newer = $this->book($owner);
+        $newer->update(['title' => 'Match newer', 'created_at' => '2025-03-04 15:00:00', 'read_count' => 5]);
+        $this->book(User::factory()->create())->update(['title' => 'Match private', 'read_count' => 9999]);
+        $this->book($owner)->update(['title' => 'Other work', 'read_count' => 9999]);
+        $this->actingAs($owner);
+        foreach (['read_count' => [$older->id, $newer->id], 'created_at' => [$newer->id, $older->id]] as $sort => $ids) {
+            foreach (['desc', 'asc'] as $direction) {
+                $response = $this->get('/eserlerim?q=Match%20&sort='.$sort.'&direction='.$direction)->assertOk();
+                $books = $response->viewData('books');
+                $this->assertSame($direction === 'desc' ? $ids : array_reverse($ids), $books->pluck('id')->all());
+                parse_str(parse_url($books->url(2), PHP_URL_QUERY), $query);
+                $this->assertSame($sort, $query['sort']);
+                $this->assertSame($direction, $query['direction']);
+                $this->assertSame('Match', $query['q']);
+                $response->assertSee('href="'.route('article', $older->slug).'" target="_blank" rel="noopener noreferrer"', false)
+                    ->assertDontSee('href="'.route('article', $newer->slug).'"', false)
+                    ->assertSee('id="work-sort"', false)
+                    ->assertSee('02.01.2020 12:30')->assertDontSee('Last opened')
+                    ->assertDontSee('<div class="eyebrow">MANUSCRIPT</div>', false);
+            }
+        }
+        $this->getJson('/eserlerim?sort=title')->assertUnprocessable();
+        $this->getJson('/eserlerim?direction=invalid')->assertUnprocessable();
+    }
+
 }

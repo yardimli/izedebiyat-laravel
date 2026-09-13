@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('writer.layouts.portal')
 @section('title', 'Talep Detayı')
-@section('content')
+@section('portal-content')
 	<main>
 		<div class="container mt-5" style="min-height: calc(88vh);">
 			<a href="{{ route('admin.account-recovery.index') }}" class="btn btn-secondary mb-4">&larr; Taleplere Geri Dön</a>

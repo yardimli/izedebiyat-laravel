@@ -963,7 +963,7 @@ export async function start() {
                 !item.architecture?.output_modalities?.includes("text");
             pick.onclick = async () => {
                 try {
-                    await api("/yazi-atolyesi/account", "PATCH", { selected_model: item.id });
+                    await api("/yazi-atolyesi/hesap", "PATCH", { selected_model: item.id });
                     model = item.id;
                     $("#model-picker").open = false;
                     renderModels();
@@ -980,7 +980,7 @@ export async function start() {
                     const next = favorites.includes(item.id)
                         ? favorites.filter((id) => id !== item.id)
                         : [...favorites, item.id];
-                    await api("/yazi-atolyesi/account", "PATCH", { favorite_models: next });
+                    await api("/yazi-atolyesi/hesap", "PATCH", { favorite_models: next });
                     favorites = next;
                     renderModels();
                 } catch (e) {
@@ -996,7 +996,7 @@ export async function start() {
         "#favorites-only",
         async () => {
             renderModels();
-            await api("/yazi-atolyesi/account", "PATCH", {
+            await api("/yazi-atolyesi/hesap", "PATCH", {
                 favorites_only: $("#favorites-only").checked,
             });
         },
@@ -1434,7 +1434,7 @@ export async function start() {
     action("#export-button", async () => {
         await flush();
         const link = element("a");
-        link.href = `/yazi-atolyesi/books/${state.book.id}/export/${$("#export-format").value}`;
+        link.href = `/yazi-atolyesi/eserler/${state.book.id}/disari-aktar/${$("#export-format").value}`;
         link.download = "";
         document.body.append(link);
         link.click();

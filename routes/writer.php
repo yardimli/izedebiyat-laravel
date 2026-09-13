@@ -9,20 +9,20 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', \App\Writer\Http\Middleware\WriterLocale::class])->prefix('yazi-atolyesi')->group(function () {
     Route::get('/', fn () => redirect()->route('articles.index'))->name('writer.dashboard');
-    Route::post('/books', [BookController::class, 'store'])->name('writer.books.store');
-    Route::get('/books/{book}', function (\App\Writer\Models\Book $book) {
+    Route::post('/eserler', [BookController::class, 'store'])->name('writer.books.store');
+    Route::get('/eserler/{book}', function (\App\Writer\Models\Book $book) {
         abort_unless((int) $book->user_id === (int) auth()->id(), 404);
 
         return redirect()->route('articles.edit', \App\Helpers\IdHasher::encode($book->id));
     })->name('writer.books.show');
-    Route::get('/books/{book}/llm-log', [BookController::class, 'llmLogPage'])->name('writer.books.llm-log');
-    Route::get('/books/{book}/llm-log/{id}', [BookController::class, 'llmCallPage'])->name('writer.books.llm-call');
-    Route::get('/books/{book}/export/{format}', [BookController::class, 'export'])->name('writer.books.export');
-    Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('writer.books.destroy');
-    Route::get('/account', [SettingsController::class, 'edit'])->name('writer.settings');
-    Route::patch('/account', [SettingsController::class, 'update'])->name('writer.settings.update');
-    Route::get('/admin/budgets', [BudgetController::class, 'index'])->name('writer.budgets.index');
-    Route::post('/admin/budgets/{user}/reset', [BudgetController::class, 'reset'])->name('writer.budgets.reset');
+    Route::get('/eserler/{book}/yapay-zeka-gunlugu', [BookController::class, 'llmLogPage'])->name('writer.books.llm-log');
+    Route::get('/eserler/{book}/yapay-zeka-gunlugu/{id}', [BookController::class, 'llmCallPage'])->name('writer.books.llm-call');
+    Route::get('/eserler/{book}/disari-aktar/{format}', [BookController::class, 'export'])->name('writer.books.export');
+    Route::delete('/eserler/{book}', [BookController::class, 'destroy'])->name('writer.books.destroy');
+    Route::get('/hesap', [SettingsController::class, 'edit'])->name('writer.settings');
+    Route::patch('/hesap', [SettingsController::class, 'update'])->name('writer.settings.update');
+    Route::get('/admin/kotalar', [BudgetController::class, 'index'])->name('writer.budgets.index');
+    Route::post('/admin/kotalar/{user}/yenile', [BudgetController::class, 'reset'])->name('writer.budgets.reset');
     Route::prefix('api')->group(function () {
         Route::get('/countries', [NameController::class, 'countries']);
         Route::get('/names', [NameController::class, 'index']);
