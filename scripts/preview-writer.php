@@ -9,7 +9,7 @@ $preview = new class('preview') extends Tests\WriterTestCase {
         $user=App\Models\User::factory()->create(['name'=>'Örnek Yazar','slug'=>'ornek-yazar','member_type'=>1]);
         $user->forceFill(['favorites_initialized_at'=>now(),'model_selected_at'=>now(),'selected_model'=>'test/writer','favorite_models'=>['test/writer']])->save();
         $parent=App\Models\Category::create(['category_name'=>'Edebiyat','slug'=>'edebiyat']);
-        $category=App\Models\Category::create(['category_name'=>'Öykü','slug'=>'oyku','parent_category_id'=>$parent->id]);
+        $category=App\Models\Category::create(['category_name'=>'Öykü','picture'=>'oyku.jpg','slug'=>'oyku','parent_category_id'=>$parent->id]);
         $book=App\Writer\Models\Book::create(['user_id'=>$user->id,'title'=>'Kıyıda Bir Akşam','subtitle'=>'Bir dönüş hikâyesi','category_id'=>$category->id,'category_name'=>'Öykü','subheading'=>'Bir sahil kasabasında başlayan hikâye.','keywords_string'=>'deniz, dönüş','document'=>App\Writer\Services\ManuscriptHtml::replacement('<h1>Birinci Bölüm</h1><p>Deniz o akşam her zamankinden daha sakindi. Elif, yıllar önce ayrıldığı kasabanın sokaklarında yürürken tanıdık bir ses duydu.</p><p><em>Belki de hiçbir şey değişmemişti.</em> Kapının önündeki nar ağacı, eski günlerdeki gibi çiçek açmıştı.</p>'),'codex_types'=>['People','Places','Items']]);
         $book->entries()->create(['type'=>'People','name'=>'Elif','content'=>'Kasabaya yıllar sonra dönen yazar.','aliases'=>[]]);
         $this->actingAs($user)->withSession(['locale'=>'tr_TR']);

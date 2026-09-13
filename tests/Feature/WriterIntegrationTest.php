@@ -412,4 +412,44 @@ class WriterIntegrationTest extends WriterTestCase
         $this->getJson('/eserlerim?direction=invalid')->assertUnprocessable();
     }
 
+
+    public function test_account_image_summary_is_owner_scoped_and_limits_recent_images(): void
+    {
+        $owner = User::factory()->create();
+        $other = User::factory()->create();
+        foreach (range(1, 9) as $id) {
+            DB::table('images')->insert(['id' => $id, 'user_id' => $id === 9 ? $other->id : $owner->id,
+                'image_type' => $id % 2 ? 'upload' : 'generated', 'image_guid' => 'image-'.$id, 'image_alt' => 'Image '.$id,
+                'image_original_filename' => $id.'.png', 'image_large_filename' => $id.'.png',
+                'image_medium_filename' => $id.'.png', 'image_small_filename' => $id.'.png',
+                'created_at' => '2026-09-01 12:00:00', 'updated_at' => '2026-09-01 12:00:00']);
+        }
+        $response = $this->actingAs($owner)->withSession(['locale' => 'tr_TR'])->get('/yazi-atolyesi/hesap')->assertOk();
+        $this->assertEquals(8, $response->viewData('imageCounts')->sum());
+        $this->assertEquals(4, $response->viewData('imageCounts')->get('upload'));
+        $this->assertEquals(4, $response->viewData('imageCounts')->get('generated'));
+        $this->assertSame([8, 7, 6, 5, 4, 3], $response->viewData('latestImages')->pluck('id')->all());
+        $response->assertSee('/storage/ai-images/medium/8.png')->assertSee('/storage/upload-images/medium/7.png')
+            ->assertDontSee('/medium/9.png')->assertSee('Oturumu kapat');
+        $html = $response->getContent();
+        $this->assertLessThan(strpos($html, 'id="api-key"'), strpos($html, 'id="account-images-title"'));
+    }
+
+
+    public function test_welcome_preference_is_session_only_and_resets_on_login(): void
+    {
+        $user = User::factory()->create();
+        $book = $this->book($user);
+        $this->actingAs($user)->getJson('/yazi-atolyesi/tanitim-tercihi')->assertOk()->assertJson(['hidden' => false]);
+        $this->postJson('/yazi-atolyesi/tanitim-tercihi', ['hidden' => true])->assertOk()->assertJson(['hidden' => true]);
+        $this->getJson('/yazi-atolyesi/tanitim-tercihi')->assertJson(['hidden' => true]);
+        Http::fake(['*/models' => Http::response(['data' => []])]);
+        $this->get('/eserlerim/'.\App\Helpers\IdHasher::encode($book->id).'/duzenle')->assertOk()
+            ->assertSee('data-hidden-for-session="1"', false);
+        event(new \Illuminate\Auth\Events\Login('web', $user, false));
+        $this->getJson('/yazi-atolyesi/tanitim-tercihi')->assertJson(['hidden' => false]);
+        $this->get('/eserlerim/'.\App\Helpers\IdHasher::encode($book->id).'/duzenle')->assertOk()
+            ->assertSee('data-hidden-for-session="0"', false);
+    }
+
 }

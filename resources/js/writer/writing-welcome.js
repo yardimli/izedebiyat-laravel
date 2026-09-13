@@ -1,4 +1,5 @@
-import { t, locale } from "./i18n";
+import { t } from "./i18n";
+import { api } from "./api";
 export function showWritingWelcome(initialModel) {
     const dialog = document.querySelector("#writing-welcome");
     const chat = document.querySelector("#chat-input");
@@ -12,7 +13,10 @@ export function showWritingWelcome(initialModel) {
     };
     setModel(initialModel);
     let highlightTimer;
+    let hiddenForSession = dialog.dataset.hiddenForSession === "1";
+    let saving = false;
     const open = () => {
+        if (hiddenForSession) return;
         clearTimeout(highlightTimer);
         chat.classList.remove("welcome-highlight");
         picker.classList.remove("welcome-highlight");
@@ -35,12 +39,35 @@ export function showWritingWelcome(initialModel) {
             chat.scrollIntoView({ block: "nearest" });
         });
     });
-    dialog.querySelectorAll("[data-welcome-close]").forEach((button) => {
-        button.addEventListener("click", () => dialog.close());
-    });
+    const close = async () => {
+        if (saving) return;
+        const checkbox = document.querySelector('#welcome-hide-session');
+        const errorMessage = document.querySelector('#welcome-preference-error');
+        if (checkbox.checked) {
+            saving = true;
+            errorMessage.hidden = true;
+            try {
+                await api(dialog.dataset.preferenceUrl, 'POST', { hidden: true });
+                hiddenForSession = true;
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                errorMessage.hidden = false;
+                return;
+            } finally { saving = false; }
+        }
+        dialog.close();
+    };
+    dialog.querySelectorAll("[data-welcome-close]").forEach(button => button.addEventListener("click", close));
+    dialog.addEventListener('cancel', event => { event.preventDefault(); close(); });
     dialog.setAttribute("closedby", "closerequest");
-    window.addEventListener("pageshow", (event) => {
-        if (event.persisted) open();
+    window.addEventListener("pageshow", async event => {
+        if (!event.persisted) return;
+        try {
+            const preference = await api(dialog.dataset.preferenceUrl);
+            hiddenForSession = preference.hidden;
+            if (hiddenForSession && dialog.open) dialog.close();
+            open();
+        } catch { /* Keep the last known session preference when offline. */ }
     });
     open();
     return { setModel };

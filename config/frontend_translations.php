@@ -138,6 +138,7 @@ return [
     'approved',
     'Show page breaks',
     'Hide page breaks',
+    'Preparing image…',
     'dark',
     'light',
     'not yet',

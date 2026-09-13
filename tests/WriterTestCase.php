@@ -53,6 +53,7 @@ abstract class WriterTestCase extends TestCase
         Schema::create('categories', function (Blueprint $t) {
             $t->id();
             $t->string('category_name');
+            $t->string('picture')->nullable();
             $t->string('slug');
             $t->integer('parent_category_id')->default(0);
             $t->timestamps();

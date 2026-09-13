@@ -19,6 +19,7 @@ Route::middleware(['auth', \App\Writer\Http\Middleware\WriterLocale::class])->pr
     Route::get('/eserler/{book}/yapay-zeka-gunlugu/{id}', [BookController::class, 'llmCallPage'])->name('writer.books.llm-call');
     Route::get('/eserler/{book}/disari-aktar/{format}', [BookController::class, 'export'])->name('writer.books.export');
     Route::delete('/eserler/{book}', [BookController::class, 'destroy'])->name('writer.books.destroy');
+    Route::match(['get', 'post'], '/tanitim-tercihi', [SettingsController::class, 'welcomePreference'])->name('writer.welcome-preference');
     Route::get('/hesap', [SettingsController::class, 'edit'])->name('writer.settings');
     Route::patch('/hesap', [SettingsController::class, 'update'])->name('writer.settings.update');
     Route::get('/admin/kotalar', [BudgetController::class, 'index'])->name('writer.budgets.index');

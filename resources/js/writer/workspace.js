@@ -314,6 +314,7 @@ export async function start() {
             ])
                 details.elements[key].value = state.book.metadata?.[key] || "";
         }
+        updateFeaturedImage();
         $("#chat-messages").replaceChildren();
         if (!state.messages.length && !state.proposals.length) {
             const empty = element("div", undefined, "chat-empty");
@@ -818,34 +819,82 @@ export async function start() {
                 const result = await api(base + '/publication-ai/' + button.dataset.publicationAi, 'POST', {text: editor.text().slice(0, 60000), model});
                 const field = button.dataset.publicationAi === 'category' ? 'category_id' : 'keywords_string';
                 $('#details-form').elements[field].value = result[field];
+                updateFeaturedImage();
                 detailsDirty = true;
                 await refresh();
             } catch (error) { notify(error.message); }
             finally { button.disabled = false; }
         };
     });
+    function updateFeaturedImage(customUrl = null) {
+        const form = $('#details-form');
+        const image = $('#featured-image-preview');
+        const custom = form.elements.featured_image.value;
+        if (!custom) {
+            image.src = form.elements.category_id.selectedOptions[0]?.dataset.image || image.dataset.defaultImage;
+        } else if (customUrl) {
+            image.src = customUrl;
+        } else {
+            const path = custom.split(String.fromCharCode(92)).join('/');
+            image.src = (path.startsWith('https://') || path.startsWith('http://')) || path.startsWith('/') ? path
+                : path.startsWith('storage/') ? '/' + path
+                : path.toLowerCase().includes('00001_') ? '/storage/yazi_resimler/' + path.replace(/[.]png$/i, '.jpg')
+                : '/storage/upload-images/original/' + path;
+        }
+        $('#remove-featured-image').hidden = !custom;
+    }
+    action('#details-form select[name="category_id"]', () => updateFeaturedImage(), 'change');
+    const imageDialog = $('#featured-image-dialog');
+    let imageBusy = false;
+    function imageScreen(generate) {
+        $('#image-upload-screen').hidden = generate;
+        $('#image-generation-screen').hidden = !generate;
+        $('#image-dialog-status').textContent = '';
+    }
+    function imageLoading(busy) {
+        imageBusy = busy;
+        imageDialog.querySelectorAll('button, input, textarea').forEach(control => control.disabled = busy);
+        $('#image-dialog-status').textContent = busy ? t('Preparing image…') : '';
+    }
+    imageDialog.addEventListener('cancel', event => { if (imageBusy) event.preventDefault(); });
+    action('#change-featured-image', () => { imageScreen(false); imageDialog.showModal(); });
+    action('#show-image-generation', () => imageScreen(true));
+    action('#show-image-upload', () => imageScreen(false));
     action('#generate-featured-image', async () => {
-        const button = $('#generate-featured-image');
-        button.disabled = true;
+        imageLoading(true);
         try {
-            const result = await api(button.dataset.url, 'POST', {user_prompt: $('#ai-image-prompt').value.trim() || editor.text().slice(0, 4000)});
+            const result = await api($('#generate-featured-image').dataset.url, 'POST', {user_prompt: $('#ai-image-prompt').value.trim() || editor.text().slice(0, 4000)});
             if (!result?.success || !result.image_medium_filename) throw new Error(result?.message || result?.error || t('Image generation failed.'));
             const path = '/storage/ai-images/medium/' + result.image_medium_filename;
             $('#details-form').elements.featured_image.value = path;
-            $('#featured-image-preview').src = path;
-            $('#featured-image-preview').hidden = false;
+            updateFeaturedImage(path);
             detailsDirty = true;
-        } finally { button.disabled = false; }
+            imageLoading(false);
+            imageDialog.close();
+        } catch (error) { imageLoading(false); $('#image-dialog-status').textContent = error.message; }
     });
-    action('#featured-image-upload', async (event) => {
-        const file = event.target.files[0]; if (!file) return;
-        const data = new FormData(); data.append('image', file);
-        const response = await fetch(base + '/featured-image', {method:'POST',headers:{'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content, 'Accept':'application/json'},body:data});
-        const result = await response.json(); if (!response.ok) throw new Error(result.message || t('Upload failed'));
-        $('#details-form').elements.featured_image.value=result.filename;
-        $('#featured-image-preview').src=result.url; $('#featured-image-preview').hidden=false; detailsDirty=true;
-    }, 'change');
-    action('#remove-featured-image', () => { $('#details-form').elements.featured_image.value=''; $('#featured-image-preview').hidden=true; detailsDirty=true; });
+    action('#featured-image-upload-form', async (event) => {
+        event.preventDefault();
+        const file = $('#featured-image-upload').files[0]; if (!file) return;
+        imageLoading(true);
+        try {
+            const data = new FormData(); data.append('image', file);
+            const response = await fetch(base + '/featured-image', {method:'POST',headers:{'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content, 'Accept':'application/json'},body:data});
+            const result = await response.json(); if (!response.ok) throw new Error(result.message || t('Upload failed'));
+            $('#details-form').elements.featured_image.value = result.filename;
+            updateFeaturedImage(result.url);
+            detailsDirty = true;
+            $('#featured-image-upload-form').reset();
+            imageLoading(false);
+            imageDialog.close();
+        } catch (error) { imageLoading(false); $('#image-dialog-status').textContent = error.message; }
+    }, 'submit');
+    action('#remove-featured-image', () => {
+        $('#details-form').elements.featured_image.value = '';
+        updateFeaturedImage();
+        detailsDirty = true;
+        imageDialog.close();
+    });
     async function loadModels(force = false) {
         const catalog = await api(
             force ? "/yazi-atolyesi/api/models/refresh" : "/yazi-atolyesi/api/models",

@@ -3,7 +3,7 @@
 namespace App\Writer\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Writer\Models\AiCall;
+use App\Models\Image;
 use App\Writer\Services\ModelCatalog;
 use Illuminate\Http\Request;
 
@@ -11,7 +11,22 @@ class SettingsController extends Controller
 {
     public function edit(Request $request)
     {
-        return view('writer.settings', ['spent' => AiCall::where('user_id', $request->user()->id)->sum('cost')]);
+        $images = Image::where('user_id', $request->user()->id);
+        $imageCounts = (clone $images)->selectRaw('image_type, COUNT(*) as total')->groupBy('image_type')->pluck('total', 'image_type');
+        $latestImages = $images->select(['id', 'image_type', 'image_alt', 'image_medium_filename', 'created_at'])
+            ->latest('created_at')->orderByDesc('id')->limit(6)->get();
+
+        return view('writer.settings', compact('imageCounts', 'latestImages'));
+    }
+
+    public function welcomePreference(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $data = $request->validate(['hidden' => 'required|boolean']);
+            $request->session()->put('writer_welcome_hidden', $data['hidden']);
+        }
+        return response()->json(['hidden' => (bool) $request->session()->get('writer_welcome_hidden', false)])
+            ->header('Cache-Control', 'no-store');
     }
 
     public function update(Request $request)

@@ -28,9 +28,11 @@
 		 * Register any events for your application.
 		 */
 		public function boot(): void
-		{
-			//
-		}
+        {
+            Event::listen(\Illuminate\Auth\Events\Login::class, function () {
+                if (request()->hasSession()) request()->session()->forget('writer_welcome_hidden');
+            });
+        }
 
 		/**
 		 * Determine if events and listeners should be automatically discovered.

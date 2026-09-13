@@ -1,18 +1,21 @@
 const fs=require('fs'),http=require('http'),path=require('path');
 const {chromium}=require(process.env.WRITER_PLAYWRIGHT_MODULE || 'playwright');
 const root=path.resolve('storage/app/writer-preview');const state=JSON.parse(fs.readFileSync(path.join(root,'state.json'),'utf8'));const errors=[];const saves=[];
+let welcomeHidden=false;
 const model={id:'test/writer',name:'Writing Model',context_length:200000,pricing:{prompt:'0.000001',completion:'0.000002'},architecture:{output_modalities:['text']}};
 const server=http.createServer(async(req,res)=>{
  const pathname=new URL(req.url,'http://127.0.0.1:8123').pathname;
  const json=value=>{res.setHeader('Content-Type','application/json');res.end(JSON.stringify(value));};
  if(pathname.startsWith('/build/')){const p=path.resolve('public','.'+pathname);if(!p.startsWith(path.resolve('public/build')+path.sep)||!fs.existsSync(p)){res.statusCode=404;return res.end();}res.setHeader('Content-Type',p.endsWith('.css')?'text/css':'application/javascript');return res.end(fs.readFileSync(p));}
  if(['/css/','/js/','/assets/'].some(prefix=>pathname.startsWith(prefix))){const p=path.resolve('public','.'+pathname);if(!p.startsWith(path.resolve('public')+path.sep)||!fs.existsSync(p)){res.statusCode=404;return res.end();}res.setHeader('Content-Type',p.endsWith('.css')?'text/css':p.endsWith('.js')?'application/javascript':p.endsWith('.png')?'image/png':'application/octet-stream');return res.end(fs.readFileSync(p));}
+ if(pathname==='/yazi-atolyesi/tanitim-tercihi'){if(req.method==='POST')welcomeHidden=true;return json({hidden:welcomeHidden});}
  if(pathname==='/check-llms-json')return json([model]);
  if(pathname==='/sohbet/oturumlar')return json([]);
  if(pathname==='/sohbet-oturum-ac')return json({session_id:'preview-session'});
  if(pathname.endsWith('/api/models'))return json({data:[model],refreshed_at:new Date().toISOString()});
  if(pathname.endsWith('/api/countries'))return json([{code:'TR',name:'Türkiye'}]);
  if(pathname==='/yazi-atolyesi/hesap'&&req.method==='PATCH')return json({saved:true});
+ if(pathname.endsWith('/featured-image')&&req.method==='POST')return json({filename:'uploaded.png',url:'/storage/upload-images/original/uploaded.png'});
  if(pathname.endsWith('/publication-ai/category'))return json({category_id:state.book.category_id});
  if(pathname.endsWith('/publication-ai/keywords'))return json({keywords_string:'deniz, umut'});
  if(req.method==='POST'&&pathname==='/image-gen')return json({success:true,image_medium_filename:'generated_medium.jpg'});
@@ -22,7 +25,7 @@ const server=http.createServer(async(req,res)=>{
  }
  const portalFiles={'/yazi-atolyesi/hesap':'account.html','/sohbet':'chat.html','/favorilerim':'favorites.html','/admin/kullanicilar':'users.html','/admin/eserler':'articles.html'};
  const file=portalFiles[pathname] || (pathname==='/eserlerim'?'library.html':pathname.includes('/admin/kotalar')?'budget.html':pathname.includes('/duzenle')?'editor.html':null);
- if(file){res.setHeader('Content-Type','text/html; charset=utf-8');return res.end(fs.readFileSync(path.join(root,file)));}res.statusCode=404;res.end();
+ if(file){res.setHeader('Content-Type','text/html; charset=utf-8');return res.end(fs.readFileSync(path.join(root,file),'utf8').replace('data-hidden-for-session="0"','data-hidden-for-session="'+(welcomeHidden?'1':'0')+'"'));}res.statusCode=404;res.end();
 });
 (async()=>{await new Promise(resolve=>server.listen(8123,'127.0.0.1',resolve));let browser;try{
  browser=await chromium.launch({channel:'chrome',headless:true});const page=await browser.newPage({viewport:{width:1440,height:1000}});page.on('pageerror',e=>errors.push(e.message));
@@ -45,11 +48,41 @@ const server=http.createServer(async(req,res)=>{
  if(await page.locator('#details-form [name="is_published"]').count())throw new Error('Publish status remains in editor');
  await page.locator('#details-form input[name="subtitle"]').fill('Yeni alt başlık');await page.locator('#details-form textarea[name="subheading"]').fill('Yeni giriş');await page.locator('#details-form input[name="keywords_string"]').fill('deniz, öykü');await page.locator('#details-form button.primary').click();await page.waitForFunction(()=>document.querySelector('#save-status').textContent.length>0);await page.waitForTimeout(300);
  if(!saves.some(s=>s.subtitle==='Yeni alt başlık'&&s.subheading==='Yeni giriş'&&!('is_published' in s)&&s.category_id===String(state.book.category_id)))throw new Error('Publication metadata was not sent correctly: '+JSON.stringify(saves));
+ const categorySelect=page.locator('[name="category_id"]');
+ await categorySelect.selectOption('');
+ const fallback=await page.locator('#featured-image-preview').getAttribute('src');
+ await categorySelect.selectOption(String(state.book.category_id));
+ const categoryImage=await page.locator('#featured-image-preview').getAttribute('src');
+ if(categoryImage===fallback)throw Error('Category selection did not update image');
+ await categorySelect.selectOption('');
  await page.locator('[data-publication-ai="category"]').click();await page.waitForTimeout(150);
+ if(await page.locator('#featured-image-preview').getAttribute('src')!==categoryImage)throw Error('AI category did not update image');
  await page.locator('[data-publication-ai="keywords"]').click();await page.waitForTimeout(150);
  if(await page.locator('[name="keywords_string"]').inputValue()!=='deniz, umut')throw new Error('AI tags were not applied');
+ await page.locator('#change-featured-image').click();
+ if(!await page.locator('#image-upload-screen').isVisible()||await page.locator('#image-generation-screen').isVisible())throw Error('Image dialog must start with upload');
+ await page.locator('#show-image-generation').click();
+ if(!await page.locator('#image-generation-screen').isVisible())throw Error('Image prompt missing');
+ await page.locator('#show-image-upload').click();
+ if(!await page.locator('#image-upload-screen').isVisible())throw Error('Cannot return to upload');
+ await page.locator('#show-image-generation').click();
  await page.locator('#generate-featured-image').click();await page.waitForTimeout(150);
+ if(await page.locator('#featured-image-dialog').isVisible())throw Error('Image dialog did not close after selection');
  if(await page.locator('[name="featured_image"]').inputValue()!=='/storage/ai-images/medium/generated_medium.jpg')throw new Error('AI image was not applied');
+ await categorySelect.selectOption('');
+ if(!(await page.locator('#featured-image-preview').getAttribute('src')).includes('generated_medium.jpg'))throw Error('Category overwrote custom image');
+ await categorySelect.selectOption(String(state.book.category_id));
+ await page.locator('#change-featured-image').click();
+ await page.locator('#remove-featured-image').click();
+ if(await page.locator('#featured-image-preview').getAttribute('src')!==categoryImage)throw Error('Removing custom image did not restore category');
+ await page.locator('#change-featured-image').click();
+ await page.locator('#featured-image-upload').setInputFiles({name:'uploaded.png',mimeType:'image/png',buffer:Buffer.from('fixture')});
+ await page.locator('#featured-image-upload-form button[type="submit"]').click();
+ await page.waitForFunction(()=>document.querySelector('[name="featured_image"]').value==='uploaded.png');
+ if(await page.locator('#featured-image-dialog').isVisible())throw Error('Upload dialog remained open');
+ await categorySelect.selectOption('');
+ if(!(await page.locator('#featured-image-preview').getAttribute('src')).includes('uploaded.png'))throw Error('Category overwrote uploaded image');
+ await categorySelect.selectOption(String(state.book.category_id));
  await page.locator('#details-form button.primary').click();await page.waitForTimeout(200);
  await page.screenshot({path:path.join(root,'details.png'),fullPage:true});
  await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(root,'mobile-details.png'),fullPage:true});await page.locator('#close-panel').click();await page.waitForTimeout(300);if(await page.locator('.writing-pane').evaluate(el=>el.getBoundingClientRect().width)<350)throw new Error('Mobile manuscript is squeezed');await page.screenshot({path:path.join(root,'mobile.png'),fullPage:true});
@@ -77,5 +110,19 @@ const server=http.createServer(async(req,res)=>{
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error(name+' overflows mobile');
   await page.setViewportSize({width:1440,height:1000});
  }
+ const welcomePage=await browser.newPage();
+ await welcomePage.goto('http://127.0.0.1:8123/eserlerim/test/duzenle');
+ await welcomePage.locator('#writing-welcome').waitFor();
+ await welcomePage.locator('[data-welcome-close]').last().click();
+ await welcomePage.reload();await welcomePage.locator('#writing-welcome').waitFor();
+ await welcomePage.locator('#welcome-hide-session').check();
+ await welcomePage.locator('[data-welcome-close]').last().click();
+ await welcomePage.waitForFunction(()=>!document.querySelector('#writing-welcome').open);
+ if(!welcomeHidden)throw Error('Welcome preference not saved');
+ await welcomePage.reload();await welcomePage.locator('.ProseMirror').waitFor();
+ if(await welcomePage.locator('#writing-welcome').isVisible())throw Error('Welcome shown after opting out');
+ welcomeHidden=false;
+ await welcomePage.reload();await welcomePage.locator('#writing-welcome').waitFor();
+ await welcomePage.close();
  if(errors.length)throw new Error(errors.join('\n'));console.log('Browser checks passed: Turkish library, editor, metadata save, mobile layout, admin budget; no JavaScript errors.');
  }finally{if(browser)await browser.close();server.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
