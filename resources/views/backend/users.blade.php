@@ -1,156 +1,195 @@
 @extends('writer.layouts.portal')
 @section('title', 'İzEdebiyat - Kullanıcılar')
 @section('portal-content')
-	<!-- **************** MAIN CONTENT START **************** -->
-	<main>
-		<!-- Container START -->
-		<div class="container mt-5">
-			<div class="row align-items-center">
-				{{-- Search Form --}}
-				<form action="{{ route('admin-users-index') }}" method="GET" class="col-md-8 col-lg-9">
-					<input type="hidden" name="sort" value="{{ $sort }}"><input type="hidden" name="direction" value="{{ $direction }}">
+    <!-- **************** MAIN CONTENT START **************** -->
+    <main>
+        <!-- Container START -->
+        <div class="container mt-5">
+            <div class="row align-items-center">
+                {{-- Search Form --}}
+                <form action="{{ route('admin-users-index') }}" method="GET" class="col-md-8 col-lg-9">
+                    <input type="hidden" name="sort" value="{{ $sort }}"><input type="hidden" name="direction"
+                        value="{{ $direction }}">
                     <div class="input-group mb-3">
-						<input name="search" type="text" class="form-control" placeholder="Search users" value="{{ request('search') }}">
-						<button class="btn btn-primary" type="submit">Search</button>
-					</div>
-				</form>
-				@if (Auth::user()->member_type === 1)
-					<div class="col-md-4 col-lg-3 text-md-end mb-3">
-						<a href="{{ route('admin.account-recovery.index') }}" class="btn btn-warning">Hesap Kurtarma Talepleri</a>
-					</div>
-				@endif
-			</div>
-			
-			<div class="table-responsive"><table class="table table-bordered">
-				<thead>
-				<tr>
-					<th style="width: 50px"></th>
-					<th scope="col" aria-sort="{{ $sort === 'name' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}"><a class="admin-sort-link" href="{{ route('admin-users-index', ['search'=>$search, 'sort'=>'name', 'direction'=>$sort === 'name' && $direction === 'asc' ? 'desc' : 'asc']) }}">Name <span aria-hidden="true">{{ $sort === 'name' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a></th>
-					<th scope="col" aria-sort="{{ $sort === 'email' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}"><a class="admin-sort-link" href="{{ route('admin-users-index', ['search'=>$search, 'sort'=>'email', 'direction'=>$sort === 'email' && $direction === 'asc' ? 'desc' : 'asc']) }}">Email <span aria-hidden="true">{{ $sort === 'email' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a></th>
-					<th scope="col" aria-sort="{{ $sort === 'story_count' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}"><a class="admin-sort-link" href="{{ route('admin-users-index', ['search'=>$search, 'sort'=>'story_count', 'direction'=>$sort === 'story_count' && $direction === 'asc' ? 'desc' : 'asc']) }}">Eserler <span aria-hidden="true">{{ $sort === 'story_count' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a></th>
-					<th scope="col" aria-sort="{{ $sort === 'last_story_date' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}"><a class="admin-sort-link" href="{{ route('admin-users-index', ['search'=>$search, 'sort'=>'last_story_date', 'direction'=>$sort === 'last_story_date' && $direction === 'asc' ? 'desc' : 'asc']) }}">Son eser <span aria-hidden="true">{{ $sort === 'last_story_date' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a></th>
-					<th scope="col" aria-sort="{{ $sort === 'created_at' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}"><a class="admin-sort-link" href="{{ route('admin-users-index', ['search'=>$search, 'sort'=>'created_at', 'direction'=>$sort === 'created_at' && $direction === 'asc' ? 'desc' : 'asc']) }}">Created <span aria-hidden="true">{{ $sort === 'created_at' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a></th>
-					<th>Actions</th>
-				</tr>
-				</thead>
-				<tbody>
-				@foreach($users as $user)
-					<tr>
-						<td class="text-center">
-							@if($user->avatar)
-								<img src="{{ !empty($user->avatar) ? Storage::url($user->avatar) : '/assets/images/avatar/placeholder.jpg' }}" class="rounded-circle" width="40" height="40">
-							@else
-								<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-								     style="width: 40px; height: 40px; font-size: 18px;">
-									{{ strtoupper(substr($user->name, 0, 1)) }}
-								</div>
-							@endif
-						</td>
-						<td>{{ $user->name }}</td>
-						<td>{{ $user->email }}</td>
-						<td class="text-center">{{ $user->story_count }}</td>
-						<td>
-							@if($user->last_story_date)
-								{{ \Carbon\Carbon::parse($user->last_story_date)->format('d M Y') }}
-							@else
-								-
-							@endif
-						</td>
-						<td>{{ $user->created_at->format('d M Y') }}</td>
-						<td>
-							{{-- MODIFIED: Actions now in a flex container --}}
-							<div class="d-flex gap-2">
-								<form action="{{ route('users-login-as') }}" method="POST">
-									@csrf
-									<input type="hidden" name="user_id" value="{{ $user->id }}"/>
-									<button type="submit" class="btn btn-primary btn-sm">Login As</button>
-								</form>
-								{{-- ADDED: Delete button and modal trigger --}}
-								<button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteUserModal-{{ $user->id }}">
-									Delete
-								</button>
-							</div>
-						</td>
-					</tr>
-					
-				@endforeach
-				</tbody>
-			</table></div>
-                @foreach($users as $user)
-					{{-- ADDED: Deletion confirmation modal for each user --}}
-					<div class="modal fade" id="deleteUserModal-{{ $user->id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel-{{ $user->id }}" aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="deleteUserModalLabel-{{ $user->id }}">Kullanıcıyı Silmeyi Onayla</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-								</div>
-								<div class="modal-body">
-									<strong>{{ $user->name }}</strong> adlı kullanıcıyı ve tüm yazılarını kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-									<form action="{{ route('admin.users.destroy', $user) }}" method="POST">
-										@csrf
-										@method('DELETE')
-										<button type="submit" class="btn btn-danger">Evet, Kullanıcıyı Sil</button>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-                @endforeach
-			
-			<!-- Pagination Links -->
+                        <input name="search" type="text" class="form-control" placeholder="Search users"
+                            value="{{ request('search') }}">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </form>
+                @if (Auth::user()->member_type === 1)
+                    <div class="col-md-4 col-lg-3 text-md-end mb-3">
+                        <a href="{{ route('admin.account-recovery.index') }}" class="btn btn-warning">Hesap Kurtarma
+                            Talepleri</a>
+                    </div>
+                @endif
+            </div>
 
-			
-			<div class="d-flex justify-content-center flex-wrap gap-1">
-				@if ($users->onFirstPage())
-					<button class="btn btn-secondary mx-1" disabled>First</button>
-				@else
-					<a href="{{ $users->url(1) }}" class="btn btn-primary mx-1">First</a>
-				@endif
-				
-				@if ($users->onFirstPage())
-					<button class="btn btn-secondary mx-1" disabled>Previous</button>
-				@else
-					<a href="{{ $users->previousPageUrl() }}" class="btn btn-primary mx-1">Previous</a>
-				@endif
-				
-				@foreach(range(1, $users->lastPage()) as $i)
-					@if ($i >= $users->currentPage() - 2 && $i <= $users->currentPage() + 2)
-						@if ($i == $users->currentPage())
-							<button class="btn btn-secondary mx-1">{{ $i }}</button>
-						@else
-							<a href="{{ $users->url($i) }}" class="btn btn-primary mx-1">{{ $i }}</a>
-						@endif
-					@endif
-				@endforeach
-				
-				@if ($users->hasMorePages())
-					<a href="{{ $users->nextPageUrl() }}" class="btn btn-primary mx-1">Next</a>
-				@else
-					<button class="btn btn-secondary mx-1" disabled>Next</button>
-				@endif
-				
-				@if ($users->currentPage() === $users->lastPage())
-					<button class="btn btn-secondary mx-1" disabled>Last</button>
-				@else
-					<a href="{{ $users->url($users->lastPage()) }}" class="btn btn-primary mx-1">Last</a>
-				@endif
-			</div>
-			
-			<p>Viewing {{ $users->firstItem() }} - {{ $users->lastItem() }} out of {{ $users->total() }}</p>
-		</div>
-	</main>
-	<!-- **************** MAIN CONTENT END **************** -->
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px"></th>
+                            <th scope="col"
+                                aria-sort="{{ $sort === 'name' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                <a class="admin-sort-link"
+                                    href="{{ route('admin-users-index', ['search' => $search, 'sort' => 'name', 'direction' => $sort === 'name' && $direction === 'asc' ? 'desc' : 'asc']) }}">Name
+                                    <span
+                                        aria-hidden="true">{{ $sort === 'name' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a>
+                            </th>
+                            <th scope="col"
+                                aria-sort="{{ $sort === 'email' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                <a class="admin-sort-link"
+                                    href="{{ route('admin-users-index', ['search' => $search, 'sort' => 'email', 'direction' => $sort === 'email' && $direction === 'asc' ? 'desc' : 'asc']) }}">Email
+                                    <span
+                                        aria-hidden="true">{{ $sort === 'email' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a>
+                            </th>
+                            <th scope="col"
+                                aria-sort="{{ $sort === 'story_count' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                <a class="admin-sort-link"
+                                    href="{{ route('admin-users-index', ['search' => $search, 'sort' => 'story_count', 'direction' => $sort === 'story_count' && $direction === 'asc' ? 'desc' : 'asc']) }}">Eserler
+                                    <span
+                                        aria-hidden="true">{{ $sort === 'story_count' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a>
+                            </th>
+                            <th scope="col"
+                                aria-sort="{{ $sort === 'last_story_date' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                <a class="admin-sort-link"
+                                    href="{{ route('admin-users-index', ['search' => $search, 'sort' => 'last_story_date', 'direction' => $sort === 'last_story_date' && $direction === 'asc' ? 'desc' : 'asc']) }}">Son
+                                    eser <span
+                                        aria-hidden="true">{{ $sort === 'last_story_date' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a>
+                            </th>
+                            <th scope="col"
+                                aria-sort="{{ $sort === 'created_at' ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                <a class="admin-sort-link"
+                                    href="{{ route('admin-users-index', ['search' => $search, 'sort' => 'created_at', 'direction' => $sort === 'created_at' && $direction === 'asc' ? 'desc' : 'asc']) }}">Created
+                                    <span
+                                        aria-hidden="true">{{ $sort === 'created_at' ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a>
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($users as $user)
+                            <tr>
+                                <td class="text-center">
+                                    @if ($user->avatar)
+                                        <img src="{{ !empty($user->avatar) ? Storage::url($user->avatar) : '/assets/images/avatar/placeholder.jpg' }}"
+                                            class="rounded-circle" width="40" height="40">
+                                    @else
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                            style="width: 40px; height: 40px; font-size: 18px;">
+                                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        </div>
+                                    @endif
+                                </td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td class="text-center">{{ $user->story_count }}</td>
+                                <td>
+                                    @if ($user->last_story_date)
+                                        {{ \Carbon\Carbon::parse($user->last_story_date)->format('d M Y') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>{{ $user->created_at->format('d M Y') }}</td>
+                                <td>
+                                    {{-- MODIFIED: Actions now in a flex container --}}
+                                    <div class="d-flex gap-2">
+                                        <form action="{{ route('users-login-as') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="user_id" value="{{ $user->id }}" />
+                                            <button type="submit" class="btn btn-primary btn-sm">Login As</button>
+                                        </form>
+                                        {{-- ADDED: Delete button and modal trigger --}}
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#deleteUserModal-{{ $user->id }}">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @foreach ($users as $user)
+                {{-- ADDED: Deletion confirmation modal for each user --}}
+                <div class="modal fade" id="deleteUserModal-{{ $user->id }}" tabindex="-1"
+                    aria-labelledby="deleteUserModalLabel-{{ $user->id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteUserModalLabel-{{ $user->id }}">Kullanıcıyı Silmeyi
+                                    Onayla</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <strong>{{ $user->name }}</strong> adlı kullanıcıyı ve tüm yazılarını kalıcı olarak
+                                silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">Evet, Kullanıcıyı Sil</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+            <!-- Pagination Links -->
+
+
+            <div class="d-flex justify-content-center flex-wrap gap-1">
+                @if ($users->onFirstPage())
+                    <button class="btn btn-secondary mx-1" disabled>First</button>
+                @else
+                    <a href="{{ $users->url(1) }}" class="btn btn-primary mx-1">First</a>
+                @endif
+
+                @if ($users->onFirstPage())
+                    <button class="btn btn-secondary mx-1" disabled>Previous</button>
+                @else
+                    <a href="{{ $users->previousPageUrl() }}" class="btn btn-primary mx-1">Previous</a>
+                @endif
+
+                @foreach (range(1, $users->lastPage()) as $i)
+                    @if ($i >= $users->currentPage() - 2 && $i <= $users->currentPage() + 2)
+                        @if ($i == $users->currentPage())
+                            <button class="btn btn-secondary mx-1">{{ $i }}</button>
+                        @else
+                            <a href="{{ $users->url($i) }}" class="btn btn-primary mx-1">{{ $i }}</a>
+                        @endif
+                    @endif
+                @endforeach
+
+                @if ($users->hasMorePages())
+                    <a href="{{ $users->nextPageUrl() }}" class="btn btn-primary mx-1">Next</a>
+                @else
+                    <button class="btn btn-secondary mx-1" disabled>Next</button>
+                @endif
+
+                @if ($users->currentPage() === $users->lastPage())
+                    <button class="btn btn-secondary mx-1" disabled>Last</button>
+                @else
+                    <a href="{{ $users->url($users->lastPage()) }}" class="btn btn-primary mx-1">Last</a>
+                @endif
+            </div>
+
+            <p>Viewing {{ $users->firstItem() }} - {{ $users->lastItem() }} out of {{ $users->total() }}</p>
+        </div>
+    </main>
+    <!-- **************** MAIN CONTENT END **************** -->
 
 @endsection
 
 @push('scripts')
-	<script>
-		var current_page = 'privacy';
-		$(document).ready(function () {
-		});
-	</script>
+    <script>
+        var current_page = 'privacy';
+        $(document).ready(function() {});
+    </script>
 @endpush

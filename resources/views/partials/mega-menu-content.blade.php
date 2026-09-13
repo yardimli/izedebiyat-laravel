@@ -1,5 +1,5 @@
 <div class="mega-menu-grid mega-menu-grid-{{ $menuType }}">
-    @if($menuType === 'home')
+    @if ($menuType === 'home')
         <section class="mega-menu-column mega-menu-intro">
             <span class="mega-menu-eyebrow">İzEdebiyat</span>
             <h3>Edebiyatı keşfet</h3>
@@ -35,7 +35,7 @@
             <h3>{!! $menuCategory->category_name !!}</h3>
             <p>
                 <strong>{{ number_format($menuCategory->menu_total) }}</strong> eser
-                @if($menuCategory->menu_new > 0)
+                @if ($menuCategory->menu_new > 0)
                     , son 3 ayda <strong>{{ number_format($menuCategory->menu_new) }}</strong> yeni eser
                 @endif
                 .
@@ -52,7 +52,7 @@
                     <a href="{{ route('frontend.subcategory', [$menuCategory->slug, $subCategory->slug]) }}">
                         <span>{!! $subCategory->category_name !!}</span>
                         <small>
-                            @if($subCategory->menu_new > 0)
+                            @if ($subCategory->menu_new > 0)
                                 <b>{{ number_format($subCategory->menu_new) }} yeni</b> ·
                             @endif
                             {{ number_format($subCategory->menu_total) }} toplam
@@ -78,14 +78,19 @@
             <span class="mega-menu-eyebrow">Kitap İzleri</span>
             <h3>Okuma yolculukları</h3>
             <p>Kitap incelemelerini keşfedin veya incelenmesini istediğiniz kitabı gönderin.</p>
-            <div class="mega-menu-actions"><a href="{{ route('frontend.book-reviews.index') }}">Tüm incelemeler</a></div>
+            <div class="mega-menu-actions"><a href="{{ route('frontend.book-reviews.index') }}">Tüm incelemeler</a>
+            </div>
         </section>
         <section class="mega-menu-column">
             <h3>Keşfet</h3>
-            <a class="mega-menu-link" href="{{ route('frontend.book-reviews.authors') }}"><i class="bi bi-people"></i> Yazarlar</a>
-            <a class="mega-menu-link" href="{{ route('frontend.book-reviews.categories') }}"><i class="bi bi-grid"></i> Kümeler</a>
-            <a class="mega-menu-link" href="{{ route('frontend.book-reviews.tags') }}"><i class="bi bi-tags"></i> Etiketler</a>
-            <a class="mega-menu-link" href="{{ route('frontend.book-reviews.create-submission') }}"><i class="bi bi-book"></i> İnceleme için kitap gönder</a>
+            <a class="mega-menu-link" href="{{ route('frontend.book-reviews.authors') }}"><i class="bi bi-people"></i>
+                Yazarlar</a>
+            <a class="mega-menu-link" href="{{ route('frontend.book-reviews.categories') }}"><i class="bi bi-grid"></i>
+                Kümeler</a>
+            <a class="mega-menu-link" href="{{ route('frontend.book-reviews.tags') }}"><i class="bi bi-tags"></i>
+                Etiketler</a>
+            <a class="mega-menu-link" href="{{ route('frontend.book-reviews.create-submission') }}"><i
+                    class="bi bi-book"></i> İnceleme için kitap gönder</a>
         </section>
         <section class="mega-menu-column">
             <h3>Yeni incelemeler</h3>
@@ -111,7 +116,8 @@
             <h3>Kanallar</h3>
             <div class="mega-menu-tag-grid">
                 @forelse($megaMenuForumTags as $tag)
-                    <a href="{{ route('forum.tag', $tag->slug) }}"><i style="--tag-color: {{ $tag->color }}"></i><span>{{ $tag->name }}</span><small>{{ $tag->discussions_count }}</small></a>
+                    <a href="{{ route('forum.tag', $tag->slug) }}"><i
+                            style="--tag-color: {{ $tag->color }}"></i><span>{{ $tag->name }}</span><small>{{ $tag->discussions_count }}</small></a>
                 @empty
                     <span class="mega-menu-empty">Henüz kanal yok.</span>
                 @endforelse
@@ -121,7 +127,8 @@
             <h3>Son tartışmalar</h3>
             @forelse($megaMenuRecentDiscussions as $discussion)
                 <a class="mega-menu-story" href="{{ route('forum.show', $discussion->slug) }}">
-                    <span>{{ $discussion->title }}</span><small>{{ $discussion->tag?->name }} · {{ $discussion->posts_count }} ileti</small>
+                    <span>{{ $discussion->title }}</span><small>{{ $discussion->tag?->name }} ·
+                        {{ $discussion->posts_count }} ileti</small>
                 </a>
             @empty
                 <span class="mega-menu-empty">Henüz tartışma yok.</span>

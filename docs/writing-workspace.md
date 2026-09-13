@@ -128,3 +128,9 @@ The users table login-as action saves the original administrator ID and the view
 ### Image generation models
 
 Set `FAL_IMAGE_MODEL_ENDPOINT=https://queue.fal.run/fal-ai/qwen-image` and `IMAGE_PROMPT_LLM_MODEL=openai/gpt-5.6-luna` in `.env` to choose the fal queue endpoint and OpenRouter model used to turn image descriptions into prompts. `FAL_API_KEY` is also read through Laravel config. These settings work with config caching; after changing them run `php artisan config:cache` (or `php artisan config:clear` when not caching). The endpoint must support the existing text-to-image queue payload and image response format. The editor’s selected writing model is separate.
+
+## Source formatting
+
+Run `npm run format` to format application JavaScript with Prettier and all Blade templates with blade-formatter, including embedded scripts. Run `npm run format:check` to verify formatting without writes. Configuration lives in `.prettierrc.json` and `.bladeformatterrc.json`; both use four spaces. Bundled vendor libraries and generated assets are excluded. `php scripts/check-blade-templates.php` compiles and PHP-lints all Blade templates, catching syntax failures that `view:cache` alone does not detect.
+
+The Blade formatting command uses `scripts/format-blade.mjs` to format sequentially, reject empty/non-stable results, and replace files through temporary siblings. Narrow formatter exclusions preserve already-formatted nested JavaScript template literals and SVG whitespace.

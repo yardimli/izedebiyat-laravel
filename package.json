@@ -3,19 +3,24 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "format:js": "prettier \"resources/js/**/*.{js,cjs,mjs}\" \"scripts/*.{js,cjs,mjs}\" \"tests/*.{js,cjs,mjs}\" \"*.{js,cjs,mjs}\" \"public/js/{custom-ui,functions,counter}.js\" \"public/frontend/assets/js/{admin,embed-comments,scripts}.js\" --write",
+        "format:blade": "node scripts/format-blade.mjs",
+        "format": "npm run format:js && npm run format:blade",
+        "format:check": "prettier \"resources/js/**/*.{js,cjs,mjs}\" \"scripts/*.{js,cjs,mjs}\" \"tests/*.{js,cjs,mjs}\" \"*.{js,cjs,mjs}\" \"public/js/{custom-ui,functions,counter}.js\" \"public/frontend/assets/js/{admin,embed-comments,scripts}.js\" --check && node scripts/format-blade.mjs --check"
     },
     "devDependencies": {
-        "axios": "^1.1.2",
-        "laravel-vite-plugin": "^0.7.5",
-        "vite": "^4.0.0",
-        "tailwindcss": "^3.1.0",
+        "@tailwindcss/forms": "^0.5.2",
         "autoprefixer": "^10.4.2",
+        "axios": "^1.1.2",
+        "blade-formatter": "1.44.4",
+        "laravel-vite-plugin": "^0.7.5",
         "postcss": "^8.4.31",
-        "@tailwindcss/forms": "^0.5.2"
+        "prettier": "3.9.6",
+        "tailwindcss": "^3.1.0",
+        "vite": "^4.0.0"
     },
     "dependencies": {
-        "quill": "^2.0.3",
         "diff": "^9.0.0",
         "docx": "^9.7.1",
         "mammoth": "^1.12.2",
@@ -26,6 +31,7 @@
         "prosemirror-model": "^1.25.11",
         "prosemirror-schema-basic": "^1.2.4",
         "prosemirror-state": "^1.4.4",
-        "prosemirror-view": "^1.42.3"
+        "prosemirror-view": "^1.42.3",
+        "quill": "^2.0.3"
     }
 }

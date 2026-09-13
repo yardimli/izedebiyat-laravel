@@ -1,12 +1,7 @@
 import { t, locale } from "./i18n";
 import { Schema } from "prosemirror-model";
 import { schema as basic } from "prosemirror-schema-basic";
-import {
-    EditorState,
-    Plugin,
-    PluginKey,
-    TextSelection,
-} from "prosemirror-state";
+import { EditorState, Plugin, PluginKey, TextSelection } from "prosemirror-state";
 import { EditorView, Decoration, DecorationSet } from "prosemirror-view";
 import { history, undo, redo } from "prosemirror-history";
 import { keymap } from "prosemirror-keymap";
@@ -14,10 +9,7 @@ import { baseKeymap, toggleMark, setBlockType } from "prosemirror-commands";
 import { $, action, element } from "./api";
 
 export const schema = new Schema({
-    nodes: basic.spec.nodes
-        .remove("image")
-        .remove("blockquote")
-        .remove("code_block"),
+    nodes: basic.spec.nodes.remove("image").remove("blockquote").remove("code_block"),
     marks: basic.spec.marks.remove("link"),
 });
 export const fromText = (text) => ({
@@ -30,12 +22,7 @@ export const fromText = (text) => ({
 const codexKey = new PluginKey("codex");
 const pageMarkerKey = new PluginKey("page-markers");
 
-export function createEditor(
-    initialDocument,
-    onChange,
-    onReference,
-    onSelection = () => {},
-) {
+export function createEditor(initialDocument, onChange, onReference, onSelection = () => {}) {
     let entries = [];
     let readOnly = false;
     let showPageBreaks = false;
@@ -47,9 +34,7 @@ export function createEditor(
             for (const name of [entry.name, ...entry.aliases]) {
                 const key = name.trim().toLocaleLowerCase();
                 if (!key) continue;
-                aliases.set(key, [
-                    ...new Set([...(aliases.get(key) || []), entry.id]),
-                ]);
+                aliases.set(key, [...new Set([...(aliases.get(key) || []), entry.id])]);
             }
         const names = [...aliases.keys()].sort((a, b) => b.length - a.length);
         if (!names.length) return DecorationSet.empty;
@@ -99,9 +84,7 @@ export function createEditor(
                 key: pageMarkerKey,
                 state: {
                     init: () => DecorationSet.empty,
-                    apply: (tr, old) =>
-                        tr.getMeta(pageMarkerKey) ??
-                        old.map(tr.mapping, tr.doc),
+                    apply: (tr, old) => tr.getMeta(pageMarkerKey) ?? old.map(tr.mapping, tr.doc),
                 },
                 props: {
                     decorations: (state) => pageMarkerKey.getState(state),
@@ -112,18 +95,14 @@ export function createEditor(
                 state: {
                     init: (_, state) => references(state.doc),
                     apply: (tr, old) =>
-                        tr.docChanged || tr.getMeta(codexKey)
-                            ? references(tr.doc)
-                            : old,
+                        tr.docChanged || tr.getMeta(codexKey) ? references(tr.doc) : old,
                 },
                 props: {
                     decorations: (state) => codexKey.getState(state),
                     handleClick: (view, pos, event) => {
                         const ref = event.target.closest("[data-codex]");
                         if (ref) {
-                            onReference(
-                                ref.dataset.codex.split(",").map(Number),
-                            );
+                            onReference(ref.dataset.codex.split(",").map(Number));
                             return true;
                         }
                         return false;
@@ -172,9 +151,7 @@ export function createEditor(
                         parts.push(
                             node.textBetween(
                                 index === from ? $from.parentOffset : 0,
-                                index === to
-                                    ? $to.parentOffset
-                                    : node.content.size,
+                                index === to ? $to.parentOffset : node.content.size,
                                 "",
                                 "\n",
                             ),
@@ -203,15 +180,11 @@ export function createEditor(
             const scroller = $("#editor-scroll");
             if (!scroller.clientHeight || !scroller.clientWidth) return;
             const scrollTop = scroller.scrollTop;
-            view.dispatch(
-                view.state.tr.setMeta(pageMarkerKey, DecorationSet.empty),
-            );
+            view.dispatch(view.state.tr.setMeta(pageMarkerKey, DecorationSet.empty));
             markerFrame = requestAnimationFrame(() => {
                 if (!showPageBreaks || generation !== markerGeneration) return;
                 const top = view.dom.getBoundingClientRect().top;
-                const padding = parseFloat(
-                    getComputedStyle(view.dom).paddingTop,
-                );
+                const padding = parseFloat(getComputedStyle(view.dom).paddingTop);
                 const scrollStyle = getComputedStyle(scroller);
                 // Use the original viewport-sized page boundaries, without page navigation.
                 const pageHeight = Math.max(
@@ -220,10 +193,7 @@ export function createEditor(
                         parseFloat(scrollStyle.paddingTop) -
                         parseFloat(scrollStyle.paddingBottom),
                 );
-                const contentHeight = Math.max(
-                    80,
-                    pageHeight - 2 * padding - 30,
-                );
+                const contentHeight = Math.max(80, pageHeight - 2 * padding - 30);
                 let page = 1,
                     shift = 0;
                 const markers = [];
@@ -238,26 +208,17 @@ export function createEditor(
                         ) {
                             const gap = Math.max(
                                 40,
-                                padding +
-                                    page * pageHeight -
-                                    (box.top - top + shift),
+                                padding + page * pageHeight - (box.top - top + shift),
                             );
                             const position = pos + 1 + offset;
                             markers.push(
                                 Decoration.widget(
                                     position,
                                     () => {
-                                        const marker = element(
-                                            "span",
-                                            undefined,
-                                            "page-marker",
-                                        );
+                                        const marker = element("span", undefined, "page-marker");
                                         marker.style.height = `${gap}px`;
                                         marker.contentEditable = "false";
-                                        marker.setAttribute(
-                                            "aria-hidden",
-                                            "true",
-                                        );
+                                        marker.setAttribute("aria-hidden", "true");
                                         return marker;
                                     },
                                     { side: -1, key: `marker-${position}` },
@@ -270,11 +231,7 @@ export function createEditor(
                             high = node.content.size + 1;
                         while (low < high) {
                             const mid = Math.floor((low + high) / 2);
-                            if (
-                                view.coordsAtPos(pos + 1 + mid, 1).top >
-                                box.top + 3
-                            )
-                                high = mid;
+                            if (view.coordsAtPos(pos + 1 + mid, 1).top > box.top + 3) high = mid;
                             else low = mid + 1;
                         }
                         offset = low;
@@ -303,9 +260,7 @@ export function createEditor(
     function updateCounts() {
         const count = (text) => (text.trim().match(/\S+/gu) || []).length;
         const selection = view.state.selection;
-        const selected = count(
-            view.state.doc.textBetween(selection.from, selection.to, " "),
-        );
+        const selected = count(view.state.doc.textBetween(selection.from, selection.to, " "));
         $("#word-count").textContent = t(":v0 words:v1", {
             v0: count(
                 view.state.doc.textBetween(0, view.state.doc.content.size, " "),
@@ -317,16 +272,11 @@ export function createEditor(
         $("#outline").replaceChildren();
         view.state.doc.descendants((node, pos) => {
             if (node.type.name === "heading") {
-                const btn = element(
-                    "button",
-                    node.textContent || t("Untitled heading"),
-                );
+                const btn = element("button", node.textContent || t("Untitled heading"));
                 btn.onclick = () => {
                     view.dispatch(
                         view.state.tr
-                            .setSelection(
-                                TextSelection.near(view.state.doc.resolve(pos)),
-                            )
+                            .setSelection(TextSelection.near(view.state.doc.resolve(pos)))
                             .scrollIntoView(),
                     );
                     view.focus();
@@ -374,19 +324,14 @@ export function createEditor(
             view.setProps({ editable: () => !readOnly });
             view.dom.setAttribute("aria-readonly", String(readOnly));
             document
-                .querySelectorAll(
-                    ".editor-toolbar button, .editor-toolbar select",
-                )
+                .querySelectorAll(".editor-toolbar button, .editor-toolbar select")
                 .forEach((control) => {
                     control.disabled = readOnly;
                 });
         },
         cursor() {
             const { $head } = view.state.selection;
-            const block = Math.min(
-                $head.index(0),
-                view.state.doc.childCount - 1,
-            );
+            const block = Math.min($head.index(0), view.state.doc.childCount - 1);
             return {
                 block,
                 offset: $head.depth === 1 ? $head.parentOffset : 0,
@@ -410,11 +355,7 @@ export function createEditor(
             updateCounts();
         },
         text() {
-            return view.state.doc.textBetween(
-                0,
-                view.state.doc.content.size,
-                "\n",
-            );
+            return view.state.doc.textBetween(0, view.state.doc.content.size, "\n");
         },
     };
 }

@@ -25,29 +25,18 @@ document.querySelectorAll("dialog").forEach((dialog) => {
 });
 
 if (!document.body.dataset.user)
-    document.documentElement.dataset.theme =
-        localStorage.getItem("writer-theme") || "paper";
+    document.documentElement.dataset.theme = localStorage.getItem("writer-theme") || "paper";
 const themeButtons = [...document.querySelectorAll("[data-theme-choice]")];
 function showTheme(value) {
     document.documentElement.dataset.theme = value;
     document.documentElement.dataset.bsTheme = value === "dark" ? "dark" : "light";
     themeButtons.forEach((button) =>
-        button.setAttribute(
-            "aria-pressed",
-            String(button.dataset.themeChoice === value),
-        ),
+        button.setAttribute("aria-pressed", String(button.dataset.themeChoice === value)),
     );
-    const selected = themeButtons.find(
-        (button) => button.dataset.themeChoice === value,
-    );
+    const selected = themeButtons.find((button) => button.dataset.themeChoice === value);
     if (selected) {
-        $("#theme-current").replaceChildren(
-            selected.querySelector("svg").cloneNode(true),
-        );
-        $("#theme-current").setAttribute(
-            "aria-label",
-            t("Appearance: :v0", { v0: t(value) }),
-        );
+        $("#theme-current").replaceChildren(selected.querySelector("svg").cloneNode(true));
+        $("#theme-current").setAttribute("aria-label", t("Appearance: :v0", { v0: t(value) }));
         $("#theme-current").title = t(":v0 mode · Change appearance", {
             v0: t(value[0].toUpperCase() + value.slice(1)),
         });
@@ -71,8 +60,7 @@ themeButtons.forEach((button) =>
     }),
 );
 document.addEventListener("click", (event) => {
-    if (!$("#theme-picker").contains(event.target))
-        $("#theme-picker").open = false;
+    if (!$("#theme-picker").contains(event.target)) $("#theme-picker").open = false;
 });
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && $("#theme-picker").open) {
@@ -81,16 +69,21 @@ document.addEventListener("keydown", (event) => {
     }
 });
 if ($("#workspace"))
-    import("./workspace")
-        .then((module) => module.start())
-        .catch((e) => notify(e.message));
+    import("./workspace").then((module) => module.start()).catch((e) => notify(e.message));
 else if (document.body.dataset.user) api("/yazi-atolyesi/api/models").catch(() => {});
 if ($("#library-import-dialog"))
-    import("./library")
-        .then((module) => module.start())
-        .catch((e) => notify(e.message));
+    import("./library").then((module) => module.start()).catch((e) => notify(e.message));
 
 if (document.querySelector("#workspace")) setupTypography();
 
-const adminMenu = document.querySelector('.admin-menu');
-if(adminMenu){document.addEventListener('click', event=>{if(!adminMenu.contains(event.target))adminMenu.open=false;});document.addEventListener('keydown',event=>{if(event.key==='Escape'){adminMenu.open=false;}});}
+const adminMenu = document.querySelector(".admin-menu");
+if (adminMenu) {
+    document.addEventListener("click", (event) => {
+        if (!adminMenu.contains(event.target)) adminMenu.open = false;
+    });
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            adminMenu.open = false;
+        }
+    });
+}

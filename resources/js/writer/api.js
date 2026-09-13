@@ -10,9 +10,7 @@ export async function api(url, method = "GET", body, timeout = 120000) {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                "X-CSRF-TOKEN": document.querySelector(
-                    'meta[name="csrf-token"]',
-                ).content,
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
             },
             ...(body === undefined ? {} : { body: JSON.stringify(body) }),
         });
@@ -37,9 +35,7 @@ export async function api(url, method = "GET", body, timeout = 120000) {
     } catch (error) {
         if (controller.signal.aborted) {
             const timeoutError = new Error(
-                t(
-                    "The request timed out. You can try sending again without refreshing.",
-                ),
+                t("The request timed out. You can try sending again without refreshing."),
             );
             timeoutError.status = 408;
             throw timeoutError;

@@ -401,7 +401,14 @@ class WriterIntegrationTest extends WriterTestCase
                 $this->assertSame($sort, $query['sort']);
                 $this->assertSame($direction, $query['direction']);
                 $this->assertSame('Match', $query['q']);
-                $response->assertSee('href="'.route('article', $older->slug).'" target="_blank" rel="noopener noreferrer"', false)
+                $dom = new \DOMDocument();
+                @$dom->loadHTML($response->getContent());
+                $links = (new \DOMXPath($dom))->query('//a[@class="read-work"]');
+                $this->assertCount(1, $links);
+                $this->assertSame(route('article', $older->slug), $links->item(0)->getAttribute('href'));
+                $this->assertSame('_blank', $links->item(0)->getAttribute('target'));
+                $this->assertSame('noopener noreferrer', $links->item(0)->getAttribute('rel'));
+                $response
                     ->assertDontSee('href="'.route('article', $newer->slug).'"', false)
                     ->assertSee('id="work-sort"', false)
                     ->assertSee('02.01.2020 12:30')->assertDontSee('Last opened')

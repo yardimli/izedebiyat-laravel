@@ -263,7 +263,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 						'safety_tolerance' => '5',
 					]
 				]);
-				Log::info('FLUX image response');
+				Log::info('image response');
 				Log::info($response->getBody());
 
 				$body = $response->getBody();
@@ -273,7 +273,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 
 					$status_url = $data['status_url'];
 					$check_count = 0;
-					$check_limit = 20; // Allow twice as many one-second fal queue checks.
+					$check_limit = 40; // Allow twice as many one-second fal queue checks.
 					$response_url = '';
 					while ($check_count < $check_limit) {
 						$response = $client->get($status_url, [
@@ -282,7 +282,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 								'Content-Type' => 'application/json',
 							]
 						]);
-						Log::info('FLUX image status response');
+						Log::info('image status response');
 						Log::info($response->getBody());
 
 						$body = $response->getBody();
@@ -302,7 +302,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 								'Content-Type' => 'application/json',
 							]
 						]);
-						Log::info('FLUX image status response');
+						Log::info('image status response');
 						Log::info($response->getBody());
 						$body = $response->getBody();
 						$data = json_decode($body, true);

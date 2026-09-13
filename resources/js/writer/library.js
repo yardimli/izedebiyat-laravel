@@ -21,11 +21,7 @@ export function start() {
     document.querySelectorAll("[data-delete-book]").forEach((form) => {
         form.addEventListener("submit", (event) => {
             if (
-                !confirm(
-                    t(
-                        "Permanently delete this work and its comments? This cannot be undone.",
-                    ),
-                )
+                !confirm(t("Permanently delete this work and its comments? This cannot be undone."))
             )
                 event.preventDefault();
         });
@@ -73,8 +69,7 @@ export function start() {
                         arrayBuffer: await file.arrayBuffer(),
                     })
                 ).value;
-            } else if (file.name.toLowerCase().endsWith(".txt"))
-                text = await file.text();
+            } else if (file.name.toLowerCase().endsWith(".txt")) text = await file.text();
             else throw new Error(t("Choose a TXT or DOCX story."));
             if (version !== readVersion) return;
             $("#library-import-preview").value = text;
@@ -96,11 +91,7 @@ export function start() {
             };
             await api(`/yazi-atolyesi/api/books/${bookId}`, "PATCH", { revision, document });
             dialog.close();
-            notify(
-                t(
-                    "Story imported. Open the manuscript to continue writing or scan its codex.",
-                ),
-            );
+            notify(t("Story imported. Open the manuscript to continue writing or scan its codex."));
         } finally {
             $("#library-confirm-import").disabled = false;
         }

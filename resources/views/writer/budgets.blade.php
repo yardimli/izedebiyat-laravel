@@ -1,11 +1,59 @@
 @extends('writer.layouts.writer')
 @section('title', 'Zekai kotaları')
 @section('content')
-<main class="settings-page"><h1>Zekai kotaları</h1><p>Yenileme tutarı: ${{ \App\Writer\Support\Money::display(\App\Writer\Services\DemoBudget::allowance()) }}. Yenileme, geçmiş harcamayı korur ve kullanılabilir kotayı %100'e getirir.</p>
-<form method="get" class="row budget-filters"><input type="hidden" name="sort" value="{{ $sort }}"><input type="hidden" name="direction" value="{{ $direction }}"><label>Üye ara<input type="search" name="search" value="{{ $search }}" maxlength="200"></label><label>Sayfa başına<select name="per_page">@foreach([25,50,100] as $size)<option value="{{ $size }}" @selected($perPage === $size)>{{ $size }}</option>@endforeach</select></label><button type="submit">Uygula</button></form>
-<div style="overflow-x:auto"><table class="budget-table"><thead><tr>@foreach(['name'=>'Üye', 'email'=>'E-posta', 'total_spent'=>'Toplam AI (USD)', 'demo_spent'=>'Harcanan demo (USD)', 'pending'=>'Bekleyen (USD)', 'limit'=>'Toplam limit (USD)', 'remaining'=>'Kalan (USD)', 'percentage'=>'Kota'] as $key=>$label)
-<th scope="col" aria-sort="{{ $sort === $key ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}"><a href="{{ route('writer.budgets.index', ['search'=>$search, 'per_page'=>$perPage, 'sort'=>$key, 'direction'=>$sort === $key && $direction === 'asc' ? 'desc' : 'asc']) }}" title="{{ $sort === $key && $direction === 'asc' ? 'Azalan sırala' : 'Artan sırala' }}">{{ $label }} <span aria-hidden="true">{{ $sort === $key ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a></th>
-@endforeach<th scope="col">İşlem</th></tr></thead><tbody>
-@forelse($users as $user)<tr><td>{{ $user->name }}</td><td>{{ $user->email }}</td><td>${{ \App\Writer\Support\Money::display($user->writer_total_spent) }}</td><td>${{ \App\Writer\Support\Money::display($user->demo_spent) }}</td><td>${{ \App\Writer\Support\Money::display($user->demo_reserved) }}</td><td>${{ \App\Writer\Support\Money::display(\App\Writer\Services\DemoBudget::limit($user)) }}</td><td>${{ \App\Writer\Support\Money::display(\App\Writer\Services\DemoBudget::remaining($user)) }}</td><td>{{ \App\Writer\Services\DemoBudget::percentage($user) }}%</td><td><form method="post" action="{{ route('writer.budgets.reset',$user) }}">@csrf<button>%100'e yenile</button></form></td></tr>@empty<tr><td colspan="9">Aramanızla eşleşen üye bulunamadı.</td></tr>@endforelse
-</tbody></table></div>{{ $users->onEachSide(1)->links('writer.partials.pagination', ['paginationLabel'=>'Members pagination', 'summaryKey'=>'Showing :first–:last of :total members']) }}</main>
+    <main class="settings-page">
+        <h1>Zekai kotaları</h1>
+        <p>Yenileme tutarı: ${{ \App\Writer\Support\Money::display(\App\Writer\Services\DemoBudget::allowance()) }}.
+            Yenileme, geçmiş harcamayı korur ve kullanılabilir kotayı %100'e getirir.</p>
+        <form method="get" class="row budget-filters"><input type="hidden" name="sort" value="{{ $sort }}"><input
+                type="hidden" name="direction" value="{{ $direction }}"><label>Üye ara<input type="search" name="search"
+                    value="{{ $search }}" maxlength="200"></label><label>Sayfa başına<select name="per_page">
+                    @foreach ([25, 50, 100] as $size)
+                        <option value="{{ $size }}" @selected($perPage === $size)>{{ $size }}</option>
+                    @endforeach
+                </select>
+            </label><button type="submit">Uygula</button></form>
+        <div style="overflow-x:auto">
+            <table class="budget-table">
+                <thead>
+                    <tr>
+                        @foreach (['name' => 'Üye', 'email' => 'E-posta', 'total_spent' => 'Toplam AI (USD)', 'demo_spent' => 'Harcanan demo (USD)', 'pending' => 'Bekleyen (USD)', 'limit' => 'Toplam limit (USD)', 'remaining' => 'Kalan (USD)', 'percentage' => 'Kota'] as $key => $label)
+                            <th scope="col"
+                                aria-sort="{{ $sort === $key ? ($direction === 'asc' ? 'ascending' : 'descending') : 'none' }}">
+                                <a href="{{ route('writer.budgets.index', ['search' => $search, 'per_page' => $perPage, 'sort' => $key, 'direction' => $sort === $key && $direction === 'asc' ? 'desc' : 'asc']) }}"
+                                    title="{{ $sort === $key && $direction === 'asc' ? 'Azalan sırala' : 'Artan sırala' }}">{{ $label }}
+                                    <span
+                                        aria-hidden="true">{{ $sort === $key ? ($direction === 'asc' ? '↑' : '↓') : '↕' }}</span></a>
+                            </th>
+                        @endforeach
+                        <th scope="col">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($users as $user)
+                        <tr>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>${{ \App\Writer\Support\Money::display($user->writer_total_spent) }}</td>
+                            <td>${{ \App\Writer\Support\Money::display($user->demo_spent) }}</td>
+                            <td>${{ \App\Writer\Support\Money::display($user->demo_reserved) }}</td>
+                            <td>${{ \App\Writer\Support\Money::display(\App\Writer\Services\DemoBudget::limit($user)) }}
+                            </td>
+                            <td>${{ \App\Writer\Support\Money::display(\App\Writer\Services\DemoBudget::remaining($user)) }}
+                            </td>
+                            <td>{{ \App\Writer\Services\DemoBudget::percentage($user) }}%</td>
+                            <td>
+                                <form method="post" action="{{ route('writer.budgets.reset', $user) }}">
+                                    @csrf<button>%100'e
+                                        yenile</button></form>
+                            </td>
+                    </tr>@empty<tr>
+                            <td colspan="9">Aramanızla eşleşen üye bulunamadı.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        {{ $users->onEachSide(1)->links('writer.partials.pagination', ['paginationLabel' => 'Members pagination', 'summaryKey' => 'Showing :first–:last of :total members']) }}
+    </main>
 @endsection

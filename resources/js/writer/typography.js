@@ -38,10 +38,7 @@ export function setupTypography() {
     function panelWidth(value) {
         const max = Math.max(
             180,
-            Math.min(
-                560,
-                workspace.clientWidth * (innerWidth <= 760 ? 0.55 : 0.45),
-            ),
+            Math.min(560, workspace.clientWidth * (innerWidth <= 760 ? 0.55 : 0.45)),
         );
         const width = Math.min(max, Math.max(180, value));
         workspace.style.setProperty("--sidebar-size", `${width}px`);
@@ -60,15 +57,7 @@ export function setupTypography() {
         return width;
     }
     function apply() {
-        for (const name of [
-            "font",
-            "size",
-            "line",
-            "indent",
-            "spacing",
-            "width",
-            "align",
-        ]) {
+        for (const name of ["font", "size", "line", "indent", "spacing", "width", "align"]) {
             const unit = ["size", "width"].includes(name)
                 ? "px"
                 : ["indent", "spacing"].includes(name)
@@ -82,17 +71,13 @@ export function setupTypography() {
         }
         root.style.setProperty("--ui-scale", Number(settings.ui) / 100);
         document.querySelector("#type-ui").value = settings.ui;
-        document.querySelector("#type-ui-output").textContent =
-            settings.ui + "%";
-        document.querySelector("#ui-scale-label").textContent =
-            settings.ui + "%";
+        document.querySelector("#type-ui-output").textContent = settings.ui + "%";
+        document.querySelector("#ui-scale-label").textContent = settings.ui + "%";
         panelWidth(settings.panel);
         window.dispatchEvent(new Event("resize"));
     }
     const dialog = document.querySelector("#typography-dialog");
-    document
-        .querySelector("#open-typography")
-        .addEventListener("click", () => dialog.showModal());
+    document.querySelector("#open-typography").addEventListener("click", () => dialog.showModal());
     dialog.querySelectorAll("select,input").forEach((control) =>
         control.addEventListener("input", () => {
             settings[control.id.replace("type-", "")] = control.value;
@@ -100,13 +85,11 @@ export function setupTypography() {
             persist();
         }),
     );
-    document
-        .querySelector("#reset-typography")
-        .addEventListener("click", () => {
-            settings = { ...defaults };
-            apply();
-            persist();
-        });
+    document.querySelector("#reset-typography").addEventListener("click", () => {
+        settings = { ...defaults };
+        apply();
+        persist();
+    });
     const handle = document.querySelector("#panel-resizer");
     handle.addEventListener("pointerdown", (event) => {
         if (event.button !== 0) return;
@@ -116,9 +99,7 @@ export function setupTypography() {
     });
     handle.addEventListener("pointermove", (event) => {
         if (!handle.hasPointerCapture(event.pointerId)) return;
-        settings.panel = panelWidth(
-            event.clientX - workspace.getBoundingClientRect().left,
-        );
+        settings.panel = panelWidth(event.clientX - workspace.getBoundingClientRect().left);
     });
     const finish = () => {
         workspace.classList.remove("resizing-panel");
@@ -130,8 +111,7 @@ export function setupTypography() {
             handle.releasePointerCapture(event.pointerId);
     });
     handle.addEventListener("keydown", (event) => {
-        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key))
-            return;
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
         event.preventDefault();
         settings.panel = panelWidth(
             event.key === "Home"
@@ -151,9 +131,7 @@ export function setupTypography() {
     });
     chatHandle.addEventListener("pointermove", (event) => {
         if (!chatHandle.hasPointerCapture(event.pointerId)) return;
-        settings.chat = chatWidth(
-            workspace.getBoundingClientRect().right - event.clientX,
-        );
+        settings.chat = chatWidth(workspace.getBoundingClientRect().right - event.clientX);
     });
     chatHandle.addEventListener("lostpointercapture", finish);
     chatHandle.addEventListener("pointerup", (event) => {
@@ -161,8 +139,7 @@ export function setupTypography() {
             chatHandle.releasePointerCapture(event.pointerId);
     });
     chatHandle.addEventListener("keydown", (event) => {
-        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key))
-            return;
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
         event.preventDefault();
         settings.chat = chatWidth(
             event.key === "Home"

@@ -11,14 +11,8 @@ export async function start() {
     for (const target of ["writing", "chat"]) {
         action(`#show-${target}`, () => {
             $("#workspace").classList.toggle("show-chat", target === "chat");
-            $("#show-writing").setAttribute(
-                "aria-pressed",
-                String(target === "writing"),
-            );
-            $("#show-chat").setAttribute(
-                "aria-pressed",
-                String(target === "chat"),
-            );
+            $("#show-writing").setAttribute("aria-pressed", String(target === "writing"));
+            $("#show-chat").setAttribute("aria-pressed", String(target === "chat"));
         });
     }
     const root = $("#workspace"),
@@ -146,25 +140,15 @@ export async function start() {
         });
     }
     const codexType = (value) =>
-        [
-            "People",
-            "Places",
-            "Items",
-            "Organizations",
-            "Events",
-            "Lore",
-        ].includes(value)
+        ["People", "Places", "Items", "Organizations", "Events", "Lore"].includes(value)
             ? t(value)
             : value;
     function options(select, values, empty) {
         const old = select.value;
         select.replaceChildren();
         if (empty !== undefined) select.add(new Option(empty, ""));
-        values.forEach((v) =>
-            select.add(new Option(v.name ?? codexType(v), v.code ?? v)),
-        );
-        if ([...select.options].some((o) => o.value === old))
-            select.value = old;
+        values.forEach((v) => select.add(new Option(v.name ?? codexType(v), v.code ?? v)));
+        if ([...select.options].some((o) => o.value === old)) select.value = old;
     }
     function panel(name) {
         root.classList.add("panel-open");
@@ -189,43 +173,33 @@ export async function start() {
     function openEntry(entry) {
         panel("codex");
         if (codexDirty) {
-            notify(
-                t(
-                    "Finish saving the current codex draft before opening another entry.",
-                ),
-            );
+            notify(t("Finish saving the current codex draft before opening another entry."));
             return;
         }
         const form = $("#entry-form");
         form.hidden = false;
         $("#codex-browser").hidden = true;
-        $("#panel-title").textContent = entry?.id
-            ? t("Edit entry")
-            : t("New entry");
+        $("#panel-title").textContent = entry?.id ? t("Edit entry") : t("New entry");
         form.reset();
         form.elements.id.value = entry?.id || "";
         form.elements.name.value = entry?.name || "";
         form.elements.type.value = entry?.type || state.book.codex_types[0];
         form.elements.aliases.value = (entry?.aliases || []).join(", ");
         form.elements.content.value = entry?.content || "";
-        $("#delete-entry").hidden = !Number.isSafeInteger(Number(entry?.id)) || Number(entry?.id) <= 0;
+        $("#delete-entry").hidden =
+            !Number.isSafeInteger(Number(entry?.id)) || Number(entry?.id) <= 0;
         form.scrollIntoView({ block: "nearest" });
     }
     editor = createEditor(
         state.book.document,
         changed,
         (ids) => {
-            if (ids.length === 1)
-                openEntry(state.entries.find((e) => e.id === ids[0]));
+            if (ids.length === 1) openEntry(state.entries.find((e) => e.id === ids[0]));
             else {
                 panel("codex");
                 showCodexList();
                 renderEntries(ids);
-                notify(
-                    t(
-                        "This alias matches several entries. Choose the intended entry below.",
-                    ),
-                );
+                notify(t("This alias matches several entries. Choose the intended entry below."));
             }
         },
         (scope) => {
@@ -254,22 +228,15 @@ export async function start() {
         const list = $("#codex-list");
         const scrollTop = list.scrollTop;
         list.replaceChildren();
-        const entries = state.entries.filter(
-            (entry) => !ids || ids.includes(entry.id),
-        );
+        const entries = state.entries.filter((entry) => !ids || ids.includes(entry.id));
         for (const type of [
-            ...new Set([
-                ...state.book.codex_types,
-                ...entries.map((entry) => entry.type),
-            ]),
+            ...new Set([...state.book.codex_types, ...entries.map((entry) => entry.type)]),
         ]) {
             const group = entries.filter((entry) => entry.type === type);
             if (!group.length) continue;
             const section = element("details", undefined, "codex-group");
             section.open = !collapsedCodexTypes.has(type);
-            section.append(
-                element("summary", `${codexType(type)} · ${group.length}`),
-            );
+            section.append(element("summary", `${codexType(type)} · ${group.length}`));
             section.addEventListener("toggle", () => {
                 if (!section.isConnected) return;
                 if (section.open) collapsedCodexTypes.delete(type);
@@ -277,8 +244,7 @@ export async function start() {
             });
             for (const entry of group) {
                 const card = element("button", entry.name, "entry-card");
-                if (entry.aliases.length)
-                    card.append(element("small", entry.aliases.join(", ")));
+                if (entry.aliases.length) card.append(element("small", entry.aliases.join(", ")));
                 card.onclick = () => openEntry(entry);
                 section.append(card);
             }
@@ -286,32 +252,28 @@ export async function start() {
         }
         if (!entries.length)
             list.append(
-                element(
-                    "p",
-                    t("No entries yet. Give your world a little detail."),
-                    "muted",
-                ),
+                element("p", t("No entries yet. Give your world a little detail."), "muted"),
             );
         list.scrollTop = scrollTop;
     }
     function render() {
         $("#book-heading").textContent = state.book.title;
-        document.title =
-            state.book.title + " · " + document.body.dataset.appName;
+        document.title = state.book.title + " · " + document.body.dataset.appName;
         editor.updateEntries(state.entries);
         options($("#entry-form").elements.type, state.book.codex_types);
         renderEntries();
         const details = $("#details-form");
         if (!detailsDirty) {
             details.elements.title.value = state.book.title;
-            for (const key of ['subtitle','subheading','category_id','keywords_string','featured_image']) details.elements[key].value = state.book[key] ?? '';
             for (const key of [
-                "synopsis",
-                "genre",
-                "point_of_view",
-                "tense",
-                "style_notes",
+                "subtitle",
+                "subheading",
+                "category_id",
+                "keywords_string",
+                "featured_image",
             ])
+                details.elements[key].value = state.book[key] ?? "";
+            for (const key of ["synopsis", "genre", "point_of_view", "tense", "style_notes"])
                 details.elements[key].value = state.book.metadata?.[key] || "";
         }
         updateFeaturedImage();
@@ -323,9 +285,7 @@ export async function start() {
                 element("p", t("Every good story starts with a conversation.")),
                 element(
                     "small",
-                    t(
-                        "Ask about a character, explore a scene, or bring your codex to life.",
-                    ),
+                    t("Ask about a character, explore a scene, or bring your codex to life."),
                 ),
             );
             $("#chat-messages").append(empty);
@@ -334,10 +294,7 @@ export async function start() {
             const button = element(
                 "button",
                 t(":v0 :v1 changes · :v2 ↗", {
-                    v0:
-                        t(proposal.status) === "pending"
-                            ? t("Review")
-                            : t("View"),
+                    v0: t(proposal.status) === "pending" ? t("Review") : t("View"),
                     v1: proposal.changes.length,
                     v2: t(proposal.status),
                 }),
@@ -347,16 +304,9 @@ export async function start() {
             return button;
         };
         for (const message of state.messages) {
-            const item = element(
-                "article",
-                undefined,
-                `message ${message.role}`,
-            );
+            const item = element("article", undefined, `message ${message.role}`);
             item.append(
-                element(
-                    "header",
-                    message.role === "user" ? t("YOU") : t("WRITING COMPANION"),
-                ),
+                element("header", message.role === "user" ? t("YOU") : t("WRITING COMPANION")),
                 element("div", message.content),
             );
             // AI suggestions are display-only; never turn model output into UI actions.
@@ -364,21 +314,14 @@ export async function start() {
                 const edit = element("button", "✎", "edit-failed-message");
                 edit.type = "button";
                 edit.title = t("Edit and resend failed message");
-                edit.setAttribute(
-                    "aria-label",
-                    t("Edit and resend failed message"),
-                );
+                edit.setAttribute("aria-label", t("Edit and resend failed message"));
                 edit.onclick = async () => {
                     if (busy) return;
                     const input = $("#chat-input");
                     if (
                         input.value.trim() &&
                         input.value !== message.content &&
-                        !confirm(
-                            t(
-                                "Replace the current chat draft with this failed message?",
-                            ),
-                        )
+                        !confirm(t("Replace the current chat draft with this failed message?"))
                     )
                         return;
                     busy = true;
@@ -388,13 +331,9 @@ export async function start() {
                     try {
                         await api(`${base}/messages/${message.id}`, "DELETE");
                         input.value = message.content;
-                        state.messages = state.messages.filter(
-                            (row) => row.id !== message.id,
-                        );
+                        state.messages = state.messages.filter((row) => row.id !== message.id);
                         item.remove();
-                        input.dispatchEvent(
-                            new Event("input", { bubbles: true }),
-                        );
+                        input.dispatchEvent(new Event("input", { bubbles: true }));
                     } catch (error) {
                         notify(error.message);
                     } finally {
@@ -403,23 +342,13 @@ export async function start() {
                         $("#send-chat").disabled = false;
                         edit.disabled = false;
                         input.focus();
-                        input.setSelectionRange(
-                            input.value.length,
-                            input.value.length,
-                        );
+                        input.setSelectionRange(input.value.length, input.value.length);
                     }
                 };
                 item.querySelector("header").append(edit);
             }
-            const remove = element(
-                "button",
-                t("Delete"),
-                "delete-chat-message",
-            );
-            remove.setAttribute(
-                "aria-label",
-                t("Delete :v0 message", { v0: t(message.role) }),
-            );
+            const remove = element("button", t("Delete"), "delete-chat-message");
+            remove.setAttribute("aria-label", t("Delete :v0 message", { v0: t(message.role) }));
             remove.onclick = async () => {
                 remove.disabled = true;
                 try {
@@ -442,9 +371,7 @@ export async function start() {
         for (const proposal of state.proposals.filter(
             (proposal) =>
                 proposal.status !== "rejected" &&
-                !state.messages.some(
-                    (message) => message.id === proposal.chat_message_id,
-                ),
+                !state.messages.some((message) => message.id === proposal.chat_message_id),
         )) {
             const item = element("article", undefined, "message assistant");
             item.dataset.created = proposal.created_at;
@@ -453,9 +380,7 @@ export async function start() {
                 proposalButton(proposal),
             );
             const next = [...$("#chat-messages").children].find(
-                (child) =>
-                    new Date(child.dataset.created) >
-                    new Date(proposal.created_at),
+                (child) => new Date(child.dataset.created) > new Date(proposal.created_at),
             );
             $("#chat-messages").insertBefore(item, next || null);
         }
@@ -466,28 +391,22 @@ export async function start() {
                 "button",
                 `${t(revision.label)} · ${new Date(revision.created_at).toLocaleString(locale())}`,
             );
-            button.onclick = () =>
-                inspectRevision(revision).catch((e) => notify(e.message));
+            button.onclick = () => inspectRevision(revision).catch((e) => notify(e.message));
             $("#revision-list").append(button);
         }
-        $("#usage").textContent = t(
-            "Demo allowance: :v2%:v3",
-            {
-                v0: money(state.usage.book),
-                v1: money(state.usage.account),
-                v2: state.usage.demo_percentage,
-                v3: state.usage.personal_key ? t(" · Using your own key") : "",
-            },
-        );
+        $("#usage").textContent = t("Demo allowance: :v2%:v3", {
+            v0: money(state.usage.book),
+            v1: money(state.usage.account),
+            v2: state.usage.demo_percentage,
+            v3: state.usage.personal_key ? t(" · Using your own key") : "",
+        });
     }
     let inspectedRevision = null;
     async function inspectRevision(revision) {
         if (codexDirty) {
             await saveEntry();
             if (codexDirty)
-                throw new Error(
-                    t("Finish the codex entry before comparing revisions."),
-                );
+                throw new Error(t("Finish the codex entry before comparing revisions."));
         }
         await flush();
         await refresh();
@@ -499,10 +418,7 @@ export async function start() {
         });
         inspectedRevision = revision;
         const totalAdded = sections.reduce((sum, part) => sum + part.added, 0);
-        const totalRemoved = sections.reduce(
-            (sum, part) => sum + part.removed,
-            0,
-        );
+        const totalRemoved = sections.reduce((sum, part) => sum + part.removed, 0);
         $("#revision-diff-title").textContent = t(revision.label);
         $("#revision-diff-date").textContent = t(":v0 → current version :v1", {
             v0: new Date(revision.created_at).toLocaleString(locale()),
@@ -527,8 +443,7 @@ export async function start() {
                     }),
                 ),
             );
-            if (!section.hunks.length)
-                group.append(element("p", t("No changes."), "muted"));
+            if (!section.hunks.length) group.append(element("p", t("No changes."), "muted"));
             for (const hunk of section.hunks) {
                 group.append(
                     element(
@@ -549,16 +464,8 @@ export async function start() {
                         `revision-diff-line ${add ? "added" : remove ? "removed" : "context"}`,
                     );
                     row.append(
-                        element(
-                            "span",
-                            add ? "" : String(oldLine++),
-                            "diff-number",
-                        ),
-                        element(
-                            "span",
-                            remove ? "" : String(newLine++),
-                            "diff-number",
-                        ),
+                        element("span", add ? "" : String(oldLine++), "diff-number"),
+                        element("span", remove ? "" : String(newLine++), "diff-number"),
                         element("span", line[0], "diff-sign"),
                         element("code", line.slice(1)),
                     );
@@ -581,11 +488,7 @@ export async function start() {
             return;
         editor.view.setProps({ editable: () => false });
         try {
-            await mutate(
-                `${base}/revisions/${inspectedRevision.id}/restore`,
-                "POST",
-                {},
-            );
+            await mutate(`${base}/revisions/${inspectedRevision.id}/restore`, "POST", {});
             await refresh(true);
             $("#revision-diff-dialog").close();
             notify(t("Revision restored."));
@@ -596,11 +499,7 @@ export async function start() {
     render();
     status(t("All changes saved"));
     const recovered = JSON.parse(localStorage.getItem(draftKey) || "null");
-    if (
-        recovered &&
-        JSON.stringify(recovered.document) !==
-            JSON.stringify(state.book.document)
-    )
+    if (recovered && JSON.stringify(recovered.document) !== JSON.stringify(state.book.document))
         $("#recovery").hidden = false;
     action("#recover-draft", () => {
         recoveryDocument = recovered.document;
@@ -615,13 +514,10 @@ export async function start() {
     });
     document
         .querySelectorAll("[data-panel]")
-        .forEach(
-            (button) => (button.onclick = () => panel(button.dataset.panel)),
-        );
+        .forEach((button) => (button.onclick = () => panel(button.dataset.panel)));
     action("#close-panel", closePanel);
     document.addEventListener("click", (event) => {
-        if (!$("#model-picker").contains(event.target))
-            $("#model-picker").open = false;
+        if (!$("#model-picker").contains(event.target)) $("#model-picker").open = false;
     });
     document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") $("#model-picker").open = false;
@@ -634,8 +530,7 @@ export async function start() {
     action("#open-names", () => {
         const full = $("#entry-form").elements.name.value.trim();
         const split = full.indexOf(" ");
-        $("#selected-first-name").value =
-            split < 0 ? full : full.slice(0, split);
+        $("#selected-first-name").value = split < 0 ? full : full.slice(0, split);
         $("#selected-last-name").value = split < 0 ? "" : full.slice(split + 1);
         $("#name-results").replaceChildren();
         $("#names-title").textContent = full
@@ -677,17 +572,10 @@ export async function start() {
                     codexDraftKey,
                     JSON.stringify(Object.fromEntries(new FormData(form))),
                 );
-                codexTimer = setTimeout(
-                    () => saveEntry().catch((e) => notify(e.message)),
-                    900,
-                );
+                codexTimer = setTimeout(() => saveEntry().catch((e) => notify(e.message)), 900);
             }
             await refresh();
-            status(
-                dirty
-                    ? t("Unsaved manuscript changes")
-                    : t("All changes saved"),
-            );
+            status(dirty ? t("Unsaved manuscript changes") : t("All changes saved"));
         })();
         try {
             await codexSaving;
@@ -711,9 +599,7 @@ export async function start() {
             status(t("Codex draft unsaved"));
             localStorage.setItem(
                 codexDraftKey,
-                JSON.stringify(
-                    Object.fromEntries(new FormData($("#entry-form"))),
-                ),
+                JSON.stringify(Object.fromEntries(new FormData($("#entry-form")))),
             );
             clearTimeout(codexTimer);
             if ($("#entry-form").elements.name.value.trim())
@@ -736,9 +622,7 @@ export async function start() {
         codexDirty = true;
         codexVersion++;
         $("#codex-recovery").hidden = true;
-        notify(
-            t("Draft restored to the form. Review it and choose Save entry."),
-        );
+        notify(t("Draft restored to the form. Review it and choose Save entry."));
     });
     action("#discard-codex", () => {
         localStorage.removeItem(codexDraftKey);
@@ -760,11 +644,7 @@ export async function start() {
             )
         )
             return;
-        await mutate(
-            `${base}/entries/${id}`,
-            "DELETE",
-            {},
-        );
+        await mutate(`${base}/entries/${id}`, "DELETE", {});
         codexDirty = false;
         codexVersion++;
         localStorage.removeItem(codexDraftKey);
@@ -782,9 +662,7 @@ export async function start() {
             });
             await refresh();
             $("#entry-form").elements.type.value = type;
-            $("#entry-form").dispatchEvent(
-                new Event("input", { bubbles: true }),
-            );
+            $("#entry-form").dispatchEvent(new Event("input", { bubbles: true }));
             $("#custom-type-dialog").close();
         },
         "submit",
@@ -801,9 +679,22 @@ export async function start() {
         async (e) => {
             e.preventDefault();
             const values = Object.fromEntries(new FormData(e.target));
-            const { title, subtitle, subheading, category_id, keywords_string, featured_image, ...metadata } = values;
+            const {
+                title,
+                subtitle,
+                subheading,
+                category_id,
+                keywords_string,
+                featured_image,
+                ...metadata
+            } = values;
             await mutate(base, "PATCH", {
-                title, subtitle, subheading, category_id: category_id || null, keywords_string, featured_image: featured_image || null,
+                title,
+                subtitle,
+                subheading,
+                category_id: category_id || null,
+                keywords_string,
+                featured_image: featured_image || null,
                 metadata,
             });
             detailsDirty = false;
@@ -812,85 +703,135 @@ export async function start() {
         },
         "submit",
     );
-    document.querySelectorAll('[data-publication-ai]').forEach(button => {
+    document.querySelectorAll("[data-publication-ai]").forEach((button) => {
         button.onclick = async () => {
             button.disabled = true;
             try {
-                const result = await api(base + '/publication-ai/' + button.dataset.publicationAi, 'POST', {text: editor.text().slice(0, 60000), model});
-                const field = ({category: 'category_id', keywords: 'keywords_string', synopsis: 'synopsis'})[button.dataset.publicationAi];
-                $('#details-form').elements[field].value = result[field];
+                const result = await api(
+                    base + "/publication-ai/" + button.dataset.publicationAi,
+                    "POST",
+                    { text: editor.text().slice(0, 60000), model },
+                );
+                const field = {
+                    category: "category_id",
+                    keywords: "keywords_string",
+                    synopsis: "synopsis",
+                }[button.dataset.publicationAi];
+                $("#details-form").elements[field].value = result[field];
                 updateFeaturedImage();
                 detailsDirty = true;
                 await refresh();
-            } catch (error) { notify(error.message); }
-            finally { button.disabled = false; }
+            } catch (error) {
+                notify(error.message);
+            } finally {
+                button.disabled = false;
+            }
         };
     });
     function updateFeaturedImage(customUrl = null) {
-        const form = $('#details-form');
-        const image = $('#featured-image-preview');
+        const form = $("#details-form");
+        const image = $("#featured-image-preview");
         const custom = form.elements.featured_image.value;
         if (!custom) {
-            image.src = form.elements.category_id.selectedOptions[0]?.dataset.image || image.dataset.defaultImage;
+            image.src =
+                form.elements.category_id.selectedOptions[0]?.dataset.image ||
+                image.dataset.defaultImage;
         } else if (customUrl) {
             image.src = customUrl;
         } else {
-            const path = custom.split(String.fromCharCode(92)).join('/');
-            image.src = (path.startsWith('https://') || path.startsWith('http://')) || path.startsWith('/') ? path
-                : path.startsWith('storage/') ? '/' + path
-                : path.toLowerCase().includes('00001_') ? '/storage/yazi_resimler/' + path.replace(/[.]png$/i, '.jpg')
-                : '/storage/upload-images/original/' + path;
+            const path = custom.split(String.fromCharCode(92)).join("/");
+            image.src =
+                path.startsWith("https://") || path.startsWith("http://") || path.startsWith("/")
+                    ? path
+                    : path.startsWith("storage/")
+                      ? "/" + path
+                      : path.toLowerCase().includes("00001_")
+                        ? "/storage/yazi_resimler/" + path.replace(/[.]png$/i, ".jpg")
+                        : "/storage/upload-images/original/" + path;
         }
-        $('#remove-featured-image').hidden = !custom;
+        $("#remove-featured-image").hidden = !custom;
     }
-    action('#details-form select[name="category_id"]', () => updateFeaturedImage(), 'change');
-    const imageDialog = $('#featured-image-dialog');
+    action('#details-form select[name="category_id"]', () => updateFeaturedImage(), "change");
+    const imageDialog = $("#featured-image-dialog");
     let imageBusy = false;
     function imageScreen(generate) {
-        $('#image-upload-screen').hidden = generate;
-        $('#image-generation-screen').hidden = !generate;
-        $('#image-dialog-status').textContent = '';
+        $("#image-upload-screen").hidden = generate;
+        $("#image-generation-screen").hidden = !generate;
+        $("#image-dialog-status").textContent = "";
     }
     function imageLoading(busy) {
         imageBusy = busy;
-        imageDialog.querySelectorAll('button, input, textarea').forEach(control => control.disabled = busy);
-        $('#image-dialog-status').textContent = busy ? t('Preparing image…') : '';
+        imageDialog
+            .querySelectorAll("button, input, textarea")
+            .forEach((control) => (control.disabled = busy));
+        $("#image-dialog-status").textContent = busy ? t("Preparing image…") : "";
     }
-    imageDialog.addEventListener('cancel', event => { if (imageBusy) event.preventDefault(); });
-    action('#change-featured-image', () => { imageScreen(false); imageDialog.showModal(); });
-    action('#show-image-generation', () => imageScreen(true));
-    action('#show-image-upload', () => imageScreen(false));
-    action('#generate-featured-image', async () => {
+    imageDialog.addEventListener("cancel", (event) => {
+        if (imageBusy) event.preventDefault();
+    });
+    action("#change-featured-image", () => {
+        imageScreen(false);
+        imageDialog.showModal();
+    });
+    action("#show-image-generation", () => imageScreen(true));
+    action("#show-image-upload", () => imageScreen(false));
+    action("#generate-featured-image", async () => {
         imageLoading(true);
         try {
-            const result = await api($('#generate-featured-image').dataset.url, 'POST', {user_prompt: $('#ai-image-prompt').value.trim() || editor.text().slice(0, 4000)}, 240000);
-            if (!result?.success || !result.image_medium_filename) throw new Error(result?.message || result?.error || t('Image generation failed.'));
-            const path = '/storage/ai-images/medium/' + result.image_medium_filename;
-            $('#details-form').elements.featured_image.value = path;
+            const result = await api(
+                $("#generate-featured-image").dataset.url,
+                "POST",
+                { user_prompt: $("#ai-image-prompt").value.trim() || editor.text().slice(0, 4000) },
+                240000,
+            );
+            if (!result?.success || !result.image_medium_filename)
+                throw new Error(result?.message || result?.error || t("Image generation failed."));
+            const path = "/storage/ai-images/medium/" + result.image_medium_filename;
+            $("#details-form").elements.featured_image.value = path;
             updateFeaturedImage(path);
             detailsDirty = true;
             imageLoading(false);
             imageDialog.close();
-        } catch (error) { imageLoading(false); $('#image-dialog-status').textContent = error.message; }
-    });
-    action('#featured-image-upload-form', async (event) => {
-        event.preventDefault();
-        const file = $('#featured-image-upload').files[0]; if (!file) return;
-        imageLoading(true);
-        try {
-            const data = new FormData(); data.append('image', file);
-            const response = await fetch(base + '/featured-image', {method:'POST',headers:{'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content, 'Accept':'application/json'},body:data});
-            const result = await response.json(); if (!response.ok) throw new Error(result.message || t('Upload failed'));
-            $('#details-form').elements.featured_image.value = result.filename;
-            updateFeaturedImage(result.url);
-            detailsDirty = true;
-            $('#featured-image-upload-form').reset();
+        } catch (error) {
             imageLoading(false);
-            imageDialog.close();
-        } catch (error) { imageLoading(false); $('#image-dialog-status').textContent = error.message; }
-    }, 'submit');
-    action('#remove-featured-image', () => {
-        $('#details-form').elements.featured_image.value = '';
+            $("#image-dialog-status").textContent = error.message;
+        }
+    });
+    action(
+        "#featured-image-upload-form",
+        async (event) => {
+            event.preventDefault();
+            const file = $("#featured-image-upload").files[0];
+            if (!file) return;
+            imageLoading(true);
+            try {
+                const data = new FormData();
+                data.append("image", file);
+                const response = await fetch(base + "/featured-image", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                        Accept: "application/json",
+                    },
+                    body: data,
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || t("Upload failed"));
+                $("#details-form").elements.featured_image.value = result.filename;
+                updateFeaturedImage(result.url);
+                detailsDirty = true;
+                $("#featured-image-upload-form").reset();
+                imageLoading(false);
+                imageDialog.close();
+            } catch (error) {
+                imageLoading(false);
+                $("#image-dialog-status").textContent = error.message;
+            }
+        },
+        "submit",
+    );
+    action("#remove-featured-image", () => {
+        $("#details-form").elements.featured_image.value = "";
         updateFeaturedImage();
         detailsDirty = true;
         imageDialog.close();
@@ -921,10 +862,7 @@ export async function start() {
     function renderModels() {
         const selected = models.find((m) => m.id === model);
         welcome.setModel(
-            selected?.name ||
-                (model
-                    ? t(":v0 (currently unavailable)", { v0: model })
-                    : null),
+            selected?.name || (model ? t(":v0 (currently unavailable)", { v0: model }) : null),
         );
         $("#model-summary").textContent = selected
             ? t("Writing with :v0", { v0: selected.name })
@@ -934,26 +872,13 @@ export async function start() {
         $("#model-list").replaceChildren();
         const q = $("#model-search").value.toLowerCase(),
             only = $("#favorites-only").checked;
-        const min =
-            $("#model-price-min").value === ""
-                ? 0
-                : Number($("#model-price-min").value);
+        const min = $("#model-price-min").value === "" ? 0 : Number($("#model-price-min").value);
         const max =
-            $("#model-price-max").value === ""
-                ? Infinity
-                : Number($("#model-price-max").value);
+            $("#model-price-max").value === "" ? Infinity : Number($("#model-price-max").value);
         $("#model-search-filters").hidden = only;
-        if (
-            !only &&
-            (!Number.isFinite(min) || min < 0 || Number.isNaN(max) || max < min)
-        ) {
+        if (!only && (!Number.isFinite(min) || min < 0 || Number.isNaN(max) || max < min)) {
             $("#model-list").append(
-                element(
-                    "p",
-                    t(
-                        "Enter a nonnegative price range with Min no greater than Max.",
-                    ),
-                ),
+                element("p", t("Enter a nonnegative price range with Min no greater than Max.")),
             );
             return;
         }
@@ -970,29 +895,17 @@ export async function start() {
                 element(
                     "p",
                     only
-                        ? t(
-                              "No favorites yet. Uncheck Favorites only and star a model.",
-                          )
-                        : t(
-                              "No models match this search and output price range.",
-                          ),
+                        ? t("No favorites yet. Uncheck Favorites only and star a model.")
+                        : t("No models match this search and output price range."),
                 ),
             );
         for (const item of matches) {
             const row = element("div", undefined, "model-row"),
                 pick = element("button", item.name),
-                star = element(
-                    "button",
-                    favorites.includes(item.id) ? "★" : "☆",
-                );
-            const bounded = [
-                item.pricing?.prompt,
-                item.pricing?.completion,
-            ].every(
+                star = element("button", favorites.includes(item.id) ? "★" : "☆");
+            const bounded = [item.pricing?.prompt, item.pricing?.completion].every(
                 (price) =>
-                    price !== undefined &&
-                    Number.isFinite(Number(price)) &&
-                    Number(price) >= 0,
+                    price !== undefined && Number.isFinite(Number(price)) && Number(price) >= 0,
             );
             pick.append(
                 element(
@@ -1002,14 +915,10 @@ export async function start() {
                               v0: money(Number(item.pricing.prompt) * 1e6),
                               v1: money(Number(item.pricing.completion) * 1e6),
                           })
-                        : t(
-                              "Variable pricing · cannot safely budget this model",
-                          ),
+                        : t("Variable pricing · cannot safely budget this model"),
                 ),
             );
-            pick.disabled =
-                !bounded ||
-                !item.architecture?.output_modalities?.includes("text");
+            pick.disabled = !bounded || !item.architecture?.output_modalities?.includes("text");
             pick.onclick = async () => {
                 try {
                     await api("/yazi-atolyesi/hesap", "PATCH", { selected_model: item.id });
@@ -1020,10 +929,7 @@ export async function start() {
                     notify(e.message);
                 }
             };
-            star.setAttribute(
-                "aria-label",
-                t("Favorite :v0", { v0: item.name }),
-            );
+            star.setAttribute("aria-label", t("Favorite :v0", { v0: item.name }));
             star.onclick = async () => {
                 try {
                     const next = favorites.includes(item.id)
@@ -1060,9 +966,7 @@ export async function start() {
         if (!model) throw new Error(t("Choose an AI model first."));
         if (codexDirty) await saveEntry();
         await flush();
-        const previousProposals = new Set(
-            state.proposals.map((proposal) => proposal.id),
-        );
+        const previousProposals = new Set(state.proposals.map((proposal) => proposal.id));
         const selection =
             selectedEdit && !extra.action
                 ? { ...selectedEdit, revision: state.book.revision }
@@ -1102,25 +1006,20 @@ export async function start() {
             const result = await call(payload);
             if (result.large_prompt_warning) {
                 const dialog = $("#large-prompt-dialog");
-                $("#large-prompt-count").textContent =
-                    result.word_count.toLocaleString(locale());
+                $("#large-prompt-count").textContent = result.word_count.toLocaleString(locale());
                 $("#disable-large-prompt-warning").checked = false;
                 dialog.returnValue = "cancel";
                 const confirmed = await new Promise((resolve) => {
-                    dialog.addEventListener(
-                        "close",
-                        () => resolve(dialog.returnValue === "send"),
-                        { once: true },
-                    );
+                    dialog.addEventListener("close", () => resolve(dialog.returnValue === "send"), {
+                        once: true,
+                    });
                     dialog.showModal();
                 });
                 if (!confirmed) return;
                 await call({
                     ...payload,
                     force_large_prompt: true,
-                    disable_large_prompt_warning: $(
-                        "#disable-large-prompt-warning",
-                    ).checked,
+                    disable_large_prompt_warning: $("#disable-large-prompt-warning").checked,
                 });
             }
             $("#chat-input").value = "";
@@ -1139,9 +1038,7 @@ export async function start() {
             $("#chat-form").setAttribute("aria-busy", "false");
             await refresh().catch((error) => notify(error.message));
             const next = state.proposals.find(
-                (proposal) =>
-                    proposal.status === "pending" &&
-                    !previousProposals.has(proposal.id),
+                (proposal) => proposal.status === "pending" && !previousProposals.has(proposal.id),
             );
             if (next && !busy) review(next);
         }
@@ -1184,10 +1081,7 @@ export async function start() {
                     ),
                 )
                 .slice(0, 15)) {
-                const button = element(
-                    "button",
-                    `${entry.name} · ${entry.type}`,
-                );
+                const button = element("button", `${entry.name} · ${entry.type}`);
                 button.type = "button";
                 button.onclick = () => {
                     mentions = [...new Set([...mentions, entry.id])];
@@ -1213,10 +1107,8 @@ export async function start() {
         left.append(element("h4", t("Original")));
         right.append(element("h4", t("Proposed")));
         for (const part of diffWordsWithSpace(before, after)) {
-            if (!part.added)
-                left.append(element(part.removed ? "del" : "span", part.value));
-            if (!part.removed)
-                right.append(element(part.added ? "ins" : "span", part.value));
+            if (!part.added) left.append(element(part.removed ? "del" : "span", part.value));
+            if (!part.removed) right.append(element(part.added ? "ins" : "span", part.value));
         }
         block.append(left, right);
         return block;
@@ -1239,16 +1131,13 @@ export async function start() {
               : t(
                     "This proposal is based on an older revision. Reject it and request a new proposal to protect your latest work.",
                 );
-        $("#approve-changes").disabled =
-            proposal.base_revision !== state.book.revision;
+        $("#approve-changes").disabled = proposal.base_revision !== state.book.revision;
         proposal.changes.forEach((change, index) => {
             const section = element("section", undefined, "diff-block"),
                 label = element("label", undefined, "check"),
                 check = element("input");
             check.type = "checkbox";
-            check.checked = historical
-                ? (proposal.decisions || []).includes(index)
-                : true;
+            check.checked = historical ? (proposal.decisions || []).includes(index) : true;
             check.disabled = historical;
             check.value = index;
             label.append(
@@ -1265,15 +1154,15 @@ export async function start() {
                 ),
             );
             section.append(label);
-            if (
-                ["manuscript_replace", "selection_replace"].includes(
-                    change.operation,
-                )
-            )
-                section.append(diffText(
-                    change.before_document ? manuscript(change.before_document) : change.before,
-                    change.replacement_document ? manuscript(change.replacement_document) : change.content,
-                ));
+            if (["manuscript_replace", "selection_replace"].includes(change.operation))
+                section.append(
+                    diffText(
+                        change.before_document ? manuscript(change.before_document) : change.before,
+                        change.replacement_document
+                            ? manuscript(change.replacement_document)
+                            : change.content,
+                    ),
+                );
             else
                 for (const field of ["name", "type", "content", "aliases"]) {
                     section.append(
@@ -1315,9 +1204,7 @@ export async function start() {
             await refresh(true);
             notify(
                 accept.length
-                    ? t(
-                          "Approved changes saved. The previous version is in Revisions.",
-                      )
+                    ? t("Approved changes saved. The previous version is in Revisions.")
                     : t("Proposal rejected."),
             );
         } finally {
@@ -1326,8 +1213,8 @@ export async function start() {
     }
     action("#approve-changes", () =>
         decide(
-            [...$("#diff-content").querySelectorAll("input:checked")].map(
-                (input) => Number(input.value),
+            [...$("#diff-content").querySelectorAll("input:checked")].map((input) =>
+                Number(input.value),
             ),
         ),
     );
@@ -1335,9 +1222,7 @@ export async function start() {
     function currentCodexNames() {
         const form = $("#entry-form");
         const name = form.elements.name.value.trim();
-        return !form.hidden && form.elements.type.value === "People" && name
-            ? [name]
-            : [];
+        return !form.hidden && form.elements.type.value === "People" && name ? [name] : [];
     }
     action(
         "#apply-codex-name",
@@ -1351,13 +1236,9 @@ export async function start() {
                 .join(" ");
             if (!name) throw new Error(t("Select or enter a name first."));
             if (name.length > 200)
-                throw new Error(
-                    t("The full name must be 200 characters or fewer."),
-                );
+                throw new Error(t("The full name must be 200 characters or fewer."));
             $("#entry-form").elements.name.value = name;
-            $("#entry-form").dispatchEvent(
-                new Event("input", { bubbles: true }),
-            );
+            $("#entry-form").dispatchEvent(new Event("input", { bubbles: true }));
             $("#names-dialog").close();
         },
         "submit",
@@ -1409,8 +1290,7 @@ export async function start() {
     action("#random-names", () => names(true));
     action("#suggest-places", async () => {
         const prompt = $("#place-prompt").value.trim();
-        if (!prompt)
-            throw new Error(t("Enter a guiding prompt for the place names."));
+        if (!prompt) throw new Error(t("Enter a guiding prompt for the place names."));
         closePanel();
         $("#chat-input").value = t("Suggest 10 place names: :v0", {
             v0: prompt,
@@ -1450,8 +1330,7 @@ export async function start() {
                         arrayBuffer: await file.arrayBuffer(),
                     })
                 ).value;
-            } else if (file.name.toLowerCase().endsWith(".txt"))
-                text = await file.text();
+            } else if (file.name.toLowerCase().endsWith(".txt")) text = await file.text();
             else throw new Error(t("Choose a TXT or DOCX story."));
             $("#import-preview").value = text;
             $("#confirm-import").disabled = false;
@@ -1463,19 +1342,14 @@ export async function start() {
         editor.view.setProps({ editable: () => false });
         try {
             const document =
-                recoveryDocument &&
-                $("#import-preview").value === schemaText(recoveryDocument)
+                recoveryDocument && $("#import-preview").value === schemaText(recoveryDocument)
                     ? recoveryDocument
                     : fromText($("#import-preview").value);
             await mutate(base, "PATCH", { document });
             conflicted = false;
             await refresh(true);
             $("#import-dialog").close();
-            notify(
-                t(
-                    "Story imported. Open Codex to scan the document for entries.",
-                ),
-            );
+            notify(t("Story imported. Open Codex to scan the document for entries."));
         } finally {
             editor.view.setProps({ editable: () => true });
         }
@@ -1502,8 +1376,6 @@ export async function start() {
 
 function schemaText(doc) {
     return (doc.content || [])
-        .map((node) =>
-            (node.content || []).map((child) => child.text || "").join(""),
-        )
+        .map((node) => (node.content || []).map((child) => child.text || "").join(""))
         .join("\n");
 }

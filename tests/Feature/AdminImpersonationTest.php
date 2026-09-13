@@ -16,13 +16,13 @@ class AdminImpersonationTest extends WriterTestCase
             ->assertRedirect('/eserlerim')->assertSessionHas('admin_impersonation.admin_id', $admin->id);
         $this->assertAuthenticatedAs($member);
         $this->get('/eserlerim')->assertOk()->assertSee('Yönetici olarak görüntülüyorsunuz:')
-            ->assertSee($member->email)->assertSee('Yönetici hesabıma dön');
-        $this->get('/yazi-atolyesi/hesap')->assertOk()->assertSee('Yönetici hesabıma dön');
+            ->assertSee($member->email)->assertSee('action="'.route('users-stop-impersonating').'"', false);
+        $this->get('/yazi-atolyesi/hesap')->assertOk()->assertSee('action="'.route('users-stop-impersonating').'"', false);
         $this->get('/admin/kullanicilar')->assertForbidden();
         $this->post('/yoneticiye-don', ['admin_id' => $otherAdmin->id])->assertRedirect('/admin/kullanicilar')
             ->assertSessionMissing('admin_impersonation');
         $this->assertAuthenticatedAs($admin);
-        $this->get('/eserlerim')->assertOk()->assertDontSee('Yönetici hesabıma dön');
+        $this->get('/eserlerim')->assertOk()->assertDontSee('action="'.route('users-stop-impersonating').'"', false);
     }
 
     public function test_non_admins_cannot_start_or_forge_a_return_and_nested_switches_are_rejected(): void

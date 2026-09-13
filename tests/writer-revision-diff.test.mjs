@@ -21,10 +21,7 @@ test("revision counts reflect additions and removals, including whitespace and f
     assert.equal(result[0].added, 1);
     assert.equal(result[0].removed, 1);
     assert.equal(
-        revisionDiff(before, before).reduce(
-            (n, s) => n + s.added + s.removed,
-            0,
-        ),
+        revisionDiff(before, before).reduce((n, s) => n + s.added + s.removed, 0),
         0,
     );
     assert.equal(revisionDiff(before, snapshot("Old line "))[0].added, 1);

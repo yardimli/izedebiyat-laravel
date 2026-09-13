@@ -9,6 +9,4 @@ for (const button of document.querySelectorAll("[data-preview]")) {
         dialog.showModal();
     });
 }
-document
-    .querySelector("#close-screenshot")
-    .addEventListener("click", () => dialog.close());
+document.querySelector("#close-screenshot").addEventListener("click", () => dialog.close());

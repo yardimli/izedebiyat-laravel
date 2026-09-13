@@ -7,6 +7,4 @@ export function t(key, replacements = {}) {
 export const locale = () => document.documentElement.lang || "en";
 document
     .querySelectorAll(".language-switch select")
-    .forEach((select) =>
-        select.addEventListener("change", () => select.form.requestSubmit()),
-    );
+    .forEach((select) => select.addEventListener("change", () => select.form.requestSubmit()));
