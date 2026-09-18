@@ -39,14 +39,15 @@
                 <div class="col-sm-12">
                     <label class="form-label">{{ __('default.Page Title') }}</label>
                     <input type="text" name="page_title" class="form-control"
-                        placeholder="{{ __('default.Enter your Page Title') }}"
+                        placeholder="{{ __('This page is still waiting for its first title.') }}"
                         value="{{ old('page_title', $user->page_title) }}">
                 </div>
 
                 <!-- Personal URL -->
                 <div class="col-sm-12">
                     <label class="form-label">{{ __('default.Personal URL') }}</label>
-                    <input type="text" name="personal_url" class="form-control" placeholder="https://"
+                    <input type="text" name="personal_url" class="form-control"
+                        placeholder="{{ __('The paths beyond this page are yet to be traced.') }}"
                         value="{{ old('personal_url', $user->personal_url) }}">
                     <span class="form-text text-muted">İzEdebiyat'daki sayfanız dışında başka bir sayfanız varsa onun
                         adresini buraya girin.</span></span>
@@ -56,7 +57,7 @@
                 <div class="col-12">
                     <label class="form-label">{{ __('default.About Me') }}</label>
                     <textarea name="about_me" id="about_me" class="form-control" rows="3"
-                        placeholder="{{ __('default.About Me Placeholder') }}">{{ old('about_me', $user->about_me) }}</textarea>
+                        placeholder="{{ __('The author’s own story is still resting between the lines.') }}">{{ old('about_me', $user->about_me) }}</textarea>
                     <span class="form-text text-muted"> Kendinizi okurlarınıza, uygun gördüğünüz yolla tanıtın. Örnek:
                         Yazınızın Özellikleri, Edebi Etkileriniz, Özgeçmişiniz, Bulunduğunuz Yer, vb.</span></span>
                 </div>
@@ -86,7 +87,7 @@
             <div class="card-header border-0 pb-0">
                 <h5 class="card-title">{{ __('default.Change your password') }}</h5>
                 <p class="mb-0">
-                    {{ __('default.If you signed up with Google, leave the current password blank the first time you update your password.') }}
+                    {{ __('If you joined with Google, use the password reset link to set your first password.') }}
                 </p>
             </div>
             <!-- Title START -->
@@ -94,6 +95,7 @@
 
                 <form action="{{ route('backend.sifre-guncelle') }}" method="post" class="row g-3">
                     @csrf
+                    <a href="{{ route('password.request') }}">{{ __('default.Forgot password?') }}</a>
                     <!-- Current password -->
                     <div class="col-12">
                         <label class="form-label">{{ __('default.Current password') }}</label>

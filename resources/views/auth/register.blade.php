@@ -9,6 +9,9 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 @endpush
 @section('form')
+    <a href="{{ url('login/google') }}" class="google-button"><img src="{{ asset('assets/v2/images/png_icons/google.png') }}"
+            width="20" height="20" alt="">{{ __('Sign up with Google') }}</a>
+    <div class="auth-divider"><span>{{ __('default.Or') }}</span></div>
     <form method="POST" action="{{ route('register') }}" class="auth-form">
         @csrf
         <div class="field-pair">

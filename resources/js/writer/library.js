@@ -2,6 +2,72 @@ import { t, locale } from "./i18n";
 import { api, $, action, notify } from "./api";
 
 export function start() {
+    const reminderKey = "writer-published-return-" + document.body.dataset.user;
+    let justPublished = false;
+    try {
+        justPublished = sessionStorage.getItem(reminderKey) === "1";
+        sessionStorage.removeItem(reminderKey);
+    } catch {}
+    const createDialog = $("#create-story-dialog");
+    action("#create-story", () => createDialog.showModal());
+    if (createDialog.querySelector('[role="alert"]')) createDialog.showModal();
+    else if (!justPublished) $("#draft-reminder-dialog")?.showModal();
+    window.addEventListener("pageshow", (event) => {
+        if (event.persisted) window.location.reload();
+    });
+    const returned = $("#returned-story");
+    const publishDialog = $("#publish-story-dialog");
+    if (returned) {
+        const publishButton = $("#publish-new-story");
+        const returnBase = "/yazi-atolyesi/api/books/" + returned.dataset.book;
+        let revision = Number(returned.dataset.revision);
+        let prepared = false;
+        const statusSelect = document.querySelector(
+            '[data-publish-book="' + returned.dataset.book + '"]',
+        );
+        const prepare = async () => {
+            const result = await api(returnBase + "/prepare-return", "POST", {});
+            revision = result.revision;
+            prepared = true;
+            if (statusSelect) statusSelect.dataset.revision = revision;
+            if (publishDialog)
+                $("#publication-progress").textContent = t(
+                    "Your story is saved. You can publish it now or leave it as a draft.",
+                );
+        };
+        publishDialog?.showModal();
+        if (statusSelect) statusSelect.disabled = true;
+        const preparing = prepare()
+            .catch((error) => {
+                const message = t(
+                    "Your story remains saved. Automatic category selection could not finish: :reason",
+                    { reason: error.message },
+                );
+                if (publishDialog) $("#publication-progress").textContent = message;
+                else notify(message);
+            })
+            .finally(() => {
+                if (publishButton) publishButton.disabled = false;
+                if (statusSelect) statusSelect.disabled = false;
+            });
+        action("#publish-new-story", async () => {
+            publishButton.disabled = true;
+            try {
+                await preparing;
+                if (!prepared) await prepare();
+                await api(returnBase, "PATCH", { revision, is_published: true });
+                publishDialog.close();
+                try {
+                    sessionStorage.setItem(reminderKey, "1");
+                } catch {}
+                window.location.reload();
+            } catch (error) {
+                $("#publication-progress").textContent = error.message;
+            } finally {
+                publishButton.disabled = false;
+            }
+        });
+    }
     document.querySelectorAll("[data-publish-book]").forEach((button) => {
         button.onchange = async () => {
             button.disabled = true;

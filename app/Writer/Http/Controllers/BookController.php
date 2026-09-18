@@ -86,6 +86,30 @@ class BookController extends Controller
         }
     }
 
+    public function prepareReturn(Request $request, Book $book, \App\Writer\Services\OpenRouter $router)
+    {
+        $this->owned($request, $book);
+        if (! $book->category_id && trim($book->manuscript ?? '') !== '') {
+            $revision = $book->revision;
+            $request->merge(['text' => mb_substr($book->manuscript, 0, 60000), 'model' => $request->user()->selected_model]);
+            $result = app(PublicationAiController::class)->suggest($request, $book, 'category', $router);
+            DB::transaction(function () use ($book, $revision, $result) {
+                $current = Book::lockForUpdate()->findOrFail($book->id);
+                Manuscript::checkRevision($current, $revision);
+                if (! $current->category_id) {
+                    $data = ['category_id' => $result['category_id']];
+                    $this->applyPublicationDetails($current, $data);
+                    // A blank featured_image uses the category's default illustration.
+                    $current->fill($data);
+                    $current->revision++;
+                    $current->save();
+                }
+            });
+        }
+        $book->refresh();
+        return ['revision' => $book->revision, 'category_id' => $book->category_id, 'is_published' => $book->is_published];
+    }
+
     public function uploadImage(Request $request, Book $book)
     {
         $this->owned($request, $book);
@@ -118,6 +142,9 @@ class BookController extends Controller
 
     public function index(Request $request)
     {
+        $returnedBook = Book::where('user_id', $request->user()->id)->find($request->session()->pull('writer.editor_book'));
+        $newStory = $returnedBook && $request->session()->pull('writer.new_book.'.$returnedBook->id, false);
+        $drafts = Book::where('user_id', $request->user()->id)->where('is_published', 0)->orderByDesc('updated_at')->get(['id', 'title']);
         $data = $request->validate(['q' => 'nullable|string|max:200', 'sort' => 'nullable|in:updated_at,created_at,read_count', 'direction' => 'nullable|in:asc,desc']);
         $sort = $data['sort'] ?? 'updated_at';
         $direction = $data['direction'] ?? 'desc';
@@ -132,7 +159,7 @@ class BookController extends Controller
             });
         }
 
-        return view('writer.books.index', ['books' => $books->select(['id', 'title', 'slug', 'user_id', 'metadata', 'manuscript', 'archived', 'deleted', 'revision', 'created_at', 'updated_at', 'read_count', 'is_published', 'approved', 'category_name', 'subtitle'])->withCount('comments')->orderBy($sort, $direction)->orderByDesc('id')->paginate(30)->withQueryString(), 'search' => $search, 'sort' => $sort, 'direction' => $direction]);
+        return view('writer.books.index', ['returnedBook' => $returnedBook, 'newStory' => $newStory, 'drafts' => $drafts, 'books' => $books->select(['id', 'title', 'slug', 'user_id', 'metadata', 'manuscript', 'archived', 'deleted', 'revision', 'created_at', 'updated_at', 'read_count', 'is_published', 'approved', 'category_name', 'subtitle'])->withCount('comments')->orderBy($sort, $direction)->orderByDesc('id')->paginate(30)->withQueryString(), 'search' => $search, 'sort' => $sort, 'direction' => $direction]);
     }
 
     public function store(Request $request)
@@ -140,6 +167,7 @@ class BookController extends Controller
         $data = $request->validate(['title' => 'required|string|max:200']);
         $book = Book::create($data + ['user_id' => $request->user()->id, 'slug' => (\Illuminate\Support\Str::slug($data['title']) ?: 'eser').'-'.\Illuminate\Support\Str::lower(\Illuminate\Support\Str::random(10)), 'approved' => 1, 'is_published' => 0, 'deleted' => 0, 'name' => $request->user()->name, 'name_slug' => $request->user()->slug ?: \Illuminate\Support\Str::slug($request->user()->name), 'document' => Manuscript::fromText(''), 'codex_types' => ['People', 'Places', 'Items', 'Organizations', 'Events', 'Lore']]);
 
+        $request->session()->put('writer.new_book.'.$book->id, true);
         return redirect()->route('articles.edit', \App\Helpers\IdHasher::encode($book->id));
     }
 
@@ -151,6 +179,7 @@ class BookController extends Controller
 
         abort_if($book->document === null, 503, 'Run php artisan writer:migrate-articles before opening the workspace.');
 
+        $request->session()->put('writer.editor_book', $book->id);
         return view('writer.books.show', ['book' => $book, 'categories' => \App\Models\Category::with('parentCategory')->where('parent_category_id', '>', 0)->orderBy('category_name')->get()]);
     }
 

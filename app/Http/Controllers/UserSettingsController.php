@@ -127,8 +127,8 @@
 					'max:255',
 					Rule::unique('users')->ignore($user->id),
 				],
-				'page_title' => ['required', 'string', 'max:255'],
-				'about_me' => ['required', 'string', 'max:1500'],
+				'page_title' => ['nullable', 'string', 'max:255'],
+				'about_me' => ['nullable', 'string', 'max:1500'],
 				'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:1024'],
 			]);
 
@@ -149,8 +149,8 @@
 			$user->name = $request->input('name');
 			$user->username = $request->input('username');
 			$user->email = $request->input('email');
-			$user->page_title = $request->input('page_title');
-			$user->about_me = $request->input('about_me');
+			$user->page_title = $request->input('page_title') ?? '';
+			$user->about_me = $request->input('about_me') ?? '';
 			$user->personal_url = $request->input('personal_url');
 			$user->save();
 

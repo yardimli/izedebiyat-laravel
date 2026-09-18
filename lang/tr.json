@@ -765,5 +765,26 @@
     "Export format": "Dışa aktarma biçimi",
     "Save export": "Dışa aktar ve kaydet"
 ,
-    "Continue writing": "Yazmaya devam et"
+    "Continue writing": "Yazmaya devam et",
+    "Sign up with Google": "Google ile aramıza katılın",
+    "This page is still waiting for its first title.": "Bu sayfa, ilk başlığının doğmasını bekliyor.",
+    "The author’s own story is still resting between the lines.": "Yazarın kendi öyküsü, şimdilik satır aralarında dinleniyor.",
+    "The paths beyond this page are yet to be traced.": "Bu sayfanın ötesine uzanan yollar henüz çizilmedi.",
+    "If you joined with Google, use the password reset link to set your first password.": "Google ile katıldıysanız ilk şifrenizi belirlemek için şifre sıfırlama bağlantısını kullanın.",
+    "Google could not verify your email address.": "Google e-posta adresinizi doğrulayamadı.",
+    "This email is linked to another Google account.": "Bu e-posta başka bir Google hesabına bağlı.",
+    "Google sign-in could not be completed. Please try again.": "Google ile giriş tamamlanamadı. Lütfen yeniden deneyin.",
+    "Create new story": "Yeni eser oluştur",
+    "Story title": "Eserin başlığı",
+    "Start writing": "Yazmaya başla",
+    "Shall this story meet its readers?": "Bu eser okurlarıyla buluşsun mu?",
+    "Finding a home for your story…": "Eseriniz için bir yer aranıyor…",
+    "Publish story": "Eseri yayımla",
+    "Keep as draft": "Taslak olarak sakla",
+    "Your unfinished stories are waiting.": "Yarım kalan eserleriniz sizi bekliyor.",
+    "A few pages still rest on your desk. Return to them whenever the words arrive.": "Masanızda hâlâ dinlenen sayfalar var. Sözcükler kapınızı çaldığında onlara dönebilirsiniz.",
+    "Back to my desk": "Masama dön",
+    "Create a new story to begin. Its title can always change later.": "Başlamak için yeni bir eser oluşturun. Başlığını daha sonra değiştirebilirsiniz.",
+    "Your story is saved. You can publish it now or leave it as a draft.": "Eseriniz kaydedildi. Şimdi yayımlayabilir ya da taslak olarak saklayabilirsiniz.",
+    "Your story remains saved. Automatic category selection could not finish: :reason": "Eseriniz kayıtlı. Otomatik kategori seçimi tamamlanamadı: :reason"
 }

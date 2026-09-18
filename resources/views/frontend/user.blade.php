@@ -78,7 +78,7 @@
 
                         <div class="col-md-4 pl-md-5 sticky-sidebar">
                             <h4 class="spanborder pt-4">
-                                <span>{{ $user->page_title ?? 'Tanıtım' }}</span>
+                                <span>{{ trim($user->page_title ?? '') ?: __('This page is still waiting for its first title.') }}</span>
                             </h4>
 
                             <div class="text-center" style="position:relative;">
@@ -94,7 +94,9 @@
                             </div>
 
                             @php
-                                $about_me = $user->about_me;
+                                $about_me =
+                                    trim($user->about_me ?? '') ?:
+                                    e(__('The author’s own story is still resting between the lines.'));
 
                                 $about_me = str_replace('<a href="http://">http://</a>', '', $about_me);
                                 $about_me = str_replace('<a href="http:/">http:/</a>', '', $about_me);

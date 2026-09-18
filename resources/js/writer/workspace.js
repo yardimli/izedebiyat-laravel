@@ -1363,6 +1363,52 @@ export async function start() {
         link.click();
         link.remove();
     });
+    document.querySelectorAll('a[href="/eserlerim"], a[href$="/eserlerim"]').forEach((link) => {
+        link.addEventListener("click", async (event) => {
+            if (
+                event.ctrlKey ||
+                event.metaKey ||
+                event.shiftKey ||
+                event.altKey ||
+                event.button !== 0
+            )
+                return;
+            event.preventDefault();
+            try {
+                if (detailsDirty) {
+                    const form = $("#details-form");
+                    if (!form.reportValidity()) return;
+                    const {
+                        title,
+                        subtitle,
+                        subheading,
+                        category_id,
+                        keywords_string,
+                        featured_image,
+                        ...metadata
+                    } = Object.fromEntries(new FormData(form));
+                    await mutate(base, "PATCH", {
+                        title,
+                        subtitle,
+                        subheading,
+                        category_id: category_id || null,
+                        keywords_string,
+                        featured_image: featured_image || null,
+                        metadata,
+                    });
+                    detailsDirty = false;
+                }
+                if (codexDirty || codexSaving) await saveEntry();
+                do {
+                    await flush();
+                } while (dirty);
+                if (codexDirty) return;
+                window.location.assign(link.href);
+            } catch (error) {
+                notify(error.message);
+            }
+        });
+    });
     window.addEventListener("beforeunload", (e) => {
         if (dirty || codexDirty || detailsDirty) {
             e.preventDefault();

@@ -9,12 +9,53 @@
                 <p class="muted">{{ __('Return to a world you know. Or begin somewhere new.') }}</p>
             </div><span class="ornament">❧</span>
         </div>
-        <form action="{{ route('writer.books.store') }}" method="post" class="new-book">@csrf<label
-                for="book-title">{{ __('Your next book') }}</label>
-            <div class="row"><input id="book-title" name="title"
-                    placeholder="{{ __('Every story begins with a title…') }}" maxlength="200" required><button
-                    class="primary">{{ __('Begin a book') }} <span>↗</span></button></div>
-        </form>
+        <button type="button" class="primary new-book" id="create-story">{{ __('Create new story') }} ↗</button>
+        <dialog id="create-story-dialog" aria-labelledby="create-story-title">
+            <div class="dialog-heading">
+                <h2 id="create-story-title">{{ __('Create new story') }}</h2>
+                <button type="button" data-close-dialog aria-label="{{ __('Close') }}">×</button>
+            </div>
+            <form action="{{ route('writer.books.store') }}" method="post">@csrf
+                <label for="book-title">{{ __('Story title') }}</label>
+                <input id="book-title" name="title" value="{{ old('title') }}"
+                    placeholder="{{ __('Every story begins with a title…') }}" maxlength="200" required autofocus>
+                @error('title')
+                    <p role="alert">{{ $message }}</p>
+                @enderror
+                <button type="submit" class="primary">{{ __('Start writing') }} ↗</button>
+            </form>
+        </dialog>
+        @if ($returnedBook)
+            <div id="returned-story" data-book="{{ $returnedBook->id }}" data-new="{{ $newStory ? '1' : '0' }}"
+                data-revision="{{ $returnedBook->revision }}"></div>
+        @endif
+        @if ($newStory && $returnedBook && !$returnedBook->is_published && $returnedBook->word_count > 0)
+            <dialog id="publish-story-dialog" aria-labelledby="publish-story-title">
+                <h2 id="publish-story-title">{{ __('Shall this story meet its readers?') }}</h2>
+                <p>{{ $returnedBook->title }}</p>
+                <p id="publication-progress" role="status">{{ __('Finding a home for your story…') }}</p>
+                <div class="row"><button type="button" id="publish-new-story" class="primary"
+                        disabled>{{ __('Publish story') }}</button>
+                    <button type="button" data-close-dialog>{{ __('Keep as draft') }}</button>
+                </div>
+            </dialog>
+        @elseif (!$newStory && $drafts->isNotEmpty())
+            <dialog id="draft-reminder-dialog" aria-labelledby="draft-reminder-title">
+                <div class="dialog-heading">
+                    <h2 id="draft-reminder-title">{{ __('Your unfinished stories are waiting.') }}</h2>
+                    <button type="button" data-close-dialog aria-label="{{ __('Close') }}">×</button>
+                </div>
+                <p>{{ __('A few pages still rest on your desk. Return to them whenever the words arrive.') }}</p>
+                <ul>
+                    @foreach ($drafts as $draft)
+                        <li><a
+                                href="{{ route('articles.edit', \App\Helpers\IdHasher::encode($draft->id)) }}">{{ $draft->title }}</a>
+                        </li>
+                    @endforeach
+                </ul>
+                <button type="button" data-close-dialog>{{ __('Back to my desk') }}</button>
+            </dialog>
+        @endif
         <form method="get" action="{{ route('articles.index') }}" class="library-search" role="search">
             <label for="work-search">{{ __('Search your works') }}</label>
             <div class="row"><input id="work-search" type="search" name="q" value="{{ $search }}"
@@ -94,7 +135,7 @@
                 </article>
             @empty <div class="empty-library"><span>Ⅰ</span>
                     <h2>{{ $search !== '' ? __('No matching works.') : __('The first page is waiting.') }}</h2>
-                    <p>{{ $search !== '' ? __('Try another title or a phrase from the short description.') : __('Give your book a title above. You can always change it later.') }}
+                    <p>{{ $search !== '' ? __('Try another title or a phrase from the short description.') : __('Create a new story to begin. Its title can always change later.') }}
                     </p>
                 </div>
             @endforelse
