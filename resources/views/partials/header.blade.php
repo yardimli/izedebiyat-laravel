@@ -16,7 +16,7 @@
             </button>
 
             @if (Auth::user())
-                <a href="{{ route('backend.account') }}">
+                <a href="{{ route('articles.index') }}">
                     <img class="small-user-avatar"
                         src="{{ !empty(Auth::user()->avatar) ? Storage::url(Auth::user()->avatar) : '/assets/images/avatar/placeholder.jpg' }}"
                         alt="avatar">
@@ -97,7 +97,7 @@
                         </ul>
 
                         @if (Auth::user())
-                            <a href="{{ route('backend.account') }}" class="user-avatar" id="UserMenu"
+                            <a href="{{ route('articles.index') }}" class="user-avatar" id="UserMenu"
                                 style="cursor: pointer;">
                                 <img src="{{ !empty(Auth::user()->avatar) ? Storage::url(Auth::user()->avatar) : '/assets/images/avatar/placeholder.jpg' }}"
                                     alt="avatar">
