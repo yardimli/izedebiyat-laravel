@@ -130,7 +130,7 @@
 		public function index()
 		{
 			if (Auth::user()->member_type !== 1) {
-				abort(403, 'Unauthorized action.');
+				abort(403, __('default.Unauthorized action.'));
 			}
 
 			$requests = AccountRecoveryRequest::orderBy('created_at', 'desc')->paginate(20);
@@ -143,7 +143,7 @@
 		public function show($id, Request $request)
 		{
 			if (Auth::user()->member_type !== 1) {
-				abort(403, 'Unauthorized action.');
+				abort(403, __('default.Unauthorized action.'));
 			}
 
 			$recoveryRequest = AccountRecoveryRequest::findOrFail($id);
@@ -169,7 +169,7 @@
 		public function approve(Request $request, $id)
 		{
 			if (Auth::user()->member_type !== 1) {
-				abort(403, 'Unauthorized action.');
+				abort(403, __('default.Unauthorized action.'));
 			}
 
 			$recoveryRequest = AccountRecoveryRequest::findOrFail($id);
@@ -217,7 +217,7 @@
 		public function reject(Request $request, $id)
 		{
 			if (Auth::user()->member_type !== 1) {
-				abort(403, 'Unauthorized action.');
+				abort(403, __('default.Unauthorized action.'));
 			}
 
 			$recoveryRequest = AccountRecoveryRequest::findOrFail($id);

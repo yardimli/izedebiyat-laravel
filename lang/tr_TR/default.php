@@ -310,4 +310,14 @@
 		'Your book has been submitted successfully.' => 'Kitabınız başarıyla gönderildi. Sizinle en kısa zamanda e-posta yoluyla iletişime geçeceğiz.',
 
 		'Book Review' => 'Kitap İzi',
-	];
+		'No comments yet' => 'Henüz yorum yok',
+		'Edit Image' => 'Görseli Düzenle',
+		'Refresh Page' => 'Sayfayı Yenile',
+		'Guest' => 'Misafir',
+		'Please enter a comment' => 'Lütfen bir yorum yazın',
+		'Error posting comment' => 'Yorum gönderilirken hata oluştu',
+		'Turkish' => 'Türkçe',
+		'No book reviews found' => 'Kitap izi bulunamadı',
+	    'Unauthorized action.' => 'Bu işlem için yetkiniz yok.',
+    'Not Found' => 'Bulunamadı',
+];

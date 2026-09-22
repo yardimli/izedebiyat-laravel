@@ -87,7 +87,7 @@
                         </div>
                         @if ($suspiciousIps->isNotEmpty())
                             <form action="{{ route('admin.read-cleanup.destroy') }}" method="POST"
-                                onsubmit="return confirm('Remove reads from these suspicious IPs and recalculate affected article counts?')">
+                                onsubmit="return confirm('Bu şüpheli IP adreslerinden gelen okumalar silinsin ve etkilenen eserlerin okunma sayıları yeniden hesaplansın mı?')">
                                 @csrf
                                 @method('DELETE')
                                 <input type="hidden" name="threshold" value="{{ $filters['threshold'] }}">
@@ -98,7 +98,7 @@
                     </div>
 
                     @if ($suspiciousIps->isEmpty())
-                        <p class="text-center my-3">No suspicious IPs found for this window.</p>
+                        <p class="text-center my-3">{{ __('No suspicious IPs found for this window.') }}</p>
                     @else
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">

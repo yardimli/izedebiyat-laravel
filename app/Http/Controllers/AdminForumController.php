@@ -131,7 +131,7 @@ class AdminForumController extends Controller
     private function ensureAdmin(): void
     {
         if (! Auth::check() || ! Auth::user()->isAdmin()) {
-            abort(403, 'Unauthorized action.');
+            abort(403, __('default.Unauthorized action.'));
         }
     }
 }

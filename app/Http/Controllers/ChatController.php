@@ -97,7 +97,7 @@
 				->first();
 
 			if (!$chatSession) {
-				return response()->json(['success' => false, 'message' => 'Invalid session']);
+				return response()->json(['success' => false, 'message' => __('Invalid session')]);
 			}
 
 			$session_id = $chatSession->id;
@@ -161,7 +161,7 @@
 				->first();
 
 			if (!$chatSession) {
-				return response()->json(['success' => false, 'message' => 'Session not found']);
+				return response()->json(['success' => false, 'message' => __('Session not found')]);
 			}
 
 			// Delete associated messages first
@@ -263,7 +263,7 @@
 				}
 
 				return response()->json([
-					'error' => 'Could not determine appropriate category'
+					'error' => __('Could not determine appropriate category')
 				], 422);
 
 			} catch (\Exception $e) {

@@ -20,8 +20,11 @@
 				App::setLocale(session()->get('locale'));
 			} else
 			{
-				App::setLocale( env('APP_LOCALE') ?? 'en_US'); // session()->get('locale'));
+				App::setLocale(config('app.locale', 'tr_TR'));
 			}
+			// Share the JSON and PHP catalogs with legacy regional locale names.
+			$locale = ['tr_TR' => 'tr', 'en_US' => 'en'][App::getLocale()] ?? App::getLocale();
+			App::setLocale($locale);
 			return $next($request);
 		}
 	}

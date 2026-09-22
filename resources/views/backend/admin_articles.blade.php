@@ -21,7 +21,7 @@
                 <form action="{{ route('admin.articles.index') }}" method="GET" class="flex-grow-1"
                     style="max-width: 760px;">
                     <div class="input-group">
-                        <input name="search" type="text" class="form-control" placeholder="Title, subtitle, or text ara"
+                        <input name="search" type="text" class="form-control" placeholder="{{ __('Title, subtitle, or text ara') }}"
                             value="{{ request('search') }}">
                         <select class="form-select" name="per_page" style="max-width: 110px;" onchange="this.form.submit()">
                             @foreach ([25, 50, 100, 200] as $size)
@@ -41,11 +41,11 @@
             <div class="card">
                 <div class="card-body">
                     @if ($articles->isEmpty())
-                        <p class="text-center my-3">No articles found.</p>
+                        <p class="text-center my-3">{{ __('No articles found.') }}</p>
                     @else
                         <form id="bulk-articles-form" action="{{ route('admin.articles.bulk-update') }}" method="POST"
                             class="d-flex flex-wrap align-items-center gap-2 mb-3"
-                            onsubmit="return confirm('Apply this action to selected articles?')">
+                            onsubmit="return confirm('Bu işlem seçili eserlere uygulansın mı?')">
                             @csrf
                             <input type="hidden" name="page" value="{{ request('page') }}">
                             <input type="hidden" name="search" value="{{ request('search') }}">

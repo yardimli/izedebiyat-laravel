@@ -352,4 +352,6 @@
 
 		'Book Review' => 'Book Review',
 
-	];
+	    'Unauthorized action.' => 'Unauthorized action.',
+    'Not Found' => 'Not Found',
+];

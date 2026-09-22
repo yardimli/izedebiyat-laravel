@@ -217,7 +217,7 @@
                         },
                         error: function(xhr, status, error) {
                             console.error('Upload failed:', error);
-                            alert('Image upload failed. Please try again.');
+                            alert(@json(__('Image upload failed. Please try again.')));
                         }
                     });
                 }

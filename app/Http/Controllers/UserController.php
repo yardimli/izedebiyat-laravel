@@ -77,7 +77,7 @@
 		public function destroy(User $user)
 		{
 			if (Auth::user()->member_type !== 1) {
-				abort(403, 'Unauthorized action.');
+				abort(403, __('default.Unauthorized action.'));
 			}
 
 			// Delete all articles by the user
@@ -86,6 +86,6 @@
 			// Delete the user
 			$user->delete();
 
-			return redirect()->route('admin-users-index')->with('success', 'User and all their articles have been deleted successfully.');
+			return redirect()->route('admin-users-index')->with('success', __('User and all their articles have been deleted successfully.'));
 		}
 	}

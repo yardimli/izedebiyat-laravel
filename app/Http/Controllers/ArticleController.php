@@ -19,7 +19,7 @@
 		private function ensureAdmin(): void
 		{
 			if (!Auth::check() || !Auth::user()->isAdmin()) {
-				abort(403, 'Unauthorized action.');
+				abort(403, __('default.Unauthorized action.'));
 			}
 		}
 
@@ -67,7 +67,7 @@
 			$article->update($validated);
 
 			return redirect()->route('admin.articles.index', $request->only('search', 'page', 'per_page'))
-				->with('success', 'Article flags updated successfully.');
+				->with('success', __('Article flags updated successfully.'));
 		}
 
 		public function adminBulkUpdate(Request $request)
@@ -113,7 +113,7 @@
 				->update($updates);
 
 			return redirect()->route('admin.articles.index', $request->only('search', 'page', 'per_page'))
-				->with('success', count($validated['article_ids']) . ' articles updated successfully.');
+				->with('success', __(':count articles updated successfully.', ['count' => count($validated['article_ids'])]));
 		}
 
 		public function adminDestroy(Request $request, Article $article)
@@ -123,7 +123,7 @@
 			$article->update(['deleted' => 1]);
 
 			return redirect()->route('admin.articles.index', $request->only('search', 'page', 'per_page'))
-				->with('success', 'Article deleted successfully.');
+				->with('success', __('Article deleted successfully.'));
 		}
 
 		public function adminReadCleanup(Request $request)
@@ -614,6 +614,6 @@
 				return response()->json(['success' => true]);
 			}
 
-			return response()->json(['success' => false, 'message' => 'Already recorded']);
+			return response()->json(['success' => false, 'message' => __('Already recorded')]);
 		}
 	}

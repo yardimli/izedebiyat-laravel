@@ -30,7 +30,7 @@
 				if (Auth::check() && Auth::user()->isAdmin()) {
 					return $next($request);
 				}
-				abort(403, 'Unauthorized action.');
+				abort(403, __('default.Unauthorized action.'));
 			});
 		}
 
@@ -219,7 +219,7 @@
 			]);
 
 			if ($validator->fails()) {
-				return response()->json(['status' => 'error', 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+				return response()->json(['status' => 'error', 'message' => __('Validation failed'), 'errors' => $validator->errors()], 422);
 			}
 
 			// 2. Check if the book already exists
@@ -228,7 +228,7 @@
 				->exists();
 
 			if ($existingBook) {
-				return response()->json(['status' => 'skipped', 'message' => 'Book already exists'], 200);
+				return response()->json(['status' => 'skipped', 'message' => __('Book already exists')], 200);
 			}
 
 			// 3. Process and store the new book
@@ -257,11 +257,11 @@
 
 				BookReview::create($data);
 
-				return response()->json(['status' => 'success', 'message' => 'Book review created successfully'], 201);
+				return response()->json(['status' => 'success', 'message' => __('Book review created successfully')], 201);
 			} catch (\Exception $e) {
 				// Log the error for debugging
 				\Illuminate\Support\Facades\Log::error('Book ingestion failed: ' . $e->getMessage());
-				return response()->json(['status' => 'error', 'message' => 'An internal error occurred.'], 500);
+				return response()->json(['status' => 'error', 'message' => __('An internal error occurred.')], 500);
 			}
 		}
 

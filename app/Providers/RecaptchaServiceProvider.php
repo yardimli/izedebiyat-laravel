@@ -38,7 +38,7 @@ class RecaptchaServiceProvider extends ServiceProvider
 	    });
 
 	    Validator::replacer('recaptcha', function ($message, $attribute, $rule, $parameters) {
-		    return 'The recaptcha verification failed. Please try again.';
+		    return __('The recaptcha verification failed. Please try again.');
 	    });
     }
 }

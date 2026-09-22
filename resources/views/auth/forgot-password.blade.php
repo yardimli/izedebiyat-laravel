@@ -119,7 +119,7 @@
                                     <!-- Input group -->
                                     <div class="input-group input-group-lg">
                                         <input class="form-control fakepassword psw-input" type="password"
-                                            id="psw-input" placeholder="Enter new password">
+                                            id="psw-input" placeholder="{{ __('Enter new password') }}">
                                         <span class="input-group-text p-0">
                                             <i
                                                 class="fakepasswordicon fa-solid fa-eye-slash cursor-pointer p-2 w-40px"></i>

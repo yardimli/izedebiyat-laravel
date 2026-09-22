@@ -44,7 +44,7 @@
 
 			$this->renderable(function (NotFoundHttpException $e, $request) {
 				if ($request->is('*.map')) {
-					return response()->json(['message' => 'Not Found'], 404);
+					return response()->json(['message' => __('default.Not Found')], 404);
 				}
 			});
 

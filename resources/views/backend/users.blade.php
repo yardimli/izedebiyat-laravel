@@ -11,7 +11,7 @@
                     <input type="hidden" name="sort" value="{{ $sort }}"><input type="hidden" name="direction"
                         value="{{ $direction }}">
                     <div class="input-group mb-3">
-                        <input name="search" type="text" class="form-control" placeholder="Search users"
+                        <input name="search" type="text" class="form-control" placeholder="{{ __('Search users') }}"
                             value="{{ request('search') }}">
                         <button class="btn btn-primary" type="submit">Search</button>
                     </div>

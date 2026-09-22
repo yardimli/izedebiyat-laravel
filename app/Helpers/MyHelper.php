@@ -212,7 +212,7 @@
 				return "<img src='/{$image_src}' 
                 class='{$extraClass}' style='{$extraStyle}' alt='yazı resim'>";
 			} else {
-				echo "Category image not found for category id: " . $categoryId;
+				echo e(__('Category image not found for category id: :id', ['id' => $categoryId]));
 			}
 		}
 

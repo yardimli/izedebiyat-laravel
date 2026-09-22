@@ -267,7 +267,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 
 				$falApiKey = config('image_generation.fal_key');
 				if (empty($falApiKey)) {
-					return response()->json(['success' => false, 'message' => 'FAL_API_KEY environment variable is not set'], 503);
+					return response()->json(['success' => false, 'message' => __('FAL_API_KEY environment variable is not set')], 503);
 				}
 
 				$client = $this->imageClient();
@@ -428,7 +428,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 		public function destroyGenImage($id)
 		{
 			if (!Auth::check()) {
-				return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+				return response()->json(['success' => false, 'message' => __('Unauthorized')], 401);
 			}
 
 			$image = Image::where('id', $id)
@@ -436,7 +436,7 @@ With the above information, compose a image. Write it as a single paragraph. The
 				->first();
 
 			if (!$image) {
-				return response()->json(['success' => false, 'message' => 'Record not found'], 404);
+				return response()->json(['success' => false, 'message' => __('Record not found')], 404);
 			}
 
 			// Delete the image file
@@ -447,6 +447,6 @@ With the above information, compose a image. Write it as a single paragraph. The
 			// Delete the database record
 			$image->delete();
 
-			return response()->json(['success' => true, 'message' => 'Image deleted successfully']);
+			return response()->json(['success' => true, 'message' => __('Image deleted successfully')]);
 		}
 	}

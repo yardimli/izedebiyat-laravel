@@ -21,7 +21,7 @@
 				if (Auth::check() && Auth::user()->isAdmin()) {
 					return $next($request);
 				}
-				abort(403, 'Unauthorized action.');
+				abort(403, __('default.Unauthorized action.'));
 			});
 		}
 

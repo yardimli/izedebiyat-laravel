@@ -62,11 +62,11 @@
 		public function destroy(Comment $comment)
 		{
 			if (Auth::id() !== $comment->user_id && !Auth::user()->isAdmin()) {
-				return response()->json(['message' => 'Unauthorized'], 403);
+				return response()->json(['message' => __('Unauthorized')], 403);
 			}
 
 			$comment->delete();
-			return response()->json(['message' => 'Comment deleted successfully']);
+			return response()->json(['message' => __('Comment deleted successfully')]);
 		}
 
 		//------------------------------------------ IMPORT OLD COMMENTS ------

@@ -184,7 +184,7 @@ Write a prompt to create an image using the above text.: Write in English even i
 
                 // Delete Image
                 $('.delete-upload-image').on('click', function() {
-                    if (confirm('Are you sure you want to delete this image?')) {
+                    if (confirm(@json(__('default.Are you sure you want to delete this image?')))) {
                         const id = $(this).data('id');
 
                         $.ajax({
@@ -195,10 +195,10 @@ Write a prompt to create an image using the above text.: Write in English even i
                             },
                             success: function() {
                                 loadImages();
-                                showNotification('Image deleted successfully', 'success');
+                                showNotification(@json(__('default.Image deleted successfully')), 'success');
                             },
                             error: function() {
-                                showNotification('Error deleting image');
+                                showNotification(@json(__('default.Error deleting image')));
                             }
                         });
                     }
@@ -348,7 +348,7 @@ Write a prompt to create an image using the above text.: Write in English even i
                             '{{ __('default.Generate Image') }}');
                     },
                     error: function() {
-                        showNotification('Error generating image');
+                        showNotification(@json(__('default.Error generating image')));
                         $('#generateImageBtn').prop('disabled', false).text(
                             '{{ __('default.Generate Image') }}');
                     }
@@ -357,7 +357,7 @@ Write a prompt to create an image using the above text.: Write in English even i
 
             // Delete generated image
             $(document).on('click', '.delete-generated-image', function() {
-                if (confirm('Are you sure you want to delete this generated image?')) {
+                if (confirm(@json(__('default.Are you sure you want to delete this generated image?')))) {
                     const sessionId = $(this).data('id');
                     $.ajax({
                         url: `/image-gen/${sessionId}`,
@@ -367,10 +367,10 @@ Write a prompt to create an image using the above text.: Write in English even i
                         },
                         success: function() {
                             loadImages();
-                            showNotification('Generated image deleted successfully', 'success');
+                            showNotification(@json(__('default.Generated image deleted successfully')), 'success');
                         },
                         error: function() {
-                            showNotification('Error deleting generated image');
+                            showNotification(@json(__('default.Error deleting generated image')));
                         }
                     });
                 }
@@ -413,10 +413,10 @@ Write a prompt to create an image using the above text.: Write in English even i
                     success: function() {
                         $('#uploadImageModal').modal('hide');
                         loadImages();
-                        showNotification('Image uploaded successfully', 'success');
+                        showNotification(@json(__('default.Image uploaded successfully')), 'success');
                     },
                     error: function() {
-                        showNotification('Error uploading image');
+                        showNotification(@json(__('default.Error uploading image')));
                     }
                 });
             });
@@ -433,10 +433,10 @@ Write a prompt to create an image using the above text.: Write in English even i
                     success: function() {
                         $('#editImageModal').modal('hide');
                         loadImages();
-                        showNotification('Image updated successfully', 'success');
+                        showNotification(@json(__('default.Image updated successfully')), 'success');
                     },
                     error: function() {
-                        showNotification('Error updating image');
+                        showNotification(@json(__('default.Error updating image')));
                     }
                 });
             });
