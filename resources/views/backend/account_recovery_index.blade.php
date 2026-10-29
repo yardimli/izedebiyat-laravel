@@ -34,7 +34,7 @@
                                                 {{-- MODIFIED: Added handling for approved_deleted status --}}
                                                 <span
                                                     class="badge bg-{{ $request->status === 'pending' ? 'warning' : ($request->status === 'approved' ? 'success' : ($request->status === 'approved_deleted' ? 'dark' : 'danger')) }}">
-                                                    {{ ucfirst($request->status) }}
+                                                    {{ $request->delete_account && in_array($request->status, ['approved', 'approved_deleted']) ? 'Hesap silindi' : ucfirst($request->status) }}
                                                 </span>
                                             </td>
                                             <td>{{ $request->created_at->format('d M Y H:i') }}</td>

@@ -15,6 +15,7 @@
 	use App\Http\Controllers\AdminForumController;
 	use App\Http\Controllers\AdminQuoteController;
 	use App\Http\Controllers\AdminLlmSettingController;
+	use App\Http\Controllers\AdminLlmUsageController;
 	use App\Http\Controllers\LoginWithGoogleController;
 	use App\Http\Controllers\UserController;
 	use App\Http\Controllers\UserSettingsController;
@@ -363,6 +364,7 @@
 		Route::get('/admin/hesap-kurtarma', [AccountRecoveryController::class, 'index'])->name('admin.account-recovery.index');
 		Route::get('/admin/hesap-kurtarma/{id}', [AccountRecoveryController::class, 'show'])->name('admin.account-recovery.show');
 		Route::post('/admin/hesap-kurtarma/{id}/onayla', [AccountRecoveryController::class, 'approve'])->name('admin.account-recovery.approve');
+		Route::get('/admin/hesap-kurtarma/{id}/onay', [AccountRecoveryController::class, 'confirmation'])->name('admin.account-recovery.confirm');
 		Route::post('/admin/hesap-kurtarma/{id}/reddet', [AccountRecoveryController::class, 'reject'])->name('admin.account-recovery.reject');
 
 		// Admin routes for Book Reviews
@@ -375,6 +377,7 @@
         Route::resourceVerbs(['create' => 'create', 'edit' => 'edit']);
 		Route::post('/admin/alintilar/olustur', [AdminQuoteController::class, 'generate'])->name('admin.quotes.generate');
 		Route::get('/admin/yapay-zeka-ayarlari', [AdminLlmSettingController::class, 'edit'])->name('admin.llm-settings.edit');
+		Route::get('/admin/llm-kullanimi', [AdminLlmUsageController::class, 'index'])->name('admin.llm-usage.index');
 		Route::put('/admin/yapay-zeka-ayarlari', [AdminLlmSettingController::class, 'update'])->name('admin.llm-settings.update');
 
 

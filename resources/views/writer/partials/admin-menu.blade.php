@@ -5,6 +5,7 @@
             <path d="m8 12 3 3 5-6" />
         </svg><span>Yönetim</span></summary>
     <div class="admin-menu-items">
+        <a href="{{ route('admin.llm-usage.index') }}">LLM Kullanımı</a>
         @foreach (['admin-users-index' => 'Kullanıcılar', 'admin.articles.index' => 'Eserler', 'admin.read-cleanup.index' => 'Okuma kayıtları', 'book-reviews.index' => 'Kitap incelemeleri', 'book-authors.index' => 'Kitap yazarları', 'admin.forum.index' => 'Forum', 'admin.quotes.index' => 'Edebiyat alıntıları', 'admin.llm-settings.edit' => 'Zekai ayarları', 'admin.account-recovery.index' => 'Hesap kurtarma talepleri'] as $route => $label)
             <a href="{{ route($route) }}">{{ $label }}</a>
         @endforeach

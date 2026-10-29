@@ -107,6 +107,14 @@
                                                 @if ($article->user)
                                                     <a href="{{ route('user', $article->user->slug) }}"
                                                         target="_blank">{{ $article->user->name }}</a>
+                                                    @if ($article->user->id !== auth()->id() && !session()->has('admin_impersonation'))
+                                                        <form action="{{ route('users-login-as') }}" method="POST" class="mt-2">
+                                                            @csrf
+                                                            <input type="hidden" name="user_id" value="{{ $article->user->id }}">
+                                                            <button type="submit" class="btn btn-primary btn-sm"
+                                                                aria-label="{{ $article->user->name }} olarak giriş yap">Kullanıcı Olarak Giriş Yap</button>
+                                                        </form>
+                                                    @endif
                                                 @else
                                                     {{ $article->name ?: '-' }}
                                                 @endif

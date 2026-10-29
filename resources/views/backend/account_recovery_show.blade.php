@@ -1,6 +1,13 @@
 @extends('writer.layouts.portal')
 @section('title', 'Talep Detayı')
 @section('portal-content')
+    <style>
+        .portal-content input.recovery-radio { appearance: auto !important; -webkit-appearance: radio !important; width: 1.25rem !important; height: 1.25rem !important; padding: 0 !important; margin: .25rem .5rem 0 0 !important; border-radius: 50% !important; display: inline-block !important; accent-color: #137552; }
+        .recovery-choice:has(input:checked) { outline: 3px solid #137552; background: #e7f3eb; color: #183c2a; }
+        .recovery-selected { display: none; font-weight: bold; }
+        input:checked ~ .recovery-selected { display: inline; }
+        .recovery-choice { margin-bottom: .75rem; overflow-wrap: anywhere; cursor: pointer; }
+    </style>
     <main>
         <div class="container mt-5" style="min-height: calc(88vh);">
             <a href="{{ route('admin.account-recovery.index') }}" class="btn btn-secondary mb-4">&larr; Taleplere Geri Dön</a>
@@ -8,6 +15,9 @@
 
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
+            @if ($errors->any())
+                <div class="alert alert-danger" role="alert">@foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>
             @endif
 
             <div class="row">
@@ -30,7 +40,7 @@
                                 <p><strong>Talep Tipi:</strong> Hesap Kurtarma</p>
                             @endif
                             <p><strong>Durum:</strong> <span
-                                    class="badge bg-{{ $request->status === 'pending' ? 'warning' : ($request->status === 'approved' ? 'success' : ($request->status === 'approved_deleted' ? 'dark' : 'danger')) }}">{{ ucfirst($request->status) }}</span>
+                                    class="badge bg-{{ $request->status === 'pending' ? 'warning' : ($request->status === 'approved' ? 'success' : ($request->status === 'approved_deleted' ? 'dark' : 'danger')) }}">{{ $request->delete_account && in_array($request->status, ['approved', 'approved_deleted']) ? 'Hesap silindi' : ucfirst($request->status) }}</span>
                             </p>
                             <p><strong>Talep Tarihi:</strong> {{ $request->created_at->format('d M Y H:i') }}</p>
                         </div>
@@ -56,12 +66,15 @@
                                     class="mb-3">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control"
-                                            placeholder="İsim veya e-posta ile ara..." value="{{ $searchQuery ?? '' }}">
+                                            aria-label="Kullanıcı ara" placeholder="İsim, e-posta, profil adresi veya slug..." value="{{ $searchQuery ?? '' }}">
                                         <button class="btn btn-outline-secondary" type="submit">Ara</button>
                                     </div>
                                 </form>
+                                @if ($request->profile_url)
+                                    <a class="btn btn-outline-secondary mb-3" href="{{ route('admin.account-recovery.show', ['id' => $request->id, 'search' => $request->profile_url]) }}">Belirtilen Profil Adresi ile Bul</a>
+                                @endif
 
-                                @if (isset($searchQuery))
+                                @if ($searchQuery !== '')
                                     @if ($possible_users->isEmpty())
                                         <div class="alert alert-warning">Bu bilgilere uyan kullanıcı bulunamadı.</div>
                                     @else
@@ -72,27 +85,37 @@
                                                 <label class="form-label">Onaylanacak Kullanıcıyı Seçin</label>
                                                 <div class="list-group">
                                                     @foreach ($possible_users as $user)
-                                                        <label class="list-group-item">
-                                                            <input class="form-check-input me-1" type="radio"
-                                                                name="user_id" value="{{ $user->id }}" required>
+                                                        <label class="list-group-item recovery-choice">
+                                                            <input class="recovery-radio" type="radio"
+                                                                name="user_id" value="{{ $user->id }}" @checked((string) old('user_id') === (string) $user->id) required>
+                                                            <span class="recovery-selected">Seçildi — </span>
                                                             <a href="{{ route('user', $user->slug) }}"
                                                                 target="_blank">{{ $user->name }}</a>
                                                             ({{ $user->email }})
+                                                            <div>Profil: <a href="{{ route('user', $user->slug) }}" target="_blank" rel="noopener">{{ route('user', $user->slug) }}</a></div>
+                                                            <div>Slug: {{ $user->slug }} · Hesap #{{ $user->id }}</div>
                                                         </label>
                                                     @endforeach
                                                 </div>
                                             </div>
+                                            @unless ($request->delete_account)
+                                                <div class="mb-3">
+                                                    <label for="new_email">Yeni e-posta adresi</label>
+                                                    <input type="email" id="new_email" name="new_email" class="form-control" required maxlength="255" value="{{ old('new_email', $request->contact_email) }}">
+                                                    <p>Şifre belirleme bağlantısı ve giriş bilgileri bu adrese gönderilecek.</p>
+                                                </div>
+                                            @endunless
                                             <div class="mb-3">
                                                 <label for="notes_approve" class="form-label">Notlar (İsteğe Bağlı)</label>
-                                                <textarea name="notes" id="notes_approve" class="form-control" rows="3"></textarea>
+                                                <textarea name="notes" id="notes_approve" class="form-control" rows="3">{{ old('notes') }}</textarea>
                                             </div>
                                             {{-- MODIFIED: Dynamic button text and color based on request type --}}
                                             <button type="submit"
                                                 class="btn btn-{{ $request->delete_account ? 'danger' : 'success' }}">
                                                 @if ($request->delete_account)
-                                                    Talebi Onayla ve Hesabı Kalıcı Olarak Sil
+                                                    Silinecek Hesabı İncele
                                                 @else
-                                                    Talebi Onayla, E-postayı Güncelle ve Şifre Gönder
+                                                    Hesabı ve E-posta Değişikliğini İncele
                                                 @endif
                                             </button>
                                         </form>
