@@ -56,6 +56,10 @@
                     <section data-content="details" hidden>
                         <form id="details-form"><label>{{ __('Book title') }}<input name="title" required
                                     maxlength="200"></label>
+                            <label>{{ __('Publish status') }}<select name="is_published">
+                                    <option value="0">{{ __('Draft') }}</option>
+                                    <option value="1">{{ __('Published') }}</option>
+                                </select></label>
                             <label>{{ __('Subtitle') }}<input name="subtitle" maxlength="255"></label>
                             <label>{{ __('Introduction') }}
                                 <textarea name="subheading" rows="4" maxlength="500"></textarea>

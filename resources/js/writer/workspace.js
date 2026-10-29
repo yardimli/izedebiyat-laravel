@@ -265,6 +265,7 @@ export async function start() {
         const details = $("#details-form");
         if (!detailsDirty) {
             details.elements.title.value = state.book.title;
+            details.elements.is_published.value = state.book.is_published ? "1" : "0";
             for (const key of [
                 "subtitle",
                 "subheading",
@@ -686,6 +687,7 @@ export async function start() {
                 category_id,
                 keywords_string,
                 featured_image,
+                is_published,
                 ...metadata
             } = values;
             await mutate(base, "PATCH", {
@@ -695,6 +697,7 @@ export async function start() {
                 category_id: category_id || null,
                 keywords_string,
                 featured_image: featured_image || null,
+                is_published: is_published === "1",
                 metadata,
             });
             detailsDirty = false;
@@ -1385,6 +1388,7 @@ export async function start() {
                         category_id,
                         keywords_string,
                         featured_image,
+                        is_published,
                         ...metadata
                     } = Object.fromEntries(new FormData(form));
                     await mutate(base, "PATCH", {
@@ -1394,6 +1398,7 @@ export async function start() {
                         category_id: category_id || null,
                         keywords_string,
                         featured_image: featured_image || null,
+                        is_published: is_published === "1",
                         metadata,
                     });
                     detailsDirty = false;

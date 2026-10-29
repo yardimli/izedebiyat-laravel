@@ -111,17 +111,16 @@ export function start() {
         });
     }
     document.querySelectorAll("[data-publish-book]").forEach((button) => {
-        button.onchange = async () => {
+        button.onclick = async () => {
             button.disabled = true;
             try {
                 await api(`/yazi-atolyesi/api/books/${button.dataset.publishBook}`, "PATCH", {
                     revision: Number(button.dataset.revision),
-                    is_published: button.value === "1",
+                    is_published: true,
                 });
                 window.location.reload();
             } catch (e) {
                 notify(e.message);
-                button.value = button.dataset.published;
                 button.disabled = false;
             }
         };

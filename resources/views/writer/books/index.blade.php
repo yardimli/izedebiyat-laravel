@@ -96,7 +96,7 @@
         </h2>
         <div class="book-grid">
             @forelse ($books as $book)
-                <article class="book-card">
+                <article class="book-card{{ !$book->is_published ? ' book-card-draft' : '' }}">
                     <div class="book-spine"></div>
                     <p class="book-publication-date muted">
                         {{ $book->is_published ? __('Publication date') : __('Created on') }}: @if ($book->created_at)
@@ -136,12 +136,12 @@
                         </div>
                     </div>
                     <div class="book-manage-actions">
-                        <label>{{ __('Publish status') }}<select data-publish-book="{{ $book->id }}"
-                                data-revision="{{ $book->revision }}"
-                                data-published="{{ $book->is_published ? '1' : '0' }}">
-                                <option value="0" @selected(!$book->is_published)>{{ __('Draft') }}</option>
-                                <option value="1" @selected($book->is_published)>{{ __('Published') }}</option>
-                            </select></label>
+                        @if (!$book->is_published)
+                            <button type="button" class="primary" data-publish-book="{{ $book->id }}"
+                                data-revision="{{ $book->revision }}">{{ __('Publish') }}</button>
+                        @else
+                            <span class="book-publication-status">{{ __('Published') }}</span>
+                        @endif
                         <form method="post" action="{{ route('writer.books.destroy', $book) }}" data-delete-book>@csrf
                             @method('DELETE')<button type="submit">{{ __('Delete book') }}</button></form>
                     </div>

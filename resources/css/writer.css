@@ -390,6 +390,22 @@ small {
     display: flex;
     flex-direction: column;
 }
+.book-card-draft {
+    background: #eee0bd;
+    border-color: #ad8c49;
+}
+html[data-theme="light"] .book-card-draft {
+    background: #fff5d9;
+    border-color: #c5a358;
+}
+html[data-theme="dark"] .book-card-draft {
+    background: #3b3525;
+    border-color: #8e7949;
+}
+.book-publication-status {
+    align-self: center;
+    font-weight: 600;
+}
 .book-spine {
     position: absolute;
     left: 7px;
