@@ -22,7 +22,7 @@
                 @error('title')
                     <p role="alert">{{ $message }}</p>
                 @enderror
-                <button type="submit" class="primary">{{ __('Start writing') }} ↗</button>
+                <button type="submit" class="primary">{{ __('Start writing') }}</button>
             </form>
         </dialog>
         @if ($returnedBook)
@@ -53,7 +53,20 @@
                         </li>
                     @endforeach
                 </ul>
-                <button type="button" data-close-dialog>{{ __('Back to my desk') }}</button>
+                <div class="row">
+                    <button type="button" id="publish-all-drafts" class="primary">{{ __('Publish all drafts (:count)', ['count' => $drafts->count()]) }}</button>
+                    <button type="button" data-close-dialog>{{ __('Cancel') }}</button>
+                </div>
+            </dialog>
+            <dialog id="publish-drafts-confirm" aria-labelledby="publish-drafts-title"
+                data-url="{{ route('writer.books.publish-drafts') }}" data-drafts="{{ $drafts->map->only(['id', 'revision'])->toJson() }}">
+                <h2 id="publish-drafts-title">{{ __('Publish :count drafts?', ['count' => $drafts->count()]) }}</h2>
+                <p>{{ __('Eligible works will become visible to readers. Works that cannot be published will be listed with a reason.') }}</p>
+                <div id="publish-drafts-result" role="status" aria-live="polite"></div>
+                <div class="row">
+                    <button type="button" id="confirm-publish-drafts" class="primary">{{ __('Publish') }}</button>
+                    <button type="button" id="cancel-publish-drafts">{{ __('Cancel') }}</button>
+                </div>
             </dialog>
         @endif
         <form method="get" action="{{ route('articles.index') }}" class="library-search" role="search">

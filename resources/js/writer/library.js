@@ -16,6 +16,48 @@ export function start() {
         if (event.persisted) window.location.reload();
     });
     const returned = $("#returned-story");
+    const bulkDialog = $("#publish-drafts-confirm");
+    let bulkPublished = false;
+    action("#publish-all-drafts", () => {
+        $("#draft-reminder-dialog").close();
+        bulkDialog.showModal();
+    });
+    action("#cancel-publish-drafts", () => {
+        if (bulkPublished) window.location.reload();
+        else bulkDialog.close();
+    });
+    bulkDialog?.addEventListener("cancel", (event) => {
+        if ($("#cancel-publish-drafts").disabled) event.preventDefault();
+        else if (bulkPublished) window.location.reload();
+    });
+    action("#confirm-publish-drafts", async () => {
+        const submit = $("#confirm-publish-drafts");
+        const cancel = $("#cancel-publish-drafts");
+        const result = $("#publish-drafts-result");
+        submit.disabled = cancel.disabled = true;
+        result.textContent = t("Publishing…");
+        try {
+            const response = await api(bulkDialog.dataset.url, "POST", {
+                confirmed: true, drafts: JSON.parse(bulkDialog.dataset.drafts),
+            });
+            bulkPublished = true;
+            result.textContent = t(":count works published.", { count: response.published });
+            const list = document.createElement("ul");
+            for (const item of response.skipped) {
+                const row = document.createElement("li");
+                row.textContent = `${item.title}: ${item.reason}`;
+                list.append(row);
+            }
+            result.append(list);
+            submit.hidden = true;
+            cancel.textContent = t("Close");
+        } catch (error) {
+            result.textContent = error.message;
+            submit.disabled = false;
+        } finally {
+            cancel.disabled = false;
+        }
+    });
     const publishDialog = $("#publish-story-dialog");
     if (returned) {
         const publishButton = $("#publish-new-story");

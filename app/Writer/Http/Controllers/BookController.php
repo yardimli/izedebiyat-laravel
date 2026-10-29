@@ -144,7 +144,7 @@ class BookController extends Controller
     {
         $returnedBook = Book::where('user_id', $request->user()->id)->find($request->session()->pull('writer.editor_book'));
         $newStory = $returnedBook && $request->session()->pull('writer.new_book.'.$returnedBook->id, false);
-        $drafts = Book::where('user_id', $request->user()->id)->where('is_published', 0)->orderByDesc('updated_at')->get(['id', 'title']);
+        $drafts = Book::where('user_id', $request->user()->id)->where('is_published', 0)->orderByDesc('updated_at')->get(['id', 'title', 'revision']);
         $data = $request->validate(['q' => 'nullable|string|max:200', 'sort' => 'nullable|in:updated_at,created_at,read_count', 'direction' => 'nullable|in:asc,desc']);
         $sort = $data['sort'] ?? 'updated_at';
         $direction = $data['direction'] ?? 'desc';
@@ -160,6 +160,42 @@ class BookController extends Controller
         }
 
         return view('writer.books.index', ['returnedBook' => $returnedBook, 'newStory' => $newStory, 'drafts' => $drafts, 'books' => $books->select(['id', 'title', 'slug', 'user_id', 'metadata', 'manuscript', 'archived', 'deleted', 'revision', 'created_at', 'updated_at', 'read_count', 'is_published', 'approved', 'category_name', 'subtitle'])->withCount('comments')->orderBy($sort, $direction)->orderByDesc('id')->paginate(30)->withQueryString(), 'search' => $search, 'sort' => $sort, 'direction' => $direction]);
+    }
+
+    public function publishDrafts(Request $request)
+    {
+        $data = $request->validate([
+            'confirmed' => 'accepted', 'drafts' => 'required|array',
+            'drafts.*.id' => 'required|integer|distinct', 'drafts.*.revision' => 'required|integer',
+        ]);
+        return DB::transaction(function () use ($request, $data) {
+            $books = Book::where('user_id', $request->user()->id)->whereIn('id', array_column($data['drafts'], 'id'))
+                ->orderBy('id')->lockForUpdate()->get()->keyBy('id');
+            abort_unless($books->count() === count($data['drafts']), 404);
+            $published = 0;
+            $skipped = [];
+            foreach ($data['drafts'] as $draft) {
+                $book = $books[$draft['id']];
+                $reason = null;
+                if ($book->is_published) $reason = __('Already published.');
+                elseif ($book->revision !== (int) $draft['revision']) $reason = __('This work changed. Reload and review it.');
+                elseif (!$book->approved || $book->moderation_flagged || $book->archived) $reason = __('This work is not eligible for publication.');
+                elseif (trim(strip_tags($book->manuscript ?? $book->main_text ?? '')) === '') $reason = __('This work has no text.');
+                elseif (!\App\Models\Category::where('id', $book->category_id)->where('parent_category_id', '>', 0)->exists()) $reason = __('Select a category before publishing.');
+                if ($reason) {
+                    $skipped[] = ['id' => $book->id, 'title' => $book->title, 'reason' => $reason];
+                    continue;
+                }
+                $publication = ['is_published' => true];
+                $this->applyPublicationDetails($book, $publication);
+                Manuscript::snapshot($book, 'Book settings');
+                $book->fill($publication);
+                $book->revision++;
+                $book->save();
+                $published++;
+            }
+            return ['published' => $published, 'skipped' => $skipped];
+        });
     }
 
     public function store(Request $request)
