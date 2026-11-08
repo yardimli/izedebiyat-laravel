@@ -281,6 +281,25 @@ small {
 .nav-icon svg {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
+}
+.nav-label {
+    display: none;
+}
+@media (min-width: 1101px) {
+    .nav-label {
+        display: inline;
+        white-space: nowrap;
+    }
+    .nav-icon,
+    .theme-switcher summary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: auto;
+        padding-inline: 8px;
+    }
 }
 .account-sign-out {
     margin-top: 24px;

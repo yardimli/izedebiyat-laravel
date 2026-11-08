@@ -36,23 +36,23 @@
                     title="{{ __('My library') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M3 4h4v16H3Zm6 0h4v16H9Zm6 1 4-1 3 15-4 1Z" />
-                    </svg></a>
+                    </svg><span class="nav-label">{{ __('My library') }}</span></a>
                 @unless (request()->routeIs('articles.edit'))
                     <a class="nav-icon" href="{{ route('backend.following') }}" aria-label="Favorilerim"
                         title="Favorilerim"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
                             aria-hidden="true">
                             <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
-                        </svg></a>
+                        </svg><span class="nav-label">Favorilerim</span></a>
                     <a class="nav-icon" href="{{ route('chat') }}" aria-label="Sohbet" title="Sohbet"><svg viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
                             <path d="M21 11a8 8 0 0 1-8 8H7l-5 3 2-6a8 8 0 1 1 17-5Z" />
-                        </svg></a>
+                        </svg><span class="nav-label">Sohbet</span></a>
                     <a class="nav-icon" href="{{ route('writer.settings') }}" aria-label="{{ __('Account') }}"
                         title="{{ __('Account') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
                             <circle cx="12" cy="8" r="4" />
                             <path d="M4 21v-2a8 8 0 0 1 16 0v2" />
-                        </svg></a>
+                        </svg><span class="nav-label">{{ __('Account') }}</span></a>
                     @if (auth()->user()->isAdmin())
                         @include('writer.partials.admin-menu')
                     @endif
@@ -65,7 +65,7 @@
             <details class="theme-switcher" id="theme-picker">
                 <summary id="theme-current"
                     aria-label="{{ __('Appearance: :name', ['name' => __(auth()->user()->theme ?? 'paper')]) }}"
-                    title="{{ __('Change appearance') }}">@include('writer.partials.theme-icon', ['mode' => auth()->user()->theme ?? 'paper'])</summary>
+                    title="{{ __('Change appearance') }}">@include('writer.partials.theme-icon', ['mode' => auth()->user()->theme ?? 'paper'])<span class="nav-label">{{ __('Appearance') }}</span></summary>
                 <div class="theme-menu" role="group" aria-label="{{ __('Appearance') }}">
                     @foreach (['light' => 'Light', 'dark' => 'Dark', 'paper' => 'Paper'] as $mode => $label)
                         <button type="button" id="theme-{{ $mode }}" data-theme-choice="{{ $mode }}"

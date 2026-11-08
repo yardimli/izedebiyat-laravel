@@ -35,7 +35,8 @@ function showTheme(value) {
     );
     const selected = themeButtons.find((button) => button.dataset.themeChoice === value);
     if (selected) {
-        $("#theme-current").replaceChildren(selected.querySelector("svg").cloneNode(true));
+        const label = element("span", t("Appearance"), "nav-label");
+        $("#theme-current").replaceChildren(selected.querySelector("svg").cloneNode(true), label);
         $("#theme-current").setAttribute("aria-label", t("Appearance: :v0", { v0: t(value) }));
         $("#theme-current").title = t(":v0 mode · Change appearance", {
             v0: t(value[0].toUpperCase() + value.slice(1)),
