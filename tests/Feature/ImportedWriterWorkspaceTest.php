@@ -158,7 +158,7 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $body = ['id' => 'generation-test', 'usage' => ['cost' => .0001, 'prompt_tokens' => 449, 'completion_tokens' => 364, 'total_tokens' => 813], 'choices' => [['message' => ['content' => '{"chat_response":"Hello","changes":[]}']]]];
         Http::fake(['*/chat/completions' => Http::response($body)]);
         $router = app(OpenRouter::class);
-        $call = $router->reserve(User::find($book->user_id), $book, $model, $messages, 'write');
+        $call = $router->reserve(User::find($book->user_id), $book, $model, $messages, 'execution');
         $router->send(User::find($book->user_id), $call, $model, $messages);
         $detail = $this->getJson('/yazi-atolyesi/api/books/'.$book->id.'/llm-log/'.$call->id)->assertOk()->assertJsonPath('request_payload.messages', $messages)->assertJsonPath('response_status', 200);
         $this->assertSame($body, json_decode($detail->json('response_body'), true));
@@ -220,7 +220,7 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $this->post('/yazi-atolyesi/eserler/'.$book->id.'/recover')->assertNotFound();
     }
 
-    public function test_publication_ai_uses_demo_budget_and_personal_key_and_checks_ownership(): void
+    public function test_publication_ai_excludes_trial_usage_and_checks_ownership(): void
     {
         $book = $this->book();
         $this->catalog();
@@ -232,11 +232,14 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $url = '/yazi-atolyesi/api/books/'.$book->id.'/publication-ai/';
         $body = ['text' => 'Deniz ve umut', 'model' => 'test/writer'];
         $this->postJson($url.'category', $body)->assertOk()->assertJsonPath('category_id', $category->id);
-        $this->assertEquals(0.02, $book->user->fresh()->demo_spent);
+        $this->assertEquals(0, $book->user->fresh()->demo_spent);
+        $this->assertEquals(0, $book->user->fresh()->demo_reserved);
+        $this->assertSame('site', AiCall::latest('id')->first()->funding);
+        $this->assertEquals(0.02, AiCall::latest('id')->first()->cost);
         $book->user->forceFill(['openrouter_key' => 'personal-test-key'])->save();
         $this->actingAs($book->user->fresh());
         $this->postJson($url.'keywords', $body)->assertOk()->assertJsonPath('keywords_string', 'deniz, umut');
-        $this->assertEquals(0.02, $book->user->fresh()->demo_spent);
+        $this->assertEquals(0, $book->user->fresh()->demo_spent);
         Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer personal-test-key'));
         $this->assertNull($book->fresh()->category_id); // Suggestions wait for the author's save.
         $this->actingAs(User::factory()->create())->postJson($url.'category', $body)->assertNotFound();
@@ -687,7 +690,34 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $this->travelBack();
     }
 
-    public function test_ai_synopsis_is_billed_and_returned_for_review_without_saving(): void
+    public function test_non_chat_calls_work_with_exhausted_trial_and_reconcile_without_charging_it(): void
+    {
+        $book = $this->book();
+        $model = $this->catalog();
+        $user = $book->user;
+        $user->forceFill(['demo_limit' => 1, 'demo_spent' => 1, 'demo_reserved' => 0])->save();
+        $router = app(OpenRouter::class);
+        foreach (['publication-category', 'publication-keywords', 'publication-synopsis', 'image-generation'] as $stage) {
+            $call = $router->reserve($user, $book, $model, [], $stage);
+            $this->assertSame('site', $call->funding);
+            $this->assertEquals(0, $user->fresh()->demo_reserved);
+            $router->release($call);
+            $this->assertEquals(0, $user->fresh()->demo_reserved);
+        }
+        $call = $router->reserve($user, $book, $model, [], 'publication-keywords');
+        $call->update(['status' => 'pending', 'provider_id' => 'site-call']);
+        Http::fake(['*/generation*' => Http::response(['data' => ['total_cost' => 0.04]])]);
+        $this->assertTrue($router->reconcile($call));
+        $this->assertFalse($router->reconcile($call->fresh()));
+        Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer demo-test-key'));
+        $this->assertEquals(1, $user->fresh()->demo_spent);
+        $this->assertEquals(0, $user->fresh()->demo_reserved);
+        $this->assertEquals(0.04, $call->fresh()->cost);
+        $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        $router->reserve($user, $book, $model, [], 'execution');
+    }
+
+    public function test_ai_synopsis_is_logged_without_trial_charge_and_returned_for_review(): void
     {
         $book = $this->book();
         $this->catalog();
@@ -697,7 +727,9 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $url = '/yazi-atolyesi/api/books/'.$book->id.'/publication-ai/synopsis';
         $body = ['text' => 'Elif evine döndü.', 'model' => 'test/writer'];
         $this->postJson($url, $body)->assertOk()->assertJsonPath('synopsis', 'Elif evine döner.');
-        $this->assertEquals(0.02, $book->user->fresh()->demo_spent);
+        $this->assertEquals(0, $book->user->fresh()->demo_spent);
+        $this->assertEquals(0, $book->user->fresh()->demo_reserved);
+        $this->assertEquals(0.02, AiCall::latest('id')->first()->cost);
         $this->assertEmpty($book->fresh()->metadata['synopsis'] ?? null);
         $this->postJson($url, $body)->assertUnprocessable();
         $this->actingAs(User::factory()->create())->postJson($url, $body)->assertNotFound();

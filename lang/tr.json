@@ -1,4 +1,5 @@
 {
+    "Site-funded (outside trial)": "Site tarafından karşılanır (deneme kotası dışında)",
     " · :v0 selected": " · :v0 seçili",
     " · Pending ": " · Bekleyen ",
     "0 words": "0 kelime",
@@ -132,7 +133,7 @@
     "Choose how much\nto reimagine.": "Ne kadarını yeniden düşüneceğinizi seçin.",
     "Choose personal names in the Names panel first, or enter existing names in the selected-names field, then resend your request.": "Önce İsimler panelinden kişisel isimleri seçin veya mevcut isimleri seçili isimler alanına girin, ardından isteği yeniden gönderin.",
     "Choose the personal name before creating a person.": "Bir kişi oluşturmadan önce ismini seçin.",
-    "Classification and writing both count. Uncertain provider charges remain reserved until reconciled.": "Sınıflandırma ve yazma işlemlerinin ikisi de ücretlendirilir. Kesinleşmeyen sağlayıcı ücretleri uzlaştırılana kadar ayrılmış kalır.",
+    "Only writing chat uses your trial allowance, including its classification step. Category, keyword, summary, and image generation do not count. Uncertain chat charges remain reserved until reconciled.": "Deneme kotanız yalnızca yazı atölyesindeki sohbet için kullanılır; isteğin sınıflandırılması da buna dahildir. Kategori, etiket, özet ve görsel oluşturma kotadan düşülmez. Kesinleşmeyen sohbet ücretleri uzlaştırılana kadar ayrılmış kalır.",
     "Clear selection scope": "Seçim kapsamını temizle",
     "Click here to re-send the verification email.": "Doğrulama e-postasını yeniden göndermek için tıklayın.",
     "Close": "Kapat",

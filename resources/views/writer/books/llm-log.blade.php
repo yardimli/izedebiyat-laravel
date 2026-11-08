@@ -42,6 +42,7 @@
                     <option value="">{{ __('All key sources') }}</option>
                     <option value="personal" @selected(($filters['funding'] ?? '') === 'personal')>{{ __('Personal key') }}</option>
                     <option value="demo" @selected(($filters['funding'] ?? '') === 'demo')>{{ __('Demo allowance') }}</option>
+                    <option value="site" @selected(($filters['funding'] ?? '') === 'site')>{{ __('Site-funded (outside trial)') }}</option>
                 </select></label>
             <button class="primary">{{ __('Apply') }}</button><a class="history-button"
                 href="{{ route('writer.books.llm-log', $book) }}">{{ __('Reset') }}</a>
@@ -70,7 +71,7 @@
                 </div>
                 <div class="history-call-meta">
                     <div>
-                        <small>{{ __('API key source') }}</small>{{ $call->funding === 'personal' ? __('Personal OpenRouter key') : __('Demo allowance') }}
+                        <small>{{ __('API key source') }}</small>{{ $call->funding === 'personal' ? __('Personal OpenRouter key') : ($call->funding === 'site' ? __('Site-funded (outside trial)') : __('Demo allowance')) }}
                     </div>
                     <div><small>{{ __('Book') }}</small><a
                             href="{{ route('articles.edit', \App\Helpers\IdHasher::encode($book->id)) }}">{{ $book->title }}</a>

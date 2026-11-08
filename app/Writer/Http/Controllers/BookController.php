@@ -304,7 +304,7 @@ class BookController extends Controller
     public function llmLogPage(Request $request, Book $book)
     {
         $this->owned($request, $book);
-        $filters = $request->validate(['stage' => 'nullable|string|max:100', 'status' => 'nullable|in:reserved,pending,settled,cancelled', 'funding' => 'nullable|in:demo,personal']);
+        $filters = $request->validate(['stage' => 'nullable|string|max:100', 'status' => 'nullable|in:reserved,pending,settled,cancelled', 'funding' => 'nullable|in:demo,personal,site']);
         $query = AiCall::where('book_id', $book->id);
         foreach ($filters as $field => $value) {
             if ($value !== null && $value !== '') {

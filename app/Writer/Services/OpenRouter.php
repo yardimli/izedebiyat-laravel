@@ -40,19 +40,20 @@ class OpenRouter
 
         return DB::transaction(function () use ($user, $book, $model, $stage, $reserve) {
             $user = User::lockForUpdate()->findOrFail($user->id);
-            $demo = ! $user->openrouter_key;
+            $sharedKey = ! $user->openrouter_key;
+            $demo = $sharedKey && in_array($stage, ['classification', 'execution', 'classify', 'chat'], true);
             if ($demo && $user->demo_limit === null) {
                 $user->demo_limit = DemoBudget::allowance();
                 $user->demo_allowance = DemoBudget::allowance();
             }
-            abort_if($demo && ! config('writer.openrouter_key'), 422, __('Add your OpenRouter API key in Account settings. The demo key is not configured.'));
+            abort_if($sharedKey && ! config('writer.openrouter_key'), 422, __('Add your OpenRouter API key in Account settings. The demo key is not configured.'));
             abort_if($demo && (float) $user->demo_spent + (float) $user->demo_reserved + $reserve > DemoBudget::limit($user), 422, __('This request exceeds your remaining demo allowance. Choose a lower-cost model or add your own key.'));
             if ($demo) {
                 $user->demo_reserved = (float) $user->demo_reserved + $reserve;
                 $user->save();
             }
 
-            return AiCall::create(['user_id' => $user->id, 'book_id' => $book->id, 'model' => $model['id'], 'stage' => $stage, 'funding' => $demo ? 'demo' : 'personal', 'reserved' => $reserve]);
+            return AiCall::create(['user_id' => $user->id, 'book_id' => $book->id, 'model' => $model['id'], 'stage' => $stage, 'funding' => $demo ? 'demo' : ($sharedKey ? 'site' : 'personal'), 'reserved' => $reserve]);
         });
     }
 
@@ -148,7 +149,7 @@ class OpenRouter
             return false;
         }
         $user = User::findOrFail($call->user_id);
-        $key = $call->funding === 'demo' ? config('writer.openrouter_key') : $user->openrouter_key;
+        $key = in_array($call->funding, ['demo', 'site'], true) ? config('writer.openrouter_key') : $user->openrouter_key;
         if (! $key) {
             return false;
         }

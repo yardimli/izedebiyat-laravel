@@ -56,7 +56,7 @@
                 <div class="large-number">{{ \App\Writer\Services\DemoBudget::percentage(auth()->user()) }}%</div><progress
                     max="100" value="{{ \App\Writer\Services\DemoBudget::percentage(auth()->user()) }}"></progress>
                 <p>{{ __('Remaining AI allowance') }}</p>
-                <small>{{ __('Classification and writing both count. Uncertain provider charges remain reserved until reconciled.') }}</small>
+                <small>{{ __('Only writing chat uses your trial allowance, including its classification step. Category, keyword, summary, and image generation do not count. Uncertain chat charges remain reserved until reconciled.') }}</small>
             </section>
         </div>
         <p><a href="{{ route('backend.close-account') }}">Hesabı kapat</a></p>
