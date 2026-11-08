@@ -45,17 +45,6 @@ class LlmSetting extends Model
         return static::current()->getAttribute($column) ?: config("llm.{$column}");
     }
 
-    public function frontendModelIsAllowed(?string $model): bool
-    {
-        if (!$model) {
-            return false;
-        }
-
-        $allowed = $this->allowed_frontend_models;
-
-        return empty($allowed) || in_array($model, $allowed, true);
-    }
-
     public function frontendDefaults(): array
     {
         return array_values(array_unique(array_filter([

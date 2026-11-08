@@ -25,9 +25,6 @@
 		'My Works' => 'Eserlerim',
 		'Help' => 'Yardım',
 		'Settings' => 'Profil Ayarları',
-
-		'AI Engines:' => 'Yapay Zeka Motorları:',
-		'Select an AI Engine' => 'Bir Yapay Zeka Motoru Seçin',
 		'Chapter' => 'Bölüm',
 		'Description' => 'Açıklama',
 		'Text' => 'Metin',
@@ -49,8 +46,6 @@
 		'Cover Image' => 'Kapak Resmi',
 		'Create Cover' => 'Kapak Oluştur',
 		'Enter cover description' => 'Kapak açıklamasını girin',
-
-		'Chat with AI' => 'Yapay Zeka ile Sohbet Et',
 		'Name' => 'Ad',
 
 		'Order' => 'Sıra',
@@ -63,7 +58,6 @@
 
 		'Save Changes' => 'Değişiklikleri Kaydet',
 		'LLM Response' => 'LLM Yanıtı',
-		'Send Prompt' => 'Gönder',
 		'Please wait...' => 'Lütfen bekleyin...',
 
 		'Account' => 'Hesap',
@@ -128,10 +122,7 @@
 		'Don\'t show again' => 'Tekrar gösterme',
 
 		'Output' => 'Çıktı',
-		'Chat' => 'Sohbet',
 		'Image Gen' => 'Resim Yap',
-
-		'Chat History' => 'Sohbet Geçmişi',
 
 		'Image Generation' => 'Resim Oluşturma',
 		'Image History' => 'Resim Geçmişi',

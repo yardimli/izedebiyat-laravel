@@ -62,8 +62,6 @@
 		'Character Profiles' => 'Character Profiles',
 
 // Found in: resources\views\user\all-beats.blade.php, resources\views\user\codex.blade.php, resources\views\user\edit-book.blade.php, resources\views\user\chat.blade.php
-		'AI Engines:' => 'AI Engines:',
-		'Select an AI Engine' => 'Select an AI Engine',
 
 // Found in: resources\views\user\all-beats.blade.php, resources\views\user\edit-book.blade.php
 		'Number of beats per chapter:' => 'Number of beats per chapter:',
@@ -192,7 +190,6 @@
 		'Back to Book Page' => 'Back to Book Page',
 		'Write All Beats' => 'Write All Beats',
 		'Edit Book Details' => 'Edit Book Details',
-		'Chat with AI' => 'Chat with AI',
 		'Delete Book' => 'Delete Book',
 
 // Found in: resources\views\user\edit-book.blade.php, resources\views\user\settings.blade.php
@@ -214,7 +211,6 @@
 // Found in: resources\views\user\edit-book.blade.php
 		'Save Changes' => 'Save Changes',
 		'LLM Response' => 'LLM Response',
-		'Send Prompt' => 'Send Prompt',
 		'Rewritten Chapter:' => 'Rewritten Chapter:',
 		'Accept Rewrite' => 'Accept Rewrite',
 		'Chapter saved successfully!' => 'Chapter saved successfully!',
@@ -341,11 +337,7 @@
 
 		'Don\'t show again' => 'Don\'t show again',
 		'Output' => 'Output',
-
-		'Chat' => 'Chat',
 		'Image Gen' => 'Image Gen',
-
-		'Chat History' => 'Chat History',
 
 		'Image Generation' => 'Image Generation',
 		'Image History' => 'Image History',

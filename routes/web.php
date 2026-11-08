@@ -5,7 +5,7 @@
 	use App\Http\Controllers\ArticleController;
 	use App\Http\Controllers\BookAuthorController;
 	use App\Http\Controllers\CategoryController;
-	use App\Http\Controllers\ChatController;
+	use App\Http\Controllers\AiGenerationController;
 	use App\Http\Controllers\CommentController;
 	use App\Http\Controllers\FollowController;
 	use App\Http\Controllers\FrontendController;
@@ -287,7 +287,6 @@
 		})->name('maintenance.check-markdown');
 
 
-		Route::get('/check-llms-json', [ChatController::class, 'checkLLMsJson']);
 
 		Route::get('/upload-images', [ImageController::class, 'index'])->name('upload-images.index');
 		Route::post('/upload-images', [ImageController::class, 'store'])->name('upload-images.store');
@@ -312,9 +311,9 @@
 
 			Route::post('/upload-article-images', [ArticleController::class, 'storeArticleImage'])->name('upload-article-images.store');
 
-			Route::post('/generate-category', [ChatController::class, 'generateCategory'])->name('articles.generate-category');
-			Route::post('/generate-description', [ChatController::class, 'generateDescription'])->name('articles.generate-description');
-			Route::post('/generate-keywords', [ChatController::class, 'generateKeywords'])->name('articles.generate-keywords');
+			Route::post('/generate-category', [AiGenerationController::class, 'generateCategory'])->name('articles.generate-category');
+			Route::post('/generate-description', [AiGenerationController::class, 'generateDescription'])->name('articles.generate-description');
+			Route::post('/generate-keywords', [AiGenerationController::class, 'generateKeywords'])->name('articles.generate-keywords');
 
 		});
 
@@ -322,12 +321,6 @@
 		Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
 
-		Route::get('/sohbet/oturumlar', [ChatController::class, 'getChatSessions']);
-		Route::get('/sohbet/{session_id?}', [ChatController::class, 'index'])->name('chat');
-		Route::post('/sohbet-oturum-ac', [ChatController::class, 'createSession'])->name('chat.create-session');
-		Route::get('/sohbet/mesajlar/{sessionId}', [ChatController::class, 'getChatMessages']);
-		Route::post('/send-llm-prompt', [ChatController::class, 'sendLlmPrompt'])->name('send-llm-prompt');
-		Route::delete('/sohbet/{sessionId}', [ChatController::class, 'destroy'])->name('chat.destroy');
 
 
 		Route::get('/sahne-arkasi', [UserSettingsController::class, 'account']);
@@ -370,8 +363,8 @@
 		// Admin routes for Book Reviews
 		Route::resourceVerbs(['create' => 'ekle', 'edit' => 'duzenle']);
         Route::resource('admin/kitap-incelemeleri', BookReviewController::class, ['except' => ['show']])->names('book-reviews')->parameters(['kitap-incelemeleri' => 'book_review']);
-		Route::post('/book-reviews/generate-category', [ChatController::class, 'generateBookCategory'])->name('book-reviews.generate-category');
-		Route::post('/book-reviews/generate-keywords', [ChatController::class, 'generateBookKeywords'])->name('book-reviews.generate-keywords');
+		Route::post('/book-reviews/generate-category', [AiGenerationController::class, 'generateBookCategory'])->name('book-reviews.generate-category');
+		Route::post('/book-reviews/generate-keywords', [AiGenerationController::class, 'generateBookKeywords'])->name('book-reviews.generate-keywords');
 		Route::resource('admin/kitap-yazarlari', BookAuthorController::class)->names('book-authors')->parameters(['kitap-yazarlari' => 'book_author']);
 		Route::resource('admin/alintilar', AdminQuoteController::class)->except('show')->names('admin.quotes')->parameters(['alintilar' => 'quote']);
         Route::resourceVerbs(['create' => 'create', 'edit' => 'edit']);

@@ -14,7 +14,6 @@
 	use Illuminate\Support\Facades\Auth;
 	use Illuminate\Support\Facades\Cache;
 	use Illuminate\Support\Facades\DB;
-	use Illuminate\Support\Facades\File;
 	use Illuminate\Support\Facades\Http;
 	use Illuminate\Support\Facades\Log;
 	use Illuminate\Support\Facades\Session;
@@ -392,127 +391,6 @@
 		}
 
 		//------------------------------------------------------------
-
-		public static function checkLLMsJson()
-		{
-			$applyFrontendAllowList = func_num_args() === 0 || func_get_arg(0) !== false;
-			$llmsJsonPath = Storage::disk('public')->path('llms.json');
-
-			if (!File::exists($llmsJsonPath) || Carbon::now()->diffInDays(Carbon::createFromTimestamp(File::lastModified($llmsJsonPath))) > 1) {
-				$client = new Client();
-				$response = $client->get('https://openrouter.ai/api/v1/models');
-				$data = json_decode($response->getBody(), true);
-
-				if (isset($data['data'])) {
-					File::put($llmsJsonPath, json_encode($data['data']));
-				} else {
-					return [];
-				}
-			}
-
-			$openrouter_admin_or_key = false;
-//			if ((Auth::user() && Auth::user()->isAdmin()) ||
-//				(Auth::user() && !empty(Auth::user()->openrouter_key))) {
-//				$openrouter_admin_or_key = true;
-//			}
-
-			$llms = json_decode(File::get($llmsJsonPath), true);
-			$filtered_llms = array_filter($llms, function ($llm) use ($openrouter_admin_or_key) {
-				if (isset($llm['id']) && (stripos($llm['id'], 'openrouter/auto') !== false)) {
-					return false;
-				}
-
-				if (isset($llm['id']) && (stripos($llm['id'], 'vision') !== false)) {
-					return false;
-				}
-
-				if (isset($llm['id']) && (stripos($llm['id'], '-3-') !== false)) {
-					return false;
-				}
-
-				if (isset($llm['id']) && (stripos($llm['id'], '-7b-') !== false)) {
-					return false;
-				}
-
-				if (isset($llm['id']) && (stripos($llm['id'], '-7b ') !== false)) {
-					return false;
-				}
-
-				if (isset($llm['id']) && (stripos($llm['id'], '-8b-') !== false)) {
-					return false;
-				}
-
-				if (isset($llm['id']) && (stripos($llm['id'], '-8b ') !== false)) {
-					return false;
-				}
-
-				if (isset($llm['id']) && (stripos($llm['id'], '-3b-') !== false)) {
-					return false;
-				}
-
-				if (isset($llm['id']) && (stripos($llm['id'], '-1b-') !== false)) {
-					return false;
-				}
-
-				if (isset($llm['id']) && (stripos($llm['id'], 'online') !== false)) {
-					return false;
-				}
-
-				if (isset($llm['id']) && (stripos($llm['id'], 'gpt-3.5') !== false)) {
-					return false;
-				}
-
-				if (isset($llm['name']) && (
-						(stripos($llm['name'], 'openai') !== false) ||
-						(stripos($llm['name'], 'anthropic') !== false) ||
-						(stripos($llm['name'], 'gemini flash') !== false) ||
-						(stripos($llm['name'], 'deepseek v3') !== false) ||
-						(stripos($llm['name'], 'command r') !== false) ||
-						(stripos($llm['name'], 'midnight rose') !== false)
-					)) {
-					//... do nothing
-				} else {
-					return false;
-				}
-
-				if (isset($llm['pricing']['completion'])) {
-					$price_per_million = floatval($llm['pricing']['completion']) * 1000000;
-					if ($openrouter_admin_or_key) {
-						return $price_per_million <= 20;
-					} else {
-						return $price_per_million <= 4;
-					}
-				}
-
-				if (!isset($llm['pricing']['completion'])) {
-					return false;
-				}
-
-				return true;
-			});
-
-
-			if ($applyFrontendAllowList) {
-				$allowed = LlmSetting::current()->allowed_frontend_models;
-				if (!empty($allowed)) {
-					$filtered_llms = array_filter($filtered_llms, fn ($model) =>
-						in_array($model['id'] ?? '', $allowed, true)
-					);
-				}
-			}
-			usort($filtered_llms, function ($a, $b) {
-				return strcmp($a['name'], $b['name']);
-			});
-			usort($filtered_llms, function ($a, $b) {
-				$aCost = (float) ($a['pricing']['prompt'] ?? 0) + (float) ($a['pricing']['completion'] ?? 0);
-				$bCost = (float) ($b['pricing']['prompt'] ?? 0) + (float) ($b['pricing']['completion'] ?? 0);
-
-				return $aCost <=> $bCost ?: strcmp($a['name'] ?? '', $b['name'] ?? '');
-			});
-
-			//for each llm with score 0 sort them alphabetically
-			return array_values($filtered_llms);
-		}
 
 		public static function moderation($message)
 		{

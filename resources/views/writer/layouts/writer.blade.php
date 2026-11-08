@@ -43,10 +43,6 @@
                             aria-hidden="true">
                             <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
                         </svg><span class="nav-label">Favorilerim</span></a>
-                    <a class="nav-icon" href="{{ route('chat') }}" aria-label="Sohbet" title="Sohbet"><svg viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-                            <path d="M21 11a8 8 0 0 1-8 8H7l-5 3 2-6a8 8 0 1 1 17-5Z" />
-                        </svg><span class="nav-label">Sohbet</span></a>
                     <a class="nav-icon" href="{{ route('writer.settings') }}" aria-label="{{ __('Account') }}"
                         title="{{ __('Account') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.6" stroke-linecap="round" aria-hidden="true">

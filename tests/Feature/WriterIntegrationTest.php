@@ -341,7 +341,7 @@ class WriterIntegrationTest extends WriterTestCase
         $admin = User::factory()->create(['member_type' => 1]);
         $book = $this->book($admin);
         $this->actingAs($admin)->get('/eserlerim')->assertOk()
-            ->assertSee('class="admin-menu"', false)->assertSee('href="'.route('chat').'"', false)
+            ->assertSee('class="admin-menu"', false)->assertDontSee('/sohbet')
             ->assertSee('href="'.route('backend.following').'"', false)
             ->assertDontSee('href="'.route('writer.budgets.index').'"', false)->assertDontSee('Site hesabı');
         $this->get('/yazi-atolyesi/hesap')->assertOk()->assertSee('writer-portal.css')
@@ -355,7 +355,7 @@ class WriterIntegrationTest extends WriterTestCase
         $this->assertStringContainsString('theme-picker', $matches[1]);
         $this->assertStringContainsString(route('articles.index'), $matches[1]);
         $this->assertStringNotContainsString('admin-menu', $matches[1]);
-        $this->assertStringNotContainsString(route('chat'), $matches[1]);
+        $this->assertStringNotContainsString('/sohbet', $matches[1]);
         $this->assertStringNotContainsString(route('writer.settings'), $matches[1]);
         $this->actingAs(User::factory()->create())->get('/yazi-atolyesi/hesap')->assertOk()
             ->assertDontSee('class="admin-menu"', false)->assertDontSee('href="'.route('writer.budgets.index').'"', false);
