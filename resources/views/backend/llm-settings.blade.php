@@ -47,9 +47,12 @@
             <form method="post" action="{{ route('admin.llm-settings.update') }}">@csrf @method('PUT')
                 <div class="card mb-4">
                     <div class="card-body">
+                        <p class="text-muted">Yazı atölyesi için sıralı üç model seçebilirsiniz. İlk model katalogda kullanılamıyorsa sıradaki kullanılabilir model varsayılan olur. Bu modeller aşağıdaki listeye otomatik eklenir.</p>
                         <div class="row g-3">
                             @foreach ([
-            'frontend_model' => 'Ön yüz varsayılan modeli',
+            'frontend_model' => 'Yazı atölyesi — 1. tercih',
+            'frontend_model_fallback_1' => 'Yazı atölyesi — 2. tercih (yedek)',
+            'frontend_model_fallback_2' => 'Yazı atölyesi — 3. tercih (yedek)',
             'backend_model' => 'Yönetim varsayılan modeli',
             'cron_model' => 'Cron varsayılan modeli',
         ] as $field => $label)
@@ -57,7 +60,9 @@
                                 <div class="col-lg-4"><label class="form-label"
                                         for="{{ $field }}">{{ $label }}</label>
                                     <select class="form-select model-default-select" id="{{ $field }}"
-                                        name="{{ $field }}" required>
+                                        name="{{ $field }}" @required(!str_contains($field, 'fallback'))
+                                        @if(str_starts_with($field, 'frontend_model')) data-writer-default @endif>
+                                        <option value="">{{ str_contains($field, 'fallback') ? 'Yedek model seçin (isteğe bağlı)' : 'Model seçin' }}</option>
                                         @if ($selectedModel && !collect($models)->contains('id', $selectedModel))
                                             <option value="{{ $selectedModel }}" selected>{{ $selectedModel }} (katalogda
                                                 bulunamadı)</option>
@@ -84,7 +89,7 @@
                     </div>
                     <div class="card-body">
                         <div id="admin-model-list">
-                            @php($allowed = old('allowed_frontend_models', $setting->allowed_frontend_models ?? collect($models)->pluck('id')->all()))
+                            @php($allowed = array_unique(array_merge(old('allowed_frontend_models', $setting->allowed_frontend_models ?? []), array_filter([old('frontend_model', $setting->frontend_model), old('frontend_model_fallback_1', $setting->frontend_model_fallback_1), old('frontend_model_fallback_2', $setting->frontend_model_fallback_2)]))))
                             @forelse($selectableModels as $model)
                                 <div class="model-option border-bottom py-1"
                                     data-search="{{ mb_strtolower($model['name'] . ' ' . $model['id']) }}">
@@ -120,6 +125,17 @@
 
 @push('scripts')
     <script>
+        const defaultSelects = document.querySelectorAll('[data-writer-default]');
+        const modelCheckboxes = document.querySelectorAll('input[name="allowed_frontend_models[]"]');
+        function checkDefaultModels() {
+            const defaults = Array.from(defaultSelects, select => select.value).filter(Boolean);
+            modelCheckboxes.forEach(checkbox => {
+                if (defaults.includes(checkbox.value)) checkbox.checked = true;
+            });
+        }
+        defaultSelects.forEach(select => select.addEventListener('change', checkDefaultModels));
+        modelCheckboxes.forEach(checkbox => checkbox.addEventListener('change', checkDefaultModels));
+        checkDefaultModels();
         document.getElementById('model-filter')?.addEventListener('input', function() {
             const query = this.value.toLocaleLowerCase('tr-TR').trim();
             document.querySelectorAll('.model-option').forEach(option => {

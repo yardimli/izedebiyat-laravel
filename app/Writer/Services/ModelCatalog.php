@@ -14,7 +14,8 @@ class ModelCatalog
 
     private function approved(array $catalog): array
     {
-        $allowed = \App\Models\LlmSetting::current()->allowed_frontend_models ?? [];
+        $setting = \App\Models\LlmSetting::current();
+        $allowed = $setting->allowed_frontend_models ?? [];
         $catalog['data'] = array_values(array_filter($catalog['data'], function ($model) use ($allowed) {
             $outputs = $model['architecture']['output_modalities'] ?? [];
             return in_array($model['id'] ?? '', $allowed, true)
@@ -33,8 +34,13 @@ class ModelCatalog
             }
             return true;
         }));
-        // Choose the lower middle model when there is an even number of options.
-        $catalog['default_model'] = $priced ? $priced[intdiv(count($priced) - 1, 2)]['id'] : null;
+        $catalog['default_model'] = null;
+        foreach ($setting->frontendDefaults() as $id) {
+            if (in_array($id, array_column($priced, 'id'), true)) {
+                $catalog['default_model'] = $id;
+                break;
+            }
+        }
         return $catalog;
     }
 

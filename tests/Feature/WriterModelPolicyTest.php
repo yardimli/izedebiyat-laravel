@@ -17,7 +17,8 @@ class WriterModelPolicyTest extends WriterTestCase
 {
     private function catalog(array $allowed = ['p/1', 'p/2', 'p/3']): void
     {
-        LlmSetting::updateOrCreate(['id' => 1], ['allowed_frontend_models' => $allowed]);
+        LlmSetting::updateOrCreate(['id' => 1], ['allowed_frontend_models' => $allowed,
+            'frontend_model' => 'p/2', 'frontend_model_fallback_1' => 'p/3', 'frontend_model_fallback_2' => 'p/1']);
         $models = [];
         foreach ([4, 1, 3, 2] as $price) {
             $models[] = ['id' => 'p/'.$price, 'name' => 'Model '.$price,
@@ -27,13 +28,15 @@ class WriterModelPolicyTest extends WriterTestCase
         Cache::forever('openrouter.catalog', ['data' => $models, 'refreshed_at' => null]);
     }
 
-    public function test_picker_returns_only_approved_models_and_middle_price_default(): void
+    public function test_picker_uses_admin_priority_order_and_skips_unavailable_defaults(): void
     {
         $this->catalog();
         $this->actingAs(User::factory()->create())->getJson('/yazi-atolyesi/api/models')
             ->assertOk()->assertJsonCount(3, 'data')->assertJsonPath('default_model', 'p/2');
         $this->assertSame(['p/1', 'p/2', 'p/3'], array_column(app(ModelCatalog::class)->get()['data'], 'id'));
         LlmSetting::first()->update(['allowed_frontend_models' => ['p/1', 'p/3']]);
+        $this->assertSame('p/3', app(ModelCatalog::class)->get()['default_model']);
+        LlmSetting::first()->update(['allowed_frontend_models' => ['p/1']]);
         $this->assertSame('p/1', app(ModelCatalog::class)->get()['default_model']);
     }
 
@@ -71,5 +74,48 @@ class WriterModelPolicyTest extends WriterTestCase
         $result = app(ModelCatalog::class)->get();
         $this->assertSame([], $result['data']);
         $this->assertNull($result['default_model']);
+    }
+
+    public function test_admin_defaults_are_saved_in_order_and_automatically_allowed(): void
+    {
+        $this->catalog();
+        Http::fake(['*/models' => Http::response(['data' => Cache::get('openrouter.catalog')['data']])]);
+        $this->actingAs(User::factory()->create(['member_type' => 1]));
+        $this->put('/admin/yapay-zeka-ayarlari', [
+            'frontend_model' => 'p/3', 'frontend_model_fallback_1' => 'p/1', 'frontend_model_fallback_2' => 'p/2',
+            'backend_model' => 'p/4', 'cron_model' => 'p/4',
+        ])->assertSessionHasNoErrors()->assertRedirect();
+        $setting = LlmSetting::current();
+        $this->assertSame(['p/3', 'p/1', 'p/2'], $setting->frontendDefaults());
+        $this->assertSame(['p/3', 'p/1', 'p/2'], $setting->allowed_frontend_models);
+        $this->assertSame('p/3', app(ModelCatalog::class)->get()['default_model']);
+        $this->get('/admin/yapay-zeka-ayarlari')->assertOk()->assertSee('frontend_model_fallback_2');
+    }
+
+    public function test_admin_cannot_save_duplicate_default_models(): void
+    {
+        $this->catalog();
+        Http::fake(['*/models' => Http::response(['data' => Cache::get('openrouter.catalog')['data']])]);
+        $this->actingAs(User::factory()->create(['member_type' => 1]))->putJson('/admin/yapay-zeka-ayarlari', [
+            'frontend_model' => 'p/3', 'frontend_model_fallback_1' => 'p/3',
+            'backend_model' => 'p/4', 'cron_model' => 'p/4',
+        ])->assertUnprocessable()->assertJsonValidationErrors('frontend_model_fallback_1');
+    }
+
+    public function test_default_falls_back_when_primary_is_missing_or_has_invalid_prices(): void
+    {
+        $this->catalog();
+        $cached = Cache::get('openrouter.catalog');
+        $cached['data'] = array_values(array_filter($cached['data'], fn ($m) => $m['id'] !== 'p/2'));
+        Cache::forever('openrouter.catalog', $cached);
+        $this->assertSame('p/3', app(ModelCatalog::class)->get()['default_model']);
+        foreach ($cached['data'] as &$model) {
+            if ($model['id'] === 'p/3') {
+                unset($model['pricing']['completion']);
+            }
+        }
+        unset($model);
+        Cache::forever('openrouter.catalog', $cached);
+        $this->assertSame('p/1', app(ModelCatalog::class)->get()['default_model']);
     }
 }

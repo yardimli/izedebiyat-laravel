@@ -92,5 +92,6 @@ abstract class WriterTestCase extends TestCase
         (require database_path('migrations/2026_09_12_100000_add_total_author_workspace.php'))->up();
         (require database_path('migrations/2026_09_13_100000_preserve_writer_billing_on_work_deletion.php'))->up();
         (require database_path('migrations/2026_08_21_000002_create_llm_settings_table.php'))->up();
+        (require database_path('migrations/2026_11_08_000001_add_frontend_model_fallbacks_to_llm_settings.php'))->up();
     }
 }
