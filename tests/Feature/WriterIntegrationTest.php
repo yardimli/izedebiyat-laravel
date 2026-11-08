@@ -20,6 +20,21 @@ use Tests\WriterTestCase;
 
 class WriterIntegrationTest extends WriterTestCase
 {
+    public function test_library_statistics_cover_all_owned_visible_works_independently_of_search(): void
+    {
+        $user = User::factory()->create(['created_at' => '2020-03-15 12:00:00']);
+        foreach ([['Apple', 'Bir iki üç', 12, false], ['Pear', 'Dört beş', 8, false], ['Deleted', 'Altı', 100, true]] as [$title, $text, $reads, $deleted]) {
+            Book::create(['user_id' => $user->id, 'title' => $title, 'document' => Manuscript::fromText($text), 'read_count' => $reads, 'deleted' => $deleted]);
+        }
+        Book::create(['user_id' => User::factory()->create()->id, 'title' => 'Other', 'document' => Manuscript::fromText('Other user'), 'read_count' => 1000]);
+        $response = $this->actingAs($user)->get('/eserlerim?q=Apple')->assertOk()
+            ->assertViewHas('libraryStats', ['works' => 2, 'words' => 5, 'reads' => 20])
+            ->assertSee('15.03.2020')->assertSee('library-statistics');
+        $this->assertLessThan(strpos($response->getContent(), 'book-title-link'), strpos($response->getContent(), 'id="library-statistics-title"'));
+        $this->get('/eserlerim?q=NoMatches')->assertOk()
+            ->assertViewHas('libraryStats', ['works' => 2, 'words' => 5, 'reads' => 20]);
+    }
+
     public function test_schema_migration_seeds_existing_accounts_from_configuration_and_rolls_back_without_losing_articles(): void
     {
         $user = User::factory()->create();
@@ -341,15 +356,17 @@ class WriterIntegrationTest extends WriterTestCase
         $admin = User::factory()->create(['member_type' => 1]);
         $book = $this->book($admin);
         $this->actingAs($admin)->get('/eserlerim')->assertOk()
-            ->assertSee('class="admin-menu"', false)->assertDontSee('/sohbet')
+            ->assertSee('class="admin-menu"', false)->assertSee('class="account-site-footer"', false)->assertDontSee('/sohbet')
             ->assertSee('href="'.route('backend.following').'"', false)
             ->assertDontSee('href="'.route('writer.budgets.index').'"', false)->assertDontSee('Site hesabı');
         $this->get('/yazi-atolyesi/hesap')->assertOk()->assertSee('writer-portal.css')
+            ->assertSee('class="account-site-footer"', false)
             ->assertSee('name="openrouter_key"', false)->assertSee('name="about_me"', false)
             ->assertSee('name="current_password"', false)
             ->assertSee('href="'.route('writer.budgets.index').'"', false);
         Http::fake(['*/models' => Http::response(['data' => []])]);
         $html = $this->get('/eserlerim/'.\App\Helpers\IdHasher::encode($book->id).'/duzenle')->assertOk()->getContent();
+        $this->assertStringNotContainsString('class="account-site-footer"', $html);
         preg_match('/<header class="site-header">(.*?)<\/header>/s', $html, $matches);
         $this->assertStringContainsString('open-typography', $matches[1]);
         $this->assertStringContainsString('theme-picker', $matches[1]);

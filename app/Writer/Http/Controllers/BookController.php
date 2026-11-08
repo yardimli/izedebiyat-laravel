@@ -150,6 +150,12 @@ class BookController extends Controller
         $direction = $data['direction'] ?? 'desc';
         $search = trim($data['q'] ?? '');
         $books = Book::where('user_id', $request->user()->id);
+        $libraryStats = ['works' => 0, 'words' => 0, 'reads' => 0];
+        foreach ((clone $books)->select(['id', 'manuscript', 'document', 'read_count'])->cursor() as $work) {
+            $libraryStats['works']++;
+            $libraryStats['words'] += $work->word_count;
+            $libraryStats['reads'] += (int) $work->read_count;
+        }
         if ($search !== '') {
             // Treat wildcard characters as literal text and keep both matches owner-scoped.
             $pattern = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search).'%';
@@ -159,7 +165,7 @@ class BookController extends Controller
             });
         }
 
-        return view('writer.books.index', ['returnedBook' => $returnedBook, 'newStory' => $newStory, 'drafts' => $drafts, 'books' => $books->select(['id', 'title', 'slug', 'user_id', 'metadata', 'manuscript', 'archived', 'deleted', 'revision', 'created_at', 'updated_at', 'read_count', 'is_published', 'approved', 'category_name', 'subtitle'])->withCount('comments')->orderBy($sort, $direction)->orderByDesc('id')->paginate(30)->withQueryString(), 'search' => $search, 'sort' => $sort, 'direction' => $direction]);
+        return view('writer.books.index', ['libraryStats' => $libraryStats, 'returnedBook' => $returnedBook, 'newStory' => $newStory, 'drafts' => $drafts, 'books' => $books->select(['id', 'title', 'slug', 'user_id', 'metadata', 'manuscript', 'archived', 'deleted', 'revision', 'created_at', 'updated_at', 'read_count', 'is_published', 'approved', 'category_name', 'subtitle'])->withCount('comments')->orderBy($sort, $direction)->orderByDesc('id')->paginate(30)->withQueryString(), 'search' => $search, 'sort' => $sort, 'direction' => $direction]);
     }
 
     public function publishDrafts(Request $request)

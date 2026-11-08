@@ -20,6 +20,7 @@ return [
     'Aliases',
     'All changes saved',
     'Any country',
+    'Appearance',
     'Appearance: :v0',
     'Approved changes saved. The previous version is in Revisions.',
     'Ask about a character, explore a scene, or bring your codex to life.',

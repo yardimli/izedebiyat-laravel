@@ -88,6 +88,13 @@
         <div class="server-errors" role="status">{{ session('success') }}</div>
     @endif
     @yield('content')
+    @auth
+        @unless (request()->routeIs('articles.edit'))
+            <div class="account-site-footer">
+                @include('partials.footer')
+            </div>
+        @endunless
+    @endauth
     @hasSection('portal')
         <script src="{{ asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
     @endif

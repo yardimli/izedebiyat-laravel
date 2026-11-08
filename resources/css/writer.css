@@ -304,6 +304,52 @@ small {
 .account-sign-out {
     margin-top: 24px;
 }
+.account-site-footer {
+    margin-top: 24px;
+    padding: 20px 24px;
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 13px;
+}
+.account-site-footer .container {
+    width: 100%;
+    max-width: 1180px;
+    margin-inline: auto;
+    padding: 0;
+}
+.account-site-footer .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0;
+}
+.account-site-footer ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin: 0 0 16px;
+    padding: 0;
+    list-style: none;
+}
+.account-site-footer .row > * {
+    padding: 0;
+}
+.account-site-footer .col-md-12,
+.account-site-footer .col-md-9 {
+    width: 100%;
+}
+.account-site-footer .text-center {
+    text-align: center;
+}
+.account-site-footer img {
+    display: inline-block;
+}
+.account-site-footer .back-to-top {
+    display: block;
+    margin-top: 12px;
+    text-align: center;
+}
 .ornament {
     font-size: 85px;
     color: var(--accent);
@@ -435,6 +481,31 @@ html[data-theme="dark"] .book-card-draft {
 .book-card h2 {
     font-size: 27px;
     margin-top: 12px;
+}
+.library-statistics dl {
+    margin: 0;
+}
+.library-statistics dl > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+}
+.library-statistics dl > div:last-child {
+    border-bottom: 0;
+}
+.library-statistics dt {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: normal;
+}
+.library-statistics dd {
+    margin: 0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
 }
 .book-bottom {
     margin-top: auto;
@@ -2458,10 +2529,18 @@ html[data-theme="dark"] .site-header .writer-brand .dark-mode-item { display: bl
 .book-manage-actions label { margin: 0; font-size: 12px; }
 .book-manage-actions select { margin-top: 4px; padding: 4px 9px; }
 
-.library-search { margin: 28px 0; }
-.library-search label { display: block; margin-bottom: 8px; }
-.library-search .row { flex-wrap: wrap; }
-.library-search input { flex: 1; min-width: 180px; }
+.library { padding-top: 12px; }
+.library-heading { gap: 16px; }
+.library-heading .eyebrow { margin: 0 0 2px; font-size: 10px; line-height: 14px; }
+.library-heading h1 { margin: 0 0 3px; font-size: 28px; line-height: 32px; }
+.library-heading p { margin: 0; font-size: 13px; line-height: 18px; }
+.library-heading .new-book { margin: 0; padding: 7px 12px; white-space: nowrap; font-size: 13px; }
+.library-search { display: flex; align-items: end; gap: 12px; margin: 6px 0; }
+.library-search-field { flex: 1; min-width: 0; }
+.library-search label { display: block; margin: 0 0 3px; font-size: 12px; line-height: 16px; }
+.library-search .row { flex-wrap: nowrap; gap: 6px; }
+.library-search input { flex: 1; min-width: 0; }
+.library-search input[type="search"], .library-search select, .library-search button { height: 34px; padding: 5px 8px; font-size: 13px; line-height: 22px; }
 .library-search a { white-space: nowrap; }
 .library-pagination { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--line); text-align: center; }
 .library-pagination p { margin: 0 0 12px; font-size: 13px; }
@@ -2489,9 +2568,19 @@ html[data-theme="dark"] .site-header .writer-brand .dark-mode-item { display: bl
 .admin-menu-items a:hover { background: var(--soft); }
 @media(max-width:600px){ .admin-menu summary span { display:none; } .site-header { gap:8px; padding-inline:12px; } .site-header nav { gap:6px; } }
 
-.library-sort { margin-top: 16px; align-items: end; }
+.library-sort { margin-top: 0; align-items: end; flex-shrink: 0; }
 .library-sort label { margin-bottom: 0; }
-.library-sort select { display: block; margin-top: 6px; }
+.library-sort select { display: block; margin-top: 3px; }
+@media (max-width: 760px) {
+    .library-heading { align-items: start; gap: 8px; }
+    .library-heading h1 { font-size: 24px; }
+    .library-heading p { display: none; }
+    .library-search { flex-wrap: wrap; gap: 6px; }
+    .library-search-field { flex-basis: 100%; }
+    .library-sort { width: 100%; }
+    .library-sort label { flex: 1; min-width: 0; }
+    .library-search-field > label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}
 .book-publication-date { margin: 0; font-size: 12px; }
 
 .page-navigation #toggle-page-breaks { border:0; background:transparent; padding:0; color:var(--muted); text-decoration:underline; text-underline-offset:3px; font:inherit; font-size:12px; cursor:pointer; }

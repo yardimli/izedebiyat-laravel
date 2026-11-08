@@ -2,14 +2,14 @@
 @section('title', __('Your library · ') . config('app.name'))
 @section('content')
     <main class="library">
-        <div class="eyebrow">{{ __('THE WRITING LIFE') }}</div>
         <div class="library-heading">
             <div>
+                <div class="eyebrow">{{ __('THE WRITING LIFE') }}</div>
                 <h1>{{ __('A room for your stories.') }}</h1>
                 <p class="muted">{{ __('Return to a world you know. Or begin somewhere new.') }}</p>
-            </div><span class="ornament">❧</span>
+            </div>
+            <button type="button" class="primary new-book" id="create-story">{{ __('Create new story') }} ↗</button>
         </div>
-        <button type="button" class="primary new-book" id="create-story">{{ __('Create new story') }} ↗</button>
         <dialog id="create-story-dialog" aria-labelledby="create-story-title">
             <div class="dialog-heading">
                 <h2 id="create-story-title">{{ __('Create new story') }}</h2>
@@ -70,6 +70,7 @@
             </dialog>
         @endif
         <form method="get" action="{{ route('articles.index') }}" class="library-search" role="search">
+            <div class="library-search-field">
             <label for="work-search">{{ __('Search your works') }}</label>
             <div class="row"><input id="work-search" type="search" name="q" value="{{ $search }}"
                     maxlength="200" placeholder="{{ __('Search titles and short descriptions…') }}"><button
@@ -78,6 +79,7 @@
                     <a
                         href="{{ route('articles.index', ['sort' => $sort, 'direction' => $direction]) }}">{{ __('Clear search') }}</a>
                 @endif
+            </div>
             </div>
             <div class="library-sort row">
                 <label for="work-sort">{{ __('Sort works by') }}<select id="work-sort" name="sort">
@@ -95,6 +97,18 @@
         <h2 class="section-heading">{{ __('On your desk') }} <span>{{ $books->total() }} {{ __('manuscripts') }}</span>
         </h2>
         <div class="book-grid">
+            <article class="book-card library-statistics" aria-labelledby="library-statistics-title">
+                <div class="book-spine" aria-hidden="true"></div>
+                <h2 id="library-statistics-title">{{ __('Your statistics') }}</h2>
+                <dl>
+                    <div><dt>{{ __('Total works') }}</dt><dd>{{ number_format($libraryStats['works']) }}</dd></div>
+                    <div><dt>{{ __('Total word count') }}</dt><dd>{{ number_format($libraryStats['words']) }}</dd></div>
+                    <div><dt>{{ __('Total reads') }}</dt><dd>{{ number_format($libraryStats['reads']) }}</dd></div>
+                    @php($memberSince = auth()->user()->created_at)
+                    <div><dt>{{ __('Member since') }}</dt><dd>@if ($memberSince)<time datetime="{{ $memberSince->toDateString() }}">{{ $memberSince->format('d.m.Y') }}</time>@else — @endif</dd></div>
+                    <div><dt>{{ __('Membership age') }}</dt><dd>{{ $memberSince ? $memberSince->diffAsCarbonInterval(now())->locale(app()->getLocale())->forHumans(['parts' => 2]) : '—' }}</dd></div>
+                </dl>
+            </article>
             @forelse ($books as $book)
                 <article class="book-card{{ !$book->is_published ? ' book-card-draft' : '' }}">
                     <div class="book-spine"></div>
