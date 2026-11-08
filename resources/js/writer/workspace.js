@@ -35,7 +35,6 @@ export async function start() {
     const codexDraftKey = draftKey + "-codex";
     let models = [],
         model = root.dataset.model,
-        favorites = JSON.parse(root.dataset.favorites || "[]"),
         mentions = [],
         activeProposal = null,
         busy = false;
@@ -853,6 +852,9 @@ export async function start() {
                 !outputs.includes("image")
             );
         });
+        if (!models.some((item) => item.id === model)) {
+            model = catalog.default_model || null;
+        }
         $("#catalog-status").textContent =
             catalog.error ||
             t("Updated :v0", {
@@ -873,39 +875,30 @@ export async function start() {
               ? t("Saved model unavailable — choose another")
               : t("Choose an AI model");
         $("#model-list").replaceChildren();
-        const q = $("#model-search").value.toLowerCase(),
-            only = $("#favorites-only").checked;
+        const q = $("#model-search").value.toLowerCase();
         const min = $("#model-price-min").value === "" ? 0 : Number($("#model-price-min").value);
         const max =
             $("#model-price-max").value === "" ? Infinity : Number($("#model-price-max").value);
-        $("#model-search-filters").hidden = only;
-        if (!only && (!Number.isFinite(min) || min < 0 || Number.isNaN(max) || max < min)) {
+        if (!Number.isFinite(min) || min < 0 || Number.isNaN(max) || max < min) {
             $("#model-list").append(
                 element("p", t("Enter a nonnegative price range with Min no greater than Max.")),
             );
             return;
         }
-        const matches = models.filter((m) =>
-            only
-                ? favorites.includes(m.id)
-                : m.pricing?.completion != null &&
-                  Number(m.pricing.completion) * 1e6 >= min &&
-                  Number(m.pricing.completion) * 1e6 <= max &&
-                  (m.name + " " + m.id).toLowerCase().includes(q),
+        const matches = models.filter(
+            (m) =>
+                m.pricing?.completion != null &&
+                Number(m.pricing.completion) * 1e6 >= min &&
+                Number(m.pricing.completion) * 1e6 <= max &&
+                (m.name + " " + m.id).toLowerCase().includes(q),
         );
         if (!matches.length)
             $("#model-list").append(
-                element(
-                    "p",
-                    only
-                        ? t("No favorites yet. Uncheck Favorites only and star a model.")
-                        : t("No models match this search and output price range."),
-                ),
+                element("p", t("No models match this search and output price range.")),
             );
         for (const item of matches) {
             const row = element("div", undefined, "model-row"),
-                pick = element("button", item.name),
-                star = element("button", favorites.includes(item.id) ? "★" : "☆");
+                pick = element("button", item.name);
             const bounded = [item.pricing?.prompt, item.pricing?.completion].every(
                 (price) =>
                     price !== undefined && Number.isFinite(Number(price)) && Number(price) >= 0,
@@ -932,34 +925,11 @@ export async function start() {
                     notify(e.message);
                 }
             };
-            star.setAttribute("aria-label", t("Favorite :v0", { v0: item.name }));
-            star.onclick = async () => {
-                try {
-                    const next = favorites.includes(item.id)
-                        ? favorites.filter((id) => id !== item.id)
-                        : [...favorites, item.id];
-                    await api("/yazi-atolyesi/hesap", "PATCH", { favorite_models: next });
-                    favorites = next;
-                    renderModels();
-                } catch (e) {
-                    notify(e.message);
-                }
-            };
-            row.append(pick, star);
+            row.append(pick);
             $("#model-list").append(row);
         }
     }
     action("#model-search", renderModels, "input");
-    action(
-        "#favorites-only",
-        async () => {
-            renderModels();
-            await api("/yazi-atolyesi/hesap", "PATCH", {
-                favorites_only: $("#favorites-only").checked,
-            });
-        },
-        "change",
-    );
     action("#model-price-min", renderModels, "input");
     action("#model-price-max", renderModels, "input");
     action("#refresh-models", () => loadModels(true));

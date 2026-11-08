@@ -25,6 +25,7 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
 
     private function catalog(): array
     {
+        \App\Models\LlmSetting::updateOrCreate(['id' => 1], ['allowed_frontend_models' => ['test/writer']]);
         $model = ['id' => 'test/writer', 'name' => 'Writer', 'context_length' => 200000, 'pricing' => ['prompt' => '0.000001', 'completion' => '0.000002'], 'architecture' => ['output_modalities' => ['text']]];
         Cache::forever('openrouter.catalog', ['data' => [$model], 'refreshed_at' => now()->toIso8601String()]);
         config(['writer.openrouter_key' => 'demo-test-key']);
@@ -330,11 +331,12 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
     {
         $user = User::factory()->create();
         $this->actingAs($user);
-        $this->patchJson('/yazi-atolyesi/hesap', ['openrouter_key' => 'private-test-key', 'selected_model' => 'a/model', 'favorite_models' => ['a/model'], 'theme' => 'dark'])->assertOk();
+        $this->catalog();
+        $this->patchJson('/yazi-atolyesi/hesap', ['openrouter_key' => 'private-test-key', 'selected_model' => 'test/writer', 'theme' => 'dark'])->assertOk();
         $this->assertNotSame('private-test-key', DB::table('users')->where('id', $user->id)->value('openrouter_key'));
         $this->assertSame('private-test-key', $user->fresh()->openrouter_key);
         $this->assertArrayNotHasKey('openrouter_key', $user->fresh()->toArray());
-        $this->assertSame('a/model', $user->fresh()->selected_model);
+        $this->assertSame('test/writer', $user->fresh()->selected_model);
     }
 
     public function test_catalog_only_refreshes_once_per_login_flag(): void

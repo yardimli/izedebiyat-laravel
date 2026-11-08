@@ -1,8 +1,7 @@
 @extends('writer.layouts.writer')
 @section('title', $book->title . ' · ' . config('app.name'))
 @section('content')
-    <main id="workspace" data-book="{{ $book->id }}" data-model="{{ auth()->user()->selected_model }}"
-        data-favorites="{{ json_encode(auth()->user()->favorite_models ?? []) }}">
+    <main id="workspace" data-book="{{ $book->id }}" data-model="{{ auth()->user()->selected_model }}">
         <div class="book-bar">
             <div>
                 <h1 id="book-heading">{{ $book->title }}</h1>
@@ -143,8 +142,7 @@
                 </div>
                 <details id="model-picker">
                     <summary id="model-summary">{{ __('Choose an AI model') }}</summary>
-                    <div class="model-menu"><label class="check model-favorites"><input id="favorites-only"
-                                type="checkbox" @checked(auth()->user()->favorites_only)> {{ __('Favorites only') }}</label>
+                    <div class="model-menu">
                         <div id="model-search-filters"><input id="model-search" placeholder="{{ __('Search models…') }}"
                                 aria-label="{{ __('Search models') }}">
                             <div class="model-filters">
@@ -152,10 +150,10 @@
                                 <fieldset class="model-price-range">
                                     <legend>{{ __('Output $ / 1M tokens') }}</legend><label>{{ __('Min') }}<input
                                             id="model-price-min" type="number" min="0" step="any"
-                                            value="1"
+                                            value=""
                                             aria-label="{{ __('Minimum model output price in USD per million tokens') }}"></label><label>{{ __('Max') }}<input
                                             id="model-price-max" type="number" min="0" step="any"
-                                            value="10"
+                                            value=""
                                             aria-label="{{ __('Maximum model output price in USD per million tokens') }}"></label>
                                 </fieldset>
                             </div>

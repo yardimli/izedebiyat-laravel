@@ -1,8 +1,8 @@
 @extends('writer.layouts.writer')
-@section('title', 'Zekai kotaları')
+@section('title', 'Yapay Zeka kotaları')
 @section('content')
     <main class="settings-page">
-        <h1>Zekai kotaları</h1>
+        <h1>Yapay Zeka kotaları</h1>
         <p>Yenileme tutarı: ${{ \App\Writer\Support\Money::display(\App\Writer\Services\DemoBudget::allowance()) }}.
             Yenileme, geçmiş harcamayı korur ve kullanılabilir kotayı %100'e getirir.</p>
         <form method="get" class="row budget-filters"><input type="hidden" name="sort" value="{{ $sort }}"><input

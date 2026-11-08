@@ -211,7 +211,7 @@ class BookController extends Controller
     {
         $this->owned($request, $book);
 
-        app(\App\Writer\Services\DefaultFavorites::class)->initialize($request, app(\App\Writer\Services\ModelCatalog::class));
+        app(\App\Writer\Services\DefaultModel::class)->initialize($request, app(\App\Writer\Services\ModelCatalog::class));
 
         abort_if($book->document === null, 503, 'Run php artisan writer:migrate-articles before opening the workspace.');
 

@@ -12,7 +12,7 @@
             </div>
             <div class="account-image-stats"><span><strong>{{ number_format($imageCounts->sum()) }}</strong> toplam
                     görsel</span><span><strong>{{ number_format($imageCounts->get('upload', 0)) }}</strong>
-                    yüklenen</span><span><strong>{{ number_format($imageCounts->get('generated', 0)) }}</strong> zekai ile
+                    yüklenen</span><span><strong>{{ number_format($imageCounts->get('generated', 0)) }}</strong> yapay zeka ile
                     oluşturulan</span></div>
             @if ($latestImages->isNotEmpty())
                 <h3>Son görseller</h3>
@@ -21,18 +21,18 @@
                         <a href="{{ route('backend.images') }}" class="account-image-item"><img
                                 src="{{ asset('storage/' . ($image->image_type === 'upload' ? 'upload-images' : 'ai-images') . '/medium/' . $image->image_medium_filename) }}"
                                 alt="{{ $image->image_alt ?: 'Görsel' }}"
-                                loading="lazy"><span>{{ $image->image_type === 'upload' ? 'Yüklenen' : 'Zekai' }} ·
+                                loading="lazy"><span>{{ $image->image_type === 'upload' ? 'Yüklenen' : 'Yapay Zeka' }} ·
                                 {{ $image->created_at?->format('d.m.Y') }}</span></a>
                     @endforeach
                 </div>
             @else
-                <p class="muted">Henüz görseliniz yok. Görsellerim sayfasından görsel yükleyebilir veya zekai ile
+                <p class="muted">Henüz görseliniz yok. Görsellerim sayfasından görsel yükleyebilir veya yapay zeka ile
                     oluşturabilirsiniz.</p>
             @endif
         </section>
         @if (auth()->user()->isAdmin())
             <section class="panel">
-                <h2>Yönetim</h2><a class="toolbar-link" href="{{ route('writer.budgets.index') }}">Zekai kotaları ↗</a>
+                <h2>Yönetim</h2><a class="toolbar-link" href="{{ route('writer.budgets.index') }}">Yapay Zeka kotaları ↗</a>
             </section>
         @endif
         <div class="settings-grid">
