@@ -1,6 +1,15 @@
 @extends('writer.layouts.portal')
 
 @section('portal-content')
+    @php
+        $selectableModels = collect($models)
+            ->reject(fn ($model) => preg_match('/free|batch/i', $model['name']))
+            ->sortBy([
+                fn ($a, $b) => strcasecmp(explode('/', $a['id'], 2)[0], explode('/', $b['id'], 2)[0]),
+                fn ($a, $b) => $a['combined_per_million'] <=> $b['combined_per_million'],
+                fn ($a, $b) => strcasecmp($a['name'], $b['name']),
+            ]);
+    @endphp
     <main>
         <div class="container py-4" style="max-width: 1100px">
             <h1 class="h3 mb-2">LLM Ayarları</h1>
@@ -37,7 +46,7 @@
                                             <option value="{{ $selectedModel }}" selected>{{ $selectedModel }} (katalogda
                                                 bulunamadı)</option>
                                         @endif
-                                        @foreach ($models as $model)
+                                        @foreach ($selectableModels as $model)
                                             <option value="{{ $model['id'] }}" @selected($selectedModel === $model['id'])>
                                                 {{ $model['name'] }} — Girdi
                                                 ${{ number_format($model['input_per_million'], 2) }} / Çıktı
@@ -58,23 +67,24 @@
                             placeholder="Model ara…">
                     </div>
                     <div class="card-body">
-                        <div class="row g-2" id="model-list">
+                        <div id="admin-model-list">
                             @php($allowed = old('allowed_frontend_models', $setting->allowed_frontend_models ?? collect($models)->pluck('id')->all()))
-                            @forelse($models as $model)
-                                <div class="col-lg-6 model-option"
+                            @forelse($selectableModels as $model)
+                                <div class="model-option border-bottom py-1"
                                     data-search="{{ mb_strtolower($model['name'] . ' ' . $model['id']) }}">
-                                    <div class="form-check border rounded p-3 ps-5 h-100">
-                                        <input class="form-check-input" type="checkbox" name="allowed_frontend_models[]"
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input class="form-check-input m-0 flex-shrink-0" type="checkbox" name="allowed_frontend_models[]"
                                             value="{{ $model['id'] }}" id="model-{{ $loop->index }}"
                                             @checked(in_array($model['id'], $allowed, true))>
-                                        <label class="form-check-label w-100" for="model-{{ $loop->index }}">
-                                            <strong>{{ $model['name'] }}</strong><br><small
-                                                class="text-muted">{{ $model['id'] }}</small>
-                                            <div class="small mt-1">Girdi:
+                                        <label class="form-check-label d-flex flex-wrap align-items-baseline justify-content-between gap-1 w-100 small"
+                                            style="min-width: 0; overflow-wrap: anywhere" for="model-{{ $loop->index }}">
+                                            <span><strong>{{ $model['name'] }}</strong> <small
+                                                class="text-muted">{{ $model['id'] }}</small></span>
+                                            <span class="text-nowrap">Girdi:
                                                 <strong>${{ number_format($model['input_per_million'], 2) }}</strong> ·
                                                 Çıktı:
                                                 <strong>${{ number_format($model['output_per_million'], 2) }}</strong>
-                                            </div>
+                                            </span>
                                         </label>
                                     </div>
                                 </div>
@@ -86,7 +96,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary mt-3" @disabled(empty($models))>Ayarları kaydet</button>
+                <button class="btn btn-primary mt-3" @disabled($selectableModels->isEmpty())>Ayarları kaydet</button>
             </form>
         </div>
     </main>

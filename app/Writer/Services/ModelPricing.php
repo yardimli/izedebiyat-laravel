@@ -19,8 +19,6 @@ class ModelPricing
                 if (array_key_exists($key, $rates)) {
                     abort_unless(is_numeric($value) && is_finite((float) $value) && $value >= 0, 422, __('This model does not have bounded pricing.'));
                     $rates[$key] = max($rates[$key], (float) $value);
-                } elseif (! in_array($key, ['overrides', 'min_prompt_tokens', 'utc_start', 'utc_end', 'utc_days', 'web_search', 'image', 'audio', 'input_audio', 'output_audio', 'video'])) {
-                    abort_unless(is_numeric($value) && (float) $value === 0.0, 422, __('This model has an unsupported pricing fee. Choose another model.'));
                 }
             }
         }

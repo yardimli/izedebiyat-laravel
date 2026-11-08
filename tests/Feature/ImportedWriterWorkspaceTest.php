@@ -533,7 +533,10 @@ class ImportedWriterWorkspaceTest extends WriterTestCase
         $book = $this->book();
         $model = $this->catalog();
         $model['pricing']['web_search'] = '0.01';
+        $model['pricing']['unrecognized_fee'] = '0.02';
+        $model['pricing']['unrecognized_metadata'] = ['label' => 'text'];
         $model['pricing']['overrides'] = [['min_prompt_tokens' => 272000, 'prompt' => '0.000004', 'completion' => '0.000006']];
+        $model['pricing']['overrides'][0]['unrecognized_fee'] = '0.03';
         Cache::forever('openrouter.catalog', ['data' => [$model], 'refreshed_at' => null]);
         Http::fake(['*/chat/completions' => Http::sequence()
             ->push(['usage' => ['cost' => .0001], 'choices' => [['message' => ['content' => '{"intent":"conversation","entry_ids":[],"needs_names":false}']]]])
