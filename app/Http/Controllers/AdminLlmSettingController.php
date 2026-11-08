@@ -21,9 +21,11 @@ class AdminLlmSettingController extends Controller
 
     public function edit(OpenRouterModelCatalog $catalog)
     {
+        $result = $catalog->load();
         return view('backend.llm-settings', [
             'setting' => LlmSetting::current(),
-            'models' => $catalog->all(),
+            'models' => $result['models'],
+            'catalogStatus' => $result,
         ]);
     }
 

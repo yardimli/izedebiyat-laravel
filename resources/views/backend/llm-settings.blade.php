@@ -15,6 +15,22 @@
             <h1 class="h3 mb-2">LLM Ayarları</h1>
             <p class="text-muted">Modeller doğrudan OpenRouter kataloğundan alınır. Fiyatlar bir milyon token için ABD
                 dolarıdır.</p>
+            <div class="alert {{ $catalogStatus['source'] === 'live' ? 'alert-success' : 'alert-warning' }}" role="status">
+                @if ($catalogStatus['source'] === 'live')
+                    OpenRouter'dan güncel katalog bu sayfa açılışında alındı.
+                @elseif ($catalogStatus['source'] === 'cache')
+                    Önbellekteki eski katalog gösteriliyor; liste güncel olmayabilir.
+                @elseif ($catalogStatus['source'] === 'file')
+                    Yedek dosyadaki katalog gösteriliyor; liste güncel olmayabilir.
+                @else
+                    Model kataloğu yüklenemedi.
+                @endif
+                {{ count($models) }} model alındı, filtrelerden sonra {{ $selectableModels->count() }} model gösteriliyor.
+                “free” veya “batch” içeren model adları gizlenir.
+            </div>
+            @foreach ($catalogStatus['warnings'] as $warning)
+                <div class="alert alert-warning" role="alert">{{ $warning }}</div>
+            @endforeach
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif

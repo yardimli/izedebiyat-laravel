@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
@@ -13,6 +14,12 @@ class OpenRouterModelCatalog
 
     public function all(): array
     {
+        return $this->load()['models'];
+    }
+
+    public function load(): array
+    {
+        $warnings = [];
         try {
             $models = Http::acceptJson()
                 ->timeout(20)
@@ -20,20 +27,47 @@ class OpenRouterModelCatalog
                 ->throw()
                 ->json('data', []);
 
-            if (!empty($models)) {
-                Cache::put(self::CACHE_KEY, $models, now()->addHours(6));
-                return $this->normalize($models);
+            if (!is_array($models) || empty($models)) {
+                throw new \RuntimeException('OpenRouter returned an empty or invalid model catalog.');
             }
-        } catch (Throwable) {
-            // Continue with the most recent cached or on-disk catalog.
+            $normalized = $this->normalize($models);
+            if (empty($normalized)) {
+                throw new \RuntimeException('OpenRouter returned no usable models.');
+            }
+        } catch (Throwable $e) {
+            Log::warning('OpenRouter model catalog refresh failed.', ['exception' => $e]);
+            $warnings[] = 'OpenRouter kataloğu yenilenemedi. Bağlantı, zaman aşımı veya yanıt hatası oluştu. Ayrıntılar sunucu günlüğüne kaydedildi.';
+            $normalized = null;
         }
 
-        $models = Cache::get(self::CACHE_KEY, []);
-        if (empty($models) && Storage::disk('public')->exists('llms.json')) {
-            $models = json_decode(Storage::disk('public')->get('llms.json'), true) ?: [];
+        if ($normalized !== null) {
+            try {
+                if (!Cache::put(self::CACHE_KEY, $models, now()->addHours(6))) {
+                    throw new \RuntimeException('Model catalog cache write returned false.');
+                }
+            } catch (Throwable $e) {
+                Log::warning('OpenRouter model catalog cache write failed.', ['exception' => $e]);
+                $warnings[] = 'Güncel modeller alındı ancak önbelleğe kaydedilemedi. Bu sayfada güncel liste gösteriliyor. Ayrıntılar sunucu günlüğüne kaydedildi.';
+            }
+
+            return ['models' => $normalized, 'source' => 'live', 'warnings' => $warnings];
         }
 
-        return $this->normalize($models);
+        foreach (['cache', 'file'] as $source) {
+            try {
+                $models = $source === 'cache'
+                    ? Cache::get(self::CACHE_KEY, [])
+                    : (Storage::disk('public')->exists('llms.json') ? json_decode(Storage::disk('public')->get('llms.json'), true) : []);
+                $normalized = is_array($models) ? $this->normalize($models) : [];
+                if (!empty($normalized)) {
+                    return ['models' => $normalized, 'source' => $source, 'warnings' => $warnings];
+                }
+            } catch (Throwable $e) {
+                Log::warning('OpenRouter fallback catalog read failed.', ['source' => $source, 'exception' => $e]);
+            }
+        }
+
+        return ['models' => [], 'source' => 'none', 'warnings' => $warnings];
     }
 
     private function normalize(array $models): array
