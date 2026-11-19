@@ -42,14 +42,24 @@ class ArticleImage
         $temporary = null;
         $image = null;
         try {
-            // No TTL or Laravel cache entry: only source/settings changes create a new file.
-            $key = hash('sha256', json_encode([
+            // Preserve source folders to avoid collisions between equal filenames.
+            $format = strtolower(pathinfo($source, PATHINFO_EXTENSION));
+            if (!in_array($format, ['jpg', 'jpeg', 'png', 'gif', 'webp'], true)) {
+                return $original;
+            }
+            $settings['format'] = $format;
+            $target = 'article-images/'.$template.'/'.$source;
+            $directory = dirname($target);
+            $metadata = $target.'.json';
+            // This signature is stored as metadata, never used as a filename or TTL.
+            $signature = hash('sha256', json_encode([
                 $source, $disk->lastModified($source), $disk->size($source), $settings,
             ]));
-            $format = $settings['format'] ?? 'webp';
-            $directory = 'article-images/'.substr($key, 0, 2);
-            $target = $directory.'/'.$key.'.'.$format;
-            if ($disk->exists($target)) {
+            $isCurrent = function () use ($disk, $target, $metadata, $signature): bool {
+                return $disk->exists($target) && $disk->exists($metadata)
+                    && json_decode($disk->get($metadata), true) === ['signature' => $signature];
+            };
+            if ($isCurrent()) {
                 return $disk->url($target);
             }
 
@@ -57,7 +67,7 @@ class ArticleImage
                 throw new \RuntimeException('Cannot create article image directory.');
             }
             // Do not make concurrent page requests wait for the same image to decode.
-            $lock = fopen($disk->path($directory.'/'.$key.'.lock'), 'c');
+            $lock = fopen($disk->path($target.'.lock'), 'c');
             if ($lock === false) {
                 throw new \RuntimeException('Cannot open article image lock.');
             }
@@ -65,7 +75,7 @@ class ArticleImage
                 return $original;
             }
             clearstatcache(true, $disk->path($target));
-            if ($disk->exists($target)) {
+            if ($isCurrent()) {
                 return $disk->url($target);
             }
 
@@ -93,6 +103,9 @@ class ArticleImage
             $image->save($temporary, 85, $format);
             if (!chmod($temporary, 0644) || !rename($temporary, $disk->path($target))) {
                 throw new \RuntimeException('Cannot publish article image.');
+            }
+            if (!$disk->put($metadata, json_encode(['signature' => $signature]))) {
+                throw new \RuntimeException('Cannot save article image metadata.');
             }
 
             return $disk->url($target);

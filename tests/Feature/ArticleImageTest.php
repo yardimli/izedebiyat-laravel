@@ -33,6 +33,7 @@ class ArticleImageTest extends TestCase
         $disk = Storage::disk('public');
         $url = ArticleImage::url($source);
         $path = 'article-images/'.explode('/article-images/', $url)[1];
+        $this->assertSame('article-images/small_landscape/yazi_resimler/sample.jpg', $path);
         $this->assertTrue($disk->exists($path));
         $this->assertSame([200, 120], array_slice(getimagesize($disk->path($path)), 0, 2));
         // A marker timestamp detects rewriting even when encoded bytes are identical.
@@ -56,6 +57,7 @@ class ArticleImageTest extends TestCase
             $html = MyHelper::getImage('sample.jpg', '', '', '', $size.'_landscape');
             $this->assertStringContainsString(e($url), $html);
             $path = 'article-images/'.explode('/article-images/', $url)[1];
+            $this->assertSame('article-images/'.$size.'_landscape/yazi_resimler/sample.jpg', $path);
             $this->assertSame($dimensions, array_slice(getimagesize(Storage::disk('public')->path($path)), 0, 2));
         }
     }
@@ -73,18 +75,29 @@ class ArticleImageTest extends TestCase
         $image->destroy();
         $this->assertSame('actual.png', ArticleImage::resolve('actual.png'));
         $this->assertStringContainsString('/article-images/', MyHelper::getImage('actual.png'));
+        $this->assertSame('image/png', getimagesize(Storage::disk('public')->path('article-images/small_landscape/actual.png'))['mime']);
         $this->assertNull(ArticleImage::resolve('../private.jpg'));
     }
 
-    public function test_source_changes_and_identical_basenames_have_distinct_variants(): void
+    public function test_source_changes_refresh_in_place_and_identical_basenames_stay_separate(): void
     {
         $source = $this->source();
         $first = ArticleImage::url($source);
         $other = $this->source('other/sample.jpg');
         $this->assertNotSame($first, ArticleImage::url($other));
+        $disk = Storage::disk('public');
+        $path = 'article-images/small_landscape/'.$source;
+        $metadata = $disk->get($path.'.json');
+        touch($disk->path($path), 1000000000);
         touch(Storage::disk('public')->path($source), time() + 10);
         clearstatcache();
-        $this->assertNotSame($first, ArticleImage::url($source));
+        $this->assertSame($first, ArticleImage::url($source));
+        clearstatcache();
+        $this->assertNotSame(1000000000, filemtime($disk->path($path)));
+        $this->assertNotSame($metadata, $disk->get($path.'.json'));
+        config(['image-resizer.templates.small_landscape.width' => 180]);
+        $this->assertSame($first, ArticleImage::url($source));
+        $this->assertSame(180, getimagesize($disk->path($path))[0]);
     }
 
     public function test_generation_in_progress_returns_original_without_waiting(): void
@@ -94,7 +107,7 @@ class ArticleImageTest extends TestCase
         $url = ArticleImage::url($source);
         $path = 'article-images/'.explode('/article-images/', $url)[1];
         $disk->delete($path);
-        $lock = fopen($disk->path(preg_replace('/\.webp$/', '.lock', $path)), 'c');
+        $lock = fopen($disk->path($path.'.lock'), 'c');
         flock($lock, LOCK_EX);
         try {
             $this->assertSame($disk->url($source), ArticleImage::url($source));
