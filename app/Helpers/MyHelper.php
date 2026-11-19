@@ -169,50 +169,18 @@
 
 		public static function getImage($articleMainImage, $categoryId = '', $extraClass = '', $extraStyle = '', $resize_image_size = 'small_landscape')
 		{
-			$articleMainImage = str_ireplace('.png', '.jpg', $articleMainImage);
-			$articleMainImage = str_replace('\\', '/', $articleMainImage);
-
-			$storage_path = $articleMainImage;
-			$storage_path = str_replace('storage/', '', $storage_path);
-
-			if ($storage_path !== '' && Storage::disk('public')->exists($storage_path)) {
-
-				if ($resize_image_size === 'large_landscape') {
-					$image_src = 'storage' . $storage_path;
-				} else {
-					$image_src = resize('storage' . $storage_path, $resize_image_size);
-				}
-
-				return "<div style='position:relative;'>
-                    <img src='/{$image_src}' class='{$extraClass}' 
-                    style='{$extraStyle}' alt='yazı resim'></div>";
+			$source = ArticleImage::resolve($articleMainImage);
+			$isArticleImage = $source !== null;
+			if ($source === null && key_exists($categoryId, self::$categoryImages)) {
+				$source = ArticleImage::resolve('catpicbox/' . self::$categoryImages[$categoryId]);
+			}
+			if ($source === null) {
+				return e(__('Category image not found for category id: :id', ['id' => $categoryId]));
 			}
 
-			if ($articleMainImage !== '' && Storage::disk('public')->exists("yazi_resimler/" . $articleMainImage)) {
-
-				if ($resize_image_size === 'large_landscape') {
-					$image_src = 'storage/yazi_resimler/' . $articleMainImage;
-				} else {
-					$image_src = resize('storage/yazi_resimler/' . $articleMainImage, $resize_image_size);
-				}
-
-				return "<div style='position:relative;'>
-                    <img src='/{$image_src}' class='{$extraClass}' 
-                    style='{$extraStyle}' alt='yazı resim'></div>";
-			}
-
-			if (key_exists($categoryId, self::$categoryImages)) {
-				if ($resize_image_size === 'large_landscape') {
-					$image_src = 'storage/catpicbox/' . self::$categoryImages[$categoryId];
-				} else {
-					$image_src = resize('storage/catpicbox/' . self::$categoryImages[$categoryId], $resize_image_size);
-				}
-
-				return "<img src='/{$image_src}' 
-                class='{$extraClass}' style='{$extraStyle}' alt='yazı resim'>";
-			} else {
-				echo e(__('Category image not found for category id: :id', ['id' => $categoryId]));
-			}
+			$image_src = e(ArticleImage::url($source, $resize_image_size));
+			$html = "<img src='{$image_src}' class='{$extraClass}' style='{$extraStyle}' alt='yazı resim'>";
+			return $isArticleImage ? "<div style='position:relative;'>{$html}</div>" : $html;
 		}
 
 		public static function timeElapsedString($datetime, $full = false)

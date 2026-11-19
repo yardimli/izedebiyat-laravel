@@ -105,72 +105,25 @@
 
 		public function getLargeUrl(): string
 		{
-            $path = str_replace('\\', '/', $this->featured_image ?? '');
-            if (preg_match('~^https?://~i', $path)) {
-                return $path;
-            }
-            if (str_starts_with(ltrim($path, '/'), 'storage/')) {
-                return asset(ltrim($path, '/'));
-            }
-			if (!$this->featured_image) {
-				return asset('images/no-image.png');
-			}
-			if (stripos($this->featured_image, '00001_') !== false) {
-
-				$articleMainImage = $this->featured_image;
-				$articleMainImage = str_ireplace('.png', '.jpg', $articleMainImage);
-				$articleMainImage = str_replace('\\', '/', $articleMainImage);
-
-				return asset('storage/yazi_resimler/' . $articleMainImage);
-			} else {
-				return asset('storage/upload-images/large/' . $this->featured_image);
-			}
+			return $this->articleImageUrl('large_landscape');
 		}
 
 		public function getMediumUrl(): string
 		{
-            $path = str_replace('\\', '/', $this->featured_image ?? '');
-            if (preg_match('~^https?://~i', $path)) {
-                return $path;
-            }
-            if (str_starts_with(ltrim($path, '/'), 'storage/')) {
-                return asset(ltrim($path, '/'));
-            }
-			if (!$this->featured_image) {
-				return asset('images/no-image.png');
-			}
-			if (stripos($this->featured_image, '00001_') !== false) {
-				$articleMainImage = $this->featured_image;
-				$articleMainImage = str_ireplace('.png', '.jpg', $articleMainImage);
-				$articleMainImage = str_replace('\\', '/', $articleMainImage);
-
-				return asset('storage/yazi_resimler/' . $articleMainImage);
-			} else {
-				return asset('storage/upload-images/medium/' . $this->featured_image);
-			}
+			return $this->articleImageUrl('medium_landscape');
 		}
 
 		public function getSmallUrl(): string
 		{
-            $path = str_replace('\\', '/', $this->featured_image ?? '');
-            if (preg_match('~^https?://~i', $path)) {
-                return $path;
-            }
-            if (str_starts_with(ltrim($path, '/'), 'storage/')) {
-                return asset(ltrim($path, '/'));
-            }
-			if (!$this->featured_image) {
-				return asset('images/no-image.png');
-			}
-			if (stripos($this->featured_image, '00001_') !== false) {
-				$articleMainImage = $this->featured_image;
-				$articleMainImage = str_ireplace('.png', '.jpg', $articleMainImage);
-				$articleMainImage = str_replace('\\', '/', $articleMainImage);
+			return $this->articleImageUrl('small_landscape');
+		}
 
-				return asset('storage/yazi_resimler/' . $articleMainImage);
-			} else {
-				return asset('storage/upload-images/small/' . $this->featured_image);
-			}
+		private function articleImageUrl(string $template): string
+		{
+			$source = \App\Helpers\ArticleImage::resolve($this->featured_image);
+			return $source !== null
+				? \App\Helpers\ArticleImage::url($source, $template)
+				: $this->getOriginalUrl();
 		}
 
 		public function favorites()
