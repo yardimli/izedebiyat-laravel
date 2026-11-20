@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
 	    $schedule->command('writer:reconcile-usage')->everyFiveMinutes()->withoutOverlapping();
 	    $schedule->command('app:moderate-texts')->hourly();
+        $schedule->command('categories:refresh-cache')->hourly()->withoutOverlapping()->runInBackground();
 	    $schedule->command('articles:update-rankings')
 		    ->daily()
 		    ->at('09:00') // Run at 9 AM
