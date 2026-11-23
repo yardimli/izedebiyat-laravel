@@ -56,3 +56,5 @@ app/Console/Commands/ExportLegacyForumSql.php
 
 /storage/app/writer-preview/
 /data/names_by_country
+
+/storage/app/human-check-preview/

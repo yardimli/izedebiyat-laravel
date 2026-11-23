@@ -1,4 +1,8 @@
 <?php
+use App\Http\Controllers\HumanCheckController;
+Route::get('/human-check', [HumanCheckController::class, 'show'])->name('human-check.show');
+Route::post('/human-check', [HumanCheckController::class, 'verify'])->name('human-check.verify');
+
 
 	use App\Helpers\MyHelper;
 	use App\Http\Controllers\AccountRecoveryController;
